@@ -165,32 +165,32 @@ const SECTORS = [
   },
 
   {
-    slug: 'food-supply',
-    name: 'Food Supply & Distribution', nameAr: 'توريد وتوزيع الأغذية',
-    short: 'Commercial activities connecting food products and fresh produce with the Qatar market.',
-    shortAr: 'أنشطة تجارية تربط المنتجات الغذائية والخضار والفواكه الطازجة بالسوق القطري.',
+    slug: 'supply-distribution',
+    name: 'Supply & Distribution', nameAr: 'التوريد والتوزيع',
+    short: 'Commercial activities connecting producers and products with the Qatar market.',
+    shortAr: 'أنشطة تجارية تربط المنتجين والمنتجات بالسوق القطري.',
     headline: 'Connecting Supply With Demand',
     headlineAr: 'نربط العرض بالطلب',
-    intro: 'Food distribution plays an important role in connecting producers, suppliers, businesses and customers.',
-    introAr: 'يؤدي توزيع الأغذية دوراً مهماً في الربط بين المنتجين والموردين والشركات والعملاء.',
+    intro: 'Distribution plays an important role in connecting producers, suppliers, businesses and customers.',
+    introAr: 'يؤدي التوزيع دوراً مهماً في الربط بين المنتجين والموردين والشركات والعملاء.',
     body: [
-      'ROMA Commercial currently focuses on supplying fruits and vegetables within Qatar, creating a foundation from which its product and customer network can continue to develop.'
+      'The sector currently operates in food. ROMA Commercial supplies fresh fruit and vegetables within Qatar, creating a foundation from which the product range and customer network can continue to develop.'
     ],
     bodyAr: [
-      'تركّز روما التجارية حالياً على توريد الفواكه والخضار داخل قطر، بما يوفّر أساساً تتوسع منه شبكة منتجاتها وعملائها.'
+      'يعمل القطاع حالياً في مجال الأغذية. تورّد روما التجارية الفواكه والخضار الطازجة داخل قطر، بما يوفّر أساساً تتوسع منه تشكيلة المنتجات وشبكة العملاء.'
     ],
     photo: null, photoStyle: 'none',
     companies: [
       {
         slug: 'roma-commercial',
         name: 'ROMA Commercial', nameAr: 'روما التجارية',
-        role: 'Fresh Produce Supply & Commercial Distribution', roleAr: 'توريد المنتجات الطازجة والتوزيع التجاري',
+        role: 'Food Supply & Distribution', roleAr: 'توريد وتوزيع الأغذية',
         headline: 'Supplying Fresh Produce to Qatar',
         headlineAr: 'توريد المنتجات الطازجة إلى قطر',
         short: 'Supply and distribution of fresh fruits and vegetables within the Qatar market.',
         shortAr: 'توريد وتوزيع الفواكه والخضار الطازجة داخل السوق القطري.',
-        intro: 'ROMA Commercial is a commercial supply business focused on fruits and vegetables within the Qatar market.',
-        introAr: 'روما التجارية شركة توريد تجاري تركّز على الفواكه والخضار داخل السوق القطري.',
+        intro: 'ROMA Commercial is the Group\u2019s food supply business, focused on fresh fruit and vegetables within the Qatar market.',
+        introAr: 'روما التجارية هي ذراع المجموعة لتوريد الأغذية، وتركّز على الفواكه والخضار الطازجة داخل السوق القطري.',
         body: [
           'The business works across sourcing and supply to help meet the needs of Qatar’s food market.',
           'Through dependable sourcing and commercial relationships, the company works to connect quality produce with the needs of businesses and customers across Qatar.',
@@ -202,8 +202,8 @@ const SECTORS = [
           'ومع تطوّر روما التجارية، تهدف الشركة إلى توسيع علاقاتها التجارية وفئات منتجاتها وقدراتها التوريدية.'
         ],
         facts: [
-          { k: 'Sector', kAr: 'القطاع', v: 'Food Supply & Distribution', vAr: 'توريد وتوزيع الأغذية' },
-          { k: 'Activity', kAr: 'النشاط', v: 'Fruits & Vegetables', vAr: 'الفواكه والخضار' },
+          { k: 'Sector', kAr: 'القطاع', v: 'Supply & Distribution', vAr: 'التوريد والتوزيع' },
+          { k: 'Activity', kAr: 'النشاط', v: 'Food — fresh fruit and vegetables', vAr: 'الأغذية — الفواكه والخضار الطازجة' },
           { k: 'Market', kAr: 'السوق', v: 'Qatar', vAr: 'قطر' }
         ],
         cta: 'Contact ROMA Commercial', ctaAr: 'تواصل مع روما التجارية',
@@ -233,6 +233,9 @@ const SECTORS = [
     companies: [
       {
         slug: 'lusail-commercial',
+        /* Defined here, in its primary sector. It also operates in supply and
+           distribution, so it is cross-listed there too. */
+        alsoIn: ['supply-distribution'],
         name: 'Lusail Commercial', nameAr: 'لوسيل التجارية',
         role: 'International Trade & Commodities', roleAr: 'التجارة الدولية والسلع',
         headline: 'Connecting Products, Suppliers and Markets',
@@ -394,14 +397,24 @@ const CAREER_VALUES = [
 /* Set to [] to show the "no current opening" state, which the brief specifies. */
 const OPEN_ROLES = [];
 
-/* Flat list of every company, each carrying a back-reference to its sector. */
+/* Flat list of every company, each carrying a back-reference to the sector it
+   is defined in. A company appears here exactly once, however many sectors it
+   is listed under. */
 const ALL_COMPANIES = SECTORS.flatMap(s =>
   s.companies.map(c => Object.assign({}, c, {
     sectorSlug: s.slug, sectorName: s.name, sectorNameAr: s.nameAr,
+    sectors: [s.slug].concat(c.alsoIn || []),
     photo: c.photo || s.photo,
     photoStyle: c.photoStyle || s.photoStyle || 'none'
   }))
 );
+
+/* Now add the cross-listed companies to the other sectors they work in. This
+   runs after ALL_COMPANIES is built, so nothing is counted twice. */
+SECTORS.forEach(s => {
+  const extra = ALL_COMPANIES.filter(c => (c.alsoIn || []).includes(s.slug));
+  if (extra.length) s.companies = s.companies.concat(extra);
+});
 
 module.exports = {
   SITE, SECTORS, ALL_COMPANIES,

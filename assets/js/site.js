@@ -169,7 +169,10 @@
     var filter = function (slug) {
       active = slug;
       cards.forEach(function (c) {
-        c.hidden = !(slug === 'all' || c.dataset.sector === slug);
+        // data-sector is a space-separated list: a company can sit in more
+        // than one sector and should match either filter
+        var secs = (c.dataset.sector || '').split(' ');
+        c.hidden = !(slug === 'all' || secs.indexOf(slug) !== -1);
       });
       chips.forEach(function (c) {
         c.setAttribute('aria-pressed', String(c.dataset.filter === slug));

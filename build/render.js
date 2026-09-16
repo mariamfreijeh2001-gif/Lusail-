@@ -332,20 +332,30 @@ ${items.map((v, i) => `      <div class="vcard">
    It pauses on hover and on focus, in CSS, and does not animate at all under
    prefers-reduced-motion. */
 function sectorMarquee() {
+  /* The marquee shows the sectors the Group actually operates in. Future
+     Ventures has no business in it yet, so it would ride along as an empty
+     card; it still has its own row on /sectors/ and its own page. */
+  const shown = SECTORS.filter(s => s.companies.length);
+
   const card = (s, clone) => {
     const n = s.companies.length;
     const hide = clone ? ' aria-hidden="true" tabindex="-1"' : '';
-    const count = n ? plural(n, 'company', 'companies') : 'In development';
-    const countAr = n ? pluralAr(n, 'شركة واحدة', 'شركات') : 'قيد التطوير';
+    const count = plural(n, 'company', 'companies');
+    const countAr = pluralAr(n, 'شركة واحدة', 'شركات');
+
+    /* A sector with no photograph gets no picture area at all. An empty
+       rectangle reads as a broken image; a solid card reads as a choice. */
     const pic = hasPhoto(s)
-      ? `<img src="/assets/img/${s.photo}-card.jpg" alt="${clone ? '' : esc(s.name)}" width="1000" height="750" loading="lazy">`
-      : `<span class="noimg" aria-hidden="true"></span>`;
-    return `      <a class="mcard" href="/sectors/${s.slug}/"${hide}>
-        <span class="pic">
+      ? `<span class="pic">
           <span class="n" aria-hidden="true">${num(SECTORS.indexOf(s))}</span>
-          ${pic}
-        </span>
+          <img src="/assets/img/${s.photo}-card.jpg" alt="${clone ? '' : esc(s.name)}" width="1000" height="750" loading="lazy">
+        </span>`
+      : '';
+
+    return `      <a class="mcard${hasPhoto(s) ? '' : ' plain'}" href="/sectors/${s.slug}/"${hide}>
+        ${pic}
         <span class="body">
+          ${hasPhoto(s) ? '' : `<span class="n" aria-hidden="true">${num(SECTORS.indexOf(s))}</span>`}
           <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
           <span class="meta"${t(count, countAr)}>${esc(count)}</span>
           <span class="sub"${t(s.short, s.shortAr)}>${esc(s.short)}</span>
@@ -353,10 +363,11 @@ function sectorMarquee() {
         </span>
       </a>`;
   };
+
   return `<div class="marquee" id="mq">
     <div class="track">
-${SECTORS.map(s => card(s, false)).join('\n')}
-${SECTORS.map(s => card(s, true)).join('\n')}
+${shown.map(s => card(s, false)).join('\n')}
+${shown.map(s => card(s, true)).join('\n')}
     </div>
   </div>`;
 }
@@ -385,7 +396,9 @@ function companyIndex(list, { showSector = true } = {}) {
   return list.map((c, i) => {
     const metaEn = showSector && c.sectorName ? c.sectorName : c.role;
     const metaAr = showSector && c.sectorNameAr ? c.sectorNameAr : c.roleAr;
-    return `      <a href="/companies/${c.slug}/" data-sector="${c.sectorSlug || ''}">
+    // a company can belong to several sectors, so the filter matches a list
+    const secs = (c.sectors || [c.sectorSlug]).filter(Boolean).join(' ');
+    return `      <a href="/companies/${c.slug}/" data-sector="${secs}">
         <span class="n">${num(i)}</span>
         <span>
           <h3${t(c.name, c.nameAr)}>${esc(c.name)}</h3>
@@ -1149,7 +1162,11 @@ function build() {
   write('index.html', pageHome());
   write('about/index.html', pageAbout());
   write('companies/index.html', pageCompaniesIndex());
-  SECTORS.forEach(s => s.companies.forEach(c => write(`companies/${c.slug}/index.html`, pageCompany(c, s))));
+  // one page per company, from the flat list, so a company listed in two
+  // sectors is still written exactly once
+  ALL_COMPANIES.forEach(c =>
+    write(`companies/${c.slug}/index.html`,
+      pageCompany(c, SECTORS.find(s => s.slug === c.sectorSlug))));
   write('sectors/index.html', pageSectorsIndex());
   SECTORS.forEach((s, i) => write(`sectors/${s.slug}/index.html`, pageSector(s, i)));
   write('partnerships/index.html', pagePartnerships());

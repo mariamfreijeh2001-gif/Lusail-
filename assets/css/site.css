@@ -705,7 +705,15 @@ html[lang="ar"] .micro-head{font-family:var(--body);letter-spacing:0;text-transf
 
 /* a sector with no company yet */
 .soon{font-size:.93rem;color:var(--ink-3);font-style:italic}
-.mcard .noimg{display:block;width:100%;height:100%;background:var(--sand)}
+/* a sector card with no photograph: solid sand, its number set large, so it
+   reads as a deliberate card rather than a failed image */
+.mcard.plain{background:var(--sand);border:1px solid var(--line)}
+.mcard.plain .body{padding:clamp(22px,2.4vw,30px) clamp(18px,2vw,24px) clamp(24px,2.6vw,32px);border-top:0}
+.mcard.plain .n{
+  display:block;font-family:var(--display);font-size:clamp(2rem,3vw,2.6rem);
+  line-height:1;color:var(--gold);opacity:.45;margin-bottom:10px;
+}
+.mcard.plain:hover{border-color:var(--gold)}
 
 
 /* two-column running text, used where a section is pure reading */
