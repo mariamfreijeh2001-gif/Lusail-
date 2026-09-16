@@ -30,16 +30,16 @@ the site pretending they are one.
 
 Adding a company to an existing sector means adding one object to that sector's
 `companies` array. The mega-menu, the filter chips and their counts, the home
-rail, the sector page, the sibling cross-links and the sitemap all resize
+marquee, the sector page, the sibling cross-links and the sitemap all resize
 themselves. Nothing else needs touching.
 
 ## Where things live
 
 ```
-data/site.js          ALL content — sectors, companies, copy, nav, roles
+data/site.js          ALL content — sectors, companies, values, roles, nav
 build/render.js       templates + generator
 assets/css/site.css   one stylesheet; design tokens at the top
-assets/js/site.js     language, mega-menu, sector rail, filter, form
+assets/js/site.js     language, mega-menu, marquee control, filter, form
 site-assets/logo/     the real logo kit (SVG) + favicons
 site-assets/img/      web-sized photography
 dist/                 generated — never edit, never commit
@@ -51,11 +51,11 @@ Everything is in [data/site.js](data/site.js). A sector looks like this:
 
 ```js
 {
-  slug: 'food',                 // -> /sectors/food/
-  photo: 'trading',             // expects trading-hero.jpg + trading-card.jpg
+  slug: 'food',                        // -> /sectors/food/
+  photo: 'food', photoStyle: 'still',  // 'plate' for real photography
   name: 'Food', nameAr: 'الأغذية',
-  short, intro, body[],         // each with an -Ar counterpart
-  companies: [ … ]              // one or more
+  short, intro, body[],                // each with an -Ar counterpart
+  companies: [ … ]                     // one or more
 }
 ```
 
@@ -66,7 +66,7 @@ and a company inside it:
   slug: 'lusail-foods',         // -> /companies/lusail-foods/
   name: 'Lusail Foods',         // <-- REPLACE
   role: 'Packing and distribution',   // what it is, vs its sector siblings
-  photo: 'foods',               // optional; falls back to the sector's photo
+  photo: 'rice',                // optional; falls back to the sector's photo
   short, intro, body[], caps[], figs[]
 }
 ```
@@ -74,8 +74,11 @@ and a company inside it:
 Every text field has an `-Ar` counterpart (`nameAr`, `shortAr`, `bodyAr`).
 Both languages must be present or the toggle will blank that node.
 
-Adding a new photo means two files: `<photo>-hero.jpg` at 2000×857 and
-`<photo>-card.jpg` at 900×675, in `site-assets/img/`.
+Adding a new photo means, in `site-assets/img/`:
+
+- `<photo>-wide.jpg` at 2400×1029 (21:9) for a plate, **or**
+  `<photo>-still.jpg` at 1100×1100 for a cutout product shot
+- `<photo>-card.jpg` at 1000×750 (4:3) for the marquee card
 
 ### Placeholders that must be replaced
 
@@ -83,6 +86,8 @@ Adding a new photo means two files: `<photo>-hero.jpg` at 2000×857 and
   The sectors were read off the photography — grain, green coffee, rigs,
   cranes, container terminals, warehouses — because the folder contains no
   café or laundry imagery at all. Confirm the real list.
+- `VALUES` is written to sound like this group rather than generic virtues,
+  but it is still written by me, not by you. Check every line.
 - `figs: []` is empty everywhere. Fill it with real figures
   (`{ v: '14', l: 'countries we source from' }`) or leave it empty and the
   block does not render.
@@ -93,10 +98,15 @@ Founding year and employee count appear nowhere, by request.
 
 ## Design
 
-Green is **not** the site colour. It appears in the logo and in exactly one
-deep band — the footer. Every other dark surface is charcoal `#16181A`, the
-identity is carried by gold `#BC9640` on cool neutrals, and the photography
-supplies the rest. Tokens are at the top of `assets/css/site.css`.
+Editorial and typographic: type and white space carry the page, on warm-neutral
+paper. Green is **not** the site colour — it is in the logo and the footer, and
+nowhere else. The identity is carried by gold `#BC9640` on paper, with a warm
+sand band behind the values. Tokens are at the top of `assets/css/site.css`.
+
+**Nothing is written over a photograph.** Strong images run as captioned
+`plate` figures with the caption underneath; cutout product shots run as
+contained `still` figures on their own white. Each sector and company declares
+`photoStyle: 'plate' | 'still'` and the template picks the treatment.
 
 Type is Marcellus for display (Roman inscriptional capitals — the Latin
 counterpart to the Kufic mark) with IBM Plex Sans for body, and Noto Kufi
@@ -108,29 +118,31 @@ siblings rather than two different websites.
 - **Mega-menu** — hovering "What we do" opens every sector and every company
   inside it. Keyboard accessible, closes on Escape, never opens on touch.
 - **Sector marquee** — on home, the sectors are cards that move continuously.
-  The track holds each sector twice and slides exactly -50%, so the loop is
-  seamless; the second copy is `aria-hidden` so a screen reader hears each
-  sector once. It pauses on hover, on keyboard focus and from a real Pause
-  button (WCAG 2.2.2 wants a way to stop motion running over five seconds),
-  and under `prefers-reduced-motion` it does not animate at all — the track
-  becomes a plain wrapping grid and the button is hidden.
+  The track holds each sector twice and slides exactly −50%, so the loop is
+  seamless; the second copy is `aria-hidden` and untabbable so a screen reader
+  hears each sector once. It pauses on hover, on keyboard focus, and from a
+  real Pause button — WCAG 2.2.2 wants a way to stop motion running longer
+  than five seconds. Under `prefers-reduced-motion` it does not animate at
+  all: the clones are dropped, the track becomes a wrapping grid, and the
+  button is hidden.
 - **Company filter** — `/companies/` slices the full list by sector without a
   reload, keeps a live count, and writes `?sector=` so a filtered view can be
   linked to.
-- **Scroll reveal** — groups fade up as they arrive. Applied only while JS is
-  running and never under `prefers-reduced-motion`, so content is always
-  readable.
+- **Hero and About** — the hero pairs type with a photograph beside it; the
+  Kufic mark sits beside the About copy and drifts slowly, disabled under
+  `prefers-reduced-motion`.
 
 ## Bilingual
 
-English and Arabic with full RTL. **A translatable element must never contain
-another** — the toggle rewrites `textContent`, so a nested `data-ar` child is
-destroyed on the first switch. Split the line into sibling spans instead (see
-the values heading).
- Each translatable element holds English as
+English and Arabic with full RTL. Each translatable element holds English as
 its content and Arabic in `data-ar`; the toggle swaps them, sets `lang`/`dir`,
 and remembers the choice. An inline script in `<head>` applies the saved
-language before first paint. `?lang=ar` deep-links into Arabic.
+language before first paint, and `?lang=ar` deep-links into Arabic.
+
+**A translatable element must never contain another.** The toggle rewrites
+`textContent`, so a nested `data-ar` child is destroyed on the first switch.
+Split the line into sibling spans instead — see the values heading, where
+"The values that" and the highlighted "guide us" are two separate spans.
 
 ## Contact form
 
