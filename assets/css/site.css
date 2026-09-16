@@ -555,7 +555,9 @@ html[dir="rtl"] .marquee::after{background:linear-gradient(to right,var(--paper)
 .mcard:hover .pic img{transform:scale(1.06)}
 
 /* the index sits on the image as a small paper chip */
-.mcard .n{
+/* scoped to the picture: a card without one puts its number in the body, and
+   this rule was absolutely positioning that copy on top of the title */
+.mcard .pic .n{
   position:absolute;inset-inline-start:0;top:0;z-index:2;
   background:var(--paper);color:var(--gold-deep);
   padding:8px 12px 7px;

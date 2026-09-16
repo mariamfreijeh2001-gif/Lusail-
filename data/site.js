@@ -179,7 +179,11 @@ const SECTORS = [
     bodyAr: [
       'يعمل القطاع حالياً في مجال الأغذية. تورّد روما التجارية الفواكه والخضار الطازجة داخل قطر، بما يوفّر أساساً تتوسع منه تشكيلة المنتجات وشبكة العملاء.'
     ],
-    photo: null, photoStyle: 'none',
+    /* Container ship at berth, from the supplied folder. Swap the file at
+       site-assets/img/port-wide.jpg and port-card.jpg to change the picture. */
+    photo: 'port', photoStyle: 'plate',
+    photoCaption: 'Containerised cargo arriving into the Qatar market.',
+    photoCaptionAr: 'بضائع بالحاويات تصل إلى السوق القطري.',
     companies: [
       {
         slug: 'roma-commercial',

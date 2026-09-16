@@ -868,7 +868,7 @@ function pageSector(s, i) {
   return head({
     title: `${s.name} · ${SITE.name}`, desc: s.short,
     url: `/sectors/${s.slug}/`,
-    image: hasPhoto(s) ? `${s.photo}-still.jpg` : undefined
+    image: hasPhoto(s) ? `${s.photo}-${s.photoStyle === 'still' ? 'still' : 'wide'}.jpg` : undefined
   })
     + header('/sectors/')
     + opener({
@@ -877,6 +877,15 @@ function pageSector(s, i) {
       lede: s.intro, ledeAr: s.introAr,
       meta: `<span${t(s.name, s.nameAr)}>${esc(s.name)}</span> &middot; <span${t(count, countAr)}>${esc(count)}</span>`
     })
+    // a real photograph runs full width with its caption under it; a cutout
+    // product shot is contained in the aside instead
+    + (hasPhoto(s) && s.photoStyle === 'plate' ? `<section class="section tight">
+  <div class="wrap">
+    ${plate(s.photo, s.photoCaption || s.short, s.photoCaptionAr || s.shortAr, { en: s.name, ar: s.nameAr })}
+  </div>
+</section>
+
+` : '')
     + `<section class="section tight">
   <div class="wrap split">
     <div>
@@ -886,7 +895,7 @@ ${body}
       </div>
     </div>
     <div class="aside">
-      ${hasPhoto(s) ? still(s.photo, s.photoCaption || s.short, s.photoCaptionAr || s.shortAr) : ''}
+      ${hasPhoto(s) && s.photoStyle === 'still' ? still(s.photo, s.photoCaption || s.short, s.photoCaptionAr || s.shortAr) : ''}
       ${n ? `<h3 data-ar="شركة المحفظة">Portfolio ${n === 1 ? 'company' : 'companies'}</h3>
       <ol class="mini">
 ${s.companies.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span class="n">${num(k)}</span><span><b${t(c.name, c.nameAr)}>${esc(c.name)}</b><em${t(c.role, c.roleAr)}>${esc(c.role)}</em></span></a></li>`).join('\n')}
