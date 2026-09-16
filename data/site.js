@@ -383,12 +383,12 @@ const PARTNER_TYPES = [
 
 /* Careers page */
 const CAREER_VALUES = [
-  { t: 'Entrepreneurial Thinking', tAr: 'التفكير الريادي' },
-  { t: 'Responsibility', tAr: 'المسؤولية' },
-  { t: 'Collaboration', tAr: 'التعاون' },
-  { t: 'Customer Focus', tAr: 'التركيز على العميل' },
-  { t: 'Problem Solving', tAr: 'حل المشكلات' },
-  { t: 'Continuous Development', tAr: 'التطوير المستمر' }
+  { icon: 'spark',       t: 'Entrepreneurial Thinking', tAr: 'التفكير الريادي' },
+  { icon: 'shield',      t: 'Responsibility', tAr: 'المسؤولية' },
+  { icon: 'partnership', t: 'Collaboration', tAr: 'التعاون' },
+  { icon: 'target',      t: 'Customer Focus', tAr: 'التركيز على العميل' },
+  { icon: 'solve',       t: 'Problem Solving', tAr: 'حل المشكلات' },
+  { icon: 'cycle',       t: 'Continuous Development', tAr: 'التطوير المستمر' }
 ];
 
 /* Set to [] to show the "no current opening" state, which the brief specifies. */

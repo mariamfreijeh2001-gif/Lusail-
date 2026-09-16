@@ -888,3 +888,52 @@ html[dir="rtl"] .cocard:hover .go::after{transform:translateX(-5px)}
   transition:transform .7s cubic-bezier(.2,.7,.3,1);
 }
 .imgrow figure:hover img{transform:scale(1.04)}
+
+/* ---------- a section asked to fit one screen ---------------------------
+   Used where a list would otherwise run past the fold on a laptop. The
+   numbers are set so the whole section clears 720px, the shortest desktop
+   height worth designing for. */
+.section.fit{padding-block:clamp(32px,3.5vw,64px)}
+.section.fit .sec-head{margin-bottom:clamp(16px,1.8vw,32px)}
+.section.fit .deflist > div{padding:clamp(14px,1.8vw,22px) 0}
+.section.fit .deflist dt{font-size:clamp(1.05rem,1.5vw,1.3rem)}
+.section.fit .deflist dd{font-size:.96rem;line-height:1.5}
+
+/* ---------- careers: what we value, as icons ---------------------------- */
+
+.vals{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line-2)}
+.val{
+  display:grid;gap:14px;align-content:start;
+  padding:clamp(24px,3vw,34px) clamp(20px,2.4vw,34px) clamp(26px,3vw,38px) 0;
+  border-bottom:1px solid var(--line);
+}
+.val:not(:nth-child(3n+1)){padding-inline-start:clamp(20px,2.4vw,34px)}
+.val svg{
+  width:30px;height:30px;fill:none;stroke:var(--gold-deep);stroke-width:1.2;
+  stroke-linecap:square;stroke-linejoin:miter;transition:stroke .25s;
+}
+.val:hover svg{stroke:var(--ink)}
+.val h3{font-size:1.1rem;transition:color .25s}
+.val:hover h3{color:var(--gold-deep)}
+@media (max-width:820px){ .vals{grid-template-columns:repeat(2,1fr)}
+  .val:not(:nth-child(3n+1)){padding-inline-start:0}
+  .val:nth-child(even){padding-inline-start:clamp(20px,2.4vw,34px)}
+}
+@media (max-width:520px){ .vals{grid-template-columns:1fr}
+  .val,.val:nth-child(even){padding-inline-start:0}
+}
+
+/* ---------- the group at a glance, as one quiet line --------------------
+   A boxed four-up gave "Multiple" and "One" the weight of real figures,
+   which they are not. This states the same facts and gets out of the way. */
+.ribbon{
+  margin:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.ribbon .wrap{
+  display:flex;flex-wrap:wrap;align-items:baseline;
+  gap:10px clamp(20px,3vw,44px);padding-block:clamp(16px,1.8vw,22px);
+}
+.ribbon div{display:flex;align-items:baseline;gap:.55em}
+.ribbon dd{margin:0;font-family:var(--display);font-size:1.12rem;color:var(--ink)}
+html[lang="ar"] .ribbon dd{font-weight:500;font-size:1rem}
+.ribbon dt{color:var(--ink-3)}

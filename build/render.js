@@ -64,6 +64,14 @@ const ICON_PATHS = {
   supply: '<circle cx="4.6" cy="6" r="1.9"/><circle cx="19.4" cy="6" r="1.9"/><circle cx="12" cy="19" r="1.9"/><path d="M6.5 6h11M5.5 7.7l5.5 9.6M18.5 7.7L13 17.3"/>',
   // a globe: markets beyond Qatar
   markets: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.7 3.3 2.7 13.7 0 17M12 3.5c-2.7 3.3-2.7 13.7 0 17"/>',
+  // a shield: taking responsibility for the outcome
+  shield: '<path d="M12 2.6 20 5.4v6.2c0 4.6-3.2 8.3-8 9.8-4.8-1.5-8-5.2-8-9.8V5.4z"/><path d="M8.6 12.1l2.4 2.4 4.6-4.9"/>',
+  // a target: knowing who the customer is
+  target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>',
+  // a path found through: solving the problem
+  solve: '<path d="M3.5 3.5h17v17h-17z"/><path d="M3.5 14.5h5v-5h7v5h5"/>',
+  // a loop that keeps going: continuous development
+  cycle: '<path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20.5 3v4.5H16"/>',
   // a leaf: growers and producers
   leaf: '<path d="M20 4c0 9-5 13-11 13H4.5C4.5 9 10 4 20 4z"/><path d="M15 8.5C10.5 10.5 7 14 5 20"/>',
   // a route with a stop on it: moving goods to a buyer
@@ -405,6 +413,8 @@ function ctaBand() {
 `;
 }
 
+/* The Group at a glance. One line, not a grid of boxes: only one of these
+   four is actually a number. */
 function glanceBand() {
   const rows = [
     { v: String(ALL_COMPANIES.length), vAr: String(ALL_COMPANIES.length), k: 'Operating Companies', kAr: 'شركات تشغيلية' },
@@ -412,9 +422,9 @@ function glanceBand() {
     { v: 'Qatar', vAr: 'قطر', k: 'Our Home Market', kAr: 'سوقنا الأساسي' },
     { v: 'One', vAr: 'واحدة', k: 'Shared Vision', kAr: 'رؤية مشتركة' }
   ];
-  return `<section class="stats">
+  return `<section class="ribbon" aria-label="The Group at a glance">
   <dl class="wrap">
-${rows.map(r => `    <div><dd${t(r.v, r.vAr)}>${esc(r.v)}</dd><dt${t(r.k, r.kAr)}>${esc(r.k)}</dt></div>`).join('\n')}
+${rows.map(r => `    <div><dd${t(r.v, r.vAr)}>${esc(r.v)}</dd><dt class="micro"${t(r.k, r.kAr)}>${esc(r.k)}</dt></div>`).join('\n')}
   </dl>
 </section>
 `;
@@ -535,7 +545,7 @@ ${GROWTH.map(g => `        <li>${icon(g.icon)}<span${t(g.t, g.tAr)}>${esc(g.t)}<
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="vcTitle">
+<section class="section stone fit" aria-labelledby="vcTitle">
   <div class="wrap">
     <div class="sec-head row">
       <div>
@@ -975,7 +985,6 @@ ${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.email}?
           <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a class="tl" href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
           <div><dt data-ar="أرفق">Include</dt><dd data-ar="سيرتك الذاتية، والشركة أو المجال الذي يهمّك.">Your CV, and which company or area interests you.</dd></div>
         </dl>
-        <a class="btn btn-gold" href="mailto:${SITE.contact.email}" data-ar="عرض الفرص">View Opportunities</a>
       </div>
     </div>`;
 
@@ -1013,9 +1022,12 @@ ${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.email}?
       <span class="eyebrow" data-ar="ما نقدّره">What We Value</span>
       <h2 id="cvTitle" data-ar="الصفات التي نبحث عنها">The qualities we look for</h2>
     </div>
-    <ul class="tags big">
-${CAREER_VALUES.map(v => `      <li${t(v.t, v.tAr)}>${esc(v.t)}</li>`).join('\n')}
-    </ul>
+    <div class="vals">
+${CAREER_VALUES.map(v => `      <div class="val">
+        ${icon(v.icon)}
+        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
+      </div>`).join('\n')}
+    </div>
   </div>
 </section>
 
