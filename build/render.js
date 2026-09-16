@@ -64,11 +64,8 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 <link rel="stylesheet" href="/assets/css/site.css">
 
 <script>
-/* Language before first paint, so the page never flashes the wrong script.
-   Also marks the document as JS-enabled so scroll-reveal can start hidden
-   without ever hiding content from a reader without JS. */
+/* Language before first paint, so the page never flashes the wrong script. */
 (function(){
-  document.documentElement.className += ' js';
   try{
     var q = new URLSearchParams(location.search).get('lang');
     var l = (q === 'ar' || q === 'en') ? q : localStorage.getItem('lc-lang');
@@ -192,7 +189,7 @@ function opener({ crumb, crumbAr, h1, h1Ar, lede, ledeAr, photo, meta }) {
 // A sector card shows how many companies are inside it — the one number that
 // tells the reader whether to expect a list or a single business.
 function sectorCards() {
-  return `<div class="cards reveal">
+  return `<div class="cards">
 ${SECTORS.map((s, i) => `    <a class="card" href="/sectors/${s.slug}/">
       <div class="pic"><img src="/assets/img/${s.photo}-card.jpg" alt="${esc(s.name)}" width="900" height="675" loading="lazy"></div>
       <div class="body">
@@ -222,7 +219,7 @@ function companyCards(list, { showSector = true } = {}) {
 }
 
 function pillarsBlock() {
-  return `<div class="pillars reveal">
+  return `<div class="pillars">
 ${PILLARS.map(p => `      <div class="pillar">
         <span class="mk" aria-hidden="true"></span>
         <h3${t(p.t, p.tAr)}>${esc(p.t)}</h3>
@@ -277,14 +274,18 @@ function pageHome() {
       <a class="btn btn-line" href="/companies/" data-ar="شركاتنا">Our companies</a>
     </div>
   </div>
-  <div class="wrap">
-    <dl class="glance">
-      <div><dd>${SECTORS.length}</dd><dt data-ar="قطاعات">Sectors</dt></div>
-      <div><dd>${ALL_COMPANIES.length}</dd><dt data-ar="شركات تشغيلية">Operating companies</dt></div>
-      <div><dd data-ar="قطر">Qatar</dd><dt data-ar="المقر الرئيسي">Headquarters</dt></div>
-      <div><dd data-ar="قطرية بالكامل">Qatari</dd><dt data-ar="الملكية">Ownership</dt></div>
-    </dl>
-  </div>
+  <a class="scroll-cue" href="#main-start" aria-label="Scroll to content">
+    <span></span>
+  </a>
+</section>
+
+<section class="stats" id="main-start">
+  <dl class="wrap">
+    <div><dd>${SECTORS.length}</dd><dt data-ar="قطاعات">Sectors</dt></div>
+    <div><dd>${ALL_COMPANIES.length}</dd><dt data-ar="شركات تشغيلية">Operating companies</dt></div>
+    <div><dd data-ar="لوسيل، قطر">Lusail, Qatar</dd><dt data-ar="المقر الرئيسي">Headquarters</dt></div>
+    <div><dd data-ar="قطرية بالكامل">Wholly Qatari</dd><dt data-ar="الملكية">Ownership</dt></div>
+  </dl>
 </section>
 
 <section class="section six on-dark" aria-labelledby="sixTitle">
@@ -444,7 +445,7 @@ ${s.companies.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span c
         <h2 id="coTitle"${count === 1 ? ' data-ar="الشركة التي تعمل في هذا القطاع"' : ' data-ar="الشركات التي تعمل في هذا القطاع"'}>${count === 1 ? 'The company working here' : 'The companies working here'}</h2>
       </div>
     </div>
-    <div class="cards reveal">
+    <div class="cards">
 ${companyCards(cos, { showSector: false })}
     </div>
   </div>
@@ -580,7 +581,7 @@ ${figs}
         <h2 id="capTitle" data-ar="ما تتولاه هذه الشركة">What this company handles</h2>
       </div>
     </div>
-    <ul class="caps reveal">
+    <ul class="caps">
 ${caps}
     </ul>
   </div>
@@ -618,7 +619,7 @@ ${companyCards(siblings.map(x => Object.assign({}, x, { sectorSlug: sector.slug,
 
 function pageCareers() {
   const roles = OPEN_ROLES.length
-    ? `<div class="roles reveal">
+    ? `<div class="roles">
 ${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.careersEmail}?subject=${encodeURIComponent('Application — ' + r.t)}">
         <h3>${esc(r.t)}</h3>
         <span class="meta">${esc(r.co)}</span>

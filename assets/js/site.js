@@ -1,7 +1,7 @@
 /* ==========================================================================
    Lusail Corp — site behaviour.
    Language, header, mega menu, home sector rail, company filter,
-   scroll reveal, contact form.
+   contact form.
    ========================================================================== */
 
 (function () {
@@ -213,60 +213,6 @@
       if (s && chips.some(function (c) { return c.dataset.filter === s; })) initial = s;
     } catch (e) {}
     if (initial !== 'all') filter(initial);
-  }
-
-  /* ---------- scroll reveal -----------------------------------------------
-     Groups fade up as they arrive. The CSS only applies this while JS is
-     running and never under prefers-reduced-motion, so content is always
-     readable; if IntersectionObserver is missing everything is shown at once. */
-
-  var reveals = $$('.reveal');
-  if (reveals.length) {
-    var showAll = function () { reveals.forEach(function (r) { r.classList.add('in'); }); };
-
-    // Anything already on screen is shown at once rather than animated in,
-    // so content above the fold is never briefly invisible.
-    var sweep = function () {
-      var vh = window.innerHeight || 800;
-      var left = 0;
-      reveals.forEach(function (r) {
-        if (r.classList.contains('in')) return;
-        var b = r.getBoundingClientRect();
-        if (b.top < vh * 0.95 && b.bottom > 0) r.classList.add('in');
-        else left++;
-      });
-      return left;
-    };
-
-    if (!('IntersectionObserver' in window)) {
-      showAll();
-    } else {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-        });
-      }, { rootMargin: '0px 0px -5% 0px', threshold: 0 });
-      reveals.forEach(function (r) { io.observe(r); });
-
-      // Belt and braces. A reveal that silently never fires would leave a
-      // whole section invisible, which is far worse than a missing animation,
-      // so a plain scroll handler re-checks independently of the observer.
-      var ticking = false;
-      var onScroll = function () {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(function () {
-          ticking = false;
-          if (sweep() === 0) window.removeEventListener('scroll', onScroll);
-        });
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-    }
-
-    sweep();
-    // Last resort: whatever happened, nothing stays hidden.
-    setTimeout(showAll, 3000);
   }
 
   /* ---------- contact form -----------------------------------------------
