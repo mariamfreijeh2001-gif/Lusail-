@@ -87,7 +87,7 @@ html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3{font-weight:500;line-he
 /* ---------- micro label: one face, one size, everywhere ----------------- */
 
 .micro,.eyebrow,.crumb,.count,.op-meta,.site-foot h4,
-.idx .n,.idx .meta,.stats dt,.caps .n,.aside dt,.plate figcaption span,
+.idx .n,.idx .meta,.stats dt,.caps .n,.aside dt,.factstrip dt,.plate figcaption span,
 .mini .n,.role .meta,.chip em,.pillar .n{
   font-family:var(--mono);
   font-size:var(--t-micro);
@@ -98,7 +98,7 @@ html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3{font-weight:500;line-he
 }
 html[lang="ar"] .eyebrow,html[lang="ar"] .crumb,html[lang="ar"] .count,
 html[lang="ar"] .op-meta,html[lang="ar"] .site-foot h4,html[lang="ar"] .idx .meta,
-html[lang="ar"] .stats dt,html[lang="ar"] .aside dt,html[lang="ar"] .plate figcaption span,
+html[lang="ar"] .stats dt,html[lang="ar"] .aside dt,html[lang="ar"] .factstrip dt,html[lang="ar"] .plate figcaption span,
 html[lang="ar"] .role .meta{
   font-family:var(--body);letter-spacing:0;text-transform:none;font-size:.85rem;
 }
@@ -937,3 +937,49 @@ html[dir="rtl"] .cocard:hover .go::after{transform:translateX(-5px)}
 .ribbon dd{margin:0;font-family:var(--display);font-size:1.12rem;color:var(--ink)}
 html[lang="ar"] .ribbon dd{font-weight:500;font-size:1rem}
 .ribbon dt{color:var(--ink-3)}
+
+/* ---------- company page: facts as a strip, not stacked in the aside -----
+   The aside was carrying an image, three facts and a button while the copy
+   beside it ran a few short paragraphs, so the right column was two and a
+   half times the height of the left. The facts come out into a full-width
+   strip and the two columns even up. */
+
+.factstrip{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--line-2);margin-top:clamp(32px,4vw,52px);
+}
+.factstrip > div{
+  display:grid;gap:8px;align-content:start;
+  padding:clamp(18px,2.2vw,26px) clamp(18px,2.2vw,28px) clamp(20px,2.4vw,30px) 0;
+  border-bottom:1px solid var(--line);
+}
+.factstrip > div + div{
+  padding-inline-start:clamp(18px,2.2vw,28px);
+  border-inline-start:1px solid var(--line);
+}
+.factstrip dt{color:var(--ink-3)}
+.factstrip dd{margin:0;font-family:var(--display);font-size:clamp(1.05rem,1.5vw,1.28rem);line-height:1.25}
+html[lang="ar"] .factstrip dd{font-weight:500;font-size:1.02rem}
+@media (max-width:700px){
+  .factstrip{grid-template-columns:1fr}
+  .factstrip > div,.factstrip > div + div{padding-inline:0;border-inline-start:0}
+}
+
+/* the company aside is now just the picture and the one action */
+.co-aside{display:grid;gap:22px;align-content:start}
+.co-aside .btn{justify-self:start}
+
+/* a company whose copy has no picture beside it gets the full measure */
+.co-solo{max-width:64ch}
+
+/* the accordion card: the role reads as a line of text, not a stack of
+   uppercase mono that wraps to four lines in a narrow card */
+.cocard .role{
+  font-family:var(--body);font-size:.84rem;letter-spacing:0;text-transform:none;
+  color:var(--gold-deep);
+}
+.cocards{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));max-width:900px}
+
+/* beside body copy the square still runs taller than the text it sits next
+   to; 4:3 evens the two columns. The image is contained, so nothing crops. */
+.co-aside .still img{aspect-ratio:4/3}

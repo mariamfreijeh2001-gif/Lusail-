@@ -727,21 +727,24 @@ ${c.activities.map((a, k) => `      <li${t(a, c.activitiesAr && c.activitiesAr[k
       meta: `<span${t(c.role, c.roleAr)}>${esc(c.role)}</span> &middot; <a href="/sectors/${sector.slug}/"${t(sector.name, sector.nameAr)}>${esc(sector.name)}</a>`
     })
     + `<section class="section tight">
-  <div class="wrap split">
+  <div class="wrap${hasPhoto(c) ? ' split' : ''}">
     <div>
       <span class="eyebrow" data-ar="الشركة">The company</span>
       <p class="lead-para"${t(c.intro, c.introAr)}>${esc(c.intro)}</p>
-      <div class="prose">
+      <div class="prose${hasPhoto(c) ? '' : ' co-solo'}">
 ${body}
       </div>
     </div>
-    <div class="aside">
-      ${hasPhoto(c) ? still(c.photo, c.short, c.shortAr) : ''}
-      <dl class="facts">
-${facts}
-      </dl>
+    ${hasPhoto(c) ? `<div class="co-aside">
+      ${still(c.photo, c.short, c.shortAr)}
       <a class="btn btn-gold" href="/contact/?company=${c.slug}"${t(c.cta, c.ctaAr)}>${esc(c.cta)}</a>
-    </div>
+    </div>` : ''}
+  </div>
+  <div class="wrap">
+    <dl class="factstrip">
+${facts}
+    </dl>
+    ${hasPhoto(c) ? '' : `<p style="margin-top:clamp(28px,3.5vw,44px)"><a class="btn btn-gold" href="/contact/?company=${c.slug}"${t(c.cta, c.ctaAr)}>${esc(c.cta)}</a></p>`}
   </div>
 </section>
 
@@ -798,7 +801,7 @@ ${SECTORS.map((s, i) => {
     const n = s.companies.length;
     const count = n ? plural(n, 'company', 'companies') : 'In development';
     const countAr = n ? pluralAr(n, 'شركة واحدة', 'شركات') : 'قيد التطوير';
-    const open = i === 0;
+    const open = false;   // every sector starts closed
 
     const cards = n ? `<div class="cocards">
 ${s.companies.map(c => {
