@@ -406,6 +406,35 @@ const PILLARS = [
     dAr: 'تطوير الكوادر القطرية وتنقّل المواهب بين الشركات لبناء قادة المستقبل.' }
 ];
 
+
+/* --------------------------------------------------------------------------
+   Values. Written to be specific to how this group actually trades rather
+   than generic corporate virtues — replace the wording, keep the specificity.
+   -------------------------------------------------------------------------- */
+
+const VALUES = [
+  {
+    t: 'Our word holds', tAr: 'كلمتنا مُلزِمة',
+    d: 'A price agreed on the phone is a price honoured on the invoice, including when the market moves against us before the vessel sails.',
+    dAr: 'السعر المتفق عليه هاتفياً هو السعر في الفاتورة، حتى لو تحرك السوق ضدنا قبل أن تُبحر السفينة.'
+  },
+  {
+    t: 'We own, we do not flip', tAr: 'نمتلك ولا نتاجر بالملكية',
+    d: 'The group buys businesses to hold them. That is why capital here is planned over years, and why a bad quarter is not a reason to sell a good company.',
+    dAr: 'تشتري المجموعة الشركات لتحتفظ بها. لذلك يُخطَّط رأس المال هنا لسنوات، ولا يكون ربع سيء سبباً لبيع شركة جيدة.'
+  },
+  {
+    t: 'One standard, every company', tAr: 'معيار واحد لكل الشركات',
+    d: 'The same reporting, the same controls and the same safety rules apply whether a company has forty people or four hundred.',
+    dAr: 'التقارير نفسها والرقابة نفسها وقواعد السلامة نفسها، سواء كانت الشركة بأربعين موظفاً أو بأربعمئة.'
+  },
+  {
+    t: 'Built in Qatar', tAr: 'نُبنى في قطر',
+    d: 'We develop Qatari talent first and move people between companies, because the group is only as durable as the people who will run it next.',
+    dAr: 'نطوّر الكوادر القطرية أولاً وننقل الناس بين الشركات، لأن المجموعة لا تدوم إلا بقدر من سيديرونها بعدنا.'
+  }
+];
+
 /* --------------------------------------------------------------------------
    Careers. Set OPEN_ROLES = [] for the "no current openings" state.
    `co` should match a company name above.
@@ -430,4 +459,4 @@ const ALL_COMPANIES = SECTORS.flatMap(s =>
   }))
 );
 
-module.exports = { SITE, SECTORS, ALL_COMPANIES, PILLARS, OPEN_ROLES };
+module.exports = { SITE, SECTORS, ALL_COMPANIES, PILLARS, VALUES, OPEN_ROLES };

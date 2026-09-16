@@ -96,6 +96,28 @@
     });
   }
 
+  /* ---------- sector marquee ----------------------------------------------
+     The cards move on their own. WCAG 2.2.2 asks for a way to stop motion
+     that runs longer than five seconds, so besides pausing on hover and on
+     keyboard focus (both CSS), this is a real control. Under
+     prefers-reduced-motion the track never animates and the button is
+     hidden, so there is nothing to stop. */
+
+  var mq = $('#mq'), mqBtn = $('#mqBtn');
+  if (mq && mqBtn) {
+    var label = mqBtn.querySelector('span:last-child');
+    mqBtn.addEventListener('click', function () {
+      var paused = mq.dataset.paused !== 'true';
+      mq.dataset.paused = String(paused);
+      mqBtn.setAttribute('aria-pressed', String(paused));
+      var en = paused ? 'Play' : 'Pause';
+      var ar = paused ? 'تشغيل' : 'إيقاف';
+      label.dataset.en = en;
+      label.dataset.ar = ar;
+      label.textContent = T(en, ar);
+    });
+  }
+
   /* ---------- company filter ---------------------------------------------
      One list of every company, sliced by sector without a page reload. */
 

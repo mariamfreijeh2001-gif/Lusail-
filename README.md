@@ -107,8 +107,13 @@ siblings rather than two different websites.
 
 - **Mega-menu** — hovering "What we do" opens every sector and every company
   inside it. Keyboard accessible, closes on Escape, never opens on touch.
-- **Home sector rail** — moving across it changes the photograph, the heading,
-  the companies named inside that sector, and the link.
+- **Sector marquee** — on home, the sectors are cards that move continuously.
+  The track holds each sector twice and slides exactly -50%, so the loop is
+  seamless; the second copy is `aria-hidden` so a screen reader hears each
+  sector once. It pauses on hover, on keyboard focus and from a real Pause
+  button (WCAG 2.2.2 wants a way to stop motion running over five seconds),
+  and under `prefers-reduced-motion` it does not animate at all — the track
+  becomes a plain wrapping grid and the button is hidden.
 - **Company filter** — `/companies/` slices the full list by sector without a
   reload, keeps a live count, and writes `?sector=` so a filtered view can be
   linked to.
@@ -118,7 +123,11 @@ siblings rather than two different websites.
 
 ## Bilingual
 
-English and Arabic with full RTL. Each translatable element holds English as
+English and Arabic with full RTL. **A translatable element must never contain
+another** — the toggle rewrites `textContent`, so a nested `data-ar` child is
+destroyed on the first switch. Split the line into sibling spans instead (see
+the values heading).
+ Each translatable element holds English as
 its content and Arabic in `data-ar`; the toggle swaps them, sets `lang`/`dir`,
 and remembers the choice. An inline script in `<head>` applies the saved
 language before first paint. `?lang=ar` deep-links into Arabic.

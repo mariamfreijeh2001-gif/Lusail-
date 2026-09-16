@@ -17,7 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { SITE, SECTORS, ALL_COMPANIES, PILLARS, OPEN_ROLES } = require('../data/site.js');
+const { SITE, SECTORS, ALL_COMPANIES, PILLARS, VALUES, OPEN_ROLES } = require('../data/site.js');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist');
@@ -35,6 +35,8 @@ const t = (en, ar) => ar ? ` data-ar="${esc(ar)}"` : '';
 // on the green footer.
 const LOGO_DARK = '<img src="/assets/logo/lusail-corp-horizontal-full-color.svg" alt="" width="574" height="112">';
 const LOGO_LIGHT = '<img src="/assets/logo/lusail-corp-horizontal-reversed.svg" alt="" width="574" height="112">';
+// the Kufic mark on its own, shown large beside the hero headline
+const MARK = '<img src="/assets/logo/lusail-corp-mark-full-color.svg" alt="" width="127" height="123">';
 
 const num = i => String(i + 1).padStart(2, '0');
 const tel = p => p.replace(/\s/g, '');
@@ -232,6 +234,32 @@ ${list.map(s => {
     </div>`;
 }
 
+/* The sectors as cards that keep moving.
+
+   The track holds the sectors twice. The animation slides it exactly -50%
+   and restarts, so the join is invisible. The second copy is aria-hidden, so
+   a screen reader hears each sector once, and it is dropped entirely under
+   prefers-reduced-motion, where the track becomes a plain wrapping grid. */
+function sectorMarquee() {
+  const card = (s, clone) => {
+    const n = s.companies.length;
+    return `      <a class="mcard" href="/sectors/${s.slug}/"${clone ? ' aria-hidden="true" tabindex="-1"' : ''}>
+        <span class="pic"><img src="/assets/img/${s.photo}-card.jpg" alt="${clone ? '' : esc(s.name)}" width="1000" height="750" loading="lazy"></span>
+        <span class="body">
+          <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
+          <span class="sub"${t(s.short, s.shortAr)}>${esc(s.short)}</span>
+          <span class="meta"${t(plural(n, 'company', 'companies'), pluralAr(n, 'شركة واحدة', 'شركات'))}>${plural(n, 'company', 'companies')}</span>
+        </span>
+      </a>`;
+  };
+  return `<div class="marquee" id="mq" data-paused="false">
+    <div class="track">
+${SECTORS.map(s => card(s, false)).join('\n')}
+${SECTORS.map(s => card(s, true)).join('\n')}
+    </div>
+  </div>`;
+}
+
 /* The same list form, for companies. */
 function companyIndex(list, { showSector = true } = {}) {
   return list.map((c, i) => {
@@ -259,6 +287,27 @@ ${PILLARS.map((p, i) => `      <div class="pillar">
     </div>`;
 }
 
+function valuesBlock() {
+  return `<section class="section values" aria-labelledby="valTitle">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow" data-ar="قيمنا">Our values</span>
+      <!-- the two halves are separate nodes: the language toggle rewrites
+           textContent, so a translatable element must never contain another -->
+      <h2 id="valTitle"><span data-ar="القيم التي">The values that</span> <span class="mark" data-ar="توجّهنا">guide us</span></h2>
+    </div>
+    <div class="vgrid">
+${VALUES.map((v, i) => `      <div class="vcard">
+        <span class="n" aria-hidden="true">${num(i)}</span>
+        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
+        <p${t(v.d, v.dAr)}>${esc(v.d)}</p>
+      </div>`).join('\n')}
+    </div>
+  </div>
+</section>
+`;
+}
+
 function ctaBand() {
   return `<section class="cta">
   <div class="wrap">
@@ -268,18 +317,6 @@ function ctaBand() {
     </div>
     <a class="btn btn-gold" href="/contact/" data-ar="تواصل معنا">Get in touch</a>
   </div>
-</section>
-`;
-}
-
-function statsBand() {
-  return `<section class="stats">
-  <dl class="wrap">
-    <div><dd>${SECTORS.length}</dd><dt data-ar="قطاعات">Sectors</dt></div>
-    <div><dd>${ALL_COMPANIES.length}</dd><dt data-ar="شركات تشغيلية">Operating companies</dt></div>
-    <div><dd data-ar="لوسيل، قطر">Lusail, Qatar</dd><dt data-ar="المقر الرئيسي">Headquarters</dt></div>
-    <div><dd data-ar="قطرية بالكامل">Wholly Qatari</dd><dt data-ar="الملكية">Ownership</dt></div>
-  </dl>
 </section>
 `;
 }
@@ -295,6 +332,7 @@ function pageHome() {
     + header('/')
     + `<section class="hero">
   <div class="wrap">
+    <div>
     <span class="crumb" data-ar="لوسيل كورب — شركة قابضة">${esc(SITE.name)} — Holding Company</span>
     <h1 data-ar="مجموعة واحدة. شركات تبني وتنقل وتُطعم قطر.">One group. Companies that build, move and feed Qatar.</h1>
     <p class="lede" data-ar="نمتلك وننمّي شركات تشغيلية، ونمنح كلاً منها رأس المال والحوكمة اللذين لا تحصل عليهما وحدها.">We own and grow operating companies, and give each the capital and governance it would not have alone.</p>
@@ -302,30 +340,10 @@ function pageHome() {
       <a class="btn btn-gold" href="/sectors/" data-ar="ما نقوم به">What we do</a>
       <a class="btn btn-ink" href="/companies/" data-ar="شركاتنا">Our companies</a>
     </div>
-  </div>
-</section>
-
-`
-    + statsBand()
-    + `
-<section class="section" aria-labelledby="secTitle">
-  <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="ما نقوم به">What we do</span>
-        <h2 id="secTitle" data-ar="خمسة قطاعات. بعضها يضم أكثر من شركة.">Five sectors. Some hold more than one company.</h2>
-      </div>
-      <a class="btn btn-ink" href="/companies/"${t('All ' + ALL_COMPANIES.length + ' companies', 'جميع الشركات')}>All ${ALL_COMPANIES.length} companies</a>
     </div>
-    ${sectorIndex(SECTORS)}
-  </div>
-</section>
-
-<section class="section tight">
-  <div class="wrap">
-    ${plate('port', 'Container operations at the terminal the group ships through.',
-            'عمليات الحاويات في المحطة التي تشحن المجموعة عبرها.',
-            { en: 'Shipping and logistics', ar: 'الشحن والخدمات اللوجستية' })}
+    <figure class="hero-shot">
+      <img src="/assets/img/skyline-tall.jpg" alt="Lusail, Qatar" width="1000" height="1333" fetchpriority="high">
+    </figure>
   </div>
 </section>
 
@@ -340,29 +358,46 @@ function pageHome() {
         <p><a class="tl" href="/about/" data-ar="المزيد عن المجموعة">More about the group</a></p>
       </div>
     </div>
-    <dl class="facts">
-      <div><dt data-ar="المقر الرئيسي">Headquarters</dt><dd data-ar="لوسيل، قطر">Lusail, Qatar</dd></div>
-      <div><dt data-ar="القطاعات">Sectors</dt><dd>${SECTORS.length}</dd></div>
-      <div><dt data-ar="الشركات التشغيلية">Operating companies</dt><dd>${ALL_COMPANIES.length}</dd></div>
-      <div><dt data-ar="الملكية">Ownership</dt><dd data-ar="قطرية بالكامل">Wholly Qatari owned</dd></div>
-    </dl>
+    <div>
+      <div class="about-mark" aria-hidden="true">${MARK}</div>
+      <dl class="facts">
+        <div><dt data-ar="المقر الرئيسي">Headquarters</dt><dd data-ar="لوسيل، قطر">Lusail, Qatar</dd></div>
+        <div><dt data-ar="القطاعات">Sectors</dt><dd>${SECTORS.length}</dd></div>
+        <div><dt data-ar="الشركات التشغيلية">Operating companies</dt><dd>${ALL_COMPANIES.length}</dd></div>
+        <div><dt data-ar="الملكية">Ownership</dt><dd data-ar="قطرية بالكامل">Wholly Qatari owned</dd></div>
+      </dl>
+    </div>
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="apTitle">
+<section class="section stone" aria-labelledby="secTitle">
   <div class="wrap">
     <div class="sec-head row">
       <div>
-        <span class="eyebrow" data-ar="نهجنا">Our approach</span>
-        <h2 id="apTitle" data-ar="ما تقدمه المجموعة لكل شركة">What the group gives every company</h2>
+        <span class="eyebrow" data-ar="ما نقوم به">What we do</span>
+        <h2 id="secTitle" data-ar="خمسة قطاعات. بعضها يضم أكثر من شركة.">Five sectors. Some hold more than one company.</h2>
       </div>
-      <p class="lede" data-ar="دور الشركة القابضة أن تجعل كل شركة تابعة أقوى مما لو عملت وحدها.">A holding company's job is to make each business stronger than it would be on its own.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="marquee-ctl" id="mqBtn" type="button" aria-pressed="false" aria-controls="mq">
+          <span class="ico" aria-hidden="true"></span><span data-ar="إيقاف">Pause</span>
+        </button>
+        <a class="btn btn-ink" href="/companies/"${t('All ' + ALL_COMPANIES.length + ' companies', 'جميع الشركات')}>All ${ALL_COMPANIES.length} companies</a>
+      </div>
     </div>
-    ${pillarsBlock()}
+  </div>
+  ${sectorMarquee()}
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    ${plate('port', 'Container operations at the terminal the group ships through.',
+            'عمليات الحاويات في المحطة التي تشحن المجموعة عبرها.',
+            { en: 'Shipping and logistics', ar: 'الشحن والخدمات اللوجستية' })}
   </div>
 </section>
 
 `
+    + valuesBlock()
     + ctaBand()
     + footer();
 }
@@ -627,7 +662,6 @@ function pageAbout() {
       lede: 'Lusail Corp is a holding company. It does not trade, build or ship itself — it owns the companies that do, and is accountable for how they are run.',
       ledeAr: 'لوسيل كورب شركة قابضة. لا تتاجر ولا تبني ولا تشحن بنفسها، بل تمتلك الشركات التي تفعل ذلك، وتتحمل مسؤولية طريقة إدارتها.'
     })
-    + statsBand()
     + `
 <section class="section">
   <div class="wrap split">
