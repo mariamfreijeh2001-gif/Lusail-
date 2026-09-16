@@ -67,7 +67,9 @@ const SITE = {
 const SECTORS = [
   {
     slug: 'food',
-    photo: 'trading',
+    photo: 'food', photoStyle: 'still',
+    photoCaption: 'Rice, pulses and grain — the staples the two food companies buy, pack and move.',
+    photoCaptionAr: 'الأرز والبقوليات والحبوب — المواد الأساسية التي تشتريها شركتا الأغذية وتعبئانها وتنقلانها.',
     name: 'Food', nameAr: 'الأغذية',
     short: 'Staple foods brought into Qatar in bulk, and turned into packed goods for the shelf.',
     shortAr: 'المواد الغذائية الأساسية تُجلب إلى قطر بالجملة، وتُحوَّل إلى منتجات معبأة للرفوف.',
@@ -86,7 +88,7 @@ const SECTORS = [
         slug: 'lusail-foods', provisional: true,
         name: 'Lusail Foods', nameAr: 'لوسيل للأغذية',
         role: 'Packing and distribution', roleAr: 'التعبئة والتوزيع',
-        photo: 'foods',
+        photo: 'rice', photoStyle: 'still',
         short: 'Packs rice, pulses and grain under its own brands and puts them on Qatari shelves.',
         shortAr: 'تعبئ الأرز والبقوليات والحبوب بعلاماتها الخاصة وتضعها على الرفوف القطرية.',
         intro: 'Takes bulk grain and pulses, packs them under its own brands, and sells them to retailers, wholesalers and caterers across Qatar.',
@@ -117,7 +119,7 @@ const SECTORS = [
         slug: 'lusail-commodities', provisional: true,
         name: 'Lusail Commodities', nameAr: 'لوسيل للسلع',
         role: 'Commodity trading', roleAr: 'تجارة السلع',
-        photo: 'trading',
+        photo: 'grain', photoStyle: 'still',
         short: 'Buys rice, pulses, sesame and sugar at origin and lands them in the Gulf in bulk.',
         shortAr: 'تشتري الأرز والبقوليات والسمسم والسكر من المصدر وتُدخلها إلى الخليج بالجملة.',
         intro: 'Contracts agricultural commodities directly with producers and exporters abroad, and moves them into Qatar and the wider Gulf in bulk.',
@@ -149,7 +151,9 @@ const SECTORS = [
 
   {
     slug: 'coffee',
-    photo: 'coffee',
+    photo: 'coffee', photoStyle: 'still',
+    photoCaption: 'Green coffee, unroasted — graded on origin, altitude, screen size and cup score.',
+    photoCaptionAr: 'البن الأخضر غير المحمّص — يُصنّف حسب المنشأ والارتفاع وحجم الحبة ودرجة التذوق.',
     name: 'Coffee', nameAr: 'البن',
     short: 'Green coffee bought at origin, graded and traded — the raw bean, before the roast.',
     shortAr: 'البن الأخضر من مصادره، يُصنّف ويُتاجر به — الحبة الخام قبل التحميص.',
@@ -168,7 +172,7 @@ const SECTORS = [
         slug: 'lusail-coffee', provisional: true,
         name: 'Lusail Coffee', nameAr: 'لوسيل للبن',
         role: 'Green coffee trading', roleAr: 'تجارة البن الأخضر',
-        photo: 'coffee',
+        photo: 'coffee', photoStyle: 'still',
         short: 'Green coffee contracted at origin, graded, and supplied to roasters across the Gulf.',
         shortAr: 'بن أخضر يُتعاقد عليه من المنشأ ويُصنّف ويُورَّد للمحامص في أنحاء الخليج.',
         intro: 'Buys green coffee at origin, grades and stores it, and supplies roasteries and wholesalers across the Gulf.',
@@ -200,7 +204,9 @@ const SECTORS = [
 
   {
     slug: 'energy',
-    photo: 'energy',
+    photo: 'energy', photoStyle: 'plate',
+    photoCaption: 'Processing plant, Mesaieed industrial area.',
+    photoCaptionAr: 'منشأة معالجة، منطقة مسيعيد الصناعية.',
     name: 'Energy', nameAr: 'الطاقة',
     short: 'Oil and gas field services, supply and support across Qatar.',
     shortAr: 'خدمات حقول النفط والغاز والتوريد والدعم في أنحاء قطر.',
@@ -217,7 +223,7 @@ const SECTORS = [
         slug: 'lusail-energy', provisional: true,
         name: 'Lusail Energy', nameAr: 'لوسيل للطاقة',
         role: 'Field services and supply', roleAr: 'الخدمات الميدانية والتوريد',
-        photo: 'energy',
+        photo: 'energy', photoStyle: 'plate',
         short: 'On-site services, equipment supply and certified crews for operators and their contractors.',
         shortAr: 'خدمات في الموقع وتوريد معدات وفرق معتمدة للمشغّلين ومقاوليهم.',
         intro: 'Field services, equipment supply, maintenance support and certified manpower for operators and the larger contractors working on their behalf.',
@@ -249,7 +255,9 @@ const SECTORS = [
 
   {
     slug: 'contracting',
-    photo: 'contracting',
+    photo: 'contracting', photoStyle: 'plate',
+    photoCaption: 'Structural works in progress on a residential scheme.',
+    photoCaptionAr: 'أعمال إنشائية جارية في مشروع سكني.',
     name: 'Contracting', nameAr: 'المقاولات',
     short: 'Building and infrastructure work, from site engineering through to handover.',
     shortAr: 'أعمال البناء والبنية التحتية، من هندسة الموقع حتى التسليم.',
@@ -266,7 +274,7 @@ const SECTORS = [
         slug: 'lusail-contracting', provisional: true,
         name: 'Lusail Contracting', nameAr: 'لوسيل للمقاولات',
         role: 'Main contracting', roleAr: 'المقاولات الرئيسية',
-        photo: 'contracting',
+        photo: 'contracting', photoStyle: 'plate',
         short: 'Main contractor on building and infrastructure packages, and specialist subcontractor on larger schemes.',
         shortAr: 'مقاول رئيسي لحزم المباني والبنية التحتية، ومقاول متخصص في المشاريع الكبرى.',
         intro: 'Works as a main contractor on building and infrastructure packages, and as a specialist subcontractor for structure and finishing on larger schemes.',
@@ -298,7 +306,9 @@ const SECTORS = [
 
   {
     slug: 'logistics',
-    photo: 'shipping',
+    photo: 'port', photoStyle: 'plate',
+    photoCaption: 'Container operations at the terminal the group ships through.',
+    photoCaptionAr: 'عمليات الحاويات في المحطة التي تشحن المجموعة عبرها.',
     name: 'Shipping and logistics', nameAr: 'الشحن والخدمات اللوجستية',
     short: 'Moving cargo from the vessel to the warehouse to the buyer, without leaving the group.',
     shortAr: 'نقل البضائع من السفينة إلى المستودع إلى المشتري، دون مغادرة المجموعة.',
@@ -317,7 +327,7 @@ const SECTORS = [
         slug: 'lusail-shipping', provisional: true,
         name: 'Lusail Shipping', nameAr: 'لوسيل للشحن',
         role: 'Freight and clearance', roleAr: 'الشحن والتخليص',
-        photo: 'shipping',
+        photo: 'port', photoStyle: 'plate',
         short: 'Chartering, freight forwarding, customs clearance and port handling.',
         shortAr: 'الاستئجار والشحن والتخليص الجمركي والمناولة في الميناء.',
         intro: 'Books the vessel, moves the cargo and clears it through Qatari customs — the sea half of the chain.',
@@ -346,7 +356,7 @@ const SECTORS = [
         slug: 'lusail-distribution', provisional: true,
         name: 'Lusail Distribution', nameAr: 'لوسيل للتوزيع',
         role: 'Warehousing and delivery', roleAr: 'التخزين والتوصيل',
-        photo: 'warehouse',
+        photo: 'warehouse', photoStyle: 'plate',
         short: 'Warehousing, order fulfilment and fleet delivery across Qatar.',
         shortAr: 'التخزين وتجهيز الطلبات والتوصيل بالأسطول في أنحاء قطر.',
         intro: 'Stores landed goods and delivers them to wholesalers, retailers and institutional buyers — the land half of the chain.',
@@ -415,7 +425,8 @@ const OPEN_ROLES = [
 const ALL_COMPANIES = SECTORS.flatMap(s =>
   s.companies.map(c => Object.assign({}, c, {
     sectorSlug: s.slug, sectorName: s.name, sectorNameAr: s.nameAr,
-    photo: c.photo || s.photo
+    photo: c.photo || s.photo,
+    photoStyle: c.photoStyle || s.photoStyle || 'plate'
   }))
 );
 

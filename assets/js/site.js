@@ -1,7 +1,6 @@
 /* ==========================================================================
    Lusail Corp — site behaviour.
-   Language, header, mega menu, home sector rail, company filter,
-   contact form.
+   Language, header, mega menu, company filter, contact form.
    ========================================================================== */
 
 (function () {
@@ -97,59 +96,6 @@
     });
   }
 
-  /* ---------- home: sector rail ------------------------------------------
-     Move across the rail and the photograph, heading, companies and link
-     change. Replaces the folded-diamond graphic: same interaction, pointed
-     at the business rather than at the logo. */
-
-  var stage = $('#stage'), rail = $('#rail');
-  if (stage && rail) {
-    var SECTORS = window.LC_SECTORS || [];
-    var shots = $$('.shot', stage);
-    var buttons = $$('button', rail);
-    var sNum = $('#sNum'), sName = $('#sName'), sDesc = $('#sDesc'),
-        sCos = $('#sCos'), sLink = $('#sLink');
-    var total = buttons.length;
-
-    function setBi(el, en, ar) {
-      el.dataset.en = en;
-      if (ar) el.dataset.ar = ar;
-      el.textContent = T(en, ar || en);
-    }
-
-    function pick(i) {
-      var d = SECTORS[i];
-      if (!d) return;
-
-      shots.forEach(function (s) { s.classList.toggle('on', Number(s.dataset.i) === i); });
-      buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.i) === i)); });
-
-      sNum.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
-      setBi(sName, d.name, d.nameAr);
-      setBi(sDesc, d.short, d.shortAr);
-
-      // Naming the companies inside is the point of the two-tier structure:
-      // the reader sees immediately that a sector can hold more than one.
-      var namesEn = d.companies.map(function (c) { return c.name; }).join('  ·  ');
-      var namesAr = d.companies.map(function (c) { return c.nameAr || c.name; }).join('  ·  ');
-      setBi(sCos, namesEn, namesAr);
-
-      sLink.setAttribute('href', '/sectors/' + d.slug + '/');
-    }
-
-    rail.addEventListener('click', function (e) {
-      var b = e.target.closest('button'); if (b) pick(Number(b.dataset.i));
-    });
-    rail.addEventListener('mouseover', function (e) {
-      var b = e.target.closest('button'); if (b) pick(Number(b.dataset.i));
-    });
-    rail.addEventListener('focusin', function (e) {
-      var b = e.target.closest('button'); if (b) pick(Number(b.dataset.i));
-    });
-
-    pick(0);
-  }
-
   /* ---------- company filter ---------------------------------------------
      One list of every company, sliced by sector without a page reload. */
 
@@ -158,7 +104,7 @@
 
   if (grid) {
     var chips = $$('.chip');
-    var cards = $$('.card', grid);
+    var cards = $$('a[data-sector]', grid);
     var active = 'all';
 
     refreshCount = function () {
