@@ -1,77 +1,108 @@
 # Lusail Corp — website
 
-Static marketing site for Lusail Corp, a Qatari holding company. No framework, no build
-step: three files (HTML, one stylesheet, one script) that can be served by anything.
-
-## Run it locally
+A multi-page static site for Lusail Corp, generated from one content file.
+No framework, no dependencies: `node build/render.js` reads `data/site.js` and
+writes finished HTML into `dist/`.
 
 ```bash
-npm start          # serves on http://localhost:5173
+npm start     # build, then serve on http://localhost:5173
+npm run build # build only, into dist/
 ```
 
-Or open `index.html` directly — nothing on the page requires a server.
+## Pages
 
-## Structure
+| URL | |
+|---|---|
+| `/` | Home — the whole group in one pass |
+| `/about/` | How the group is structured and governed |
+| `/companies/` | Index of all six operating companies |
+| `/companies/<slug>/` | One page per company (six of them) |
+| `/careers/` | Working here, and open roles |
+| `/contact/` | Office, channels, enquiry form |
+| `/404.html` | Not found |
+
+## Where things live
 
 ```
-index.html            page markup, SEO meta, JSON-LD, inline SVG logo symbols
-assets/css/styles.css all styling (design tokens at the top of the file)
-assets/js/main.js     sector data, bilingual switching, interactions, contact form
-assets/img/favicon.svg
-robots.txt, sitemap.xml
+data/site.js          ALL content — company names, copy, nav, roles, contact
+build/render.js       templates + generator
+assets/css/site.css   one stylesheet; design tokens at the top
+assets/js/site.js     language toggle, nav, sector rail, contact form
+site-assets/logo/     the real logo kit (SVG) + favicons
+site-assets/img/      web-sized photography
+dist/                 generated — never edit, never commit
 ```
 
 ## Editing content
 
-Almost all sector content lives in one place: the `SECTORS` array in
-`assets/js/main.js`. Each entry carries both languages and renders into three places
-at once — the hero caption, the companies index, and the footer column:
+Everything is in [data/site.js](data/site.js). To rename a company, change
+`company` in its entry — its own page, the home rail, the cards, the footer and
+every sibling link all update on the next build.
+
+Each company entry carries both languages:
 
 ```js
-{ id:'food',
-  en:{ s:'Food industry', c:'Lusail Foods', t:'…', l:['…'], f:'300+', fl:'…' },
-  ar:{ s:'الصناعات الغذائية', c:'لوسيل للأغذية', t:'…', l:['…'], f:'+300', fl:'…' } }
+{
+  slug: 'trading',            // the URL: /companies/trading/
+  photo: 'trading',           // expects trading-hero.jpg + trading-card.jpg
+  sector: 'Commodity trading', sectorAr: 'تجارة السلع',
+  company: 'Lusail Trading',   companyAr: 'لوسيل للتجارة',
+  short, intro, body[], caps[], figs[]   // each with an -Ar counterpart
+}
 ```
 
-`s` sector name · `c` company name · `t` description · `l` capability list ·
-`f` headline figure · `fl` figure label.
+Adding a seventh company means adding one entry plus two images
+(`<photo>-hero.jpg` at 2000×857 and `<photo>-card.jpg` at 900×675). The rail,
+the cards and the sitemap all size themselves to the list.
 
-Its icon comes from `ICONS[id]` in the same file — a 36×36 stroked SVG path. Adding a
-seventh sector means adding an entry to both objects; the hero diagram, sector strip,
-index and footer all pick it up, though the diagram's folded-line geometry is drawn for
-six bars and would need `buildBars()` adjusted.
+### Placeholders that must be replaced
 
-Static copy (headings, about, news, contact) is edited in `index.html`. Every
-translatable element carries the English text as its content and the Arabic in a
-`data-ar` attribute — both must be present or the language toggle will blank it.
+- **The six company names are invented.** They are marked
+  `nameProvisional: true`. The sectors were read off the photography — grain,
+  green coffee, rigs, cranes, container terminals, warehouses — because the
+  folder contains no café or laundry imagery at all. Confirm the real list.
+- `figs: []` is empty on every company. Fill it with real figures
+  (`{ v: '14', l: 'countries we source from' }`) or leave it empty and the
+  block does not render.
+- Phone number and office address are placeholders.
+- Open roles in `OPEN_ROLES` are examples. Set it to `[]` to show the
+  "no current openings" state.
 
-## Bilingual behaviour
+Founding year and employee count appear nowhere, by request.
 
-English and Arabic, with full RTL. The toggle sets `<html lang dir>`, swaps fonts
-(Marcellus/Instrument Sans → Noto Kufi/IBM Plex Sans Arabic), re-renders the data-driven
-sections, and remembers the choice in `localStorage`. An inline script in `<head>`
-applies the saved language before first paint so the page never flashes the wrong
-script. `?lang=ar` deep-links into Arabic.
+## Design
+
+Green is **not** the site colour. It appears in the logo and in exactly one
+deep band — the footer. Every other dark surface is charcoal `#16181A`, the
+identity is carried by gold `#BC9640` on cool neutrals, and the photography
+supplies the rest. Tokens are at the top of `assets/css/site.css`.
+
+Type is Marcellus for display (Roman inscriptional capitals, the Latin
+counterpart to the Kufic mark) with IBM Plex Sans for body, and
+Noto Kufi Arabic / IBM Plex Sans Arabic for Arabic, so both scripts are
+typographic siblings rather than two different websites.
+
+## Bilingual
+
+English and Arabic with full RTL. Each translatable element holds English as
+its content and Arabic in `data-ar`; the toggle swaps them, sets `lang`/`dir`,
+and remembers the choice. An inline script in `<head>` applies the saved
+language before first paint. `?lang=ar` deep-links into Arabic.
+
+Both languages must be present on a node or the toggle will blank it.
 
 ## Contact form
 
-The form validates in the browser and, by default, **sends nothing** — it confirms and
-resets. To make it live, set `CONTACT_ENDPOINT` in `assets/js/main.js` to a URL that
-accepts a JSON `POST` (a form backend, an API route, a serverless function). The payload
-is `{name, email, topic, message, lang}`. On a non-2xx response the form tells the
-visitor to email `info@lusailcorp.qa` instead.
-
-## Before going live
-
-- [ ] Point the canonical URL, `og:url`, `hreflang`, sitemap and JSON-LD at the real
-      domain (they currently read `lusailcorp.qa`)
-- [ ] Set `CONTACT_ENDPOINT`
-- [ ] Replace the placeholder phone number and office address
-- [ ] Add a real `og:image` (1200×630) and reference it in `<head>`
-- [ ] Replace the sample news items, or wire the section to a real source
-- [ ] Give `Privacy policy` / `Terms` and the social links real destinations
+Validates in the browser and, by default, **sends nothing**. To make it live,
+set `CONTACT_ENDPOINT` in [assets/js/site.js](assets/js/site.js) to a URL that
+accepts a JSON `POST`. Payload is `{name, email, topic, message, lang}`. On
+failure it tells the visitor to email `info@lusailcorp.qa` instead.
 
 ## Deploying
 
-Upload the folder as-is. Any static host works — Netlify, Vercel, Cloudflare Pages,
-GitHub Pages, or plain nginx with `index.html` as the root document.
+`vercel.json` is committed, so Vercel needs no manual configuration — it runs
+`npm run build` and serves `dist/`. Any other static host works the same way:
+build, then upload `dist/`.
+
+Before going live, point the domain at the real one: `SITE.domain` in
+`data/site.js` feeds the canonical URL, OpenGraph tags and the sitemap.
