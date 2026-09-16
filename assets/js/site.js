@@ -118,6 +118,23 @@
     });
   }
 
+  /* ---------- sector accordion --------------------------------------------
+     Each sector opens in place to show the companies inside it. The panel
+     animates on grid-template-rows, so it works without knowing the height,
+     and the global reduced-motion rule turns the animation off. */
+
+  var acc = $('.acc');
+  if (acc) {
+    acc.addEventListener('click', function (e) {
+      var btn = e.target.closest('.acc-btn');
+      if (!btn) return;
+      var item = btn.closest('.acc-item');
+      var open = !item.classList.contains('open');
+      item.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  }
+
   /* ---------- company filter ---------------------------------------------
      One list of every company, sliced by sector without a page reload. */
 

@@ -43,12 +43,14 @@ const SITE = {
     appleTouch: 'apple-touch-icon.png'
   },
 
+  /* One published address. Enquiries are routed internally from there, which
+     is why the form sends the 'area' field — it tells the Group which desk a
+     message belongs to. The phone number is a placeholder: replace the zeros. */
   contact: {
     location: 'State of Qatar',
     locationAr: 'دولة قطر',
     email: 'info@lusailcorp.qa',
-    partnerships: 'partnerships@lusailcorp.qa',
-    careersEmail: 'careers@lusailcorp.qa',
+    phone: '+974 0000 0000',
     linkedin: '#',
     instagram: '#'
   },
@@ -348,33 +350,33 @@ const VALUES = [
 
 /* Home: what the Group is actively looking to do next */
 const GROWTH = [
-  { t: 'Establish new businesses.', tAr: 'تأسيس أعمال جديدة.' },
-  { t: 'Expand existing companies.', tAr: 'توسيع الشركات القائمة.' },
-  { t: 'Enter new commercial sectors.', tAr: 'دخول قطاعات تجارية جديدة.' },
-  { t: 'Develop strategic partnerships.', tAr: 'تطوير شراكات استراتيجية.' },
-  { t: 'Build supplier and distribution relationships.', tAr: 'بناء علاقات توريد وتوزيع.' },
-  { t: 'Explore new regional and international markets.', tAr: 'استكشاف أسواق إقليمية ودولية جديدة.' },
-  { t: 'Strengthen connections between our portfolio companies.', tAr: 'تعزيز الروابط بين شركات المحفظة.' }
+  { icon: 'found',       t: 'Establish new businesses.', tAr: 'تأسيس أعمال جديدة.' },
+  { icon: 'expand',      t: 'Expand existing companies.', tAr: 'توسيع الشركات القائمة.' },
+  { icon: 'sectors',     t: 'Enter new commercial sectors.', tAr: 'دخول قطاعات تجارية جديدة.' },
+  { icon: 'partnership', t: 'Develop strategic partnerships.', tAr: 'تطوير شراكات استراتيجية.' },
+  { icon: 'supply',      t: 'Build supplier and distribution relationships.', tAr: 'بناء علاقات توريد وتوزيع.' },
+  { icon: 'markets',     t: 'Explore new regional and international markets.', tAr: 'استكشاف أسواق إقليمية ودولية جديدة.' },
+  { icon: 'network',     t: 'Strengthen connections between our portfolio companies.', tAr: 'تعزيز الروابط بين شركات المحفظة.' }
 ];
 
 /* Partnerships page */
 const PARTNER_TYPES = [
-  { t: 'International Suppliers', tAr: 'الموردون الدوليون',
+  { icon: 'markets', t: 'International Suppliers', tAr: 'الموردون الدوليون',
     d: 'Companies seeking reliable commercial relationships and market opportunities.',
     dAr: 'شركات تبحث عن علاقات تجارية موثوقة وفرص في السوق.' },
-  { t: 'Local Suppliers & Businesses', tAr: 'الموردون والشركات المحلية',
+  { icon: 'found', t: 'Local Suppliers & Businesses', tAr: 'الموردون والشركات المحلية',
     d: 'Organizations interested in supplying or collaborating with our portfolio companies.',
     dAr: 'جهات ترغب في التوريد لشركات محفظتنا أو التعاون معها.' },
-  { t: 'Producers & Exporters', tAr: 'المنتجون والمصدّرون',
+  { icon: 'leaf', t: 'Producers & Exporters', tAr: 'المنتجون والمصدّرون',
     d: 'Producers of food, agricultural products, coffee, wheat and other future trading categories.',
     dAr: 'منتجو الأغذية والمنتجات الزراعية والبن والقمح وفئات تجارية أخرى مستقبلاً.' },
-  { t: 'Distributors & Buyers', tAr: 'الموزعون والمشترون',
+  { icon: 'route', t: 'Distributors & Buyers', tAr: 'الموزعون والمشترون',
     d: 'Businesses looking for commercial supply relationships within Qatar or international markets.',
     dAr: 'شركات تبحث عن علاقات توريد تجاري داخل قطر أو في الأسواق الدولية.' },
-  { t: 'Business Partners', tAr: 'الشركاء التجاريون',
+  { icon: 'partnership', t: 'Business Partners', tAr: 'الشركاء التجاريون',
     d: 'Organizations interested in joint commercial opportunities, new concepts or strategic cooperation.',
     dAr: 'جهات مهتمة بفرص تجارية مشتركة أو مفاهيم جديدة أو تعاون استراتيجي.' },
-  { t: 'Entrepreneurs', tAr: 'روّاد الأعمال',
+  { icon: 'spark', t: 'Entrepreneurs', tAr: 'روّاد الأعمال',
     d: 'Operators and founders with businesses or concepts that may complement the future direction of Lusail Corp.',
     dAr: 'مشغّلون ومؤسسون لديهم أعمال أو مفاهيم قد تكمّل اتجاه لوسيل كورب المستقبلي.' }
 ];

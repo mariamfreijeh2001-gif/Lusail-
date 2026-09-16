@@ -47,6 +47,36 @@ const logoImg = file =>
 const LOGO_DARK = logoImg(B.logoOnLight);
 const LOGO_LIGHT = logoImg(B.logoOnDark);
 
+/* Icons, drawn here rather than pulled from a set, so they share the site's
+   geometry: 24x24, hairline strokes, square caps, mitre joins, no rounding.
+   They are decorative — the label beside each one carries the meaning — so
+   they are aria-hidden. */
+const ICON_PATHS = {
+  // a building going up, with a plus: founding something new
+  found: '<path d="M3.5 20.5V8.5h9v12"/><path d="M6 12h1.5M10 12h1.5M6 15.5h1.5M10 15.5h1.5"/><path d="M17.5 3v7M14 6.5h7"/>',
+  // four corners pushing outward: growing what is already there
+  expand: '<path d="M4 9.5v-5.5h5.5M14.5 4H20v5.5M20 14.5V20h-5.5M9.5 20H4v-5.5"/><path d="M4 4l5 5M20 4l-5 5M20 20l-5-5M4 20l5-5"/>',
+  // three squares held, a fourth taken: entering a new sector
+  sectors: '<path d="M3.5 3.5h7v7h-7zM13.5 3.5h7v7h-7zM3.5 13.5h7v7h-7z"/><path d="M13.5 13.5h7v7h-7z" fill="currentColor" stroke="none"/>',
+  // two rings overlapping: a partnership, not an acquisition
+  partnership: '<circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/>',
+  // three points, all connected: suppliers, the group, buyers
+  supply: '<circle cx="4.6" cy="6" r="1.9"/><circle cx="19.4" cy="6" r="1.9"/><circle cx="12" cy="19" r="1.9"/><path d="M6.5 6h11M5.5 7.7l5.5 9.6M18.5 7.7L13 17.3"/>',
+  // a globe: markets beyond Qatar
+  markets: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.7 3.3 2.7 13.7 0 17M12 3.5c-2.7 3.3-2.7 13.7 0 17"/>',
+  // a leaf: growers and producers
+  leaf: '<path d="M20 4c0 9-5 13-11 13H4.5C4.5 9 10 4 20 4z"/><path d="M15 8.5C10.5 10.5 7 14 5 20"/>',
+  // a route with a stop on it: moving goods to a buyer
+  route: '<path d="M3.5 18.5h6a4 4 0 0 0 0-8h-5a4 4 0 0 1 0-8h6"/><circle cx="18" cy="16.5" r="3"/><path d="M18 2.5v5M15.5 5h5"/>',
+  // a spark: founders and new concepts
+  spark: '<path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5M5.2 5.2l3.5 3.5M15.3 15.3l3.5 3.5M18.8 5.2l-3.5 3.5M8.7 15.3l-3.5 3.5"/><circle cx="12" cy="12" r="2.6"/>',
+  // two companies joined: connections inside the portfolio
+  network: '<path d="M3.5 3.5h6v6h-6zM14.5 14.5h6v6h-6z"/><path d="M9.5 6.5h4.5a3 3 0 0 1 3 3v5"/>'
+};
+const icon = name => ICON_PATHS[name]
+  ? `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICON_PATHS[name]}</svg>`
+  : '';
+
 const num = i => String(i + 1).padStart(2, '0');
 const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
 const pluralAr = (n, one, many) => n === 1 ? one : n + ' ' + many;
@@ -174,6 +204,7 @@ ${cos}
           <li><a href="${SITE.contact.linkedin}">LinkedIn</a></li>
           <li><a href="${SITE.contact.instagram}">Instagram</a></li>
           <li><a href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></li>
+          <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a></li>
           <li><span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span></li>
         </ul>
       </div>
@@ -229,8 +260,54 @@ function figureFor(o, credit) {
   return o.photoStyle === 'still' ? still(o.photo, cap, capAr) : plate(o.photo, cap, capAr, credit);
 }
 
-/* One numbered-card grid, shared by every "four things" section on the site,
-   so they align and behave identically instead of drifting apart. */
+/* A process, read across. Used once, for what the Group does. */
+function steps(items) {
+  return `<div class="steps">
+${items.map((v, i) => `      <div class="step">
+        <span class="n" aria-hidden="true">${num(i)}</span>
+        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
+        <p${t(v.d, v.dAr)}>${esc(v.d)}</p>
+      </div>`).join('\n')}
+    </div>`;
+}
+
+/* A definition list. Used once, for how value is created. */
+function defList(items) {
+  return `<dl class="deflist">
+${items.map((v, i) => `      <div>
+        <span class="n" aria-hidden="true">${num(i)}</span>
+        <dt${t(v.t, v.tAr)}>${esc(v.t)}</dt>
+        <dd${t(v.d, v.dAr)}>${esc(v.d)}</dd>
+      </div>`).join('\n')}
+    </dl>`;
+}
+
+/* Icon rows. Used once, for who the Group wants to hear from. */
+function iconRows(items) {
+  return `<div class="plines">
+${items.map(v => `      <div class="pline">
+        ${icon(v.icon)}
+        <div>
+          <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
+          <p${t(v.d, v.dAr)}>${esc(v.d)}</p>
+        </div>
+      </div>`).join('\n')}
+    </div>`;
+}
+
+/* Two products, given room. Used once, on the trading company. */
+function prodBlocks(items) {
+  return `<div class="prods">
+${items.map(v => `      <div class="prod">
+        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
+        <p${t(v.d, v.dAr)}>${esc(v.d)}</p>
+      </div>`).join('\n')}
+    </div>`;
+}
+
+/* The numbered cards now appear once only, on the About values section,
+   which is the treatment the client picked out as a reference. Every other
+   section that used to reuse them has its own component above. */
 function numberedCards(items, mod) {
   return `<div class="vgrid${mod ? ' ' + mod : ''}">
 ${items.map((v, i) => `      <div class="vcard">
@@ -416,7 +493,7 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
       </div>
       <p class="lede" data-ar="صُمّمت لوسيل كورب لتهيئة بيئة تنمو فيها الأعمال باستقلالية مع استفادتها من قوة مجموعة أوسع.">Lusail Corp is designed to create an environment where businesses can develop independently while benefiting from the strength of a wider corporate group.</p>
     </div>
-    ${numberedCards(WHAT_WE_DO)}
+    ${steps(WHAT_WE_DO)}
   </div>
 </section>
 
@@ -434,7 +511,7 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
     <div>
       <p class="micro-head" data-ar="نستكشف باستمرار فرصاً لـ">We continuously explore opportunities to</p>
       <ul class="ticks">
-${GROWTH.map(g => `        <li${t(g.t, g.tAr)}>${esc(g.t)}</li>`).join('\n')}
+${GROWTH.map(g => `        <li>${icon(g.icon)}<span${t(g.t, g.tAr)}>${esc(g.t)}</span></li>`).join('\n')}
       </ul>
     </div>
   </div>
@@ -467,7 +544,7 @@ ${GROWTH.map(g => `        <li${t(g.t, g.tAr)}>${esc(g.t)}</li>`).join('\n')}
       </div>
       <p class="lede" data-ar="النمو ليس مجرد إضافة شركات إلى محفظة. النمو عندنا يعني بناء أعمال أفضل.">Growth is not simply about adding more companies to a portfolio. For Lusail Corp, growth means building better businesses.</p>
     </div>
-    ${numberedCards(VALUE_CREATION, 'three')}
+    ${defList(VALUE_CREATION)}
   </div>
 </section>
 
@@ -489,23 +566,18 @@ function pageAbout() {
       lede: 'Lusail Corp is a diversified corporate group registered in the State of Qatar, bringing together businesses across consumer services, food and beverage, commercial distribution and international trade.',
       ledeAr: 'لوسيل كورب مجموعة شركات متنوعة مسجّلة في دولة قطر، تجمع أعمالاً في خدمات المستهلك والأغذية والمشروبات والتوزيع التجاري والتجارة الدولية.'
     })
+    // Deliberately not the prose-plus-aside layout Home already uses for its
+    // introduction: this one runs the statement full measure and sets the copy
+    // in two columns, so the two pages do not read as the same page twice.
     + `<section class="section tight" aria-labelledby="whoTitle">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="من نحن">Who We Are</span>
-      <h2 id="whoTitle" class="statement" data-ar="منصّة لنمو الأعمال">A Platform for Business Growth</h2>
-      <div class="prose">
-        <p data-ar="تأسست لوسيل كورب بطموح واضح: إنشاء وتطوير ودعم أعمال لديها القدرة على النمو.">Lusail Corp was established with a straightforward ambition: to create, develop and support businesses with the potential to grow.</p>
-        <p data-ar="تعمل شركات محفظتنا باستقلالية في أسواقها، وتتشارك في الوقت نفسه التوجيه الاستراتيجي وقدرات المجموعة الأوسع.">Our portfolio companies operate independently within their respective markets while sharing the strategic direction and broader capabilities of the Group.</p>
-        <p data-ar="يتيح هذا الهيكل لكل شركة الاحتفاظ بهويتها وعملائها وتركيزها التجاري، مع استفادتها من الانتماء إلى منظومة متنوعة.">This structure allows each business to maintain its own identity, customers and commercial focus while benefiting from belonging to a diversified organization.</p>
-        <p data-ar="ومع تطوّر المجموعة، ستنضم أعمال وقطاعات إضافية إلى محفظة لوسيل كورب.">As the Group develops, additional businesses and sectors will become part of the Lusail Corp portfolio.</p>
-      </div>
-    </div>
-    <div class="aside">
-      <h3 data-ar="المحفظة الحالية">Current portfolio</h3>
-      <ol class="mini">
-${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span class="n">${num(k)}</span><span><b${t(c.name, c.nameAr)}>${esc(c.name)}</b><em${t(c.sectorName, c.sectorNameAr)}>${esc(c.sectorName)}</em></span></a></li>`).join('\n')}
-      </ol>
+  <div class="wrap">
+    <span class="eyebrow" data-ar="من نحن">Who We Are</span>
+    <h2 id="whoTitle" class="wide-statement" data-ar="منصّة لنمو الأعمال">A Platform for Business Growth</h2>
+    <div class="prose cols">
+      <p data-ar="تأسست لوسيل كورب بطموح واضح: إنشاء وتطوير ودعم أعمال لديها القدرة على النمو.">Lusail Corp was established with a straightforward ambition: to create, develop and support businesses with the potential to grow.</p>
+      <p data-ar="تعمل شركات محفظتنا باستقلالية في أسواقها، وتتشارك في الوقت نفسه التوجيه الاستراتيجي وقدرات المجموعة الأوسع.">Our portfolio companies operate independently within their respective markets while sharing the strategic direction and broader capabilities of the Group.</p>
+      <p data-ar="يتيح هذا الهيكل لكل شركة الاحتفاظ بهويتها وعملائها وتركيزها التجاري، مع استفادتها من الانتماء إلى منظومة متنوعة.">This structure allows each business to maintain its own identity, customers and commercial focus while benefiting from belonging to a diversified organization.</p>
+      <p data-ar="ومع تطوّر المجموعة، ستنضم أعمال وقطاعات إضافية إلى محفظة لوسيل كورب.">As the Group develops, additional businesses and sectors will become part of the Lusail Corp portfolio.</p>
     </div>
   </div>
 </section>
@@ -536,6 +608,10 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
         <p><strong data-ar="نحن لا نُعرَّف بصناعة واحدة. نُعرَّف بطريقة بنائنا.">We are not defined by one industry. We are defined by how we build.</strong></p>
       </div>
     </div>
+    <figure class="port-fig">
+      <img src="/assets/img/approach-tall.jpg" alt="Group management at work" width="1000" height="1333" loading="lazy">
+      <figcaption data-ar="إدارة المجموعة تلتقي بكل شركة تشغيلية بانتظام.">Group management meets each operating company regularly.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -605,7 +681,7 @@ function pageCompany(c, sector) {
       <span class="eyebrow" data-ar="المنتجات الحالية">Current Products</span>
       <h2 id="prodTitle" data-ar="ما نتاجر به اليوم">What we trade today</h2>
     </div>
-    ${numberedCards(c.products, 'two')}
+    ${prodBlocks(c.products)}
   </div>
 </section>
 
@@ -694,13 +770,63 @@ function pageSectorsIndex() {
     })
     + `<section class="section tight">
   <div class="wrap">
-    ${sectorIndex(SECTORS)}
+    ${sectorAccordion()}
   </div>
 </section>
 
 `
     + ctaBand()
     + footer();
+}
+
+/* The sectors index opens in place: each row expands to show the companies
+   inside it as cards, so the whole portfolio can be read without leaving the
+   page, while each sector still has its own address. */
+function sectorAccordion() {
+  return `<div class="acc">
+${SECTORS.map((s, i) => {
+    const n = s.companies.length;
+    const count = n ? plural(n, 'company', 'companies') : 'In development';
+    const countAr = n ? pluralAr(n, 'شركة واحدة', 'شركات') : 'قيد التطوير';
+    const open = i === 0;
+
+    const cards = n ? `<div class="cocards">
+${s.companies.map(c => {
+      const pic = hasPhoto(c)
+        ? `<span class="pic"><img src="/assets/img/${c.photo}-card.jpg" alt="${esc(c.name)}" width="1000" height="750" loading="lazy"></span>`
+        : '';
+      return `            <a class="cocard" href="/companies/${c.slug}/">
+              ${pic}
+              <span class="body">
+                <span class="role micro"${t(c.role, c.roleAr)}>${esc(c.role)}</span>
+                <h4${t(c.name, c.nameAr)}>${esc(c.name)}</h4>
+                <p${t(c.short, c.shortAr)}>${esc(c.short)}</p>
+                <span class="go" data-ar="عرض الشركة">View company</span>
+              </span>
+            </a>`;
+    }).join('\n')}
+          </div>`
+      : `<p class="acc-empty" data-ar="لا توجد شركة في هذا القطاع بعد. إن كان لديك عمل أو مفهوم يناسبه، نودّ أن نسمع منك.">No company sits in this sector yet. If you have a business or concept that fits it, we would like to hear from you.</p>`;
+
+    return `      <div class="acc-item${open ? ' open' : ''}" id="sec-${s.slug}">
+        <button class="acc-btn" type="button" aria-expanded="${open}" aria-controls="panel-${s.slug}">
+          <span class="n">${num(i)}</span>
+          <span>
+            <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
+            <span class="sub"${t(s.short, s.shortAr)}>${esc(s.short)}</span>
+          </span>
+          <span class="meta"${t(count, countAr)}>${esc(count)}</span>
+          <span class="plus" aria-hidden="true"></span>
+        </button>
+        <div class="acc-panel" id="panel-${s.slug}" role="region">
+          <div><div class="acc-inner">
+            ${cards}
+            <p style="margin-top:22px"><a class="tl" href="/sectors/${s.slug}/"${t('Read about ' + s.name, 'اقرأ عن ' + s.nameAr)}>Read about ${esc(s.name)}</a></p>
+          </div></div>
+        </div>
+      </div>`;
+  }).join('\n')}
+    </div>`;
 }
 
 function pageSector(s, i) {
@@ -795,7 +921,7 @@ function pagePartnerships() {
       </div>
       <p class="lede" data-ar="تعتمد شركاتنا على علاقات قوية في أسواقها، ونحن مهتمون بتطوير علاقات مع:">Our companies depend on strong relationships across their respective markets. We are interested in developing relationships with:</p>
     </div>
-    ${numberedCards(PARTNER_TYPES, 'three')}
+    ${iconRows(PARTNER_TYPES)}
   </div>
 </section>
 
@@ -812,8 +938,8 @@ function pagePartnerships() {
     <div class="aside">
       <h3 data-ar="ابدأ الحديث">Start a conversation</h3>
       <dl>
-        <div><dt data-ar="الشراكات وفرص الأعمال">Partnerships &amp; business opportunities</dt><dd><a class="tl" href="mailto:${SITE.contact.partnerships}">${SITE.contact.partnerships}</a></dd></div>
-        <div><dt data-ar="الاستفسارات العامة">General enquiries</dt><dd><a class="tl" href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
+        <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a class="tl" href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
+        <div><dt data-ar="الهاتف">Phone</dt><dd><a class="tl" href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a></dd></div>
       </dl>
       <a class="btn btn-gold" href="/contact/" data-ar="ابدأ الحديث">Start a Conversation</a>
     </div>
@@ -828,7 +954,7 @@ function pagePartnerships() {
 function pageCareers() {
   const roles = OPEN_ROLES.length
     ? `<div class="roles">
-${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.careersEmail}?subject=${encodeURIComponent('Application — ' + r.t)}">
+${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.email}?subject=${encodeURIComponent('Application — ' + r.t)}">
         <h3>${esc(r.t)}</h3>
         <span class="meta">${esc(r.co)}</span>
         <span class="meta">${esc(r.loc)}</span>
@@ -846,10 +972,10 @@ ${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.careers
       <div class="aside">
         <h3 data-ar="أرسل سيرتك الذاتية">Send your CV</h3>
         <dl>
-          <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a class="tl" href="mailto:${SITE.contact.careersEmail}">${SITE.contact.careersEmail}</a></dd></div>
+          <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a class="tl" href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
           <div><dt data-ar="أرفق">Include</dt><dd data-ar="سيرتك الذاتية، والشركة أو المجال الذي يهمّك.">Your CV, and which company or area interests you.</dd></div>
         </dl>
-        <a class="btn btn-gold" href="mailto:${SITE.contact.careersEmail}" data-ar="عرض الفرص">View Opportunities</a>
+        <a class="btn btn-gold" href="mailto:${SITE.contact.email}" data-ar="عرض الفرص">View Opportunities</a>
       </div>
     </div>`;
 
@@ -868,6 +994,16 @@ ${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.careers
     + `<section class="section tight">
   <div class="wrap">
     <p class="lead-para" data-ar="سواء كان العمل مع المجموعة مباشرة أو داخل إحدى شركات المحفظة، فإن موظفينا جزء من منظومة متنامية تُقدَّر فيها المبادرة والتنفيذ.">Whether working directly with the Group or within one of our portfolio companies, our people are part of a growing organization where initiative and execution matter.</p>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="imgrow">
+      <figure><img src="/assets/img/careers-a.jpg" alt="" width="1000" height="750" loading="lazy"></figure>
+      <figure><img src="/assets/img/careers-b.jpg" alt="" width="1000" height="750" loading="lazy"></figure>
+      <figure><img src="/assets/img/careers-c.jpg" alt="" width="1000" height="750" loading="lazy"></figure>
+    </div>
   </div>
 </section>
 
@@ -924,10 +1060,10 @@ function pageContact() {
     <div>
       <span class="eyebrow" data-ar="تواصل مباشر">Direct contact</span>
       <dl class="channels">
-        <div><dt data-ar="الاستفسارات العامة">General Enquiries</dt><dd><a href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
-        <div><dt data-ar="الشراكات وفرص الأعمال">Partnerships &amp; Business Opportunities</dt><dd><a href="mailto:${SITE.contact.partnerships}">${SITE.contact.partnerships}</a></dd></div>
-        <div><dt data-ar="الوظائف">Careers</dt><dd><a href="mailto:${SITE.contact.careersEmail}">${SITE.contact.careersEmail}</a></dd></div>
+        <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
+        <div><dt data-ar="الهاتف">Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a></dd></div>
         <div><dt data-ar="الموقع">Location</dt><dd${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</dd></div>
+        <div><dt data-ar="التوجيه">Routing</dt><dd data-ar="اختر مجال الاهتمام وسنحوّل رسالتك إلى القسم المختص.">Pick an area of interest and we route your message to the right desk.</dd></div>
       </dl>
     </div>
     <form id="form" novalidate>
