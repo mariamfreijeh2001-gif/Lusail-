@@ -1,0 +1,9 @@
+{
+  "name": "lusail-corp-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lusail Corp holding company website — static, no build step.",
+  "scripts": {
+    "start": "npx --yes serve . -l 5173"
+  }
+}
