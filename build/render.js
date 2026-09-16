@@ -141,13 +141,13 @@ function footer() {
         <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}</a>
         <p class="foot-blurb" data-ar="مجموعة قطرية تمتلك وتنمّي شركات تشغيلية في الأغذية والبن والطاقة والمقاولات والخدمات اللوجستية.">A Qatari group that owns and grows operating companies in food, coffee, energy, contracting and logistics.</p>
       </div>
-      <div>
+      <div class="foot-links">
         <h4 data-ar="ما نقوم به">What we do</h4>
         <ul>
 ${secs}
         </ul>
       </div>
-      <div>
+      <div class="foot-links">
         <h4 data-ar="المجموعة">Group</h4>
         <ul>
 ${group}
@@ -455,7 +455,7 @@ ${companyCards(cos, { showSector: false })}
     <p class="eyebrow" data-ar="بقية المجموعة">The rest of the group</p>
     <h2 id="othTitle" class="sib-title" data-ar="القطاعات الأخرى">The other sectors</h2>
   </div>
-  <div class="siblings">
+  <div class="wrap"><div class="siblings">
 ${others.map(o => `    <a href="/sectors/${o.slug}/">
       <span class="n">${num(SECTORS.indexOf(o))}</span>
       <span class="t"${t(o.name, o.nameAr)}>${esc(o.name)}</span>
@@ -463,7 +463,7 @@ ${others.map(o => `    <a href="/sectors/${o.slug}/">
         ? '<span data-ar="شركة واحدة">1 company</span>'
         : `<span data-ar="${o.companies.length} شركات">${o.companies.length} companies</span>`}</span>
     </a>`).join('\n')}
-  </div>
+  </div></div>
   <div class="wrap" style="padding-block:clamp(32px,4vw,52px)">
     <a class="btn btn-line" href="/sectors/" data-ar="عرض كل القطاعات">View all sectors</a>
   </div>

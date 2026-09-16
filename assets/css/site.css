@@ -87,12 +87,16 @@ html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3{font-weight:500;letter-
 /* ---------- shared -------------------------------------------------- */
 
 .eyebrow{
+  display:block;
   font:500 .72rem/1 var(--body);
   letter-spacing:.16em;text-transform:uppercase;
   color:var(--gold-deep);
-  display:flex;align-items:center;gap:.7em;
 }
-.eyebrow::before{content:"";width:24px;height:1px;background:var(--gold);flex:none}
+/* The rule sits above the label rather than beside it, so the label starts
+   on the same edge as the heading under it. */
+.eyebrow::before{
+  content:"";display:block;width:26px;height:1px;background:var(--gold);margin-bottom:13px;
+}
 .on-dark .eyebrow{color:var(--gold)}
 html[lang="ar"] .eyebrow{letter-spacing:0}
 
@@ -408,7 +412,8 @@ textarea{min-height:130px;resize:vertical}
 .foot-blurb{margin-top:18px;color:var(--on-dark-2);font-size:.93rem;max-width:34ch}
 .site-foot h4{font:500 .74rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:0 0 16px}
 .site-foot ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.site-foot ul a{text-decoration:none;font-size:.94rem;color:var(--on-dark-2);transition:color .2s}
+.site-foot ul a,.site-foot ul span{font-size:.94rem;color:var(--on-dark-2)}
+.site-foot ul a{text-decoration:none;transition:color .2s}
 .site-foot ul a:hover{color:#fff}
 .legal{
   display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
@@ -470,6 +475,7 @@ textarea{min-height:130px;resize:vertical}
   background:transparent;padding:22px 20px 26px;
   display:grid;gap:5px;backdrop-filter:blur(2px);
 }
+.glance > div:first-child{padding-inline-start:0}
 .glance dd{
   margin:0;font-family:var(--display);font-size:clamp(1.7rem,3vw,2.5rem);
   line-height:1;color:#fff;
@@ -554,3 +560,175 @@ html[lang="ar"] .stage .in{font-family:var(--body);letter-spacing:0}
   html.js .reveal.in > *:nth-child(5){transition-delay:.24s}
   html.js .reveal.in > *:nth-child(6){transition-delay:.3s}
 }
+
+/* ==========================================================================
+   Alignment pass
+   Everything that sets type on a page now starts on the same edge as the
+   page gutter. Measured, not eyeballed: the eyebrow rule used to consume
+   32px of inline space, the first "at a glance" cell 20px, and the sector
+   rail sat outside the wrap entirely.
+   ========================================================================== */
+
+/* ---------- stage: full-bleed photo, gutter-aligned text -----------------
+   The photograph runs edge to edge; its caption is placed on the same
+   three-column track the rest of the page uses, so the sector heading lines
+   up exactly with every other heading on the page. */
+
+.six .wrap > .stage{ /* reset the old in-wrap placement */
+  margin-inline:calc(var(--gutter) * -1);
+}
+@media (min-width:1221px){
+  .six .wrap > .stage{
+    margin-inline:calc((100% - 100vw) / 2);
+    max-width:100vw;
+  }
+}
+.stage .copy{
+  display:grid;
+  grid-template-columns:
+    minmax(var(--gutter), 1fr)
+    minmax(0, calc(var(--wrap) - var(--gutter) * 2))
+    minmax(var(--gutter), 1fr);
+  align-content:end;
+  padding:0 0 clamp(20px,3.4vw,46px);
+  gap:10px 0;
+}
+.stage .copy > *{grid-column:2}
+
+/* the rail keeps the content width, so its first label sits on the gutter */
+.rail-wrap{padding-inline:var(--gutter)}
+.rail button:first-child{padding-inline-start:0}
+.rail button:last-child{padding-inline-end:0}
+
+/* ---------- one heading scale --------------------------------------------
+   Section headings were being set at three different sizes by three
+   different rules. They are one size now. */
+
+.sec-head h2,
+.six-title,
+.sib-title{
+  font-size:clamp(1.8rem,3.4vw,2.8rem);
+  margin-top:18px;
+  max-width:20ch;
+}
+.sib-title{color:#fff}
+.statement{font-size:clamp(1.55rem,2.7vw,2.3rem);line-height:1.3;max-width:26ch;margin-top:18px}
+
+/* sub-headings, one size */
+.card h3,.pillar h3{font-size:1.38rem}
+.aside h3{font-size:1.22rem}
+
+/* ---------- section head: baseline, not box, alignment ------------------- */
+.sec-head{align-items:baseline}
+.sec-head > div{flex:1 1 30ch}
+.sec-head .btn{flex:none;align-self:flex-end}
+
+/* ---------- siblings: align first cell to the gutter --------------------- */
+/* content width, so its first label sits on the same edge as the headings */
+.siblings a{padding-inline:0 20px}
+.siblings a + a{padding-inline-start:20px}
+
+/* ---------- footer: full on desktop, essentials on a phone ---------------
+   A phone does not need every sector and every group link repeated under
+   the page — they are all one tap away in the menu. */
+
+@media (max-width:640px){
+  .site-foot{padding-block:36px 24px}
+  .foot-grid{gap:24px}
+  .foot-links{display:none}
+  .site-foot .brand svg,.site-foot .brand img{height:38px}
+  .foot-blurb{display:none}
+  .site-foot h4{margin-bottom:10px}
+  .legal{margin-top:26px;padding-top:18px;font-size:.8rem;gap:8px}
+}
+
+/* ==========================================================================
+   Type scale
+   One size per role, sitewide. Before this block the site was rendering two
+   h1 sizes (74px / 64px), two h2 sizes, four h3 sizes, two button sizes, two
+   lede sizes, and splitting micro-labels across two typefaces.
+   ========================================================================== */
+
+:root{
+  --t-h1:  clamp(2.3rem, 5.2vw, 4.1rem);   /* page title */
+  --t-h2:  clamp(1.75rem, 3.2vw, 2.6rem);  /* section title */
+  --t-h3:  1.34rem;                        /* card, pillar, aside, role */
+  --t-lede:1.14rem;
+  --t-micro:.74rem;                        /* eyebrow, crumb, label, count */
+}
+
+/* one page title */
+.hero h1,
+.opener h1{font-size:var(--t-h1)}
+
+/* one section title — .statement is a section title too, not a third size */
+.sec-head h2,
+.six-title,
+.sib-title,
+.statement,
+.cta h2{font-size:var(--t-h2)}
+.statement{line-height:1.22;max-width:26ch}
+
+/* the sector name over the photograph is the one deliberate exception:
+   it is display type, so it sits just under the section scale, never over it */
+.stage h3{font-size:clamp(1.6rem, 3vw, 2.4rem)}
+
+/* one sub-heading */
+.card h3,
+.pillar h3,
+.aside h3,
+.role h3,
+.mega-sec{font-size:var(--t-h3)}
+
+/* one lede */
+.lede,
+.hero .lede{font-size:var(--t-lede)}
+
+/* one button size */
+.btn,
+.head-tools .btn{font-size:.94rem}
+.head-tools .btn{padding:.78em 1.15em}
+
+/* every micro-label is the same face and size — the eyebrow was the odd one
+   out in IBM Plex Sans while the crumb, figures and column heads used Mono */
+.eyebrow,
+.crumb,
+.count,
+.op-meta,
+.site-foot h4,
+.card .n,
+.caps .n,
+.mini .n,
+.rail .n,
+.glance dt,
+.channels dt,
+.aside dt,
+.siblings .n,
+.stage .num{
+  font-family:var(--mono);
+  font-size:var(--t-micro);
+  font-weight:500;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.stage .in{font-size:var(--t-micro);letter-spacing:.06em}
+html[lang="ar"] .eyebrow,
+html[lang="ar"] .crumb,
+html[lang="ar"] .count,
+html[lang="ar"] .op-meta,
+html[lang="ar"] .site-foot h4,
+html[lang="ar"] .card .n,
+html[lang="ar"] .glance dt,
+html[lang="ar"] .channels dt,
+html[lang="ar"] .aside dt,
+html[lang="ar"] .stage .in{
+  font-family:var(--body);
+  letter-spacing:0;
+  text-transform:none;
+}
+/* numerals in the numbered lists stay latin even in Arabic */
+html[lang="ar"] .caps .n,
+html[lang="ar"] .mini .n,
+html[lang="ar"] .rail .n,
+html[lang="ar"] .siblings .n,
+html[lang="ar"] .stage .num{font-family:var(--mono);letter-spacing:.08em}

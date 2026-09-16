@@ -222,16 +222,51 @@
 
   var reveals = $$('.reveal');
   if (reveals.length) {
+    var showAll = function () { reveals.forEach(function (r) { r.classList.add('in'); }); };
+
+    // Anything already on screen is shown at once rather than animated in,
+    // so content above the fold is never briefly invisible.
+    var sweep = function () {
+      var vh = window.innerHeight || 800;
+      var left = 0;
+      reveals.forEach(function (r) {
+        if (r.classList.contains('in')) return;
+        var b = r.getBoundingClientRect();
+        if (b.top < vh * 0.95 && b.bottom > 0) r.classList.add('in');
+        else left++;
+      });
+      return left;
+    };
+
     if (!('IntersectionObserver' in window)) {
-      reveals.forEach(function (r) { r.classList.add('in'); });
+      showAll();
     } else {
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
           if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
         });
-      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      }, { rootMargin: '0px 0px -5% 0px', threshold: 0 });
       reveals.forEach(function (r) { io.observe(r); });
+
+      // Belt and braces. A reveal that silently never fires would leave a
+      // whole section invisible, which is far worse than a missing animation,
+      // so a plain scroll handler re-checks independently of the observer.
+      var ticking = false;
+      var onScroll = function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+          ticking = false;
+          if (sweep() === 0) window.removeEventListener('scroll', onScroll);
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
     }
+
+    sweep();
+    // Last resort: whatever happened, nothing stays hidden.
+    setTimeout(showAll, 3000);
   }
 
   /* ---------- contact form -----------------------------------------------
