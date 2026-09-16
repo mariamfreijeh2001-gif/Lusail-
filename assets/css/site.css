@@ -420,3 +420,137 @@ textarea{min-height:130px;resize:vertical}
 
 /* the aside is a grid; keep the button its natural width */
 .aside .btn{justify-self:start}
+
+/* ==========================================================================
+   Two-tier additions: sector -> companies
+   ========================================================================== */
+
+/* ---------- mega menu ---------------------------------------------------
+   With several companies inside a sector a flat nav stops working. Hovering
+   "What we do" opens the whole group at once. */
+
+.mega{
+  position:absolute;inset-inline:0;top:100%;
+  background:var(--dark-2);border-top:1px solid var(--line-dark);
+  box-shadow:0 24px 48px rgba(0,0,0,.34);
+  z-index:39;
+}
+.mega-in{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:clamp(20px,3vw,44px);padding-block:32px 36px;
+}
+.mega-sec{
+  display:block;font-family:var(--display);font-size:1.16rem;color:#fff;
+  text-decoration:none;padding-bottom:10px;margin-bottom:12px;
+  border-bottom:1px solid var(--line-dark);position:relative;
+}
+.mega-sec::after{
+  content:"";position:absolute;inset-inline-start:0;bottom:-1px;height:1px;width:0;
+  background:var(--gold);transition:width .3s;
+}
+.mega-sec:hover::after{width:100%}
+.mega-sec:hover{color:var(--gold-soft)}
+.mega-col ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.mega-col a:not(.mega-sec){
+  text-decoration:none;font-size:.92rem;color:var(--on-dark-2);transition:color .18s,padding .18s;
+  display:block;
+}
+.mega-col a:not(.mega-sec):hover{color:#fff;padding-inline-start:5px}
+@media (max-width:860px){ .mega{display:none!important} }
+
+/* ---------- at a glance -------------------------------------------------- */
+
+.glance{
+  position:relative;margin:clamp(36px,5vw,60px) 0 0;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--line-dark);
+  border-top:1px solid var(--line-dark);
+}
+.glance > div{
+  background:transparent;padding:22px 20px 26px;
+  display:grid;gap:5px;backdrop-filter:blur(2px);
+}
+.glance dd{
+  margin:0;font-family:var(--display);font-size:clamp(1.7rem,3vw,2.5rem);
+  line-height:1;color:#fff;
+}
+.glance dt{
+  font:500 .72rem/1.3 var(--mono);letter-spacing:.11em;text-transform:uppercase;
+  color:var(--gold);
+}
+html[lang="ar"] .glance dt{letter-spacing:0;font-family:var(--body)}
+@media (max-width:760px){ .glance{grid-template-columns:repeat(2,1fr)} }
+
+/* ---------- filter chips ------------------------------------------------- */
+
+.filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px}
+.chip{
+  all:unset;box-sizing:border-box;cursor:pointer;
+  display:inline-flex;align-items:center;gap:.55em;
+  padding:.62em 1.05em;border:1px solid var(--line);border-radius:2px;
+  font:500 .9rem/1 var(--body);color:var(--ink-2);
+  transition:border-color .2s,background .2s,color .2s;
+}
+.chip em{font-style:normal;font-family:var(--mono);font-size:.78rem;opacity:.65}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip[aria-pressed="true"] em{opacity:.75}
+.chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.count{
+  font:500 .8rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-2);margin-bottom:26px;
+}
+html[lang="ar"] .count{letter-spacing:0;font-family:var(--body)}
+.empty{color:var(--ink-2);padding:40px 0}
+
+/* cards hide by filter without reflow jank */
+.card[hidden]{display:none}
+
+/* ---------- opener meta line --------------------------------------------- */
+
+.op-meta{
+  margin-top:20px;font:500 .84rem/1.5 var(--mono);color:var(--on-dark-2);
+  letter-spacing:.05em;
+}
+html[lang="ar"] .op-meta{letter-spacing:0;font-family:var(--body)}
+.op-meta a{color:var(--gold-soft);text-underline-offset:3px}
+
+/* ---------- mini company list on sector pages ---------------------------- */
+
+.mini{list-style:none;margin:0;padding:0;display:grid}
+.mini li + li{border-top:1px solid var(--line)}
+.mini a{
+  display:grid;grid-template-columns:26px minmax(0,1fr);gap:12px;
+  padding:14px 0;text-decoration:none;align-items:baseline;
+}
+.mini .n{font:500 .74rem/1.6 var(--mono);color:var(--gold-deep)}
+.mini b{display:block;font-weight:600;transition:color .2s}
+.mini em{font-style:normal;color:var(--ink-2);font-size:.9rem}
+.mini a:hover b{color:var(--gold-deep)}
+
+/* ---------- shared headings on dark -------------------------------------- */
+
+.sib-title{color:#fff;font-size:clamp(1.5rem,2.6vw,2.1rem);margin-top:16px}
+.six-title{font-size:clamp(1.8rem,3.4vw,2.8rem);margin-top:18px}
+.statement{margin-top:20px}
+.stage .in{color:var(--gold-soft);font-size:.9rem;font-family:var(--mono);letter-spacing:.04em}
+html[lang="ar"] .stage .in{font-family:var(--body);letter-spacing:0}
+.rail-wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:0}
+
+/* ---------- scroll reveal -------------------------------------------------
+   Only ever applied when JS is running, so a reader without it sees
+   everything. Disabled entirely under prefers-reduced-motion. */
+
+@media (prefers-reduced-motion:no-preference){
+  html.js .reveal > *{
+    opacity:0;transform:translateY(14px);
+    transition:opacity .5s ease,transform .5s cubic-bezier(.2,.6,.2,1);
+  }
+  html.js .reveal.in > *{opacity:1;transform:none}
+  html.js .reveal.in > *:nth-child(2){transition-delay:.06s}
+  html.js .reveal.in > *:nth-child(3){transition-delay:.12s}
+  html.js .reveal.in > *:nth-child(4){transition-delay:.18s}
+  html.js .reveal.in > *:nth-child(5){transition-delay:.24s}
+  html.js .reveal.in > *:nth-child(6){transition-delay:.3s}
+}

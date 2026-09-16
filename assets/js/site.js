@@ -1,6 +1,7 @@
 /* ==========================================================================
    Lusail Corp — site behaviour.
-   Header, mobile nav, language toggle, the home sector rail, contact form.
+   Language, header, mega menu, home sector rail, company filter,
+   scroll reveal, contact form.
    ========================================================================== */
 
 (function () {
@@ -10,9 +11,8 @@
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
   /* ---------- language ---------------------------------------------------
-     Every translatable node carries its English text as content and its
-     Arabic in data-ar. The first switch stores the English so it can come
-     back. Placeholder-free: if a node has no data-ar it is left alone. */
+     Every translatable node carries English as its content and Arabic in
+     data-ar. The first switch stores the English so it can come back. */
 
   var lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
   var T = function (en, ar) { return lang === 'ar' ? ar : en; };
@@ -32,6 +32,7 @@
       btn.textContent = l === 'ar' ? 'English' : 'عربي';
       btn.setAttribute('aria-label', l === 'ar' ? 'Switch to English' : 'التبديل إلى العربية');
     }
+    if (typeof refreshCount === 'function') refreshCount();
     try { localStorage.setItem('lc-lang', l); } catch (e) {}
   }
 
@@ -61,21 +62,60 @@
     });
   }
 
+  /* ---------- mega menu ---------------------------------------------------
+     Opens on hover and on keyboard focus; closes on leave, Escape, or focus
+     moving out. Never opens on touch, where the link should just navigate. */
+
+  var mega = $('#mega'), megaLink = $('[data-mega]');
+  if (mega && megaLink && window.matchMedia('(hover: hover)').matches) {
+    var closeTimer;
+    var openMega = function () {
+      clearTimeout(closeTimer);
+      mega.hidden = false;
+      megaLink.setAttribute('aria-expanded', 'true');
+    };
+    var closeMega = function (now) {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(function () {
+        mega.hidden = true;
+        megaLink.setAttribute('aria-expanded', 'false');
+      }, now ? 0 : 140);
+    };
+
+    megaLink.addEventListener('mouseenter', openMega);
+    megaLink.addEventListener('focus', openMega);
+    megaLink.addEventListener('mouseleave', function () { closeMega(); });
+    mega.addEventListener('mouseenter', openMega);
+    mega.addEventListener('mouseleave', function () { closeMega(); });
+    mega.addEventListener('focusin', openMega);
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !mega.hidden) { closeMega(true); megaLink.focus(); }
+    });
+    document.addEventListener('focusin', function (e) {
+      if (!mega.hidden && !mega.contains(e.target) && e.target !== megaLink) closeMega(true);
+    });
+  }
+
   /* ---------- home: sector rail ------------------------------------------
-     Move across the rail and the photograph, heading, line and link change.
-     This replaces the folded-diamond graphic: the interaction is the same,
-     but it now reveals the business rather than animating the logo. */
+     Move across the rail and the photograph, heading, companies and link
+     change. Replaces the folded-diamond graphic: same interaction, pointed
+     at the business rather than at the logo. */
 
   var stage = $('#stage'), rail = $('#rail');
   if (stage && rail) {
+    var SECTORS = window.LC_SECTORS || [];
     var shots = $$('.shot', stage);
     var buttons = $$('button', rail);
-    var sNum = $('#sNum'), sName = $('#sName'), sDesc = $('#sDesc'), sLink = $('#sLink');
+    var sNum = $('#sNum'), sName = $('#sName'), sDesc = $('#sDesc'),
+        sCos = $('#sCos'), sLink = $('#sLink');
     var total = buttons.length;
 
-    // The copy comes from data/site.js, emitted by the build as LC_SECTORS,
-    // so sector wording lives in exactly one place.
-    var SECTORS = window.LC_SECTORS || [];
+    function setBi(el, en, ar) {
+      el.dataset.en = en;
+      if (ar) el.dataset.ar = ar;
+      el.textContent = T(en, ar || en);
+    }
 
     function pick(i) {
       var d = SECTORS[i];
@@ -85,16 +125,16 @@
       buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.i) === i)); });
 
       sNum.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+      setBi(sName, d.name, d.nameAr);
+      setBi(sDesc, d.short, d.shortAr);
 
-      sName.dataset.ar = d.sectorAr;
-      sName.dataset.en = d.sector;
-      sName.textContent = T(d.sector, d.sectorAr);
+      // Naming the companies inside is the point of the two-tier structure:
+      // the reader sees immediately that a sector can hold more than one.
+      var namesEn = d.companies.map(function (c) { return c.name; }).join('  ·  ');
+      var namesAr = d.companies.map(function (c) { return c.nameAr || c.name; }).join('  ·  ');
+      setBi(sCos, namesEn, namesAr);
 
-      sDesc.dataset.ar = d.shortAr;
-      sDesc.dataset.en = d.short;
-      sDesc.textContent = T(d.short, d.shortAr);
-
-      sLink.setAttribute('href', '/companies/' + d.slug + '/');
+      sLink.setAttribute('href', '/sectors/' + d.slug + '/');
     }
 
     rail.addEventListener('click', function (e) {
@@ -106,6 +146,92 @@
     rail.addEventListener('focusin', function (e) {
       var b = e.target.closest('button'); if (b) pick(Number(b.dataset.i));
     });
+
+    pick(0);
+  }
+
+  /* ---------- company filter ---------------------------------------------
+     One list of every company, sliced by sector without a page reload. */
+
+  var grid = $('#coGrid'), countEl = $('#count'), emptyEl = $('#empty');
+  var refreshCount;
+
+  if (grid) {
+    var chips = $$('.chip');
+    var cards = $$('.card', grid);
+    var active = 'all';
+
+    refreshCount = function () {
+      var shown = cards.filter(function (c) { return !c.hidden; }).length;
+      var label = chips.filter(function (c) { return c.dataset.filter === active; })[0];
+      var secEn = '', secAr = '';
+      if (label && active !== 'all') {
+        var sp = label.querySelector('span');
+        secEn = ' in ' + (sp.dataset.en || sp.textContent);
+        secAr = ' في ' + (sp.dataset.ar || sp.textContent);
+      }
+      var en = active === 'all'
+        ? 'Showing all ' + shown + ' companies'
+        : 'Showing ' + shown + (shown === 1 ? ' company' : ' companies') + secEn;
+      var ar = active === 'all'
+        ? 'عرض جميع الشركات (' + shown + ')'
+        : 'عرض ' + shown + (shown === 1 ? ' شركة' : ' شركات') + secAr;
+      countEl.dataset.en = en;
+      countEl.dataset.ar = ar;
+      countEl.textContent = T(en, ar);
+    };
+
+    var filter = function (slug) {
+      active = slug;
+      cards.forEach(function (c) {
+        c.hidden = !(slug === 'all' || c.dataset.sector === slug);
+      });
+      chips.forEach(function (c) {
+        c.setAttribute('aria-pressed', String(c.dataset.filter === slug));
+      });
+      var shown = cards.filter(function (c) { return !c.hidden; }).length;
+      if (emptyEl) emptyEl.hidden = shown > 0;
+      refreshCount();
+
+      // Keep the URL shareable: /companies/?sector=food
+      try {
+        var u = new URL(location.href);
+        if (slug === 'all') u.searchParams.delete('sector');
+        else u.searchParams.set('sector', slug);
+        history.replaceState(null, '', u);
+      } catch (e) {}
+    };
+
+    chips.forEach(function (c) {
+      c.addEventListener('click', function () { filter(c.dataset.filter); });
+    });
+
+    // Honour ?sector= on load, so a filtered view can be linked to.
+    var initial = 'all';
+    try {
+      var s = new URLSearchParams(location.search).get('sector');
+      if (s && chips.some(function (c) { return c.dataset.filter === s; })) initial = s;
+    } catch (e) {}
+    if (initial !== 'all') filter(initial);
+  }
+
+  /* ---------- scroll reveal -----------------------------------------------
+     Groups fade up as they arrive. The CSS only applies this while JS is
+     running and never under prefers-reduced-motion, so content is always
+     readable; if IntersectionObserver is missing everything is shown at once. */
+
+  var reveals = $$('.reveal');
+  if (reveals.length) {
+    if (!('IntersectionObserver' in window)) {
+      reveals.forEach(function (r) { r.classList.add('in'); });
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      reveals.forEach(function (r) { io.observe(r); });
+    }
   }
 
   /* ---------- contact form -----------------------------------------------
