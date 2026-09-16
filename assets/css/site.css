@@ -8,27 +8,27 @@
    are shown as contained stills on their own white, because that is what
    they are.
 
-   COLOUR: green is not the site colour. It is in the logo and in the footer.
-   Everything else is ink and gold on a warm-neutral paper.
+   COLOUR: the deep navy is not a background colour. It anchors the footer and
+   sets the type colour; everything else is gold on white and pale grey.
    ========================================================================== */
 
 :root{
-  --green:#03260A;          /* logo + footer only */
-  --gold:#BC9640;
-  --gold-deep:#6B5217;      /* gold that passes contrast on paper */
-  --gold-soft:#D9C28C;      /* gold that reads on the footer */
+  --navy:#030C2B;          /* footer, and the colour all type is set in */
+  --gold:#D3A750;
+  --gold-deep:#8A6A24;      /* gold that passes contrast on paper */
+  --gold-soft:#E3C68E;      /* gold that reads on the footer */
 
-  --paper:#FBFBF9;
-  --stone:#F1F1ED;
-  --ink:#15171A;
-  --ink-2:#5B6167;
-  --ink-3:#8A9097;
-  --line:#E0E0DA;
-  --sand:#F7F3EA;          /* warm band, used by the values section */
-  --line-2:#CBCBC3;
+  --paper:#FFFFFF;
+  --stone:#F2F1F0;
+  --ink:#030C2B;
+  --ink-2:#4A5268;
+  --ink-3:#6E7488;
+  --line:#D0CECC;
+  --sand:#F9F4EA;          /* warm band, used by the values section */
+  --line-2:#B6B3B0;
 
-  --on-dark:#F2F3F1;
-  --on-dark-2:#A8AEAB;
+  --on-dark:#F4F5F8;
+  --on-dark-2:#A7AEC2;
   --line-dark:rgba(255,255,255,.16);
 
   --display:"Marcellus","Optima","Candara",Georgia,serif;
@@ -36,7 +36,7 @@
   --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 
   /* one type scale, one size per role */
-  --t-display:clamp(2.6rem, 6.4vw, 5.4rem);
+  --t-display:clamp(2.1rem, min(5.2vw, 7.6vh), 4.5rem);
   --t-h1:clamp(2.2rem, 4.6vw, 3.6rem);
   --t-h2:clamp(1.7rem, 3vw, 2.5rem);
   --t-h3:clamp(1.3rem, 2.2vw, 1.75rem);
@@ -81,7 +81,7 @@ html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3{font-weight:500;line-he
 .skip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .skip:focus{
   position:fixed;inset-inline-start:0;top:0;width:auto;height:auto;clip-path:none;overflow:visible;
-  background:var(--gold);color:#1A1405;padding:12px 18px;z-index:100;
+  background:var(--gold);color:#0A1020;padding:12px 18px;z-index:100;
 }
 
 /* ---------- micro label: one face, one size, everywhere ----------------- */
@@ -114,8 +114,8 @@ html[lang="ar"] .role .meta{
   text-decoration:none;border:1px solid transparent;cursor:pointer;
   transition:background .2s,color .2s,border-color .2s;
 }
-.btn-gold{background:var(--gold);color:#1A1405}
-.btn-gold:hover{background:#A57F2E;color:#fff}
+.btn-gold{background:var(--gold);color:#0A1020}
+.btn-gold:hover{background:#B98C34;color:#fff}
 .btn-ink{border-color:var(--line-2);color:var(--ink)}
 .btn-ink:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 .btn-line{border-color:var(--line-dark);color:var(--on-dark)}
@@ -132,8 +132,13 @@ html[lang="ar"] .role .meta{
 .sec-head{margin-bottom:clamp(34px,5vw,58px)}
 .sec-head h2{font-size:var(--t-h2);max-width:22ch}
 .sec-head .lede{margin-top:18px}
-.sec-head.row{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap}
+.sec-head.row{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:clamp(24px,4vw,56px);flex-wrap:wrap;
+}
 .sec-head.row > div{flex:1 1 28ch}
+.sec-head.row > .lede{flex:1 1 30ch;max-width:44ch;padding-top:.4em}
+.sec-head.row > .btn{flex:none;align-self:flex-end}
 
 /* ==========================================================================
    Header — light, so the page opens on paper rather than a dark slab
@@ -183,7 +188,7 @@ html[lang="ar"] .lang{font-family:var(--body)}
 /* mega menu, on paper */
 .mega{
   position:absolute;inset-inline:0;top:100%;background:var(--paper);
-  border-bottom:1px solid var(--line);box-shadow:0 20px 40px rgba(20,22,24,.09);z-index:39;
+  border-bottom:1px solid var(--line);box-shadow:0 20px 40px rgba(3,12,43,.10);z-index:39;
 }
 .mega-in{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));
@@ -211,7 +216,7 @@ html[lang="ar"] .lang{font-family:var(--body)}
 .opener .op-meta a:hover{text-decoration:underline}
 .crumb{color:var(--gold-deep);margin-bottom:20px;display:block}
 
-.hero{padding-block:clamp(64px,9vw,148px) clamp(48px,6vw,88px)}
+.hero{padding-block:clamp(44px,5vw,88px) clamp(36px,4vw,64px)}
 .hero h1{font-size:var(--t-display);max-width:16ch}
 .hero .lede{margin-top:30px;max-width:52ch}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
@@ -335,18 +340,8 @@ html[lang="ar"] .facts dd{font-weight:500;font-size:1.1rem}
 .caps b{font-weight:600;display:block;font-size:1.06rem}
 .caps span{color:var(--ink-2);font-size:.97rem;display:block;margin-top:4px;max-width:58ch}
 
-/* the four things the group provides */
-.pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line-2)}
-.pillar{padding:clamp(26px,3vw,38px) clamp(24px,3vw,44px) clamp(26px,3vw,38px) 0;border-bottom:1px solid var(--line)}
-.pillar:nth-child(even){padding-inline:clamp(24px,3vw,44px) 0;border-inline-start:1px solid var(--line)}
-.pillar h3{font-size:1.32rem;margin:14px 0 12px}
-.pillar p{color:var(--ink-2);font-size:.98rem;max-width:44ch}
-.pillar .n{color:var(--gold-deep)}
-@media (max-width:700px){
-  .pillars{grid-template-columns:1fr}
-  .pillar,.pillar:nth-child(even){padding-inline:0;border-inline-start:0}
-}
-
+/* the four things the group provides — same component as the values, so the
+   two four-up grids on the site share one alignment and one hover */
 /* small company list inside an aside */
 .mini{list-style:none;margin:0;padding:0;display:grid}
 .mini li + li{border-top:1px solid var(--line)}
@@ -420,7 +415,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 textarea{min-height:140px;resize:vertical}
 .form-end{grid-column:1/-1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .status{color:var(--gold-deep);font-size:.94rem}
-.status.err{color:#9B3412}
+.status.err{color:#A3341A}
 @media (max-width:560px){ form{grid-template-columns:1fr} }
 
 /* ==========================================================================
@@ -432,7 +427,7 @@ textarea{min-height:140px;resize:vertical}
 .cta h2{font-size:var(--t-h2);max-width:18ch}
 .cta p{color:var(--ink-2);margin-top:12px;max-width:44ch}
 
-.site-foot{background:var(--green);color:var(--on-dark);padding-block:clamp(52px,6vw,78px) 30px}
+.site-foot{background:var(--navy);color:var(--on-dark);padding-block:clamp(52px,6vw,78px) 30px}
 .foot-grid{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));gap:32px}
 @media (max-width:900px){ .foot-grid{grid-template-columns:1fr 1fr} }
 @media (max-width:540px){ .foot-grid{grid-template-columns:1fr} }
@@ -460,16 +455,17 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Hero — type on one side, the Kufic mark on the other
-   The ground is a soft warm wash rather than flat white, and the mark drifts
-   almost imperceptibly so the opening is not a dead rectangle.
+   Hero — type on one side, a photograph on the other
+   The ground is a soft warm wash rather than flat white. Nothing here is
+   derived from the logo, so the opening survives a rebrand.
    ========================================================================== */
 
 .hero{
   position:relative;overflow:hidden;
+  display:grid;align-content:center;
   background:
-    radial-gradient(120% 90% at 88% 18%, rgba(188,150,64,.10) 0%, rgba(188,150,64,0) 58%),
-    radial-gradient(90% 80% at 0% 100%, rgba(3,38,10,.05) 0%, rgba(3,38,10,0) 60%),
+    radial-gradient(120% 90% at 88% 18%, rgba(211,167,80,.13) 0%, rgba(211,167,80,0) 58%),
+    radial-gradient(90% 80% at 0% 100%, rgba(3,12,43,.05) 0%, rgba(3,12,43,0) 60%),
     linear-gradient(175deg, var(--stone) 0%, var(--paper) 46%);
   border-bottom:1px solid var(--line);
 }
@@ -490,21 +486,21 @@ textarea{min-height:140px;resize:vertical}
   position:absolute;inset-inline-start:0;bottom:-2px;
   background:var(--paper);padding:12px 18px 0 0;color:var(--ink-3);
 }
-@media (max-width:820px){
-  .hero .wrap{grid-template-columns:1fr;gap:32px}
-  .hero-shot img{aspect-ratio:4/3}
-  .hero h1{max-width:none}
+/* header + hero is exactly one screen, so the whole opening is visible
+   without scrolling. As a grid item the wrap needs an explicit width or it
+   shrinks to its text and its auto margins push the copy off the gutter. */
+@media (min-width:821px){
+  .hero{min-height:calc(100vh - var(--head-h))}
+  @supports (height:100svh){ .hero{min-height:calc(100svh - var(--head-h))} }
+  .hero-shot img{max-height:calc(100svh - var(--head-h) - 180px)}
 }
+.hero > .wrap{width:100%}
 
-/* the Kufic mark, now beside the About copy */
-.about-mark{width:clamp(120px,15vw,190px);margin-bottom:26px}
-.about-mark img{width:100%;height:auto}
-@media (prefers-reduced-motion:no-preference){
-  .about-mark{animation:drift 15s ease-in-out infinite}
-}
-@keyframes drift{
-  0%,100%{transform:translateY(0) rotate(0deg)}
-  50%{transform:translateY(-10px) rotate(-1.2deg)}
+@media (max-width:820px){
+  .hero{min-height:0}
+  .hero .wrap{grid-template-columns:1fr;gap:32px}
+  .hero-shot img{aspect-ratio:4/3;max-height:none}
+  .hero h1{max-width:none}
 }
 
 /* ==========================================================================
@@ -522,10 +518,10 @@ textarea{min-height:140px;resize:vertical}
 .marquee::before,.marquee::after{
   content:"";position:absolute;top:0;bottom:0;width:clamp(28px,7vw,110px);z-index:2;pointer-events:none;
 }
-.marquee::before{inset-inline-start:0;background:linear-gradient(to right,var(--paper),rgba(251,251,249,0))}
-.marquee::after{inset-inline-end:0;background:linear-gradient(to left,var(--paper),rgba(251,251,249,0))}
-html[dir="rtl"] .marquee::before{background:linear-gradient(to left,var(--paper),rgba(251,251,249,0))}
-html[dir="rtl"] .marquee::after{background:linear-gradient(to right,var(--paper),rgba(251,251,249,0))}
+.marquee::before{inset-inline-start:0;background:linear-gradient(to right,var(--paper),rgba(255,255,255,0))}
+.marquee::after{inset-inline-end:0;background:linear-gradient(to left,var(--paper),rgba(255,255,255,0))}
+html[dir="rtl"] .marquee::before{background:linear-gradient(to left,var(--paper),rgba(255,255,255,0))}
+html[dir="rtl"] .marquee::after{background:linear-gradient(to right,var(--paper),rgba(255,255,255,0))}
 
 .track{display:flex;width:max-content;gap:clamp(14px,1.6vw,22px)}
 @media (prefers-reduced-motion:no-preference){
@@ -534,38 +530,50 @@ html[dir="rtl"] .marquee::after{background:linear-gradient(to right,var(--paper)
 }
 @keyframes slide{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
+/* pointing at the cards, or tabbing into them, stops the motion */
 .marquee:hover .track,
-.marquee:focus-within .track,
-.marquee[data-paused="true"] .track{animation-play-state:paused}
+.marquee:focus-within .track{animation-play-state:paused}
 
 .mcard{
-  flex:none;width:clamp(232px,23vw,304px);
-  background:var(--paper);border:1px solid var(--line);
+  flex:none;width:clamp(250px,25vw,330px);
   text-decoration:none;display:flex;flex-direction:column;
-  transition:border-color .25s,transform .25s;
+  transition:transform .35s cubic-bezier(.2,.7,.3,1);
 }
-.mcard:hover{border-color:var(--gold);transform:translateY(-4px)}
-.mcard .pic{aspect-ratio:4/3;overflow:hidden;background:#fff}
-.mcard .pic img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
-.mcard:hover .pic img{transform:scale(1.04)}
-.mcard .body{padding:18px clamp(15px,1.6vw,20px) 20px;display:grid;gap:7px;flex:1;align-content:start}
-.mcard h3{font-size:1.28rem}
-.mcard .sub{color:var(--ink-2);font-size:.93rem;line-height:1.5}
-.mcard .meta{color:var(--gold-deep);margin-top:auto;padding-top:10px}
+.mcard:hover{transform:translateY(-6px)}
 
-/* the control sits with the section heading, not floating over the cards */
-.marquee-ctl{
-  all:unset;box-sizing:border-box;cursor:pointer;flex:none;
-  display:inline-flex;align-items:center;gap:.55em;
-  padding:.6em 1em;border:1px solid var(--line-2);border-radius:2px;
-  font:500 .86rem/1 var(--body);color:var(--ink-2);
-  transition:border-color .2s,color .2s;
+.mcard .pic{
+  position:relative;aspect-ratio:4/3;overflow:hidden;background:#fff;
 }
-.marquee-ctl:hover{border-color:var(--ink);color:var(--ink)}
-.marquee-ctl:focus-visible{outline:2px solid var(--gold-deep);outline-offset:2px}
-.marquee-ctl .ico{width:9px;height:11px;flex:none;background:currentColor;
-  clip-path:polygon(0 0,3px 0,3px 100%,0 100%,0 0,6px 0,9px 0,9px 100%,6px 100%)}
-.marquee-ctl[aria-pressed="true"] .ico{clip-path:polygon(0 0,9px 50%,0 100%)}
+.mcard .pic img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .7s cubic-bezier(.2,.7,.3,1);
+}
+.mcard:hover .pic img{transform:scale(1.06)}
+
+/* the index sits on the image as a small paper chip */
+.mcard .n{
+  position:absolute;inset-inline-start:0;top:0;z-index:2;
+  background:var(--paper);color:var(--gold-deep);
+  padding:8px 12px 7px;
+}
+
+.mcard .body{
+  padding:18px 0 0;display:grid;gap:8px;flex:1;align-content:start;
+  border-top:1px solid var(--line);transition:border-color .3s;
+}
+.mcard:hover .body{border-color:var(--gold)}
+.mcard h3{font-size:1.32rem;transition:color .25s}
+.mcard:hover h3{color:var(--gold-deep)}
+.mcard .meta{color:var(--gold-deep)}
+.mcard .sub{color:var(--ink-2);font-size:.94rem;line-height:1.55}
+.mcard .go{
+  margin-top:6px;display:inline-flex;align-items:center;gap:.5em;
+  color:var(--ink);font-size:.9rem;font-weight:500;
+}
+.mcard .go::after{content:"→";transition:transform .3s}
+html[dir="rtl"] .mcard .go::after{content:"←"}
+.mcard:hover .go::after{transform:translateX(5px)}
+html[dir="rtl"] .mcard:hover .go::after{transform:translateX(-5px)}
 
 /* Reduced motion: no animation, no clones, just a grid that wraps. */
 @media (prefers-reduced-motion:reduce){
@@ -574,7 +582,6 @@ html[dir="rtl"] .marquee::after{background:linear-gradient(to right,var(--paper)
   .track{width:auto;flex-wrap:wrap;animation:none}
   .track [aria-hidden="true"]{display:none}
   .mcard{width:clamp(220px,30%,320px);flex:1 1 260px}
-  .marquee-ctl{display:none}
 }
 
 /* ==========================================================================
@@ -589,25 +596,87 @@ html[dir="rtl"] .marquee::after{background:linear-gradient(to right,var(--paper)
 /* the second line of the heading carries a gold block, so the section has
    one deliberate moment of colour and the rest stays quiet */
 .mark{
-  background:var(--gold);color:#1A1405;
+  background:var(--gold);color:#0A1020;
   padding:.04em .3em .1em;
   box-decoration-break:clone;-webkit-box-decoration-break:clone;
 }
 
 .vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,1.6vw,22px)}
-@media (max-width:1000px){ .vgrid{grid-template-columns:repeat(2,1fr)} }
-@media (max-width:600px){ .vgrid{grid-template-columns:1fr} }
+.vgrid.two{grid-template-columns:repeat(2,1fr)}
+@media (max-width:1000px){ .vgrid,.vgrid.two{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:600px){ .vgrid,.vgrid.two{grid-template-columns:1fr} }
 
 .vcard{
-  background:var(--paper);border:1px solid var(--line);border-top:2px solid var(--gold);
+  background:#fff;border:1px solid var(--line);border-top:2px solid var(--gold);
   padding:clamp(22px,2.4vw,30px) clamp(20px,2.2vw,28px) clamp(26px,2.8vw,34px);
   display:grid;gap:10px;align-content:start;position:relative;
   transition:transform .25s,box-shadow .25s;
 }
-.vcard:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(20,22,24,.06)}
+.vcard:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(3,12,43,.08)}
+.vcard h3{transition:color .25s}
+.vcard:hover h3{color:var(--gold-deep)}
 .vcard .n{
   font-family:var(--display);font-size:clamp(2.4rem,3.4vw,3.2rem);line-height:1;
   color:var(--gold);opacity:.26;margin-bottom:4px;letter-spacing:.01em;
 }
 .vcard h3{font-size:1.16rem}
 .vcard p{color:var(--ink-2);font-size:.96rem;line-height:1.6}
+
+/* ==========================================================================
+   Components introduced with the real content
+   ========================================================================== */
+
+.section.sand{background:var(--sand)}
+.lede-2{margin-top:16px}
+.lead-para{font-size:var(--t-lede);color:var(--ink);max-width:58ch;line-height:1.55}
+
+/* three-up variant of the numbered cards, for six-item sets */
+.vgrid.three{grid-template-columns:repeat(3,1fr)}
+@media (max-width:1000px){ .vgrid.three{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:600px){ .vgrid.three{grid-template-columns:1fr} }
+
+/* a ticked list, for the growth section */
+.micro-head{
+  font-family:var(--mono);font-size:var(--t-micro);font-weight:500;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--gold-deep);
+  padding-bottom:16px;border-bottom:1px solid var(--line-2);
+}
+html[lang="ar"] .micro-head{font-family:var(--body);letter-spacing:0;text-transform:none;font-size:.85rem}
+.ticks{list-style:none;margin:0;padding:0;display:grid}
+.ticks li{
+  padding:15px 0 15px 30px;border-bottom:1px solid var(--line);
+  color:var(--ink-2);font-size:.99rem;position:relative;
+}
+html[dir="rtl"] .ticks li{padding:15px 30px 15px 0}
+.ticks li::before{
+  content:"";position:absolute;inset-inline-start:2px;top:1.45em;
+  width:9px;height:9px;border:1px solid var(--gold);
+}
+
+/* vision / mission, side by side */
+.vm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(32px,5vw,80px)}
+@media (max-width:820px){ .vm-grid{grid-template-columns:1fr} }
+.vm h2{font-size:clamp(1.4rem,2.2vw,1.85rem);line-height:1.22;margin-bottom:18px;max-width:22ch}
+.vm p{color:var(--ink-2);max-width:48ch}
+
+/* activity / value tags */
+.tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.tags li{
+  border:1px solid var(--line-2);padding:.65em 1.1em;
+  font-size:.93rem;color:var(--ink-2);border-radius:2px;
+  transition:border-color .2s,color .2s;
+}
+.tags li:hover{border-color:var(--gold);color:var(--ink)}
+.tags.big li{font-family:var(--display);font-size:1.12rem;color:var(--ink);padding:.7em 1.3em}
+
+/* a portrait figure beside body copy */
+.port-fig{margin:0}
+.port-fig img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;background:var(--stone)}
+.port-fig figcaption{padding-top:12px;color:var(--ink-3);font-size:.88rem}
+
+/* the closing call to action carries two buttons */
+.cta-actions{display:flex;gap:12px;flex-wrap:wrap}
+
+/* a sector with no company yet */
+.soon{font-size:.93rem;color:var(--ink-3);font-style:italic}
+.mcard .noimg{display:block;width:100%;height:100%;background:var(--sand)}
