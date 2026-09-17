@@ -35,10 +35,11 @@ const SITE = {
      derived from its shape, so swapping these files re-brands the site.
      Paths are relative to site-assets/logo/. */
   brand: {
-    /* Navy on the paper header: the lockup's silver C under-reads on white at
-       header size, so the single-colour cut is the legible one. Reversed on the
-       navy footer — the lockup the brand sheet itself shows on dark. */
-    logoOnLight: 'lusail-corp-horizontal-navy.svg',
+    /* The full-colour lockup on the paper header and the reversed one on the
+       navy footer — the two cuts the brand sheet itself shows. The header sits
+       on the warm paper ground rather than pure white, which is kinder to the
+       silver C. */
+    logoOnLight: 'lusail-corp-horizontal-full-color.svg',
     logoOnDark: 'lusail-corp-horizontal-reversed.svg',
     logoWidth: 564, logoHeight: 142,
     faviconSvg: 'favicon.svg',
