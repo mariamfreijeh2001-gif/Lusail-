@@ -150,7 +150,7 @@ html[lang="ar"] .role .meta{
 }
 .head-row{display:flex;align-items:center;gap:clamp(18px,3vw,40px);height:var(--head-h)}
 .brand{display:flex;align-items:center;flex:none;text-decoration:none}
-.brand img{height:34px;width:auto}
+.brand img{height:46px;width:auto}
 .nav{display:flex;gap:clamp(16px,2.2vw,32px);margin-inline-start:auto}
 .nav a{
   text-decoration:none;font-size:.95rem;color:var(--ink-2);
@@ -183,6 +183,7 @@ html[lang="ar"] .lang{font-family:var(--body)}
   .nav a[aria-current="page"]::after{display:none}
   .menu-btn{display:block}
   .head-tools{margin-inline-start:auto}
+  .brand img{height:40px}
 }
 
 /* mega menu, on paper */
