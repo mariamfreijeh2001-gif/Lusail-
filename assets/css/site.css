@@ -993,3 +993,7 @@ html[lang="ar"] .factstrip dd{font-weight:500;font-size:1.02rem}
 /* beside body copy the square still runs taller than the text it sits next
    to; 4:3 evens the two columns. The image is contained, so nothing crops. */
 .co-aside .still img{aspect-ratio:4/3}
+
+/* beside a company's copy the portrait ran far taller than the text; the 4:3
+   crop keeps the two columns close in height */
+.co-aside .port-fig img{aspect-ratio:4/3}

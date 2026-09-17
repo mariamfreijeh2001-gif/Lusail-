@@ -85,7 +85,10 @@ const SECTORS = [
     bodyAr: [
       'من خلال مفاهيم مثل مغسلة كافالو، نسعى إلى بناء شركات خدمات موثوقة قادرة على تكوين علاقات قوية مع عملائها.'
     ],
-    photo: null, photoStyle: 'none',
+    /* Supplied by the client. Swap lifestyle-wide.jpg / -card.jpg to change it. */
+    photo: 'lifestyle', photoStyle: 'plate',
+    photoCaption: 'Garment care for everyday Qatari life.',
+    photoCaptionAr: 'العناية بالملابس في الحياة القطرية اليومية.',
     companies: [
       {
         slug: 'cavallo-laundry',
@@ -111,7 +114,7 @@ const SECTORS = [
           { k: 'Market', kAr: 'السوق', v: 'Qatar', vAr: 'قطر' }
         ],
         cta: 'Visit Cavallo Laundry', ctaAr: 'زيارة مغسلة كافالو',
-        photo: null, photoStyle: 'none'
+        photo: 'lifestyle', photoStyle: 'plate'
       }
     ]
   },
@@ -181,7 +184,7 @@ const SECTORS = [
     ],
     /* Container ship at berth, from the supplied folder. Swap the file at
        site-assets/img/port-wide.jpg and port-card.jpg to change the picture. */
-    photo: 'port', photoStyle: 'plate',
+    photo: 'shipping', photoStyle: 'plate',
     photoCaption: 'Containerised cargo arriving into the Qatar market.',
     photoCaptionAr: 'بضائع بالحاويات تصل إلى السوق القطري.',
     companies: [

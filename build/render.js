@@ -749,7 +749,12 @@ ${body}
       </div>
     </div>
     ${hasPhoto(c) ? `<div class="co-aside">
-      ${still(c.photo, c.short, c.shortAr)}
+      ${c.photoStyle === 'still'
+      ? still(c.photo, c.short, c.shortAr)
+      : `<figure class="port-fig">
+        <img src="/assets/img/${c.photo}-card.jpg" alt="${esc(c.name)}" width="1000" height="750" loading="lazy">
+        <figcaption${t(c.short, c.shortAr)}>${esc(c.short)}</figcaption>
+      </figure>`}
       <a class="btn btn-gold" href="/contact/?company=${c.slug}"${t(c.cta, c.ctaAr)}>${esc(c.cta)}</a>
     </div>` : ''}
   </div>
