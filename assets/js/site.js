@@ -217,6 +217,29 @@
       status.textContent = msg;
     };
 
+    /* Build a mailto the visitor can simply send. Keeps the enquiry alive
+       while CONTACT_ENDPOINT is empty. */
+    var handOff = function () {
+      var to = form.getAttribute('data-mailto');
+      if (!to) { say(T('Please email us directly.', 'يرجى مراسلتنا مباشرة.'), true); return; }
+      var f = {};
+      new FormData(form).forEach(function (v, k) { f[k] = v; });
+      var subject = T('Website enquiry', 'استفسار من الموقع') + (f.area ? ' \u2014 ' + f.area : '');
+      var lines = [
+        T('Name', 'الاسم') + ': ' + (f.name || ''),
+        T('Company', 'الشركة') + ': ' + (f.company || ''),
+        T('Email', 'البريد الإلكتروني') + ': ' + (f.email || ''),
+        T('Phone', 'الهاتف') + ': ' + (f.phone || ''),
+        T('Area of interest', 'مجال الاهتمام') + ': ' + (f.area || ''),
+        '', (f.message || '')
+      ].join('\n');
+      window.location.href = 'mailto:' + to +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(lines);
+      say(T('Opening your email app to send this to us.',
+            'يتم فتح تطبيق البريد لديك لإرسال الرسالة إلينا.'));
+    };
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -233,7 +256,10 @@
       }
 
       var sent = T('Message sent. We reply within two working days.', 'تم إرسال الرسالة. نرد خلال يومي عمل.');
-      if (!CONTACT_ENDPOINT) { say(sent); form.reset(); return; }
+
+      /* No endpoint yet. Rather than confirm a send that did not happen,
+         hand the message to the visitor's mail client, already filled in. */
+      if (!CONTACT_ENDPOINT) { handOff(); return; }
 
       var btn = form.querySelector('button[type="submit"]');
       btn.disabled = true;

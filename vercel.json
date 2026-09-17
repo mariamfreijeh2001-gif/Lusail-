@@ -3,5 +3,45 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": true
+  "trailingSlash": true,
+  "redirects": [
+    { "source": "/home", "destination": "/", "permanent": true },
+    { "source": "/index", "destination": "/", "permanent": true },
+
+    { "source": "/about-us", "destination": "/about", "permanent": true },
+    { "source": "/who-we-are", "destination": "/about", "permanent": true },
+    { "source": "/our-companies", "destination": "/companies", "permanent": true },
+    { "source": "/subsidiaries", "destination": "/companies", "permanent": true },
+    { "source": "/our-sectors", "destination": "/sectors", "permanent": true },
+    { "source": "/our-business", "destination": "/sectors", "permanent": true },
+    { "source": "/partnership", "destination": "/partnerships", "permanent": true },
+    { "source": "/contact-us", "destination": "/contact", "permanent": true },
+    { "source": "/jobs", "destination": "/careers", "permanent": true },
+    { "source": "/vacancies", "destination": "/careers", "permanent": true },
+
+    { "source": "/sector/:slug", "destination": "/sectors/:slug", "permanent": true },
+    { "source": "/company/:slug", "destination": "/companies/:slug", "permanent": true },
+
+    { "source": "/sectors/coffee", "destination": "/sectors/food-beverage", "permanent": true },
+    { "source": "/sectors/food", "destination": "/sectors/food-beverage", "permanent": true },
+    { "source": "/sectors/food-supply", "destination": "/sectors/supply-distribution", "permanent": true },
+    { "source": "/sectors/distribution", "destination": "/sectors/supply-distribution", "permanent": true },
+    { "source": "/sectors/logistics", "destination": "/sectors/supply-distribution", "permanent": true },
+    { "source": "/sectors/shipping", "destination": "/sectors/supply-distribution", "permanent": true },
+    { "source": "/sectors/contracting", "destination": "/sectors", "permanent": true },
+    { "source": "/sectors/energy", "destination": "/sectors", "permanent": true },
+
+    { "source": "/companies/lusail-coffee", "destination": "/companies/nero-cafe", "permanent": true },
+    { "source": "/companies/lusail-foods", "destination": "/companies/roma-commercial", "permanent": true },
+    { "source": "/companies/lusail-commodities", "destination": "/companies/lusail-commercial", "permanent": true },
+    { "source": "/companies/lusail-distribution", "destination": "/companies/lusail-commercial", "permanent": true },
+    { "source": "/companies/lusail-shipping", "destination": "/companies/lusail-commercial", "permanent": true },
+    { "source": "/companies/lusail-contracting", "destination": "/companies", "permanent": true },
+    { "source": "/companies/lusail-energy", "destination": "/companies", "permanent": true },
+
+    { "source": "/news", "destination": "/", "permanent": true },
+    { "source": "/news/:path*", "destination": "/", "permanent": true },
+    { "source": "/media", "destination": "/", "permanent": true },
+    { "source": "/press", "destination": "/", "permanent": true }
+  ]
 }

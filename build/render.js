@@ -41,6 +41,18 @@ const t = (en, ar) => ar ? ` data-ar="${esc(ar)}"` : '';
 /* The logo appears only where a logo belongs — header, footer, favicon — and
    never as a decorative element the layout is built around, so the design
    survives a rebrand. Filenames come from SITE.brand. */
+/* A social link is only rendered once it points somewhere. While the
+   handles are unset the row simply is not there, rather than being a
+   link to '#'. */
+const social = () => [
+  ['LinkedIn', 'لينكدإن', SITE.contact.linkedin],
+  ['Instagram', 'إنستغرام', SITE.contact.instagram]
+]
+  .filter(([, , href]) => href && href !== '#')
+  .map(([en, ar, href]) =>
+    `          <li><a href="${href}"${t(en, ar)}>${en}</a></li>`)
+  .join('\n');
+
 const B = SITE.brand;
 const logoImg = file =>
   `<img src="/assets/logo/${file}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
@@ -209,8 +221,7 @@ ${cos}
       <div>
         <h4 data-ar="تواصل">Connect</h4>
         <ul>
-          <li><a href="${SITE.contact.linkedin}">LinkedIn</a></li>
-          <li><a href="${SITE.contact.instagram}">Instagram</a></li>
+${social()}
           <li><a href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></li>
           <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a></li>
           <li><span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span></li>
@@ -1108,7 +1119,7 @@ function pageContact() {
         <div><dt data-ar="التوجيه">Routing</dt><dd data-ar="اختر مجال الاهتمام وسنحوّل رسالتك إلى القسم المختص.">Pick an area of interest and we route your message to the right desk.</dd></div>
       </dl>
     </div>
-    <form id="form" novalidate>
+    <form id="form" novalidate data-mailto="${SITE.contact.email}">
       <div class="field"><label for="fName" data-ar="الاسم الكامل">Full Name</label><input id="fName" name="name" autocomplete="name" required></div>
       <div class="field"><label for="fCompany" data-ar="الشركة">Company</label><input id="fCompany" name="company" autocomplete="organization"></div>
       <div class="field"><label for="fMail" data-ar="البريد الإلكتروني">Email Address</label><input id="fMail" name="email" type="email" autocomplete="email" required></div>
