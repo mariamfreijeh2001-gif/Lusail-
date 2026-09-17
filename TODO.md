@@ -55,25 +55,33 @@ visitor's mail client with the message prefilled, so no enquiry is lost.
 The live domain is **lusailcorp.com**. It is registered, DNS is managed at
 **HostGator**, and right now it shows a parking error page:
 
-| Host | Points at | State |
+**The site itself is live and correct on Vercel.** Forcing a connection to
+Vercel's IP returns HTTP 200, `Server: Vercel`, a valid certificate and the
+right page. Nothing is wrong with the deployment.
+
+The fault is one bad DNS record. The `www` name at HostGator has **two
+conflicting records at once**:
+
+| Record | Value | Verdict |
 |---|---|---|
-| `lusailcorp.com` | a parking IP (216.150.1.1 / 208.91.197.13) | **wrong** — this is the error page |
-| `www.lusailcorp.com` | `ef2b1ec2f8d15bf2.vercel-dns-016.com` | Vercel CNAME set, but HTTPS does not answer |
+| `www` **CNAME** | `ef2b1ec2f8d15bf2.vercel-dns-016.com` | correct — this is Vercel |
+| `www` **A** | `208.91.197.13` | **delete this** — the old parking IP |
+| `@` **A** | `216.150.1.1` | correct — Vercel, and it 308s to www |
 
-The error page is **not from Vercel** — it is the domain parking page, 195
-bytes of plain HTML with no server header. This will **not** fix itself with
-time. Two steps:
+A name that has a CNAME may not have any other record (RFC 1034 / RFC 2181).
+With both present, resolvers disagree: Google returns the CNAME and reaches
+the real site, while other resolvers return the parking A record and show the
+error page. **This is why Vercel keeps flipping between Configured and Not
+Configured** — its checks land on different answers each time.
 
-1. **Vercel** → Project → Settings → Domains → add both `lusailcorp.com` and
-   `www.lusailcorp.com`. Vercel then shows the exact records to use and issues
-   the TLS certificate automatically once they match. The fact that HTTPS on
-   www times out suggests the domain is not added to the project yet.
-2. **HostGator** → cPanel → Zone Editor for lusailcorp.com:
-   - **Delete** the parking `A` record on `@`.
-   - **Add** `A` on `@` → the IP Vercel shows (currently `76.76.21.21`).
-   - Leave the `www` CNAME alone — that part is already correct.
+### The fix — one action
 
-Allow up to a few hours for propagation after the change.
+**HostGator** → cPanel → Zone Editor → lusailcorp.com → **delete the `A`
+record on `www` that points to `208.91.197.13`.** Keep the CNAME. Change
+nothing else; the apex is already right.
+
+Propagation then takes up to an hour (the zone TTL is 3600s). This will **not**
+resolve on its own while the conflicting record is still there.
 
 Do **not** switch the nameservers to Vercel unless email moves too — the
 mailboxes would go with them.
