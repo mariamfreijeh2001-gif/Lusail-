@@ -29,7 +29,7 @@ const SITE = {
   supportingAr: 'مجموعة واحدة. أعمال متعددة. طموح مشترك.',
   blurb: 'A diversified corporate group based in the State of Qatar.',
   blurbAr: 'مجموعة شركات متنوعة مقرها دولة قطر.',
-  domain: 'https://lusailcorp.com',
+  domain: 'https://www.lusailcorp.com',
 
   /* The logo is an asset, not a design ingredient. Nothing in the layout is
      derived from its shape, so swapping these files re-brands the site.
