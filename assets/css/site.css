@@ -87,7 +87,7 @@ html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3{font-weight:500;line-he
 /* ---------- micro label: one face, one size, everywhere ----------------- */
 
 .micro,.eyebrow,.crumb,.count,.op-meta,.site-foot h4,
-.idx .n,.idx .meta,.stats dt,.caps .n,.aside dt,.factstrip dt,.plate figcaption span,
+.idx .n,.idx .meta,.stats dt,.caps .n,.aside dt,.factstrip dt,
 .mini .n,.role .meta,.chip em,.pillar .n{
   font-family:var(--mono);
   font-size:var(--t-micro);
@@ -98,7 +98,7 @@ html[lang="ar"] h1,html[lang="ar"] h2,html[lang="ar"] h3{font-weight:500;line-he
 }
 html[lang="ar"] .eyebrow,html[lang="ar"] .crumb,html[lang="ar"] .count,
 html[lang="ar"] .op-meta,html[lang="ar"] .site-foot h4,html[lang="ar"] .idx .meta,
-html[lang="ar"] .stats dt,html[lang="ar"] .aside dt,html[lang="ar"] .factstrip dt,html[lang="ar"] .plate figcaption span,
+html[lang="ar"] .stats dt,html[lang="ar"] .aside dt,html[lang="ar"] .factstrip dt,
 html[lang="ar"] .role .meta{
   font-family:var(--body);letter-spacing:0;text-transform:none;font-size:.85rem;
 }
@@ -233,23 +233,10 @@ html[lang="ar"] .lang{font-family:var(--body)}
 
 .plate{margin:0}
 .plate img{width:100%;height:auto;aspect-ratio:21/9;object-fit:cover;background:var(--stone)}
-.plate figcaption{
-  padding-top:14px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
-  align-items:baseline;
-}
-.plate figcaption b{
-  color:var(--ink-2);font-weight:400;font-size:.92rem;font-family:var(--body);
-  max-width:62ch;line-height:1.5;
-}
-.plate figcaption span{color:var(--ink-3);flex:none}
 
 /* contained product still, kept on its own white */
 .still{margin:0;background:#fff;border:1px solid var(--line)}
 .still img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;padding:clamp(14px,2.4vw,30px)}
-.still figcaption{
-  padding:0 clamp(14px,2.4vw,30px) 20px;color:var(--ink-2);
-  font-size:.9rem;line-height:1.5;
-}
 
 /* ==========================================================================
    The sector index — a list you read, not a carousel you operate
@@ -421,6 +408,10 @@ textarea{min-height:140px;resize:vertical}
 .form-end{grid-column:1/-1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .status{color:var(--gold-deep);font-size:.94rem}
 .status.err{color:#A3341A}
+/* Honeypot. Off-screen rather than display:none, and out of the tab order.
+   A person never reaches it, so anything in it came from a bot. */
+.hp{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
 @media (max-width:560px){ form{grid-template-columns:1fr} }
 
 /* ==========================================================================
@@ -486,10 +477,6 @@ textarea{min-height:140px;resize:vertical}
 .hero-shot img{
   width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;
   background:var(--stone);
-}
-.hero-shot figcaption{
-  position:absolute;inset-inline-start:0;bottom:-2px;
-  background:var(--paper);padding:12px 18px 0 0;color:var(--ink-3);
 }
 /* header + hero is exactly one screen, so the whole opening is visible
    without scrolling. As a grid item the wrap needs an explicit width or it
@@ -701,7 +688,6 @@ html[lang="ar"] .micro-head{font-family:var(--body);letter-spacing:0;text-transf
 /* a portrait figure beside body copy */
 .port-fig{margin:0}
 .port-fig img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;background:var(--stone)}
-.port-fig figcaption{padding-top:12px;color:var(--ink-3);font-size:.88rem}
 
 /* the closing call to action carries two buttons */
 .cta-actions{display:flex;gap:12px;flex-wrap:wrap}

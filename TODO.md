@@ -21,41 +21,84 @@ instagram: 'https://www.instagram.com/…',
 
 The links reappear in the footer automatically.
 
-### 2. Contact form delivery — *most important*
-The form previously told visitors *"Message sent"* while sending nothing —
-enquiries were silently lost. It now opens the visitor's email app with the
-message prefilled to `info@lusailcorp.qa`, so nothing disappears.
+### 2. Contact form — set the Resend key in Vercel
 
-That is a stopgap. For a proper form, pick one and give me the endpoint URL:
+The form now posts to [api/contact.js](api/contact.js), which relays through
+Resend. **It needs one environment variable before it can send.**
 
-| Option | Cost | Notes |
+Vercel → Project → Settings → Environment Variables:
+
+| Name | Value | Required |
 |---|---|---|
-| **Formspree** | free tier | Fastest. Sign up, paste the form URL. |
-| **Vercel serverless + Resend** | free tier | Stays on your own domain; I write the function. |
-| **Web3Forms** | free | No account needed, just an access key. |
+| `RESEND_API_KEY` | from resend.com/api-keys | **yes** |
+| `CONTACT_TO` | where enquiries land (defaults to `info@lusailcorp.com`) | no |
+| `CONTACT_FROM` | the From address | no |
 
-It goes into `CONTACT_ENDPOINT` at the top of the form block in
-[assets/js/site.js](assets/js/site.js).
+Add it to **Production, Preview and Development**, then redeploy — env vars are
+read at deploy time, so an existing deployment will not pick it up.
+
+**`CONTACT_FROM` needs a verified domain.** Until lusailcorp.com is verified in
+Resend (Domains → Add → paste the DKIM/SPF records into HostGator), Resend only
+accepts `onboarding@resend.dev`, which is the built-in default. So the form
+works as soon as the key is set, and starts sending from your own domain later
+without a code change.
+
+Until the key exists the form does not pretend to succeed — it opens the
+visitor's mail client with the message prefilled, so no enquiry is lost.
 
 ### 3. Real phone number
 `+974 0000 0000` is a deliberate placeholder, as you asked. Replace `phone` in
 [data/site.js](data/site.js) when the line is live.
 
-### 4. The live domain
-`SITE.domain` is currently `https://lusailcorp.qa`. This is used for canonical
-tags, social preview cards and `sitemap.xml` — **if the real domain differs,
-search engines and link previews will point at the wrong place.** Confirm it.
+### 4. Domain and DNS — blocking launch
 
-### 5. ROMA Commercial has no photograph
+The live domain is **lusailcorp.com**. It is registered, DNS is managed at
+**HostGator**, and right now it shows a parking error page:
+
+| Host | Points at | State |
+|---|---|---|
+| `lusailcorp.com` | a parking IP (216.150.1.1 / 208.91.197.13) | **wrong** — this is the error page |
+| `www.lusailcorp.com` | `ef2b1ec2f8d15bf2.vercel-dns-016.com` | Vercel CNAME set, but HTTPS does not answer |
+
+The error page is **not from Vercel** — it is the domain parking page, 195
+bytes of plain HTML with no server header. This will **not** fix itself with
+time. Two steps:
+
+1. **Vercel** → Project → Settings → Domains → add both `lusailcorp.com` and
+   `www.lusailcorp.com`. Vercel then shows the exact records to use and issues
+   the TLS certificate automatically once they match. The fact that HTTPS on
+   www times out suggests the domain is not added to the project yet.
+2. **HostGator** → cPanel → Zone Editor for lusailcorp.com:
+   - **Delete** the parking `A` record on `@`.
+   - **Add** `A` on `@` → the IP Vercel shows (currently `76.76.21.21`).
+   - Leave the `www` CNAME alone — that part is already correct.
+
+Allow up to a few hours for propagation after the change.
+
+Do **not** switch the nameservers to Vercel unless email moves too — the
+mailboxes would go with them.
+
+### 5. Email does not exist yet
+
+`lusailcorp.com` has **no MX records**, so `info@lusailcorp.com` cannot receive
+anything today. That address is published on every page and is where the
+contact form delivers. Set up a mailbox — HostGator includes email hosting, or
+use Google Workspace / Microsoft 365 — before launch.
+
+> The site previously said **lusailcorp.qa**. That domain is **not registered**
+> at all, so the published email address and every canonical URL pointed
+> nowhere. Both now use lusailcorp.com. If .qa is wanted, register it first.
+
+### 6. ROMA Commercial has no photograph
 Every other company has imagery. ROMA renders in the typographic style, which
 looks deliberate rather than broken, but a photo would balance the set. Food
 distribution, warehousing or packaged goods would fit.
 
-### 6. Careers images are placeholders
+### 7. Careers images are placeholders
 `careers-a.jpg`, `careers-b.jpg`, `careers-c.jpg` are stand-ins to show the
 layout, as agreed. Replace them one at a time — same filenames, no code change.
 
-### 7. Arabic needs a native review
+### 8. Arabic needs a native review
 Every Arabic string on the site is my translation. The structure and RTL
 behaviour are sound, but the **wording should be read by a native speaker**
 before launch, particularly the company descriptions and the value statements.

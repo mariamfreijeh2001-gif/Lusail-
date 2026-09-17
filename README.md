@@ -140,11 +140,19 @@ Split the line into sibling spans instead — see the values heading.
 
 ## Contact form
 
-Validates in the browser and, by default, **sends nothing**. To make it live,
-set `CONTACT_ENDPOINT` in [assets/js/site.js](assets/js/site.js) to a URL that
-accepts a JSON `POST`. The payload carries the whole form including `area`, the
-dropdown value, so enquiries can be routed to the right company. On failure it
-tells the visitor to email `info@lusailcorp.qa` instead.
+Validates in the browser, then `POST`s the whole form as JSON to
+`CONTACT_ENDPOINT` — [api/contact.js](api/contact.js), a Vercel serverless
+function that relays through Resend. The payload carries `area`, the dropdown
+value, so an enquiry can be routed to the right company; the function turns
+that code into the company's real name and puts it in the subject line.
+
+The function needs `RESEND_API_KEY` set in the Vercel project. `CONTACT_TO`
+and `CONTACT_FROM` are optional overrides.
+
+If the key is missing, or the request fails for any reason, the form does
+**not** claim success. It opens the visitor's mail client with the message
+already filled in, addressed to `info@lusailcorp.com`, so an enquiry is never
+silently lost.
 
 ## Deploying
 

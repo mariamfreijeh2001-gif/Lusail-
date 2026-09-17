@@ -207,7 +207,10 @@
      Set CONTACT_ENDPOINT to a URL that accepts a JSON POST to make this live.
      While it is empty the form validates and confirms but sends nothing. */
 
-  var CONTACT_ENDPOINT = '';
+  /* The serverless function in api/contact.js, which relays through Resend.
+     If it is unreachable the form falls back to the visitor's mail client,
+     so an enquiry is never simply lost. */
+  var CONTACT_ENDPOINT = '/api/contact';
 
   var form = $('#form');
   if (form) {
@@ -277,8 +280,11 @@
         if (!res.ok) throw new Error(res.status);
         say(sent); form.reset();
       }).catch(function () {
-        say(T('We could not send that. Please email info@lusailcorp.qa instead.',
-              'تعذّر الإرسال. يرجى مراسلتنا على info@lusailcorp.qa.'), true);
+        /* Do not make them retype it — open their mail client with the
+           message already filled in. */
+        say(T('We could not send that. Opening your email app instead.',
+              'تعذّر الإرسال. يتم فتح تطبيق البريد لديك.'), true);
+        setTimeout(handOff, 900);
       }).then(function () {
         btn.disabled = false;
       });

@@ -254,29 +254,25 @@ function opener({ crumb, crumbAr, h1, h1Ar, lede, ledeAr, meta }) {
 `;
 }
 
-function plate(photo, caption, captionAr, credit) {
+/* The caption text is kept, as alt. It describes the picture for anyone who
+   cannot see it, without printing a credit line under the photograph. */
+function plate(photo, caption) {
   return `<figure class="plate">
       <img src="/assets/img/${photo}-wide.jpg" alt="${esc(caption)}" width="2400" height="1029" loading="lazy">
-      <figcaption>
-        <b${t(caption, captionAr)}>${esc(caption)}</b>
-        ${credit ? `<span${t(credit.en, credit.ar)}>${esc(credit.en)}</span>` : ''}
-      </figcaption>
     </figure>`;
 }
 
-function still(photo, caption, captionAr) {
+function still(photo, caption) {
   return `<figure class="still">
         <img src="/assets/img/${photo}-still.jpg" alt="${esc(caption)}" width="1100" height="1100" loading="lazy">
-        <figcaption${t(caption, captionAr)}>${esc(caption)}</figcaption>
       </figure>`;
 }
 
 // Renders whichever treatment the source photograph deserves, or nothing.
-function figureFor(o, credit) {
+function figureFor(o) {
   if (!hasPhoto(o)) return '';
   const cap = o.photoCaption || o.short;
-  const capAr = o.photoCaptionAr || o.shortAr;
-  return o.photoStyle === 'still' ? still(o.photo, cap, capAr) : plate(o.photo, cap, capAr, credit);
+  return o.photoStyle === 'still' ? still(o.photo, cap) : plate(o.photo, cap);
 }
 
 /* A process, read across. Used once, for what the Group does. */
@@ -564,7 +560,6 @@ ${GROWTH.map(g => `        <li>${icon(g.icon)}<span${t(g.t, g.tAr)}>${esc(g.t)}<
     </div>
     <figure class="port-fig">
       <img src="/assets/img/doha-tall.jpg" alt="Doha, Qatar" width="1000" height="1333" loading="lazy">
-      <figcaption data-ar="الدوحة، دولة قطر">Doha, State of Qatar</figcaption>
     </figure>
   </div>
 </section>
@@ -644,7 +639,6 @@ function pageAbout() {
     </div>
     <figure class="port-fig">
       <img src="/assets/img/approach-tall.jpg" alt="Group management at work" width="1000" height="1333" loading="lazy">
-      <figcaption data-ar="إدارة المجموعة تلتقي بكل شركة تشغيلية بانتظام.">Group management meets each operating company regularly.</figcaption>
     </figure>
   </div>
 </section>
@@ -764,7 +758,6 @@ ${body}
       ? still(c.photo, c.short, c.shortAr)
       : `<figure class="port-fig">
         <img src="/assets/img/${c.photo}-card.jpg" alt="${esc(c.name)}" width="1000" height="750" loading="lazy">
-        <figcaption${t(c.short, c.shortAr)}>${esc(c.short)}</figcaption>
       </figure>`}
       <a class="btn btn-gold" href="/contact/?company=${c.slug}"${t(c.cta, c.ctaAr)}>${esc(c.cta)}</a>
     </div>` : ''}
@@ -897,7 +890,7 @@ function pageSector(s, i) {
     // product shot is contained in the aside instead
     + (hasPhoto(s) && s.photoStyle === 'plate' ? `<section class="section tight">
   <div class="wrap">
-    ${plate(s.photo, s.photoCaption || s.short, s.photoCaptionAr || s.shortAr, { en: s.name, ar: s.nameAr })}
+    ${plate(s.photo, s.photoCaption || s.short)}
   </div>
 </section>
 
@@ -911,7 +904,7 @@ ${body}
       </div>
     </div>
     <div class="aside">
-      ${hasPhoto(s) && s.photoStyle === 'still' ? still(s.photo, s.photoCaption || s.short, s.photoCaptionAr || s.shortAr) : ''}
+      ${hasPhoto(s) && s.photoStyle === 'still' ? still(s.photo, s.photoCaption || s.short) : ''}
       ${n ? `<h3 data-ar="شركة المحفظة">Portfolio ${n === 1 ? 'company' : 'companies'}</h3>
       <ol class="mini">
 ${s.companies.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span class="n">${num(k)}</span><span><b${t(c.name, c.nameAr)}>${esc(c.name)}</b><em${t(c.role, c.roleAr)}>${esc(c.role)}</em></span></a></li>`).join('\n')}
@@ -1120,6 +1113,10 @@ function pageContact() {
       </dl>
     </div>
     <form id="form" novalidate data-mailto="${SITE.contact.email}">
+      <div class="hp" aria-hidden="true">
+        <label for="fSite">Website</label>
+        <input id="fSite" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <div class="field"><label for="fName" data-ar="الاسم الكامل">Full Name</label><input id="fName" name="name" autocomplete="name" required></div>
       <div class="field"><label for="fCompany" data-ar="الشركة">Company</label><input id="fCompany" name="company" autocomplete="organization"></div>
       <div class="field"><label for="fMail" data-ar="البريد الإلكتروني">Email Address</label><input id="fMail" name="email" type="email" autocomplete="email" required></div>
