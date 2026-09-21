@@ -20,7 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const {
-  SITE, SECTORS, ALL_COMPANIES,
+  SITE, REACH, WHY, SECTORS, ALL_COMPANIES,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH,
   PARTNER_TYPES, CAREER_VALUES, OPEN_ROLES
 } = require('../data/site.js');
@@ -500,6 +500,30 @@ ${rows.map(r => `    <div><dd${t(r.v, r.vAr)}>${esc(r.v)}</dd><dt class="micro"$
 
 /* ---------- pages ------------------------------------------------------ */
 
+/* The markets the Group reaches. A list of places wants to read as a list of
+   places, so this is a plain two-column register with a rule between rows —
+   not another set of cards. */
+function reachList() {
+  return `<dl class="reach">
+${REACH.map(x => `      <div>
+        <dt${t(x.t, x.tAr)}>${esc(x.t)}</dt>
+        <dd${t(x.d, x.dAr)}>${esc(x.d)}</dd>
+      </div>`).join('\n')}
+    </dl>`;
+}
+
+/* Four statements about the Group, set as an ordered argument rather than a
+   grid of tiles. */
+function whyList() {
+  return `<div class="why">
+${WHY.map((x, i) => `      <section>
+        <span class="why-n" aria-hidden="true">${num(i)}</span>
+        <h3${t(x.t, x.tAr)}>${esc(x.t)}</h3>
+        <p${t(x.d, x.dAr)}>${esc(x.d)}</p>
+      </section>`).join('\n')}
+    </div>`;
+}
+
 function pageHome() {
   return head({
     title: `${SITE.name} · ${SITE.tagline}`,
@@ -555,6 +579,32 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
     </div>
   </div>
   ${sectorMarquee()}
+</section>
+
+<section class="section" aria-labelledby="whyTitle">
+  <div class="wrap">
+    <div class="sec-head row">
+      <div>
+        <span class="eyebrow" data-ar="لماذا لوسيل كورب">Why Lusail Corp</span>
+        <h2 id="whyTitle" data-ar="ما الذي يجعلها مجموعة">What makes it a group</h2>
+      </div>
+      <p class="lede" data-ar="الشركات التي نملكها متنوعة. أما طريقة إدارتها فليست كذلك.">The businesses we own are varied. The way they are run is not.</p>
+    </div>
+    ${whyList()}
+  </div>
+</section>
+
+<section class="section stone" aria-labelledby="reachTitle">
+  <div class="wrap">
+    <div class="sec-head row">
+      <div>
+        <span class="eyebrow" data-ar="الامتداد الدولي">Global Reach</span>
+        <h2 id="reachTitle" data-ar="من أين نورّد">Where we source from</h2>
+      </div>
+      <p class="lede" data-ar="ليست كل سلعة تأتي من كل بلد. يُختار المنشأ حسب المنتج والموسم والجودة والتوافر وشروط الصفقة.">Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.</p>
+    </div>
+    ${reachList()}
+  </div>
 </section>
 
 <section class="section" aria-labelledby="wwdTitle">
@@ -739,6 +789,52 @@ ${companyIndex(ALL_COMPANIES)}
     + footer();
 }
 
+/* The widest crop that exists for a photograph. Not every picture was cut at
+   every size, so ask the disk rather than assume. */
+function wideSrc(photo) {
+  const wide = path.join(ROOT, 'site-assets/img', photo + '-wide.jpg');
+  return '/assets/img/' + photo + (fs.existsSync(wide) ? '-wide' : '-card') + '.jpg';
+}
+
+/* A company's opening. Which one it gets is named in data/site.js, so a new
+   company picks a template rather than inheriting the last one's. */
+function companyHero(c, sector) {
+  const variant = c.template || 'left-aligned';
+  const img = hasPhoto(c) ? wideSrc(c.photo) : null;
+  if (!img) return '';
+
+  const label = `<a class="co-sector" href="/sectors/${sector.slug}/"${t(sector.name, sector.nameAr)}>${esc(sector.name)}</a>`;
+  const title = `<h1${t(c.name, c.nameAr)}>${esc(c.name)}</h1>`;
+  const sub = `<p class="co-head-lede"${t(c.headline, c.headlineAr)}>${esc(c.headline)}</p>`;
+
+  if (variant === 'split') {
+    return `<section class="co-head co-split">
+  <div class="co-split-text">
+    ${label}
+    ${title}
+    ${sub}
+  </div>
+  <div class="co-split-shot"><img src="${img}" alt="" width="2400" height="1029" fetchpriority="high"></div>
+</section>
+
+`;
+  }
+
+  const cls = variant === 'fullscreen' ? 'co-full'
+    : variant === 'compact' ? 'co-compact' : 'co-left';
+
+  return `<section class="co-head ${cls}">
+  <img class="co-head-bg" src="${img}" alt="" width="2400" height="1029" fetchpriority="high">
+  <div class="wrap">
+    ${label}
+    ${title}
+    ${sub}
+  </div>
+</section>
+
+`;
+}
+
 function pageCompany(c, sector) {
   const body = c.body.map((p, k) => `        <p${t(p, c.bodyAr && c.bodyAr[k])}>${esc(p)}</p>`).join('\n');
 
@@ -781,12 +877,12 @@ ${c.activities.map((a, k) => `      <li${t(a, c.activitiesAr && c.activitiesAr[k
     image: hasPhoto(c) ? `${c.photo}-${c.photoStyle === 'still' ? 'still' : 'wide'}.jpg` : undefined
   })
     + header('/companies/')
-    + opener({
+    + (hasPhoto(c) ? companyHero(c, sector) : opener({
       crumb: sector.name, crumbAr: sector.nameAr,
       h1: c.name, h1Ar: c.nameAr,
       lede: c.headline, ledeAr: c.headlineAr,
       meta: `<span${t(c.role, c.roleAr)}>${esc(c.role)}</span> &middot; <a href="/sectors/${sector.slug}/"${t(sector.name, sector.nameAr)}>${esc(sector.name)}</a>`
-    })
+    }))
     + `<section class="section tight">
   <div class="wrap${hasPhoto(c) ? ' split' : ''}">
     <div>

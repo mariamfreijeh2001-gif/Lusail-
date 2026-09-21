@@ -96,6 +96,7 @@ const SECTORS = [
     companies: [
       {
         slug: 'cavallo-laundry',
+        template: 'split',
         name: 'Cavallo Laundry', nameAr: 'مغسلة كافالو',
         role: 'Professional Garment & Textile Care', roleAr: 'العناية الاحترافية بالملابس والمنسوجات',
         headline: 'Professional Laundry & Garment Care',
@@ -144,6 +145,7 @@ const SECTORS = [
     companies: [
       {
         slug: 'nero-cafe',
+        template: 'fullscreen',
         name: 'Nero Café', nameAr: 'نيرو كافيه',
         role: 'Coffee. Experience. Community.', roleAr: 'قهوة. تجربة. مجتمع.',
         headline: 'A Coffee Concept Built Around Experience',
@@ -194,6 +196,7 @@ const SECTORS = [
     companies: [
       {
         slug: 'roma-commercial',
+        template: 'left-aligned',
         name: 'ROMA Commercial', nameAr: 'روما التجارية',
         role: 'Food Import & Distribution', roleAr: 'استيراد وتوزيع الأغذية',
         headline: 'From Global Farms to Qatar\u2019s Market',
@@ -254,6 +257,7 @@ const SECTORS = [
     companies: [
       {
         slug: 'lusail-commercial',
+        template: 'compact',
         /* Defined here, in its primary sector. It also operates in supply and
            distribution, so it is cross-listed there too. */
         alsoIn: ['supply-distribution'],
@@ -443,8 +447,42 @@ SECTORS.forEach(s => {
   if (extra.length) s.companies = s.companies.concat(extra);
 });
 
+/* The markets the Group sources from today, through Lusail Commercial. Not
+   every commodity comes from every country: the origin is chosen per product,
+   per season and per set of terms. */
+const REACH = [
+  { t: 'Middle East', tAr: 'الشرق الأوسط',
+    d: 'Qatar · UAE · Türkiye · Lebanon', dAr: 'قطر · الإمارات · تركيا · لبنان' },
+  { t: 'Europe & Black Sea', tAr: 'أوروبا والبحر الأسود',
+    d: 'Ukraine · Bulgaria · Spain', dAr: 'أوكرانيا · بلغاريا · إسبانيا' },
+  { t: 'Asia & Central Asia', tAr: 'آسيا وآسيا الوسطى',
+    d: 'India · Indonesia · Vietnam · Singapore · Turkmenistan · Kazakhstan', dAr: 'الهند · إندونيسيا · فيتنام · سنغافورة · تركمانستان · كازاخستان' },
+  { t: 'Africa', tAr: 'إفريقيا',
+    d: 'Ethiopia · Uganda · Libya', dAr: 'إثيوبيا · أوغندا · ليبيا' },
+  { t: 'The Americas', tAr: 'الأمريكتان',
+    d: 'Canada · United States · Brazil · Colombia', dAr: 'كندا · الولايات المتحدة · البرازيل · كولومبيا' },
+  { t: 'Oceania', tAr: 'أوقيانوسيا',
+    d: 'Australia', dAr: 'أستراليا' }
+];
+
+/* What the Group is, as distinct from the businesses inside it. */
+const WHY = [
+  { t: 'One group, not a holding list', tAr: 'مجموعة واحدة، لا قائمة ملكيات',
+    d: 'The businesses are run as parts of one group. Sourcing, logistics and commercial relationships developed in one company are available to the others.',
+    dAr: 'تُدار الأعمال كأجزاء من مجموعة واحدة. فالتوريد والخدمات اللوجستية والعلاقات التجارية التي تبنيها إحدى الشركات متاحة لبقيتها.' },
+  { t: 'Trade and logistics together', tAr: 'التجارة واللوجستيات معاً',
+    d: 'Buying a commodity and moving it are one question, not two. Holding both means an enquiry can be answered with the origin, the specification and the route at once.',
+    dAr: 'شراء السلعة ونقلها سؤال واحد لا سؤالان. وامتلاك الاثنين معاً يعني أن الاستفسار يُجاب بالمنشأ والمواصفات والمسار في آنٍ واحد.' },
+  { t: 'Built on the Qatar market', tAr: 'مبنية على السوق القطري',
+    d: 'Every business here serves demand we can see directly — households, kitchens, retailers and wholesalers in Qatar — before it looks further out.',
+    dAr: 'كل عمل هنا يخدم طلباً نراه مباشرة — المنازل والمطابخ وتجار التجزئة والجملة في قطر — قبل أن ينظر إلى أبعد من ذلك.' },
+  { t: 'Room to add', tAr: 'مساحة للإضافة',
+    d: 'The sector names are deliberately broad. They describe where we operate now and leave room for what the Group takes on next.',
+    dAr: 'أسماء القطاعات واسعة عن قصد. فهي تصف موقعنا الحالي وتترك مساحة لما ستتولاه المجموعة لاحقاً.' }
+];
+
 module.exports = {
-  SITE, SECTORS, ALL_COMPANIES,
+  SITE, SECTORS, ALL_COMPANIES, REACH, WHY,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH,
   PARTNER_TYPES, CAREER_VALUES, OPEN_ROLES
 };
