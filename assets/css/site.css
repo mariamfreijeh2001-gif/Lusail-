@@ -1,38 +1,41 @@
 /* ==========================================================================
    Lusail Corp — site stylesheet
 
-   DIRECTION: editorial and typographic.
-   Type and white space carry the page. Photography appears only where it is
-   genuinely strong, as a deliberate full-width plate with a caption beneath
-   it — never as a dark scrim with text dropped on top. Cutout product shots
-   are shown as contained stills on their own white, because that is what
-   they are.
+   DIRECTION: dark and editorial, on the pattern of the reference the client
+   chose. The page is navy throughout; photography sits on it as full-bleed
+   plates and tiles rather than being framed on white. Type is Playfair
+   Display over Raleway.
 
-   COLOUR: the deep navy is not a background colour. It anchors the footer and
-   sets the type colour; everything else is gold on white and pale grey.
+   COLOUR: navy at three depths — --navy anchors the header, hero and footer,
+   --paper is the page, --stone and --sand lift panels off it. Gold is the
+   single accent. Every component draws its ground from a token, which is what
+   lets the whole site change key at once.
    ========================================================================== */
 
 :root{
-  --navy:#030C2B;          /* footer, and the colour all type is set in */
+  /* Three depths of navy rather than one. --navy is the deepest and anchors
+     the header, the hero and the footer; --paper is the page itself; --stone
+     and --sand lift a panel off it. */
+  --navy:#030C2B;
   --gold:#D3A750;
-  --gold-deep:#8A6A24;      /* gold that passes contrast on paper */
-  --gold-soft:#E3C68E;      /* gold that reads on the footer */
+  --gold-deep:#E6CC96;      /* was the gold that held on white; on navy it lifts */
+  --gold-soft:#E3C68E;
 
-  --paper:#FFFFFF;
-  --stone:#F2F1F0;
-  --ink:#030C2B;
-  --ink-2:#4A5268;
-  --ink-3:#6E7488;
-  --line:#D0CECC;
-  --sand:#F9F4EA;          /* warm band, used by the values section */
-  --line-2:#B6B3B0;
+  --paper:#070F2A;          /* the page ground */
+  --stone:#0D1739;          /* a panel lifted off it */
+  --ink:#F4F5F8;            /* body type */
+  --ink-2:#BAC2D6;
+  --ink-3:#98A1BC;
+  --line:rgba(255,255,255,.13);
+  --sand:#111B3E;           /* the band that used to be cream */
+  --line-2:rgba(255,255,255,.26);
 
   --on-dark:#F4F5F8;
   --on-dark-2:#A7AEC2;
   --line-dark:rgba(255,255,255,.16);
 
-  --display:"Marcellus","Optima","Candara",Georgia,serif;
-  --body:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --display:"Playfair Display","Marcellus",Georgia,serif;
+  --body:"Raleway","Segoe UI",system-ui,-apple-system,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 
   /* one type scale, one size per role */
@@ -48,7 +51,7 @@
   --gutter:clamp(20px,5vw,56px);
   --band:clamp(68px,9vw,132px);
 
-  color-scheme:light;
+  color-scheme:dark;
 }
 
 html[lang="ar"]{
@@ -145,7 +148,7 @@ html[lang="ar"] .role .meta{
    ========================================================================== */
 
 .site-head{
-  position:sticky;top:0;z-index:40;background:var(--paper);
+  position:sticky;top:0;z-index:40;background:var(--navy);
   border-bottom:1px solid var(--line);
 }
 .head-row{display:flex;align-items:center;gap:clamp(18px,3vw,40px);height:var(--head-h)}
@@ -234,7 +237,8 @@ html[lang="ar"] .lang{font-family:var(--body)}
 .plate{margin:0}
 .plate img{width:100%;height:auto;aspect-ratio:21/9;object-fit:cover;background:var(--stone)}
 
-/* contained product still, kept on its own white */
+/* Contained product still, still on white. These photographs have white
+   baked into them, so a navy card would just frame a white rectangle. */
 .still{margin:0;background:#fff;border:1px solid var(--line)}
 .still img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;padding:clamp(14px,2.4vw,30px)}
 
@@ -451,48 +455,54 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Hero — type on one side, a photograph on the other
-   The ground is a soft warm wash rather than flat white. Nothing here is
-   derived from the logo, so the opening survives a rebrand.
+   Hero — the name centred over a full-bleed photograph
+   Two scrims rather than one: a flat wash holding the whole frame down and a
+   radial darkening the middle, so the type always sits on the darkest part of
+   the picture no matter where the photograph is bright.
    ========================================================================== */
 
 .hero{
-  position:relative;overflow:hidden;
-  display:grid;align-content:center;
-  background:
-    radial-gradient(120% 90% at 88% 18%, rgba(211,167,80,.13) 0%, rgba(211,167,80,0) 58%),
-    radial-gradient(90% 80% at 0% 100%, rgba(3,12,43,.05) 0%, rgba(3,12,43,0) 60%),
-    linear-gradient(175deg, var(--stone) 0%, var(--paper) 46%);
+  position:relative;overflow:hidden;isolation:isolate;
+  display:grid;align-content:center;justify-items:center;text-align:center;
+  background:var(--navy);
   border-bottom:1px solid var(--line);
+  padding-block:clamp(72px,10vw,132px);
 }
-.hero .wrap{
-  position:relative;z-index:2;
-  display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
-  gap:clamp(30px,5vw,76px);align-items:center;
+.hero-bg{
+  position:absolute;inset:0;z-index:-2;
+  width:100%;height:100%;object-fit:cover;
 }
-.hero h1{max-width:14ch}
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(78% 68% at 50% 46%, rgba(3,12,43,.58) 0%, rgba(3,12,43,.84) 62%, rgba(3,12,43,.93) 100%),
+    linear-gradient(180deg, rgba(3,12,43,.55) 0%, rgba(3,12,43,.40) 42%, rgba(3,12,43,.80) 100%);
+}
+.hero > .wrap{
+  position:relative;z-index:1;width:100%;max-width:980px;
+  display:grid;justify-items:center;
+}
+.hero .crumb{color:var(--gold)}
+.hero h1{max-width:18ch;margin-top:18px;color:#fff;text-wrap:balance}
+.hero .lede{margin-top:26px;max-width:58ch;color:var(--on-dark-2)}
+.hero .hero-cta{justify-content:center;gap:0;margin-top:44px}
 
-/* the hero photograph sits beside the type, never behind it */
-.hero-shot{position:relative}
-.hero-shot img{
-  width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;
-  background:var(--stone);
+/* the two buttons meet, as they do in the reference, instead of floating apart */
+.hero .hero-cta .btn{border-radius:0}
+
+/* flat translucent button, for use over a photograph */
+.btn-ghost{
+  background:rgba(255,255,255,.10);color:#fff;
+  border:1px solid rgba(255,255,255,.34);
 }
-/* header + hero is exactly one screen, so the whole opening is visible
-   without scrolling. As a grid item the wrap needs an explicit width or it
-   shrinks to its text and its auto margins push the copy off the gutter. */
+.btn-ghost:hover{background:rgba(255,255,255,.20);border-color:rgba(255,255,255,.62)}
+
 @media (min-width:821px){
   .hero{min-height:calc(100vh - var(--head-h))}
   @supports (height:100svh){ .hero{min-height:calc(100svh - var(--head-h))} }
-  .hero-shot img{max-height:calc(100svh - var(--head-h) - 180px)}
 }
-.hero > .wrap{width:100%}
-
-@media (max-width:820px){
-  .hero{min-height:0}
-  .hero .wrap{grid-template-columns:1fr;gap:32px}
-  .hero-shot img{aspect-ratio:4/3;max-height:none}
-  .hero h1{max-width:none}
+@media (max-width:620px){
+  .hero .hero-cta{flex-direction:column;align-items:stretch;width:100%;max-width:330px;gap:10px}
 }
 
 /* ==========================================================================
@@ -534,7 +544,7 @@ html[dir="rtl"] .marquee::after{background:linear-gradient(to right,var(--paper)
 .mcard:hover{transform:translateY(-6px)}
 
 .mcard .pic{
-  position:relative;aspect-ratio:4/3;overflow:hidden;background:#fff;
+  position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--stone);
 }
 .mcard .pic img{
   width:100%;height:100%;object-fit:cover;
@@ -601,7 +611,7 @@ html[dir="rtl"] .mcard:hover .go::after{transform:translateX(-5px)}
 @media (max-width:600px){ .vgrid,.vgrid.two{grid-template-columns:1fr} }
 
 .vcard{
-  background:#fff;border:1px solid var(--line);border-top:2px solid var(--gold);
+  background:var(--stone);border:1px solid var(--line);border-top:2px solid var(--gold);
   padding:clamp(22px,2.4vw,30px) clamp(20px,2.2vw,28px) clamp(26px,2.8vw,34px);
   display:grid;gap:10px;align-content:start;position:relative;
   transition:transform .25s,box-shadow .25s;

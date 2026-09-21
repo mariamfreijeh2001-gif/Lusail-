@@ -129,7 +129,7 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/site.css">
 
 <script>
@@ -173,7 +173,7 @@ function header(current) {
 
   return `<header class="site-head" id="top">
   <div class="wrap head-row">
-    <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_DARK}</a>
+    <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_LIGHT}</a>
     <nav class="nav" id="nav" aria-label="Main">
 ${links}
     </nav>
@@ -460,20 +460,15 @@ function pageHome() {
   })
     + header('/')
     + `<section class="hero">
+  <img class="hero-bg" src="/assets/img/skyline-tall.jpg" alt="" width="1000" height="1333" fetchpriority="high">
   <div class="wrap">
-    <div>
       <span class="crumb"${t(SITE.name + ' — ' + SITE.supporting, SITE.nameAr + ' — ' + SITE.supportingAr)}>${esc(SITE.name)} — ${esc(SITE.supporting)}</span>
       <h1${t(SITE.tagline, SITE.taglineAr)}>${esc(SITE.tagline)}</h1>
       <p class="lede" data-ar="لوسيل كورب مجموعة شركات قطرية متنوعة، تبني وتدير وتدعم أعمالاً في قطاعات متعددة.">Lusail Corp is a Qatar-based diversified corporate group building, operating and supporting businesses across multiple sectors.</p>
-      <p class="lede lede-2" data-ar="من خدمات المستهلك والأغذية والمشروبات إلى التوزيع التجاري والتجارة الدولية، تجمع محفظتنا طموحاً واحداً: بناء أعمال قوية لها أسس تنمو عليها.">From consumer services and food &amp; beverage to commercial distribution and international trade, our portfolio is united by one ambition: to build strong businesses with the foundations to grow.</p>
-      <div class="hero-cta">
+            <div class="hero-cta">
         <a class="btn btn-gold" href="/companies/" data-ar="استكشف شركاتنا">Explore Our Companies</a>
-        <a class="btn btn-ink" href="/about/" data-ar="تعرّف على لوسيل كورب">Discover Lusail Corp</a>
+        <a class="btn btn-ghost" href="/about/" data-ar="تعرّف على لوسيل كورب">Discover Lusail Corp</a>
       </div>
-    </div>
-    <figure class="hero-shot">
-      <img src="/assets/img/skyline-tall.jpg" alt="Lusail, Qatar" width="1000" height="1333" fetchpriority="high">
-    </figure>
   </div>
 </section>
 
