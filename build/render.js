@@ -164,29 +164,77 @@ ${s.companies.length
       </div>`;
 }
 
-function header(current) {
-  const links = SITE.nav.map(n => {
-    const on = current === n.href ? ' aria-current="page"' : '';
-    const mega = n.mega ? ' data-mega="1" aria-haspopup="true" aria-expanded="false"' : '';
-    return `      <a href="${n.href}"${on}${mega}${t(n.label, n.labelAr)}>${esc(n.label)}</a>`;
-  }).join('\n');
+const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg>`;
 
-  return `<header class="site-head" id="top">
-  <div class="wrap head-row">
-    <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_LIGHT}</a>
-    <nav class="nav" id="nav" aria-label="Main">
-${links}
+/* The left drawer: every sector, opening to the companies inside it. */
+function sectorsDrawer() {
+  return `<aside class="drawer drawer-l" id="sectorsDrawer" aria-label="Sectors" hidden>
+  <div class="drawer-in">
+    <button class="drawer-x" type="button" data-close>
+      <span aria-hidden="true">&times;</span><span data-ar="القطاعات">Sectors</span>
+    </button>
+    <nav class="dnav">
+${SECTORS.map(s => `      <div class="dcat">
+        <button class="dcat-btn" type="button" aria-expanded="false">
+          ${icon(SECTOR_ICON[s.slug] || 'sectors')}
+          <span${t(s.name, s.nameAr)}>${esc(s.name)}</span>
+          <span class="chev" aria-hidden="true"></span>
+        </button>
+        <div class="dcat-panel"><div>
+          <a class="dlink dlink-all" href="/sectors/${s.slug}/"${t('All of ' + s.name, 'كل ' + s.nameAr)}>All of ${esc(s.name)}</a>
+${s.companies.length
+    ? s.companies.map(co => `          <a class="dlink" href="/companies/${co.slug}/"${t(co.name, co.nameAr)}>${esc(co.name)}</a>`).join('\n')
+    : `          <span class="dlink soon" data-ar="قيد التطوير">In development</span>`}
+        </div></div>
+      </div>`).join('\n')}
     </nav>
-    <div class="head-tools">
-      <button class="lang" id="langBtn" type="button" aria-label="Switch language">عربي</button>
-      <a class="btn btn-gold" href="/contact/" data-ar="تواصل معنا">Contact</a>
-      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
-        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h20M3 13h20M3 18h20"/></svg>
-      </button>
+  </div>
+</aside>`;
+}
+
+/* The right drawer: everything that is not a sector. */
+function corporateDrawer() {
+  const links = [
+    ['Home', 'الرئيسية', '/'],
+    ['About Us', 'من نحن', '/about/'],
+    ['Our Companies', 'شركاتنا', '/companies/'],
+    ['Partnerships', 'الشراكات', '/partnerships/'],
+    ['Careers', 'الوظائف', '/careers/'],
+    ['Contact', 'تواصل معنا', '/contact/']
+  ];
+  return `<aside class="drawer drawer-r" id="corpDrawer" aria-label="Corporate" hidden>
+  <div class="drawer-in">
+    <button class="drawer-x" type="button" data-close>
+      <span data-ar="الشركة">Corporate</span><span aria-hidden="true">&times;</span>
+    </button>
+    <nav class="dnav">
+${links.map(([en, ar, href]) => `      <a class="dlink dlink-lg" href="${href}"${t(en, ar)}>${esc(en)}</a>`).join('\n')}
+    </nav>
+    <div class="drawer-foot">
+      <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
+      <a href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a>
+      <span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span>
     </div>
   </div>
-${megaMenu()}
+</aside>`;
+}
+
+function header(current) {
+  return `<header class="site-head" id="top">
+  <button class="head-btn" type="button" id="sectorsBtn" aria-expanded="false" aria-controls="sectorsDrawer">
+    ${BURGER}<span data-ar="القطاعات">Sectors</span>
+  </button>
+  <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_LIGHT}</a>
+  <div class="head-right">
+    <button class="lang" id="langBtn" type="button" aria-label="Switch language">عربي</button>
+    <button class="head-btn" type="button" id="corpBtn" aria-expanded="false" aria-controls="corpDrawer">
+      <span data-ar="الشركة">Corporate</span>${BURGER}
+    </button>
+  </div>
 </header>
+<div class="scrim" id="scrim" hidden></div>
+${sectorsDrawer()}
+${corporateDrawer()}
 <main id="main">
 `;
 }

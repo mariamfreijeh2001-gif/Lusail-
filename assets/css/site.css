@@ -1053,3 +1053,105 @@ html[dir="rtl"] .tile::after{transform-origin:right}
   .tile img,.tile::after{transition:none}
   .tile:hover img,.tile:focus-visible img{transform:none}
 }
+
+/* ==========================================================================
+   Header and drawers — two words and the mark
+   The bar carries SECTORS on one side and CORPORATE on the other, with the
+   lockup centred between them. Everything else lives in the two panels.
+   ========================================================================== */
+
+.site-head{
+  /* above the scrim so the other drawer button stays clickable while one
+     panel is open, but below the panels themselves so they cover the bar */
+  position:sticky;top:0;z-index:75;background:var(--navy);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;height:var(--head-h);padding-inline:var(--gutter);
+}
+.site-head .brand{position:absolute;left:50%;transform:translateX(-50%)}
+.site-head .brand img{height:44px}
+.head-right{display:flex;align-items:center;gap:14px}
+
+.head-btn{
+  display:flex;align-items:center;gap:9px;background:none;border:0;cursor:pointer;
+  color:var(--on-dark);font:600 .78rem/1 var(--body);
+  letter-spacing:.14em;text-transform:uppercase;padding:10px 2px;
+  transition:color .2s;
+}
+html[lang="ar"] .head-btn{letter-spacing:0;font-size:.9rem}
+.head-btn:hover{color:var(--gold)}
+.head-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+.head-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(2,6,20,.6);opacity:0;transition:opacity .28s}
+.scrim.open{opacity:1}
+
+.drawer{
+  position:fixed;top:0;bottom:0;z-index:80;width:min(86vw,360px);
+  background:var(--navy);border-inline-end:1px solid var(--line);
+  overflow-y:auto;overscroll-behavior:contain;
+  transition:transform .32s cubic-bezier(.2,.7,.2,1);
+}
+.drawer-l{inset-inline-start:0;transform:translateX(-102%)}
+.drawer-r{inset-inline-end:0;border-inline-end:0;border-inline-start:1px solid var(--line);transform:translateX(102%)}
+html[dir="rtl"] .drawer-l{transform:translateX(102%)}
+html[dir="rtl"] .drawer-r{transform:translateX(-102%)}
+.drawer.open{transform:none}
+.drawer-in{padding:22px var(--gutter) 40px;display:grid;gap:6px;align-content:start}
+
+.drawer-x{
+  display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;
+  color:var(--gold);font:600 .78rem/1 var(--body);letter-spacing:.14em;text-transform:uppercase;
+  padding:12px 0;margin-bottom:14px;
+}
+html[lang="ar"] .drawer-x{letter-spacing:0;font-size:.9rem}
+.drawer-x span[aria-hidden]{font-size:1.5rem;line-height:1}
+.drawer-r .drawer-x{justify-content:flex-end}
+
+.dnav{display:grid;gap:2px}
+.dcat-btn{
+  display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;cursor:pointer;
+  color:var(--on-dark);font:500 .96rem/1.3 var(--body);text-align:start;
+  padding:14px 4px;border-bottom:1px solid var(--line);transition:color .2s;
+}
+.dcat-btn:hover{color:var(--gold)}
+.dcat-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--gold);stroke-width:1.2;stroke-linecap:square;stroke-linejoin:miter}
+.dcat-btn > span:not(.chev){flex:1 1 auto;min-width:0}
+.chev{
+  flex:none;width:9px;height:9px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;
+  transform:rotate(45deg);margin-top:-4px;transition:transform .25s;
+}
+.dcat.open .chev{transform:rotate(-135deg);margin-top:2px}
+
+/* grid-template-rows animates; height:auto does not */
+.dcat-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.7,.2,1)}
+.dcat.open .dcat-panel{grid-template-rows:1fr}
+.dcat-panel > div{overflow:hidden;display:grid}
+
+.dlink{
+  display:block;padding:11px 4px 11px 30px;color:var(--ink-2);text-decoration:none;
+  font-size:.92rem;transition:color .2s;
+}
+html[dir="rtl"] .dlink{padding:11px 30px 11px 4px}
+.dlink:hover{color:var(--gold)}
+.dlink-all{color:var(--gold-soft)}
+.dlink.soon{color:var(--ink-3)}
+.dlink-lg{
+  padding:16px 4px;font-family:var(--display);font-size:1.22rem;color:var(--on-dark);
+  border-bottom:1px solid var(--line);
+}
+
+.drawer-foot{display:grid;gap:9px;margin-top:30px;font-size:.88rem;color:var(--ink-2)}
+.drawer-foot a{color:var(--ink-2);text-decoration:none}
+.drawer-foot a:hover{color:var(--gold)}
+
+@media (max-width:760px){
+  .site-head{padding-inline:18px}
+  .site-head .brand img{height:34px}
+  .head-btn span:not(.chev){display:none}
+  .head-right{gap:10px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .drawer,.scrim,.dcat-panel,.chev{transition:none}
+}

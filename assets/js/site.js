@@ -47,54 +47,80 @@
     onScroll();
   }
 
-  var menuBtn = $('#menuBtn'), nav = $('#nav');
-  if (menuBtn && nav) {
-    menuBtn.addEventListener('click', function () {
-      var open = nav.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', String(open));
+  /* ---------- drawers ------------------------------------------------------
+     Two panels, one each side. Only one is ever open. Escape closes, so does
+     the scrim and any link inside. Focus moves into the panel on open and
+     back to the button that opened it on close. */
+
+  var scrim = $('#scrim');
+  var openDrawer = null, opener = null;
+
+  var closeDrawer = function (restore) {
+    if (!openDrawer) return;
+    openDrawer.classList.remove('open');
+    var panel = openDrawer;
+    setTimeout(function () { if (!panel.classList.contains('open')) panel.hidden = true; }, 260);
+    if (scrim) { scrim.classList.remove('open'); setTimeout(function () { if (!openDrawer) scrim.hidden = true; }, 260); }
+    if (opener) opener.setAttribute('aria-expanded', 'false');
+    document.documentElement.style.overflow = '';
+    if (restore && opener) opener.focus();
+    openDrawer = null; opener = null;
+  };
+
+  var showDrawer = function (panel, btn) {
+    if (openDrawer === panel) { closeDrawer(true); return; }
+    if (openDrawer) closeDrawer(false);
+    panel.hidden = false;
+    if (scrim) scrim.hidden = false;
+    /* next frame, so the transition has a start state to move from */
+    requestAnimationFrame(function () {
+      panel.classList.add('open');
+      if (scrim) scrim.classList.add('open');
     });
-    nav.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
-        nav.classList.remove('open');
-        menuBtn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-expanded', 'true');
+    document.documentElement.style.overflow = 'hidden';
+    openDrawer = panel; opener = btn;
+    var first = panel.querySelector('[data-close]');
+    if (first) first.focus();
+  };
+
+  [['#sectorsBtn', '#sectorsDrawer'], ['#corpBtn', '#corpDrawer']].forEach(function (pair) {
+    var btn = $(pair[0]), panel = $(pair[1]);
+    if (!btn || !panel) return;
+    btn.addEventListener('click', function () { showDrawer(panel, btn); });
+    panel.addEventListener('click', function (e) {
+      if (e.target.closest('[data-close]') || e.target.closest('a')) closeDrawer(false);
+    });
+  });
+
+  if (scrim) scrim.addEventListener('click', function () { closeDrawer(true); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && openDrawer) closeDrawer(true);
+  });
+
+  /* a sector opens to the companies inside it */
+  $$('.dcat-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var on = btn.getAttribute('aria-expanded') === 'true';
+      $$('.dcat-btn').forEach(function (o) {
+        if (o !== btn) { o.setAttribute('aria-expanded', 'false'); o.parentNode.classList.remove('open'); }
+      });
+      btn.setAttribute('aria-expanded', String(!on));
+      btn.parentNode.classList.toggle('open', !on);
+    });
+  });
+
+  /* open the sector the current page belongs to */
+  (function () {
+    var here = location.pathname;
+    $$('.dcat').forEach(function (cat) {
+      if ([].some.call(cat.querySelectorAll('a'), function (x) { return x.getAttribute('href') === here; })) {
+        cat.classList.add('open');
+        var b = cat.querySelector('.dcat-btn');
+        if (b) b.setAttribute('aria-expanded', 'true');
       }
     });
-  }
-
-  /* ---------- mega menu ---------------------------------------------------
-     Opens on hover and on keyboard focus; closes on leave, Escape, or focus
-     moving out. Never opens on touch, where the link should just navigate. */
-
-  var mega = $('#mega'), megaLink = $('[data-mega]');
-  if (mega && megaLink && window.matchMedia('(hover: hover)').matches) {
-    var closeTimer;
-    var openMega = function () {
-      clearTimeout(closeTimer);
-      mega.hidden = false;
-      megaLink.setAttribute('aria-expanded', 'true');
-    };
-    var closeMega = function (now) {
-      clearTimeout(closeTimer);
-      closeTimer = setTimeout(function () {
-        mega.hidden = true;
-        megaLink.setAttribute('aria-expanded', 'false');
-      }, now ? 0 : 140);
-    };
-
-    megaLink.addEventListener('mouseenter', openMega);
-    megaLink.addEventListener('focus', openMega);
-    megaLink.addEventListener('mouseleave', function () { closeMega(); });
-    mega.addEventListener('mouseenter', openMega);
-    mega.addEventListener('mouseleave', function () { closeMega(); });
-    mega.addEventListener('focusin', openMega);
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !mega.hidden) { closeMega(true); megaLink.focus(); }
-    });
-    document.addEventListener('focusin', function (e) {
-      if (!mega.hidden && !mega.contains(e.target) && e.target !== megaLink) closeMega(true);
-    });
-  }
+  })();
 
   /* ---------- sector marquee ----------------------------------------------
      The cards move on their own. WCAG 2.2.2 asks for a way to stop motion
