@@ -2,7 +2,7 @@
    Lusail Corp — all site content.
 
    STRUCTURE: two tiers, sector -> companies.
-   A sector holds any number of companies, including none (Future Ventures).
+   A sector holds any number of companies.
 
        /sectors/<slug>/            the sector, and the companies in it
        /companies/                 every company, filterable by sector
@@ -298,27 +298,6 @@ const SECTORS = [
         photo: 'shipping', photoStyle: 'plate'
       }
     ]
-  },
-
-  {
-    slug: 'future-ventures',
-    name: 'Future Ventures', nameAr: 'مشاريع المستقبل',
-    short: 'Our portfolio will continue to evolve. New sectors will join it.',
-    shortAr: 'ستواصل محفظتنا التطوّر، وستنضم إليها قطاعات جديدة.',
-    headline: 'Always Looking Forward',
-    headlineAr: 'نتطلّع دائماً إلى الأمام',
-    intro: 'Our current sectors do not define the limits of Lusail Corp.',
-    introAr: 'قطاعاتنا الحالية لا تحدّ نطاق لوسيل كورب.',
-    body: [
-      'We continue to evaluate businesses and sectors that offer compelling commercial opportunities and fit the Group’s capabilities and direction.',
-      'Lusail Corp remains open to new businesses, sectors, partnerships and commercial opportunities that complement our capabilities and long-term direction. As Lusail Corp expands, new industries will become part of our portfolio.'
-    ],
-    bodyAr: [
-      'نواصل دراسة الأعمال والقطاعات التي تنطوي على فرص تجارية مقنعة وتتوافق مع قدرات المجموعة واتجاهها.',
-      'وتبقى لوسيل كورب منفتحة على أعمال وقطاعات وشراكات وفرص تجارية جديدة تكمّل قدراتنا واتجاهنا بعيد المدى. ومع توسّع المجموعة، ستنضم صناعات جديدة إلى محفظتنا.'
-    ],
-    photo: null, photoStyle: 'none',
-    companies: []
   }
 ];
 

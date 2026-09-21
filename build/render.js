@@ -934,8 +934,7 @@ const SECTOR_ICON = {
   'consumer-services': 'cycle',
   'food-beverage': 'leaf',
   'supply-distribution': 'supply',
-  'trading': 'markets',
-  'future-ventures': 'spark'
+  'trading': 'markets'
 };
 
 /* Sector bands: the sector names itself, then the companies inside it. */

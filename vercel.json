@@ -334,6 +334,16 @@
       "source": "/press",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/sectors/future-ventures/",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/future-ventures",
+      "destination": "/sectors/",
+      "permanent": true
     }
   ]
 }

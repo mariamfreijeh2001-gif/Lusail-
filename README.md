@@ -11,9 +11,9 @@ npm run build # build only, into dist/
 
 ## Structure
 
-Two tiers: a **sector** holds any number of **companies**, including none —
-Future Ventures is a real sector with no company in it yet, and the templates
-handle that rather than hiding it.
+Two tiers: a **sector** holds any number of **companies**. The Group runs four
+sectors today, and a company can sit in more than one of them — Lusail
+Commercial appears under both Trading and Supply & Distribution.
 
 | URL | |
 |---|---|
