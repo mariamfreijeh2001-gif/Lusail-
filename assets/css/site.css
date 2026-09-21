@@ -18,24 +18,28 @@
      and --sand lift a panel off it. */
   --navy:#030C2B;
   --gold:#D3A750;
-  --gold-deep:#E6CC96;      /* was the gold that held on white; on navy it lifts */
+  --gold-deep:#8A6A24;      /* gold that holds its own on paper */
   --gold-soft:#E3C68E;
 
-  --paper:#070F2A;          /* the page ground */
-  --stone:#0D1739;          /* a panel lifted off it */
-  --ink:#F4F5F8;            /* body type */
-  --ink-2:#BAC2D6;
-  --ink-3:#98A1BC;
-  --line:rgba(255,255,255,.13);
-  --sand:#111B3E;           /* the band that used to be cream */
-  --line-2:rgba(255,255,255,.26);
+  /* The page is light and the dark is spent, not spread: navy carries the
+     header, the hero, the sector bands, the company openings and the footer,
+     and the reading sits on paper between them. The grey is the brand's own
+     #D0CECC, used where a rule belongs. */
+  --paper:#F7F6F3;          /* off-white, not a bright white */
+  --stone:#EFEDE9;          /* a panel set into the page */
+  --ink:#0A1231;            /* body type */
+  --ink-2:#4A5268;
+  --ink-3:#6E7488;
+  --line:#D8D5D0;
+  --sand:#EDE8DE;           /* the warmer band */
+  --line-2:#B6B3B0;
 
   --on-dark:#F4F5F8;
   --on-dark-2:#A7AEC2;
   --line-dark:rgba(255,255,255,.16);
 
-  --display:"Playfair Display","Marcellus",Georgia,serif;
-  --body:"Raleway","Segoe UI",system-ui,-apple-system,sans-serif;
+  --display:"Newsreader","Marcellus",Georgia,serif;
+  --body:"Archivo","Segoe UI",system-ui,-apple-system,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 
   /* one type scale, one size per role */
@@ -51,7 +55,7 @@
   --gutter:clamp(20px,5vw,56px);
   --band:clamp(68px,9vw,132px);
 
-  color-scheme:dark;
+  color-scheme:light;
 }
 
 html[lang="ar"]{
@@ -165,13 +169,14 @@ html[lang="ar"] .role .meta{
   content:"";position:absolute;inset-inline:0;bottom:0;height:1.5px;background:var(--gold);
 }
 .head-tools{display:flex;align-items:center;gap:12px}
+/* on the navy header, so it takes the dark-ground colours */
 .lang{
-  background:none;border:1px solid var(--line-2);color:var(--ink);
+  background:none;border:1px solid rgba(255,255,255,.30);color:var(--on-dark);
   font:500 .88rem/1 "Noto Kufi Arabic",var(--body);
   padding:.62em .9em;border-radius:2px;cursor:pointer;transition:border-color .2s;
 }
 html[lang="ar"] .lang{font-family:var(--body)}
-.lang:hover{border-color:var(--ink)}
+.lang:hover{border-color:var(--gold);color:var(--gold)}
 .head-tools .btn{padding:.72em 1.15em}
 .menu-btn{display:none;background:none;border:0;color:var(--ink);padding:8px;cursor:pointer}
 
@@ -621,7 +626,7 @@ html[dir="rtl"] .mcard:hover .go::after{transform:translateX(-5px)}
 .vcard:hover h3{color:var(--gold-deep)}
 .vcard .n{
   font-family:var(--display);font-size:clamp(2.4rem,3.4vw,3.2rem);line-height:1;
-  color:var(--gold);opacity:.26;margin-bottom:4px;letter-spacing:.01em;
+  color:var(--gold-deep);opacity:.55;margin-bottom:4px;letter-spacing:.01em;
 }
 .vcard h3{font-size:1.16rem}
 .vcard p{color:var(--ink-2);font-size:.96rem;line-height:1.6}
@@ -819,9 +824,9 @@ html[dir="rtl"] .cocard:hover .go::after{transform:translateX(-5px)}
 .step:hover::before{width:100%}
 .step .n{
   display:block;font-family:var(--display);font-size:clamp(2rem,3vw,2.7rem);
-  line-height:1;color:var(--line-2);margin-bottom:18px;transition:color .3s;
+  line-height:1;color:var(--ink-3);margin-bottom:18px;transition:color .3s;
 }
-.step:hover .n{color:var(--gold)}
+.step:hover .n{color:var(--gold-deep)}
 .step h3{font-size:clamp(1.3rem,2vw,1.6rem);margin-bottom:12px}
 .step p{color:var(--ink-2);font-size:.96rem;max-width:34ch}
 @media (max-width:860px){
@@ -1003,6 +1008,11 @@ html[lang="ar"] .factstrip dd{font-weight:500;font-size:1.02rem}
    ========================================================================== */
 
 .band-wrap{background:var(--navy);color:var(--on-dark)}
+/* the section heading has its own colours, set for paper; on this band they
+   have to be the dark-ground set or the lede sinks into the navy */
+.band-wrap .eyebrow{color:var(--gold-soft)}
+.band-wrap h2,.band-wrap h3{color:var(--on-dark)}
+.band-wrap .lede,.band-wrap p{color:var(--on-dark-2)}
 .bands{display:grid;gap:clamp(48px,6vw,86px)}
 
 .band-head{display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap}
@@ -1225,7 +1235,7 @@ html[dir="rtl"] .co-left::before{background:linear-gradient(to left, rgba(3,12,4
 .why > section{padding:clamp(26px,3vw,38px) clamp(24px,3vw,44px) clamp(30px,3.4vw,44px);border-top:1px solid var(--line);position:relative}
 .why > section:nth-child(odd){border-inline-end:1px solid var(--line)}
 .why-n{
-  display:block;color:var(--gold);font:500 var(--t-micro)/1 var(--mono);
+  display:block;color:var(--gold-deep);font:500 var(--t-micro)/1 var(--mono);
   letter-spacing:.14em;margin-bottom:14px;
 }
 .why h3{margin:0 0 10px;font-size:1.22rem}
@@ -1245,3 +1255,10 @@ html[dir="rtl"] .co-left::before{background:linear-gradient(to left, rgba(3,12,4
   .why,.reach{grid-template-columns:1fr}
   .why > section:nth-child(odd),.reach > div:nth-child(odd){border-inline-end:0}
 }
+
+/* Compact bands, for the home page: tighter rows and smaller tiles, so the
+   whole portfolio reads as one mosaic rather than four tall sections. */
+.bands-tight{gap:clamp(26px,3vw,40px)}
+.bands-tight .band-head{margin-bottom:14px}
+.bands-tight .tiles.n1{max-width:min(100%,300px)}
+.bands-tight .tiles.n2{max-width:min(100%,604px)}

@@ -129,7 +129,7 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/site.css">
 
 <script>
@@ -196,16 +196,16 @@ ${s.companies.length
 function corporateDrawer() {
   const links = [
     ['Home', 'الرئيسية', '/'],
-    ['About Us', 'من نحن', '/about/'],
-    ['Our Companies', 'شركاتنا', '/companies/'],
-    ['Partnerships', 'الشراكات', '/partnerships/'],
-    ['Careers', 'الوظائف', '/careers/'],
-    ['Contact', 'تواصل معنا', '/contact/']
+    ['The Group', 'المجموعة', '/about/'],
+    ['Portfolio', 'المحفظة', '/companies/'],
+    ['Work With Us', 'اعمل معنا', '/partnerships/'],
+    ['Join Us', 'انضم إلينا', '/careers/'],
+    ['Get in Touch', 'تواصل معنا', '/contact/']
   ];
   return `<aside class="drawer drawer-r" id="corpDrawer" aria-label="Corporate" hidden>
   <div class="drawer-in">
     <button class="drawer-x" type="button" data-close>
-      <span data-ar="الشركة">Corporate</span><span aria-hidden="true">&times;</span>
+      <span data-ar="المجموعة">The Group</span><span aria-hidden="true">&times;</span>
     </button>
     <nav class="dnav">
 ${links.map(([en, ar, href]) => `      <a class="dlink dlink-lg" href="${href}"${t(en, ar)}>${esc(en)}</a>`).join('\n')}
@@ -228,7 +228,7 @@ function header(current) {
   <div class="head-right">
     <button class="lang" id="langBtn" type="button" aria-label="Switch language">عربي</button>
     <button class="head-btn" type="button" id="corpBtn" aria-expanded="false" aria-controls="corpDrawer">
-      <span data-ar="الشركة">Corporate</span>${BURGER}
+      <span data-ar="المجموعة">The Group</span>${BURGER}
     </button>
   </div>
 </header>
@@ -568,7 +568,7 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="secTitle">
+<section class="section band-wrap" aria-labelledby="secTitle">
   <div class="wrap">
     <div class="sec-head row">
       <div>
@@ -577,8 +577,8 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
       </div>
       <p class="lede" data-ar="تعكس محفظتنا إيماننا بأن الفرص قد توجد في صناعات مختلفة، فنبني الأعمال حيث نرى إمكانات تجارية قوية.">Our portfolio reflects our belief that opportunities can exist across different industries, so we build businesses where we see strong commercial potential.</p>
     </div>
+    ${sectorBands(true)}
   </div>
-  ${sectorMarquee()}
 </section>
 
 <section class="section" aria-labelledby="whyTitle">
@@ -938,8 +938,8 @@ const SECTOR_ICON = {
 };
 
 /* Sector bands: the sector names itself, then the companies inside it. */
-function sectorBands() {
-  return `<div class="bands">
+function sectorBands(compact) {
+  return `<div class="bands${compact ? " bands-tight" : ""}">
 ${SECTORS.map(s => {
     const n = s.companies.length;
     const count = n ? plural(n, 'company', 'companies') : 'In development';
@@ -964,11 +964,11 @@ ${SECTORS.map(s => {
           <span class="rule" aria-hidden="true"></span>
           <span class="count micro"${t(count, countAr)}>${esc(count)}</span>
         </div>
-        <p class="band-lede"${t(s.short, s.shortAr)}>${esc(s.short)}</p>
+        ${compact ? "" : `<p class="band-lede"${t(s.short, s.shortAr)}>${esc(s.short)}</p>`}
         <div class="tiles n${Math.min(n || 1, 3)}">
 ${tiles}
         </div>
-        <p class="band-more"><a class="tl" href="/sectors/${s.slug}/"${t('Read about ' + s.name, 'اقرأ عن ' + s.nameAr)}>Read about ${esc(s.name)}</a></p>
+        ${compact ? "" : `<p class="band-more"><a class="tl" href="/sectors/${s.slug}/"${t('Read about ' + s.name, 'اقرأ عن ' + s.nameAr)}>Read about ${esc(s.name)}</a></p>`}
       </section>`;
   }).join('\n')}
     </div>`;

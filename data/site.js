@@ -60,12 +60,12 @@ const SITE = {
   },
 
   nav: [
-    { href: '/about/', label: 'About Us', labelAr: 'من نحن' },
-    { href: '/companies/', label: 'Our Companies', labelAr: 'شركاتنا' },
-    { href: '/sectors/', label: 'Our Sectors', labelAr: 'قطاعاتنا', mega: true },
-    { href: '/partnerships/', label: 'Partnerships', labelAr: 'الشراكات' },
-    { href: '/careers/', label: 'Careers', labelAr: 'الوظائف' },
-    { href: '/contact/', label: 'Contact', labelAr: 'تواصل معنا' }
+    { href: '/about/', label: 'The Group', labelAr: 'المجموعة' },
+    { href: '/companies/', label: 'Portfolio', labelAr: 'المحفظة' },
+    { href: '/sectors/', label: 'Where We Operate', labelAr: 'مجالات عملنا', mega: true },
+    { href: '/partnerships/', label: 'Work With Us', labelAr: 'اعمل معنا' },
+    { href: '/careers/', label: 'Join Us', labelAr: 'انضم إلينا' },
+    { href: '/contact/', label: 'Get in Touch', labelAr: 'تواصل معنا' }
   ]
 };
 
