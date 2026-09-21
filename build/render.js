@@ -790,6 +790,52 @@ ${companyIndex(others)}
     + footer();
 }
 
+/* A mark per sector, drawn from the set already in ICON_PATHS. */
+const SECTOR_ICON = {
+  'consumer-services': 'cycle',
+  'food-beverage': 'leaf',
+  'supply-distribution': 'supply',
+  'trading': 'markets',
+  'future-ventures': 'spark'
+};
+
+/* Sector bands: the sector names itself, then the companies inside it. */
+function sectorBands() {
+  return `<div class="bands">
+${SECTORS.map(s => {
+    const n = s.companies.length;
+    const count = n ? plural(n, 'company', 'companies') : 'In development';
+    const countAr = n ? pluralAr(n, 'شركة واحدة', 'شركات') : 'قيد التطوير';
+
+    /* A sector with no company yet still gets a tile, pointing at its own
+       page, so the row reads as deliberate rather than unfinished. */
+    const tiles = n
+      ? s.companies.map(co => `        <a class="tile" href="/companies/${co.slug}/">
+          <span class="shot"><img src="/assets/img/${co.photo || s.photo || 'skyline-tall'}-card.jpg" alt="" width="1000" height="750" loading="lazy"></span>
+          <span class="tcap"><span class="tname"${t(co.name, co.nameAr)}>${esc(co.name)}</span></span>
+        </a>`).join('\n')
+      : `        <a class="tile" href="/sectors/${s.slug}/">
+          <span class="shot"><img src="/assets/img/skyline-tall.jpg" alt="" width="1000" height="1333" loading="lazy"></span>
+          <span class="tcap"><span class="tname" data-ar="ما نبنيه بعد ذلك">What we build next</span></span>
+        </a>`;
+
+    return `      <section class="band">
+        <div class="band-head">
+          ${icon(SECTOR_ICON[s.slug] || 'sectors')}
+          <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
+          <span class="rule" aria-hidden="true"></span>
+          <span class="count micro"${t(count, countAr)}>${esc(count)}</span>
+        </div>
+        <p class="band-lede"${t(s.short, s.shortAr)}>${esc(s.short)}</p>
+        <div class="tiles n${Math.min(n || 1, 3)}">
+${tiles}
+        </div>
+        <p class="band-more"><a class="tl" href="/sectors/${s.slug}/"${t('Read about ' + s.name, 'اقرأ عن ' + s.nameAr)}>Read about ${esc(s.name)}</a></p>
+      </section>`;
+  }).join('\n')}
+    </div>`;
+}
+
 function pageSectorsIndex() {
   return head({
     title: `Our Sectors · ${SITE.name}`,
@@ -803,9 +849,9 @@ function pageSectorsIndex() {
       lede: 'Lusail Corp operates across multiple industries while maintaining one common focus: building commercially sound businesses capable of sustainable growth.',
       ledeAr: 'تعمل لوسيل كورب في صناعات متعددة مع تركيز واحد مشترك: بناء أعمال سليمة تجارياً وقادرة على النمو المستدام.'
     })
-    + `<section class="section tight">
+    + `<section class="section band-wrap">
   <div class="wrap">
-    ${sectorAccordion()}
+    ${sectorBands()}
   </div>
 </section>
 

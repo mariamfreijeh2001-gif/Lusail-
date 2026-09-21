@@ -984,3 +984,62 @@ html[lang="ar"] .factstrip dd{font-weight:500;font-size:1.02rem}
 /* beside a company's copy the portrait ran far taller than the text; the 4:3
    crop keeps the two columns close in height */
 .co-aside .port-fig img{aspect-ratio:4/3}
+
+/* ==========================================================================
+   Sector bands — a sector names itself, the companies inside it follow
+   On navy, because the tiles are photographs and they carry on a dark
+   ground. The footer and the closing band are already navy, so the page
+   stays within the palette rather than introducing a new one.
+   ========================================================================== */
+
+.band-wrap{background:var(--navy);color:var(--on-dark)}
+.bands{display:grid;gap:clamp(48px,6vw,86px)}
+
+.band-head{display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap}
+/* The icon paths carry no presentation of their own; each block that uses
+   them supplies the stroke. Without this they fall back to a solid fill. */
+.band-head svg{
+  width:24px;height:24px;flex:none;
+  fill:none;stroke:var(--gold);stroke-width:1.2;stroke-linecap:square;stroke-linejoin:miter;
+}
+.band-head h3{margin:0;color:var(--on-dark);font-size:clamp(1.15rem,2vw,1.5rem);flex:0 1 auto;min-width:0}
+.band-head .rule{flex:1 1 40px;height:1px;background:var(--line-dark);min-width:24px}
+.band-head .count{color:var(--gold);flex:none}
+.band-lede{margin:14px 0 26px;max-width:62ch;color:var(--on-dark-2);font-size:.95rem}
+
+/* The tiles size themselves to the row. A sector with one company gets one
+   readable tile rather than a quarter-width stub in a four-column grid. */
+/* Sized by how many tiles there are, so a short row still holds the width
+   instead of leaving a stub against empty ground. */
+.tiles{display:grid;gap:4px;justify-content:start;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))}
+.tiles.n1{grid-template-columns:minmax(0,1fr);max-width:min(100%,520px)}
+.tiles.n2{grid-template-columns:repeat(2,minmax(0,1fr));max-width:min(100%,760px)}
+.tiles.n3{grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr))}
+.tile{position:relative;display:block;overflow:hidden;text-decoration:none;background:#07122f}
+.tile .shot{display:block;overflow:hidden}
+/* height:auto or the img height attribute wins and aspect-ratio never applies */
+.tile img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.tile .tcap{
+  position:absolute;inset-inline:0;bottom:0;padding:18px 20px;
+  background:linear-gradient(to top,rgba(3,12,43,.92) 0%,rgba(3,12,43,.58) 60%,rgba(3,12,43,0) 100%);
+}
+.tile .tname{color:#fff;font-family:var(--display);font-size:1.12rem;line-height:1.25;text-wrap:balance}
+.tile::after{
+  content:"";position:absolute;inset-inline:0;bottom:0;height:2px;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
+}
+html[dir="rtl"] .tile::after{transform-origin:right}
+.tile:hover img,.tile:focus-visible img{transform:scale(1.06)}
+.tile:hover::after,.tile:focus-visible::after{transform:scaleX(1)}
+.tile:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.band-more{margin:20px 0 0}
+.band-wrap .tl{color:var(--on-dark)}
+.band-wrap .tl:hover{color:var(--gold)}
+
+@media (max-width:620px){ .tiles.n2{grid-template-columns:minmax(0,1fr)} }
+
+@media (prefers-reduced-motion:reduce){
+  .tile img,.tile::after{transition:none}
+  .tile:hover img,.tile:focus-visible img{transform:none}
+}

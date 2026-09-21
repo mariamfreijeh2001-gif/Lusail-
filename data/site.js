@@ -195,17 +195,17 @@ const SECTORS = [
       {
         slug: 'roma-commercial',
         name: 'ROMA Commercial', nameAr: 'روما التجارية',
-        role: 'Food Supply & Distribution', roleAr: 'توريد وتوزيع الأغذية',
-        headline: 'Supplying Fresh Produce to Qatar',
-        headlineAr: 'توريد المنتجات الطازجة إلى قطر',
-        short: 'Supply and distribution of fresh fruits and vegetables within the Qatar market.',
-        shortAr: 'توريد وتوزيع الفواكه والخضار الطازجة داخل السوق القطري.',
-        intro: 'ROMA Commercial is the Group\u2019s food supply business, focused on fresh fruit and vegetables within the Qatar market.',
-        introAr: 'روما التجارية هي ذراع المجموعة لتوريد الأغذية، وتركّز على الفواكه والخضار الطازجة داخل السوق القطري.',
+        role: 'Food Import & Distribution', roleAr: 'استيراد وتوزيع الأغذية',
+        headline: 'From Global Farms to Qatar\u2019s Market',
+        headlineAr: 'من مزارع العالم إلى السوق القطري',
+        short: 'Import and distribution of fresh produce, rice and essential foods across the Qatar market.',
+        shortAr: 'استيراد وتوزيع المنتجات الطازجة والأرز والأغذية الأساسية في السوق القطري.',
+        intro: 'ROMA Commercial connects international producers and suppliers with businesses across Qatar, importing fresh fruit and vegetables, rice and essential food products.',
+        introAr: 'تربط روما التجارية المنتجين والموردين الدوليين بالشركات في أنحاء قطر، من خلال استيراد الفواكه والخضار الطازجة والأرز والمنتجات الغذائية الأساسية.',
         body: [
-          'The business works across sourcing and supply to help meet the needs of Qatar’s food market.',
-          'Through dependable sourcing and commercial relationships, the company works to connect quality produce with the needs of businesses and customers across Qatar.',
-          'As ROMA Commercial develops, the company aims to expand its commercial relationships, product categories and supply capabilities.'
+          'Quality food distribution begins long before a product reaches the market. ROMA works across the supply chain: sourcing from suitable producers and international suppliers, coordinating import into Qatar, and distributing according to what the local market requires.',
+          'Agricultural products are seasonal, so sourcing has to move with the harvest. Rather than depending on a single origin, the company builds relationships across different growing regions, which lets it shift as seasons end, quality changes or availability tightens.',
+          'Fresh produce has a limited commercial life. The operating approach is therefore built around removing delay between source, import and distribution — so products reach supermarkets, hotels, restaurants, caterers and wholesalers in the condition the buyer expects.'
         ],
         bodyAr: [
           'تعمل الشركة في التوريد والإمداد لتلبية احتياجات سوق الأغذية في قطر.',
@@ -214,11 +214,21 @@ const SECTORS = [
         ],
         facts: [
           { k: 'Sector', kAr: 'القطاع', v: 'Supply & Distribution', vAr: 'التوريد والتوزيع' },
-          { k: 'Activity', kAr: 'النشاط', v: 'Food — fresh fruit and vegetables', vAr: 'الأغذية — الفواكه والخضار الطازجة' },
-          { k: 'Market', kAr: 'السوق', v: 'Qatar', vAr: 'قطر' }
+          { k: 'Activity', kAr: 'النشاط', v: 'Food import, wholesale and distribution', vAr: 'استيراد الأغذية والبيع بالجملة والتوزيع' },
+          { k: 'Market', kAr: 'السوق', v: 'Qatar', vAr: 'قطر' },
+          { k: 'Customers', kAr: 'العملاء', v: 'Retail, wholesale, hospitality and food service', vAr: 'التجزئة والجملة والضيافة وخدمات الأغذية' }
         ],
+        products: [
+          { t: 'Fresh Vegetables', tAr: 'الخضار الطازجة', d: 'A changing selection sourced by season, origin and customer demand — tomatoes, potatoes, onions, peppers, cucumbers and leafy produce among them.', dAr: 'تشكيلة متغيّرة يتم توريدها حسب الموسم والمنشأ وطلب العملاء — من الطماطم والبطاطس والبصل والفلفل والخيار والورقيات.' },
+          { t: 'Fresh Fruits', tAr: 'الفواكه الطازجة', d: 'Fruit sourced from international growing regions as seasons allow — apples, citrus, bananas, grapes, melons and stone fruit.', dAr: 'فواكه من مناطق زراعية دولية بحسب المواسم — التفاح والحمضيات والموز والعنب والبطيخ والفواكه ذات النواة.' },
+          { t: 'Rice', tAr: 'الأرز', d: 'Basmati, long-grain, parboiled and white rice, sourced by variety, grade and pack size for retail, food service and hospitality.', dAr: 'أرز بسمتي وطويل الحبة ومسلوق وأبيض، حسب الصنف والدرجة وحجم التعبئة للتجزئة وخدمات الأغذية والضيافة.' },
+          { t: 'Grains & Pulses', tAr: 'الحبوب والبقوليات', d: 'Lentils, chickpeas, beans, peas and wheat products, adapted to what customers in Qatar require.', dAr: 'العدس والحمص والفاصولياء والبازلاء ومنتجات القمح، بما يتوافق مع احتياجات العملاء في قطر.' },
+          { t: 'Dry Food Products', tAr: 'الأغذية الجافة', d: 'Shelf-stable and essential food categories sourced and imported according to commercial demand.', dAr: 'فئات غذائية أساسية وطويلة الصلاحية يتم توريدها واستيرادها حسب الطلب التجاري.' }
+        ],
+        activities: ['International Sourcing', 'Food Import', 'Wholesale Supply', 'Qatar Distribution', 'Seasonal Sourcing', 'Supplier Development'],
+        activitiesAr: ['التوريد الدولي', 'استيراد الأغذية', 'التوريد بالجملة', 'التوزيع في قطر', 'التوريد الموسمي', 'تطوير الموردين'],
         cta: 'Contact ROMA Commercial', ctaAr: 'تواصل مع روما التجارية',
-        photo: null, photoStyle: 'none'
+        photo: 'grain', photoStyle: 'plate'
       }
     ]
   },
@@ -248,34 +258,40 @@ const SECTORS = [
            distribution, so it is cross-listed there too. */
         alsoIn: ['supply-distribution'],
         name: 'Lusail Commercial', nameAr: 'لوسيل التجارية',
-        role: 'International Trade & Commodities', roleAr: 'التجارة الدولية والسلع',
-        headline: 'Connecting Products, Suppliers and Markets',
-        headlineAr: 'نربط المنتجات بالموردين والأسواق',
-        short: 'International import and export, initially focused on commodities including coffee and wheat.',
-        shortAr: 'الاستيراد والتصدير الدولي، بتركيز أولي على سلع تشمل البن والقمح.',
-        intro: 'Lusail Commercial is the Group’s international trading business.',
-        introAr: 'لوسيل التجارية هي ذراع المجموعة للتجارة الدولية.',
+        role: 'Trading & Logistics', roleAr: 'التجارة والخدمات اللوجستية',
+        headline: 'Global Trade. Reliable Logistics. Connected Markets.',
+        headlineAr: 'تجارة عالمية. لوجستيات موثوقة. أسواق مترابطة.',
+        short: 'Commodity trading and international freight — moving goods by sea, land and air, and sourcing food and industrial commodities.',
+        shortAr: 'تجارة السلع والشحن الدولي — نقل البضائع بحراً وبراً وجواً، وتوريد السلع الغذائية والصناعية.',
+        intro: 'Lusail Commercial operates where international trade meets logistics, combining commodity sourcing with the freight capability to move it.',
+        introAr: 'تعمل لوسيل التجارية عند تقاطع التجارة الدولية مع الخدمات اللوجستية، جامعةً بين توريد السلع والقدرة على نقلها.',
         body: [
-          'The company is focused on importing and exporting selected commodities, initially including coffee and wheat.',
-          'Through relationships with suppliers and commercial partners, Lusail Commercial works to identify sourcing opportunities and develop dependable trading channels between international markets and customers.'
+          'The business runs on two sides that support each other. Commodity trading sources and moves edible oils, sugar, wheat, coffee and granular sulphur through an international network of producers and suppliers. Logistics coordinates the cargo itself — ocean, road and air freight, vessel chartering, trailers and heavy transport.',
+          'Keeping both under one roof is the point. Purchasing and transport are handled as one commercial question rather than two, so an enquiry can be answered with the origin, the specification and the route together.',
+          'Sourcing reaches across the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia. Which origin is used depends on the product, the season, quality, availability and the terms of the transaction.'
         ],
         bodyAr: [
           'تركّز الشركة على استيراد وتصدير سلع مختارة، تشمل في البداية البن والقمح.',
           'ومن خلال علاقاتها مع الموردين والشركاء التجاريين، تعمل لوسيل التجارية على تحديد فرص التوريد وبناء قنوات تجارية موثوقة بين الأسواق الدولية والعملاء.'
         ],
         products: [
-          { t: 'Coffee', tAr: 'البن', d: 'International sourcing and commercial trade of coffee products.', dAr: 'التوريد الدولي والتجارة في منتجات البن.' },
-          { t: 'Wheat', tAr: 'القمح', d: 'Sourcing and commercial trade of wheat for relevant markets and customers.', dAr: 'توريد القمح والتجارة فيه للأسواق والعملاء المعنيين.' }
+          { t: 'Ocean Freight', tAr: 'الشحن البحري', d: 'Full and part container loads, bulk, breakbulk and project cargo between Qatar and international ports.', dAr: 'حاويات كاملة وجزئية وبضائع سائبة وعامة وشحنات المشاريع بين قطر والموانئ الدولية.' },
+          { t: 'Vessel Chartering', tAr: 'استئجار السفن', d: 'Marine capacity arranged with shipping partners for bulk commodities and large-volume shipments.', dAr: 'تأمين سعة بحرية بالتعاون مع شركاء الشحن للسلع السائبة والشحنات كبيرة الحجم.' },
+          { t: 'Land Freight', tAr: 'الشحن البري', d: 'Heavy trucks, flatbed and low-bed trailers and container movement within Qatar and across regional borders.', dAr: 'شاحنات ثقيلة ومقطورات مسطحة ومنخفضة ونقل الحاويات داخل قطر وعبر الحدود الإقليمية.' },
+          { t: 'Air Freight', tAr: 'الشحن الجوي', d: 'For urgent, high-value or time-sensitive cargo between Qatar and major international markets.', dAr: 'للشحنات العاجلة أو عالية القيمة أو الحساسة للوقت بين قطر والأسواق الدولية الرئيسية.' },
+          { t: 'Food & Agricultural Commodities', tAr: 'السلع الغذائية والزراعية', d: 'Edible oils, sugar, wheat and grains, and coffee, sourced by specification, origin and season.', dAr: 'الزيوت الصالحة للأكل والسكر والقمح والحبوب والبن، حسب المواصفات والمنشأ والموسم.' },
+          { t: 'Industrial Commodities', tAr: 'السلع الصناعية', d: 'Granular solid sulphur in bulk for industrial and commercial applications, with the shipping arranged alongside.', dAr: 'الكبريت الصلب المحبب السائب للاستخدامات الصناعية والتجارية، مع تنسيق الشحن معه.' }
         ],
-        activities: ['Import', 'Export', 'International Sourcing', 'Commodity Trading', 'Supplier Development', 'Commercial Partnerships'],
-        activitiesAr: ['الاستيراد', 'التصدير', 'التوريد الدولي', 'تجارة السلع', 'تطوير الموردين', 'الشراكات التجارية'],
+        activities: ['Ocean Freight', 'Land Freight', 'Air Freight', 'Vessel Chartering', 'Multimodal Logistics', 'Commodity Trading', 'Import & Export', 'Global Sourcing'],
+        activitiesAr: ['الشحن البحري', 'الشحن البري', 'الشحن الجوي', 'استئجار السفن', 'النقل متعدد الوسائط', 'تجارة السلع', 'الاستيراد والتصدير', 'التوريد العالمي'],
         facts: [
-          { k: 'Sector', kAr: 'القطاع', v: 'Trading & Commodities', vAr: 'التجارة والسلع' },
-          { k: 'Activity', kAr: 'النشاط', v: 'Import, export and commodity trading', vAr: 'الاستيراد والتصدير وتجارة السلع' },
-          { k: 'Market', kAr: 'السوق', v: 'Qatar and international', vAr: 'قطر والأسواق الدولية' }
+          { k: 'Sector', kAr: 'القطاع', v: 'Trading, Supply & Distribution', vAr: 'التجارة والتوريد والتوزيع' },
+          { k: 'Activity', kAr: 'النشاط', v: 'Commodity trading and international freight', vAr: 'تجارة السلع والشحن الدولي' },
+          { k: 'Market', kAr: 'السوق', v: 'Qatar, the GCC and international', vAr: 'قطر ودول الخليج والأسواق الدولية' },
+          { k: 'Transport', kAr: 'النقل', v: 'Sea, land, air and multimodal', vAr: 'بحراً وبراً وجواً ومتعدد الوسائط' }
         ],
         cta: 'Partner With Lusail Commercial', ctaAr: 'كن شريكاً للوسيل التجارية',
-        photo: 'grain', photoStyle: 'still'
+        photo: 'shipping', photoStyle: 'plate'
       }
     ]
   },
