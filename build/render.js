@@ -622,11 +622,16 @@ function pageHome() {
     + `
 <section class="section intro" aria-labelledby="introTitle">
   <div class="wrap">
-    <span class="eyebrow" data-ar="مقدمة">Introduction</span>
-    <h2 id="introTitle" class="intro-say"${t(SITE.supporting, SITE.supportingAr)}>${esc(SITE.supporting)}</h2>
-    <p class="intro-lede" data-ar="ودورنا يتجاوز الملكية. نوفّر التوجيه الاستراتيجي والدعم التجاري ومنصة مشتركة تستطيع شركاتنا من خلالها تقوية عملياتها وتطوير أسواقها واقتناص فرص جديدة.">Our role goes beyond ownership. We provide strategic direction, commercial support and a shared platform from which our companies strengthen their operations, develop their markets and pursue new opportunities.</p>
-    <p class="intro-now" data-ar="تمتد المحفظة اليوم عبر خدمات المستهلك والأغذية والمشروبات وتوريد الأغذية وتجارة السلع الدولية.">Today it spans consumer services, food and beverage, food supply and international commodity trading.</p>
-    <a class="tl intro-more" href="/about/" data-ar="المزيد عن المجموعة">More about the Group</a>
+    <div class="intro-text">
+      <span class="eyebrow" data-ar="مقدمة">Introduction</span>
+      <h2 id="introTitle" class="intro-say"${t(SITE.supporting, SITE.supportingAr)}>${esc(SITE.supporting)}</h2>
+      <p class="intro-lede" data-ar="ودورنا يتجاوز الملكية. نوفّر التوجيه الاستراتيجي والدعم التجاري ومنصة مشتركة تستطيع شركاتنا من خلالها تقوية عملياتها وتطوير أسواقها واقتناص فرص جديدة.">Our role goes beyond ownership. We provide strategic direction, commercial support and a shared platform from which our companies strengthen their operations, develop their markets and pursue new opportunities.</p>
+      <p class="intro-now" data-ar="تمتد المحفظة اليوم عبر خدمات المستهلك والأغذية والمشروبات وتوريد الأغذية وتجارة السلع الدولية.">Today it spans consumer services, food and beverage, food supply and international commodity trading.</p>
+      <a class="tl intro-more" href="/about/" data-ar="المزيد عن المجموعة">More about the Group</a>
+    </div>
+    <div class="intro-mark" aria-hidden="true">
+      <img src="/assets/logo/${B.markOnLight}" alt="" width="240" height="240" loading="lazy">
+    </div>
   </div>
 </section>
 

@@ -42,7 +42,9 @@ const SITE = {
     logoOnLight: 'lusail-corp-horizontal-full-color.svg',
     logoOnDark: 'lusail-corp-horizontal-reversed.svg',
     logoWidth: 564, logoHeight: 142,
-    faviconSvg: 'favicon.svg',
+      /* The monogram on its own, used large and decoratively. */
+    markOnLight: 'lusail-corp-mark-full-color.svg',
+  faviconSvg: 'favicon.svg',
     faviconIco: 'favicon.ico',
     appleTouch: 'apple-touch-icon.png'
   },

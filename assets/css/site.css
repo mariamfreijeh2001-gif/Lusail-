@@ -1496,7 +1496,11 @@ html[lang="ar"] .foot-nav a{letter-spacing:0;text-transform:none;font-size:.9rem
    to carry on its own: there is nothing beside it.
    ========================================================================== */
 
-.intro .wrap{max-width:900px}
+.intro .wrap{
+  display:grid;gap:clamp(30px,5vw,80px);align-items:center;
+  grid-template-columns:minmax(0,1fr) minmax(0,.62fr);
+}
+.intro-text{min-width:0}
 .intro-say{
   margin:18px 0 0;max-width:19ch;text-wrap:balance;
   font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.08;letter-spacing:-.012em;
@@ -1558,4 +1562,25 @@ html[lang="ar"] .foot-nav a{letter-spacing:0;text-transform:none;font-size:.9rem
   .cocard,.cocard-shot img{transition:none}
   .cocard:hover{transform:none}
   .cocard:hover .cocard-shot img{transform:none}
+}
+
+/* The monogram beside the introduction. Decoration: aria-hidden, and the
+   column drops away below 900px rather than squeezing the text. */
+.intro-mark{display:grid;place-items:center;min-width:0}
+.intro-mark img{
+  width:clamp(160px,20vw,260px);height:auto;
+  opacity:.92;will-change:transform;
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .intro-mark img{animation:mark-drift 9s ease-in-out infinite}
+}
+@keyframes mark-drift{
+  0%,100%{transform:translateY(-8px) rotate(-1.1deg)}
+  50%{transform:translateY(8px) rotate(1.1deg)}
+}
+
+@media (max-width:900px){
+  .intro .wrap{grid-template-columns:1fr}
+  .intro-mark{display:none}
 }
