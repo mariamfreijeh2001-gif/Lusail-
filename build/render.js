@@ -246,26 +246,15 @@ ${corporateDrawer()}
 }
 
 function footer() {
-  const nav = SITE.nav.map(n =>
-    `        <a href="${n.href}"${t(n.label, n.labelAr)}>${esc(n.label)}</a>`).join('\n');
-
+  /* The footer is gone. Both drawers reach every page from any scroll
+     position, so it was repeating the navigation; what is left is the line a
+     company site has to carry.  */
   return `</main>
 <footer class="site-foot">
-  <div class="wrap">
-    <div class="foot-top">
-      <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_LIGHT}</a>
-      <nav class="foot-nav" aria-label="Footer">
-${nav}
-      </nav>
-    </div>
-    <div class="legal">
-      <span data-ar="© لوسيل كورب. جميع الحقوق محفوظة.">© ${esc(SITE.name)}. All Rights Reserved.</span>
-      <span class="legal-mid">
-        <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
-        <span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span>
-      </span>
-      <span data-ar="سياسة الخصوصية · الشروط والأحكام">Privacy Policy · Terms &amp; Conditions</span>
-    </div>
+  <div class="wrap legal">
+    <span data-ar="© لوسيل كورب. جميع الحقوق محفوظة.">© ${esc(SITE.name)}. All Rights Reserved.</span>
+    <span class="legal-mid"><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a><span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span></span>
+    <span data-ar="سياسة الخصوصية · الشروط والأحكام">Privacy Policy · Terms &amp; Conditions</span>
   </div>
 </footer>
 <script src="/assets/js/site.js" defer></script>
@@ -527,14 +516,10 @@ function reachMap() {
       const isHub = Math.abs(x - hx) < 3 && Math.abs(y - hy) < 3;
       if (isHub) return;
 
-      /* The label lives in the group, so hovering the pin reveals it. Near
-         the right edge it is anchored the other way to stay in frame. */
-      const anchor = x > MAP_BOX.width - 160 ? 'end' : 'start';
-      const lx = anchor === 'end' ? x - 9 : x + 9;
       pins.push(
-        `<g class="pin-g" style="--i:${ri * 4 + i}">` +
-        `<circle class="pin" cx="${x}" cy="${y}" r="3.4"/>` +
-        `<text class="pin-t" x="${lx}" y="${y + 4}" text-anchor="${anchor}">${esc(name)}</text>` +
+        `<g class="pin-g" transform="translate(${x} ${y})" style="--i:${ri * 4 + i}">` +
+        `<path class="pin" d="M0 0c-3.1-4.9-7.6-8.2-7.6-12.8a7.6 7.6 0 1 1 15.2 0C7.6-8.2 3.1-4.9 0 0Z"/>` +
+        `<circle class="pin-eye" cy="-12.8" r="2.6"/>` +
         `<title>${esc(name)}</title>` +
         `</g>`);
     });
@@ -547,8 +532,8 @@ function reachMap() {
         <g class="routes">${routes.join('')}</g>
         <g class="pins">${pins.join('')}</g>
         <g class="hub">
-          <circle class="hub-ring" cx="${hx}" cy="${hy}" r="9"/>
-          <circle class="hub-dot" cx="${hx}" cy="${hy}" r="4.2"/>
+          <path class="hub-pin" transform="translate(${hx} ${hy})" d="M0 0c-4-6.3-9.8-10.6-9.8-16.5a9.8 9.8 0 1 1 19.6 0C9.8-10.6 4-6.3 0 0Z"/>
+          <circle class="hub-eye" cx="${hx}" cy="${hy - 16.5}" r="3.4"/>
         </g>
       </svg>
       <figcaption class="map-key">
@@ -684,7 +669,7 @@ function pageHome() {
       </div>
       <p class="lede" data-ar="نحن مالك فاعل. تُدار كل شركة بشكل مستقل، ولكن ليست بمفردها.">We are an active owner. Each company is run independently, but none of them is run alone.</p>
     </div>
-    ${doesSpread()}
+    ${steps(WHAT_WE_DO)}
   </div>
 </section>
 
@@ -809,9 +794,7 @@ function pageCompaniesIndex() {
 ${chips}
     </div>
     <span class="count" id="count" role="status" data-ar="عرض جميع الشركات">Showing all ${ALL_COMPANIES.length} companies</span>
-    <div class="idx" id="coGrid">
-${companyIndex(ALL_COMPANIES)}
-    </div>
+    ${companyRail(ALL_COMPANIES, 'coGrid')}
     <p class="empty" id="empty" hidden data-ar="لا توجد شركات في هذا القطاع.">No companies in that sector.</p>
   </div>
 </section>
@@ -950,9 +933,7 @@ ${products}${activities}<section class="section tight" aria-labelledby="othTitle
       </div>
       <a class="btn btn-ink" href="/companies/" data-ar="عرض الكل">View all</a>
     </div>
-    <div class="idx">
-${companyIndex(others)}
-    </div>
+    ${companyIndex(others)}
   </div>
 </section>
 
@@ -1156,9 +1137,7 @@ ${n ? `<section class="section stone" aria-labelledby="coTitle">
       <span class="eyebrow" data-ar="الشركات">Companies</span>
       <h2 id="coTitle"${n === 1 ? ' data-ar="الشركة العاملة في هذا القطاع"' : ' data-ar="الشركات العاملة في هذا القطاع"'}>${n === 1 ? 'The company working here' : 'The companies working here'}</h2>
     </div>
-    <div class="idx">
-${companyIndex(cos, { showSector: false })}
-    </div>
+    ${companyIndex(cos, { showSector: false })}
   </div>
 </section>
 

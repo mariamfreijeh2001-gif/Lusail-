@@ -64,6 +64,9 @@ html[lang="ar"]{
 }
 
 *{box-sizing:border-box}
+/* Any author rule that sets display beats the browser default for [hidden],
+   so a hidden card with display:grid stays on screen. This puts it back. */
+[hidden]{display:none!important}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -786,29 +789,6 @@ html[dir="rtl"] .acc-inner{padding-inline:calc(3.5rem + clamp(14px,2.4vw,32px)) 
   .acc-inner{padding-inline:0}
 }
 
-/* a company card that works with or without a photograph */
-.cocards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:clamp(14px,1.6vw,22px)}
-.cocard{
-  background:var(--paper);border:1px solid var(--line);border-top:2px solid var(--gold);
-  text-decoration:none;display:flex;flex-direction:column;
-  transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s;
-}
-.cocard:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(3,12,43,.07)}
-.cocard .pic{aspect-ratio:4/3;overflow:hidden;background:var(--sand)}
-.cocard .pic img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
-.cocard:hover .pic img{transform:scale(1.05)}
-.cocard .body{padding:20px clamp(16px,1.8vw,22px) 22px;display:grid;gap:7px;flex:1;align-content:start}
-.cocard h4{font-family:var(--display);font-size:1.22rem;transition:color .25s}
-.cocard:hover h4{color:var(--gold-deep)}
-.cocard .role{color:var(--gold-deep)}
-.cocard p{color:var(--ink-2);font-size:.93rem;line-height:1.55}
-.cocard .go{
-  margin-top:auto;padding-top:12px;display:inline-flex;align-items:center;gap:.5em;
-  color:var(--ink);font-size:.89rem;font-weight:500;
-}
-.cocard .go::after{content:"→";transition:transform .3s}
-html[dir="rtl"] .cocard .go::after{content:"←"}
-.cocard:hover .go::after{transform:translateX(5px)}
 html[dir="rtl"] .cocard:hover .go::after{transform:translateX(-5px)}
 .acc-empty{color:var(--ink-2);font-size:.98rem;max-width:56ch}
 
@@ -990,13 +970,6 @@ html[lang="ar"] .factstrip dd{font-weight:500;font-size:1.02rem}
 /* a company whose copy has no picture beside it gets the full measure */
 .co-solo{max-width:64ch}
 
-/* the accordion card: the role reads as a line of text, not a stack of
-   uppercase mono that wraps to four lines in a narrow card */
-.cocard .role{
-  font-family:var(--body);font-size:.84rem;letter-spacing:0;text-transform:none;
-  color:var(--gold-deep);
-}
-.cocards{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));max-width:900px}
 
 /* beside body copy the square still runs taller than the text it sits next
    to; 4:3 evens the two columns. The image is contained, so nothing crops. */
@@ -1327,8 +1300,12 @@ html[dir="rtl"] .co-left::before{background:linear-gradient(to left, rgba(3,12,4
 .land{fill:#DCD9D3;stroke:#CFCBC4;stroke-width:.6}
 
 .pin-g{cursor:default}
-.pin{fill:var(--gold-deep);stroke:var(--paper);stroke-width:1.6;transition:r .18s,fill .18s}
-.pin-g:hover .pin{fill:var(--navy);r:5.2}
+.pin{fill:var(--gold-deep);stroke:var(--paper);stroke-width:1.2;transition:fill .18s}
+.pin-eye{fill:var(--paper)}
+.pin-g{transition:transform .18s cubic-bezier(.2,.7,.2,1)}
+.pin-g:hover .pin{fill:var(--navy)}
+.hub-pin{fill:var(--navy);stroke:var(--paper);stroke-width:1.4}
+.hub-eye{fill:var(--paper)}
 
 /* The name shows on hover. paint-order puts the halo behind the glyphs, so
    the label stays readable wherever on the land it happens to fall. */
@@ -1429,7 +1406,7 @@ html[lang="ar"] .map-key{font-family:var(--body);letter-spacing:0;text-transform
    not repeat the navigation. It signs the page and gives the address.
    ========================================================================== */
 
-.site-foot{padding-block:clamp(26px,3vw,38px) clamp(18px,2vw,24px)}
+.site-foot{padding-block:clamp(16px,1.8vw,22px)}
 .foot-top{
   display:flex;align-items:center;justify-content:space-between;
   gap:20px 40px;flex-wrap:wrap;
@@ -1446,7 +1423,7 @@ html[lang="ar"] .foot-nav a{letter-spacing:0;text-transform:none;font-size:.9rem
 
 .legal{
   display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 28px;
-  margin-top:clamp(20px,2.4vw,28px);padding-top:16px;border-top:1px solid var(--line-dark);
+  margin:0;padding:0;border:0;
   font-size:.78rem;color:var(--ink-3);
 }
 .legal-mid{display:flex;flex-wrap:wrap;gap:6px 20px}
@@ -1584,3 +1561,26 @@ html[lang="ar"] .foot-nav a{letter-spacing:0;text-transform:none;font-size:.9rem
   .intro .wrap{grid-template-columns:1fr}
   .intro-mark{display:none}
 }
+
+/* ==========================================================================
+   The closing band
+   Lost its rules to a careless regex once; without them the icons render
+   at their intrinsic size, which is enormous and solid black.
+   ========================================================================== */
+
+.cta .wrap{align-items:start}
+.cta-say{max-width:44ch}
+.nexts{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+.nexts li{display:flex;align-items:flex-start;gap:11px;font-size:.92rem;color:var(--ink-2)}
+.nexts svg{
+  width:17px;height:17px;flex:none;margin-top:3px;
+  fill:none;stroke:var(--gold-deep);stroke-width:1.2;stroke-linecap:square;stroke-linejoin:miter;
+}
+@media (max-width:820px){ .nexts{gap:9px} }
+
+/* ---- every card in a rail is the same height ---------------------------- */
+/* The name gets its own row and the role the one under it, so a role that
+   wraps to two lines does not make its card taller than its neighbours. */
+.corail{align-items:stretch}
+.cocard-body{grid-template-rows:auto auto 1fr}
+.cocard-role{align-self:start}
