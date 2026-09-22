@@ -435,6 +435,26 @@ SECTORS.forEach(s => {
   if (extra.length) s.companies = s.companies.concat(extra);
 });
 
+/* One ordering, applied in both directions. COMPANY_ORDER puts the two
+   trading businesses at the head of any list of companies — including the
+   list inside each sector — and the sectors those two work in lead the list
+   of sectors, so the Group opens on the part of it that trades abroad. */
+const rankCompany = slug => {
+  const i = COMPANY_ORDER.indexOf(slug);
+  return i === -1 ? COMPANY_ORDER.length : i;
+};
+
+SECTORS.forEach(s => {
+  s.companies.sort((x, y) => rankCompany(x.slug) - rankCompany(y.slug));
+});
+
+SECTORS.sort((x, y) => {
+  /* a sector ranks by the best-ranked company in it */
+  const best = s => s.companies.reduce(
+    (m, c) => Math.min(m, rankCompany(c.slug)), COMPANY_ORDER.length);
+  return best(x) - best(y);
+});
+
 /* The markets the Group sources from today, through Lusail Commercial. Not
    every commodity comes from every country: the origin is chosen per product,
    per season and per set of terms. */
