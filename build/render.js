@@ -471,17 +471,37 @@ function companyIndex(list, { showSector = true } = {}) {
   }).join('\n');
 }
 
+/* Build / Operate / Grow / Partner, each carrying what the Group actually
+   contributes at that stage. Four columns rather than a numbered strip: this
+   is not a sequence, it is four things done at once. */
+function doesSpread() {
+  return `<div class="does">
+${WHAT_WE_DO.map((w, i) => {
+    const v = VALUE_CREATION[i];
+    return `      <section>
+        <h3${t(w.t, w.tAr)}>${esc(w.t)}</h3>
+        <p${t(w.d, w.dAr)}>${esc(w.d)}</p>
+${v ? `        <span class="does-k"${t(v.t, v.tAr)}>${esc(v.t)}</span>
+        <p class="does-v"${t(v.d, v.dAr)}>${esc(v.d)}</p>` : ''}
+      </section>`;
+  }).join('\n')}
+    </div>`;
+}
+
 function ctaBand() {
   return `<section class="cta">
   <div class="wrap">
-    <div>
+    <div class="cta-say">
       <h2 data-ar="ما التالي للوسيل كورب؟">What&rsquo;s Next for Lusail Corp?</h2>
       <p data-ar="تُبنى قصتنا عملاً تلو الآخر، وشراكة تلو الأخرى، وفرصة تلو الأخرى.">Our story is being built one business, one partnership and one opportunity at a time.</p>
+      <div class="cta-actions">
+        <a class="btn btn-gold" href="/companies/" data-ar="استكشف شركاتنا">Explore Our Companies</a>
+        <a class="btn btn-ink" href="/partnerships/" data-ar="كن شريكاً لنا">Partner With Us</a>
+      </div>
     </div>
-    <div class="cta-actions">
-      <a class="btn btn-gold" href="/companies/" data-ar="استكشف شركاتنا">Explore Our Companies</a>
-      <a class="btn btn-ink" href="/partnerships/" data-ar="كن شريكاً لنا">Partner With Us</a>
-    </div>
+    <ul class="nexts">
+${GROWTH.map(g => `      <li>${icon(g.icon)}<span${t(g.t, g.tAr)}>${esc(g.t)}</span></li>`).join('\n')}
+    </ul>
   </div>
 </section>
 `;
@@ -670,33 +690,14 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
         <span class="eyebrow" data-ar="ما نقوم به">What We Do</span>
         <h2 id="wwdTitle" data-ar="أكثر من مجرد محفظة">Building More Than a Portfolio</h2>
       </div>
-      <p class="lede" data-ar="صُمّمت لوسيل كورب لتهيئة بيئة تنمو فيها الأعمال باستقلالية مع استفادتها من قوة مجموعة أوسع.">Lusail Corp is designed to create an environment where businesses can develop independently while benefiting from the strength of a wider corporate group.</p>
+      <p class="lede" data-ar="نحن مالك فاعل. تُدار كل شركة بشكل مستقل، ولكن ليست بمفردها.">We are an active owner. Each company is run independently, but none of them is run alone.</p>
     </div>
-    ${steps(WHAT_WE_DO)}
+    ${doesSpread()}
+    <p class="does-close" data-ar="${esc(VALUE_CREATION[4] ? VALUE_CREATION[4].dAr : '')}">${esc(VALUE_CREATION[4] ? VALUE_CREATION[4].d : '')}</p>
   </div>
 </section>
 
-<section class="section sand" aria-labelledby="growthTitle">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="النمو">Growth</span>
-      <h2 id="growthTitle" class="statement" data-ar="مبنيّون لما هو قادم">Built for What Comes Next</h2>
-      <div class="prose">
-        <p data-ar="تمثّل شركات لوسيل كورب اليوم بداية رحلة نمو أوسع.">The companies within Lusail Corp today represent the beginning of a broader growth journey.</p>
-        <p data-ar="ومع تغيّر الأسواق وظهور فرص جديدة، صُمّمت محفظتنا لتتطوّر معها.">As markets change and new opportunities emerge, our portfolio is designed to evolve with them.</p>
-        <p data-ar="نهجنا انتقائي وعملي ويركّز على الفرص التي تستطيع فيها لوسيل كورب خلق قيمة حقيقية بعيدة المدى.">Our approach is selective, practical and focused on opportunities where Lusail Corp can create meaningful long-term value.</p>
-      </div>
-    </div>
-    <div>
-      <p class="micro-head" data-ar="نستكشف باستمرار فرصاً لـ">We continuously explore opportunities to</p>
-      <ul class="ticks">
-${GROWTH.map(g => `        <li>${icon(g.icon)}<span${t(g.t, g.tAr)}>${esc(g.t)}</span></li>`).join('\n')}
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="qatarTitle">
+<section class="section sand" aria-labelledby="qatarTitle">
   <div class="wrap split">
     <div>
       <span class="eyebrow" data-ar="قطر">Qatar</span>
@@ -710,19 +711,6 @@ ${GROWTH.map(g => `        <li>${icon(g.icon)}<span${t(g.t, g.tAr)}>${esc(g.t)}<
     <figure class="port-fig">
       <img src="/assets/img/doha-tall.jpg" alt="Doha, Qatar" width="1000" height="1333" loading="lazy">
     </figure>
-  </div>
-</section>
-
-<section class="section stone fit" aria-labelledby="vcTitle">
-  <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="خلق القيمة">Value Creation</span>
-        <h2 id="vcTitle" data-ar="كيف نصنع القيمة">How We Create Value</h2>
-      </div>
-      <p class="lede" data-ar="النمو ليس مجرد إضافة شركات إلى محفظة. النمو عندنا يعني بناء أعمال أفضل.">Growth is not simply about adding more companies to a portfolio. For Lusail Corp, growth means building better businesses.</p>
-    </div>
-    ${defList(VALUE_CREATION)}
   </div>
 </section>
 
