@@ -972,6 +972,35 @@ ${SECTORS.map(s => {
     </div>`;
 }
 
+/* One row per sector: the sector on one side, its companies on the other. */
+function sectorRows() {
+  return SECTORS.map((s, i) => {
+    const n = s.companies.length;
+    const count = plural(n, 'company', 'companies');
+    const countAr = pluralAr(n, 'شركة واحدة', 'شركات');
+
+    /* the cards want to know which sector they are being shown under */
+    const cos = s.companies.map(co => Object.assign({}, co, {
+      sectorSlug: s.slug, sectorName: s.name, sectorNameAr: s.nameAr
+    }));
+
+    return `<section class="secrow${i % 2 ? ' stone' : ''}" aria-labelledby="sec-${s.slug}">
+  <div class="wrap">
+    <div class="secrow-id">
+      ${icon(SECTOR_ICON[s.slug] || 'sectors')}
+      <h2 id="sec-${s.slug}"${t(s.name, s.nameAr)}>${esc(s.name)}</h2>
+      <span class="count micro"${t(count, countAr)}>${esc(count)}</span>
+      <p${t(s.short, s.shortAr)}>${esc(s.short)}</p>
+      <a class="tl" href="/sectors/${s.slug}/"${t('About ' + s.name, 'عن ' + s.nameAr)}>About ${esc(s.name)}</a>
+    </div>
+    ${companyRail(cos)}
+  </div>
+</section>
+
+`;
+  }).join('');
+}
+
 function sectorBands(compact) {
   return `<div class="bands${compact ? " bands-tight" : ""}">
 ${SECTORS.map(s => {
@@ -1021,13 +1050,7 @@ function pageSectorsIndex() {
       lede: 'Lusail Corp operates across multiple industries while maintaining one common focus: building commercially sound businesses capable of sustainable growth.',
       ledeAr: 'تعمل لوسيل كورب في صناعات متعددة مع تركيز واحد مشترك: بناء أعمال سليمة تجارياً وقادرة على النمو المستدام.'
     })
-    + `<section class="section band-wrap">
-  <div class="wrap">
-    ${sectorBands()}
-  </div>
-</section>
-
-`
+    + `${sectorRows()}`
     + ctaBand()
     + footer();
 }

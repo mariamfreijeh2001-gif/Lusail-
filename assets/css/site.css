@@ -1499,7 +1499,9 @@ html[lang="ar"] .foot-nav a{letter-spacing:0;text-transform:none;font-size:.9rem
    ========================================================================== */
 
 .corail{
-  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(258px,1fr);
+  /* A max as well as a min: with one card in the rail, 1fr stretches it
+     across the whole track and a 4:3 image then stands 578px tall. */
+  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(258px,336px);justify-content:start;
   gap:clamp(12px,1.4vw,18px);margin-top:clamp(24px,2.6vw,34px);
   overflow-x:auto;overscroll-behavior-inline:contain;
   scroll-snap-type:x proximity;scroll-padding-inline:var(--gutter);
@@ -1584,3 +1586,30 @@ html[lang="ar"] .foot-nav a{letter-spacing:0;text-transform:none;font-size:.9rem
 .corail{align-items:stretch}
 .cocard-body{grid-template-rows:auto auto 1fr}
 .cocard-role{align-self:start}
+
+/* ==========================================================================
+   Where We Operate — one row per sector
+   The sector on one side, its companies on the other, alternating grounds.
+   ========================================================================== */
+
+.secrow{padding-block:clamp(40px,4.4vw,64px);border-top:1px solid var(--line)}
+.secrow.stone{background:var(--stone)}
+.secrow .wrap{
+  display:grid;gap:clamp(22px,3vw,52px);align-items:start;
+  grid-template-columns:minmax(0,270px) minmax(0,1fr);
+}
+.secrow-id svg{
+  width:24px;height:24px;margin-bottom:14px;
+  fill:none;stroke:var(--gold-deep);stroke-width:1.2;stroke-linecap:square;stroke-linejoin:miter;
+}
+.secrow-id h2{margin:0;font-size:clamp(1.3rem,2vw,1.7rem);line-height:1.15}
+.secrow-id .count{display:block;margin-top:10px;color:var(--gold-deep)}
+.secrow-id p{margin:14px 0 0;color:var(--ink-2);font-size:.92rem;line-height:1.65}
+.secrow-id .tl{display:inline-block;margin-top:16px}
+
+/* the rail already has its own top margin for use under a heading */
+.secrow .corail{margin-top:0}
+
+@media (max-width:860px){
+  .secrow .wrap{grid-template-columns:1fr;gap:20px}
+}
