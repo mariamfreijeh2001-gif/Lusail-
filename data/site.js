@@ -65,9 +65,8 @@ const SITE = {
     { href: '/about/', label: 'The Group', labelAr: 'المجموعة' },
     { href: '/companies/', label: 'Portfolio', labelAr: 'المحفظة' },
     { href: '/sectors/', label: 'Where We Operate', labelAr: 'مجالات عملنا', mega: true },
-    { href: '/partnerships/', label: 'Work With Us', labelAr: 'اعمل معنا' },
-    { href: '/careers/', label: 'Join Us', labelAr: 'انضم إلينا' },
-    { href: '/contact/', label: 'Get in Touch', labelAr: 'تواصل معنا' }
+      { href: '/careers/', label: 'Join Us', labelAr: 'انضم إلينا' },
+    { href: '/contact/', label: 'Contact Us', labelAr: 'تواصل معنا' }
   ]
 };
 

@@ -217,7 +217,7 @@ ${links.map(([en, ar, href]) => `      <a class="clink" href="${href}"${t(en, ar
     </nav>
     <div class="drawer-foot">
       <p data-ar="شركات المجموعة تورّد وتوزّع وتتاجر في أنحاء قطر وخارجها.">The Group&rsquo;s companies supply, distribute and trade across Qatar and beyond.</p>
-      <a class="btn btn-gold drawer-cta" href="/contact/" data-ar="تواصل معنا">Get in Touch</a>
+      <a class="btn btn-gold drawer-cta" href="/contact/" data-ar="تواصل معنا">Contact Us</a>
       <p class="drawer-alt" data-ar="تورّد أو ترغب في شراكة؟ <a href=&quot;/partnerships/&quot;>اعمل معنا</a>">Supplying, or looking to partner? <a href="/partnerships/">Work with us</a></p>
 ${social}
     </div>
@@ -1224,6 +1224,43 @@ function pagePartnerships() {
       </dl>
       <a class="btn btn-gold" href="/contact/" data-ar="ابدأ الحديث">Start a Conversation</a>
     </div>
+  </div>
+</section>
+
+`
+    + `<section class="section stone" aria-labelledby="pfTitle">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow" data-ar="تحدّث إلينا">Talk to us</span>
+      <h2 id="pfTitle" data-ar="أخبرنا بما تقترحه">Tell us what you are proposing</h2>
+      <p class="lede" data-ar="سواء كنت منتجاً أو مورّداً أو موزّعاً أو شركة تبحث عن شريك في قطر، أرسل التفاصيل وسيرد عليك الفريق المعني.">Whether you are a producer, a supplier, a distributor or a business looking for a partner in Qatar, send the detail and the right desk will answer.</p>
+      <dl class="channels">
+        <div><dt data-ar="الموردون الدوليون">International suppliers</dt><dd data-ar="المنتجون والمصدّرون الراغبون في الوصول إلى السوق القطري.">Producers and exporters seeking access to the Qatar market.</dd></div>
+        <div><dt data-ar="التوريد والتوزيع">Supply and distribution</dt><dd data-ar="الشركات التي تبحث عن توريد غذائي أو تجاري موثوق داخل قطر.">Businesses looking for dependable food or commercial supply inside Qatar.</dd></div>
+        <div><dt data-ar="الشراكات التجارية">Commercial partnerships</dt><dd data-ar="المشغّلون وأصحاب العلامات والشركاء التجاريون على المدى الطويل.">Operators, brand owners and long-term commercial partners.</dd></div>
+      </dl>
+    </div>
+    <form id="form" novalidate data-mailto="${SITE.contact.email}">
+      <div class="hp" aria-hidden="true">
+        <label for="pSite">Website</label>
+        <input id="pSite" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="field"><label for="pName" data-ar="الاسم الكامل">Full Name</label><input id="pName" name="name" autocomplete="name" required></div>
+      <div class="field"><label for="pCompany" data-ar="الشركة">Company</label><input id="pCompany" name="company" autocomplete="organization"></div>
+      <div class="field"><label for="pMail" data-ar="البريد الإلكتروني">Email Address</label><input id="pMail" name="email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="pPhone" data-ar="رقم الهاتف">Phone Number</label><input id="pPhone" name="phone" type="tel" autocomplete="tel"></div>
+      <div class="field full"><label for="pArea" data-ar="نوع الشراكة">Type of partnership</label>
+        <select id="pArea" name="area">
+          <option value="partnership" data-ar="شراكة تجارية">Business Partnership</option>
+          <option value="supplier" data-ar="فرصة توريد">Supplier Opportunity</option>
+          <option value="other" data-ar="أخرى">Other</option>
+        </select></div>
+      <div class="field full"><label for="pMsg" data-ar="ما الذي تقترحه؟">What are you proposing?</label><textarea id="pMsg" name="message" required></textarea></div>
+      <div class="form-end">
+        <button class="btn btn-gold" type="submit" data-ar="إرسال الاقتراح">Send Proposal</button>
+        <span class="status" id="status" role="status"></span>
+      </div>
+    </form>
   </div>
 </section>
 
