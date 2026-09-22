@@ -225,8 +225,8 @@ ${social}
 </aside>`;
 }
 
-function header(current) {
-  return `<header class="site-head" id="top">
+function header(current, overHero) {
+  return `<header class="site-head${overHero ? ' over' : ''}" id="top">
   <button class="head-btn" type="button" id="sectorsBtn" aria-expanded="false" aria-controls="sectorsDrawer">
     ${BURGER}<span data-ar="القطاعات">Sectors</span>
   </button>
@@ -246,44 +246,24 @@ ${corporateDrawer()}
 }
 
 function footer() {
-  const explore = SITE.nav.map(n =>
-    `        <li><a href="${n.href}"${t(n.label, n.labelAr)}>${esc(n.label)}</a></li>`).join('\n');
-  const cos = ALL_COMPANIES.map(c =>
-    `        <li><a href="/companies/${c.slug}/"${t(c.name, c.nameAr)}>${esc(c.name)}</a></li>`).join('\n');
+  const nav = SITE.nav.map(n =>
+    `        <a href="${n.href}"${t(n.label, n.labelAr)}>${esc(n.label)}</a>`).join('\n');
 
   return `</main>
 <footer class="site-foot">
   <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_LIGHT}</a>
-        <p class="foot-tag"${t(SITE.tagline, SITE.taglineAr)}>${esc(SITE.tagline)}</p>
-        <p class="foot-blurb"${t(SITE.blurb, SITE.blurbAr)}>${esc(SITE.blurb)}</p>
-      </div>
-      <div class="foot-links">
-        <h4 data-ar="استكشف">Explore</h4>
-        <ul>
-${explore}
-        </ul>
-      </div>
-      <div class="foot-links">
-        <h4 data-ar="شركاتنا">Our Companies</h4>
-        <ul>
-${cos}
-        </ul>
-      </div>
-      <div>
-        <h4 data-ar="تواصل">Connect</h4>
-        <ul>
-${social()}
-          <li><a href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></li>
-          <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a></li>
-          <li><span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span></li>
-        </ul>
-      </div>
+    <div class="foot-top">
+      <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_LIGHT}</a>
+      <nav class="foot-nav" aria-label="Footer">
+${nav}
+      </nav>
     </div>
     <div class="legal">
       <span data-ar="© لوسيل كورب. جميع الحقوق محفوظة.">© ${esc(SITE.name)}. All Rights Reserved.</span>
+      <span class="legal-mid">
+        <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
+        <span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span>
+      </span>
       <span data-ar="سياسة الخصوصية · الشروط والأحكام">Privacy Policy · Terms &amp; Conditions</span>
     </div>
   </div>
@@ -453,38 +433,40 @@ ${list.map(s => {
     </div>`;
 }
 
-function companyIndex(list, { showSector = true } = {}) {
-  return list.map((c, i) => {
-    const metaEn = showSector && c.sectorName ? c.sectorName : c.role;
-    const metaAr = showSector && c.sectorNameAr ? c.sectorNameAr : c.roleAr;
-    // a company can belong to several sectors, so the filter matches a list
-    const secs = (c.sectors || [c.sectorSlug]).filter(Boolean).join(' ');
-    return `      <a href="/companies/${c.slug}/" data-sector="${secs}">
-        <span class="n">${num(i)}</span>
-        <span>
-          <h3${t(c.name, c.nameAr)}>${esc(c.name)}</h3>
-          <span class="sub"${t(c.short, c.shortAr)}>${esc(c.short)}</span>
+/* The card. Every company listing on the site is made of these. */
+function coCard(c) {
+  const photo = c.photo || (SECTORS.find(s => s.slug === c.sectorSlug) || {}).photo || 'skyline';
+  /* the portfolio filter reads this: a company can sit in more than one
+     sector, so it is a space-separated list */
+  const inSectors = (c.sectors || [c.sectorSlug]).join(' ');
+  return `      <a class="cocard" href="/companies/${c.slug}/" data-sector="${inSectors}">
+        <span class="cocard-shot"><img src="/assets/img/${photo}-card.jpg" alt="" width="1000" height="750" loading="lazy"></span>
+        <span class="cocard-body">
+          <span class="cocard-sector micro"${t(c.sectorName, c.sectorNameAr)}>${esc(c.sectorName)}</span>
+          <span class="cocard-name"${t(c.name, c.nameAr)}>${esc(c.name)}</span>
+          <span class="cocard-role"${t(c.role, c.roleAr)}>${esc(c.role)}</span>
         </span>
-        <span class="meta"${t(metaEn, metaAr)}>${esc(metaEn)}</span>
-        <span class="go" aria-hidden="true">&#8594;</span>
       </a>`;
-  }).join('\n');
 }
 
-/* Build / Operate / Grow / Partner, each carrying what the Group actually
-   contributes at that stage. Four columns rather than a numbered strip: this
-   is not a sequence, it is four things done at once. */
+/* A rail: the cards sit side by side and the row scrolls when it has to. */
+function companyRail(list, id) {
+  return `<div class="corail"${id ? ` id="${id}"` : ''}>
+${list.map(coCard).join('\n')}
+    </div>`;
+}
+
+/* kept for the pages that still call it */
+function companyIndex(list) {
+  return companyRail(list);
+}
+
 function doesSpread() {
   return `<div class="does">
-${WHAT_WE_DO.map((w, i) => {
-    const v = VALUE_CREATION[i];
-    return `      <section>
+${WHAT_WE_DO.map(w => `      <section>
         <h3${t(w.t, w.tAr)}>${esc(w.t)}</h3>
         <p${t(w.d, w.dAr)}>${esc(w.d)}</p>
-${v ? `        <span class="does-k"${t(v.t, v.tAr)}>${esc(v.t)}</span>
-        <p class="does-v"${t(v.d, v.dAr)}>${esc(v.d)}</p>` : ''}
-      </section>`;
-  }).join('\n')}
+      </section>`).join('\n')}
     </div>`;
 }
 
@@ -530,7 +512,7 @@ ${rows.map(r => `    <div><dd${t(r.v, r.vAr)}>${esc(r.v)}</dd><dt class="micro"$
    places, so this is a plain two-column register with a rule between rows —
    not another set of cards. */
 /* The map, drawn once at build time. */
-const MAP_BOX = { width: 1000, height: 430, latTop: 84, latBottom: -56 };
+const MAP_BOX = { width: 1000, height: 430, latTop: 84, latBottom: -56, minArea: 45 };
 
 function reachMap() {
   const project = makeProjection(MAP_BOX);
@@ -545,23 +527,21 @@ function reachMap() {
       const isHub = Math.abs(x - hx) < 3 && Math.abs(y - hy) < 3;
       if (isHub) return;
 
-      /* Bow each route away from the straight line, perpendicular to it, by a
-         fraction of its own length. Long routes bend more, so the lines fan
-         out instead of stacking. */
-      const mx = (x + hx) / 2, my = (y + hy) / 2;
-      const dx = x - hx, dy = y - hy;
-      const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      const bow = Math.min(46, len * 0.17);
-      const cx = Math.round((mx + (-dy / len) * bow) * 10) / 10;
-      const cy = Math.round((my + (dx / len) * bow) * 10) / 10;
-
-      routes.push(`<path class="route" d="M${hx} ${hy}Q${cx} ${cy} ${x} ${y}" style="--i:${ri * 4 + i}"/>`);
-      pins.push(`<circle class="pin" cx="${x}" cy="${y}" r="3.4" style="--i:${ri * 4 + i}"><title>${esc(name)}</title></circle>`);
+      /* The label lives in the group, so hovering the pin reveals it. Near
+         the right edge it is anchored the other way to stay in frame. */
+      const anchor = x > MAP_BOX.width - 160 ? 'end' : 'start';
+      const lx = anchor === 'end' ? x - 9 : x + 9;
+      pins.push(
+        `<g class="pin-g" style="--i:${ri * 4 + i}">` +
+        `<circle class="pin" cx="${x}" cy="${y}" r="3.4"/>` +
+        `<text class="pin-t" x="${lx}" y="${y + 4}" text-anchor="${anchor}">${esc(name)}</text>` +
+        `<title>${esc(name)}</title>` +
+        `</g>`);
     });
   });
 
   return `<figure class="map">
-      <svg viewBox="0 0 ${MAP_BOX.width} ${MAP_BOX.height}" role="img"
+      <svg viewBox="0 58 ${MAP_BOX.width} ${MAP_BOX.height - 74}" role="img"
            aria-label="The markets Lusail Corp sources from, drawn on a world map">
         <path class="land" d="${land}"/>
         <g class="routes">${routes.join('')}</g>
@@ -589,6 +569,25 @@ ${REACH.map(x => `      <div>
 
 /* Four statements about the Group, set as an ordered argument rather than a
    grid of tiles. */
+/* Four statements, one open at a time. The list is the control; the panel
+   beside it is what changes. */
+function whyPanel() {
+  return `<div class="whyp">
+      <div class="whyp-tabs" role="tablist" aria-label="What makes it a group">
+${WHY.map((x, i) => `        <button class="whyp-tab" type="button" role="tab" id="whyt${i}"
+          aria-controls="whyp${i}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}">
+          <span class="whyp-n" aria-hidden="true">${num(i)}</span>
+          <span${t(x.t, x.tAr)}>${esc(x.t)}</span>
+        </button>`).join('\n')}
+      </div>
+      <div class="whyp-panels">
+${WHY.map((x, i) => `        <div class="whyp-panel" role="tabpanel" id="whyp${i}" aria-labelledby="whyt${i}"${i === 0 ? '' : ' hidden'}>
+          <p${t(x.d, x.dAr)}>${esc(x.d)}</p>
+        </div>`).join('\n')}
+      </div>
+    </div>`;
+}
+
 function whyList() {
   return `<div class="why">
 ${WHY.map((x, i) => `      <section>
@@ -605,7 +604,7 @@ function pageHome() {
     desc: 'Lusail Corp is a Qatar-based diversified corporate group building and supporting businesses across consumer services, food and beverage, commercial distribution and international trade.',
     url: '/', image: 'coffee-still.jpg'
   })
-    + header('/')
+    + header('/', true)
     + `<section class="hero">
   <img class="hero-bg" src="/assets/img/skyline-tall.jpg" alt="" width="1000" height="1333" fetchpriority="high">
   <div class="wrap">
@@ -620,26 +619,14 @@ function pageHome() {
 </section>
 
 `
-    + glanceBand()
     + `
-<section class="section" aria-labelledby="introTitle">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="مقدمة">Introduction</span>
-      <h2 id="introTitle" class="statement"${t(SITE.supporting, SITE.supportingAr)}>${esc(SITE.supporting)}</h2>
-      <div class="prose">
-        <p data-ar="تجمع لوسيل كورب محفظة متنامية من الأعمال في صناعات مختلفة.">Lusail Corp brings together a growing portfolio of businesses operating across different industries.</p>
-        <p data-ar="ودورنا يتجاوز الملكية: نوفّر التوجيه الاستراتيجي والدعم التجاري ومنصة مشتركة تستطيع شركاتنا من خلالها تقوية عملياتها وتطوير أسواقها واقتناص فرص جديدة.">Our role goes beyond ownership. We provide strategic direction, commercial support and a shared platform from which our companies can strengthen their operations, develop their markets and pursue new opportunities.</p>
-        <p data-ar="تمتد محفظتنا اليوم عبر خدمات المستهلك والأغذية والمشروبات وتوريد المنتجات الطازجة وتجارة السلع الدولية. وغداً ستمضي أبعد من ذلك.">Today, our portfolio spans consumer services, food and beverage, fresh produce supply and international commodity trading. Tomorrow, it will go further.</p>
-      </div>
-    </div>
-    <div class="aside">
-      <h3 data-ar="شركاتنا">Our Companies</h3>
-      <ol class="mini">
-${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span class="n">${num(k)}</span><span><b${t(c.name, c.nameAr)}>${esc(c.name)}</b><em${t(c.role, c.roleAr)}>${esc(c.role)}</em></span></a></li>`).join('\n')}
-      </ol>
-      <a class="btn btn-ink" href="/companies/" data-ar="عرض المحفظة">View the portfolio</a>
-    </div>
+<section class="section intro" aria-labelledby="introTitle">
+  <div class="wrap">
+    <span class="eyebrow" data-ar="مقدمة">Introduction</span>
+    <h2 id="introTitle" class="intro-say"${t(SITE.supporting, SITE.supportingAr)}>${esc(SITE.supporting)}</h2>
+    <p class="intro-lede" data-ar="ودورنا يتجاوز الملكية. نوفّر التوجيه الاستراتيجي والدعم التجاري ومنصة مشتركة تستطيع شركاتنا من خلالها تقوية عملياتها وتطوير أسواقها واقتناص فرص جديدة.">Our role goes beyond ownership. We provide strategic direction, commercial support and a shared platform from which our companies strengthen their operations, develop their markets and pursue new opportunities.</p>
+    <p class="intro-now" data-ar="تمتد المحفظة اليوم عبر خدمات المستهلك والأغذية والمشروبات وتوريد الأغذية وتجارة السلع الدولية.">Today it spans consumer services, food and beverage, food supply and international commodity trading.</p>
+    <a class="tl intro-more" href="/about/" data-ar="المزيد عن المجموعة">More about the Group</a>
   </div>
 </section>
 
@@ -652,7 +639,7 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
       </div>
       <p class="lede" data-ar="تعكس محفظتنا إيماننا بأن الفرص قد توجد في صناعات مختلفة، فنبني الأعمال حيث نرى إمكانات تجارية قوية.">Our portfolio reflects our belief that opportunities can exist across different industries, so we build businesses where we see strong commercial potential.</p>
     </div>
-    ${sectorBands(true)}
+    ${sectorStrip()}
   </div>
 </section>
 
@@ -665,7 +652,7 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
       </div>
       <p class="lede" data-ar="الشركات التي نملكها متنوعة. أما طريقة إدارتها فليست كذلك.">The businesses we own are varied. The way they are run is not.</p>
     </div>
-    ${whyList()}
+    ${whyPanel()}
   </div>
 </section>
 
@@ -692,25 +679,7 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
       </div>
       <p class="lede" data-ar="نحن مالك فاعل. تُدار كل شركة بشكل مستقل، ولكن ليست بمفردها.">We are an active owner. Each company is run independently, but none of them is run alone.</p>
     </div>
-    ${doesSpread()}
-    <p class="does-close" data-ar="${esc(VALUE_CREATION[4] ? VALUE_CREATION[4].dAr : '')}">${esc(VALUE_CREATION[4] ? VALUE_CREATION[4].d : '')}</p>
-  </div>
-</section>
-
-<section class="section sand" aria-labelledby="qatarTitle">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="قطر">Qatar</span>
-      <h2 id="qatarTitle" class="statement" data-ar="متجذّرون في قطر. متصلون بالفرص.">Rooted in Qatar. Connected to Opportunity.</h2>
-      <div class="prose">
-        <p data-ar="تأسست لوسيل كورب في دولة قطر بطموح بناء مجموعة أعمال متنوعة قادرة على خدمة الطلب المحلي مع تطوير صلات تتجاوز حدود البلاد.">Lusail Corp was established in the State of Qatar with the ambition to build a diversified group of businesses capable of serving local demand while developing connections beyond the country&rsquo;s borders.</p>
-        <p data-ar="وتبقى قطر في قلب عملياتنا واستراتيجية نمونا.">Qatar remains at the center of our operations and growth strategy.</p>
-        <p data-ar="وفي الوقت نفسه، تتيح أعمال مثل لوسيل التجارية للمجموعة بناء شبكات موردين دولية وعلاقات توريد وفرص تجارية. نظرتنا محلية في الفهم ودولية في الأفق.">At the same time, businesses such as Lusail Commercial allow the Group to develop international supplier networks, sourcing relationships and trading opportunities. Our perspective is local in understanding and international in outlook.</p>
-      </div>
-    </div>
-    <figure class="port-fig">
-      <img src="/assets/img/doha-tall.jpg" alt="Doha, Qatar" width="1000" height="1333" loading="lazy">
-    </figure>
+    ${doesSpread()}
   </div>
 </section>
 
@@ -788,6 +757,20 @@ function pageAbout() {
       <h2 id="valTitle"><span data-ar="القيم التي">The values that</span> <span class="mark" data-ar="توجّهنا">guide us</span></h2>
     </div>
     ${numberedCards(VALUES, 'three')}
+  </div>
+</section>
+
+`
+    + `<section class="section stone" aria-labelledby="vcTitle">
+  <div class="wrap">
+    <div class="sec-head row">
+      <div>
+        <span class="eyebrow" data-ar="خلق القيمة">Value Creation</span>
+        <h2 id="vcTitle" data-ar="كيف نصنع القيمة">How We Create Value</h2>
+      </div>
+      <p class="lede" data-ar="النمو ليس مجرد إضافة شركات إلى محفظة. النمو عندنا يعني بناء أعمال أفضل.">Growth is not simply about adding more companies to a portfolio. For Lusail Corp, growth means building better businesses.</p>
+    </div>
+    ${defList(VALUE_CREATION)}
   </div>
 </section>
 
@@ -920,7 +903,7 @@ ${c.activities.map((a, k) => `      <li${t(a, c.activitiesAr && c.activitiesAr[k
     url: `/companies/${c.slug}/`,
     image: hasPhoto(c) ? `${c.photo}-${c.photoStyle === 'still' ? 'still' : 'wide'}.jpg` : undefined
   })
-    + header('/companies/')
+    + header('/companies/', hasPhoto(c) && c.template !== 'split')
     + (hasPhoto(c) ? companyHero(c, sector) : opener({
       crumb: sector.name, crumbAr: sector.nameAr,
       h1: c.name, h1Ar: c.nameAr,
@@ -982,6 +965,27 @@ const SECTOR_ICON = {
 };
 
 /* Sector bands: the sector names itself, then the companies inside it. */
+/* One tile per sector, four across. The companies inside them are on the
+   sectors page; here the point is only that there are four of them. */
+function sectorStrip() {
+  return `<div class="strip">
+${SECTORS.map(s => {
+    const lead = s.companies[0];
+    const photo = (lead && lead.photo) || s.photo || 'skyline';
+    const n = s.companies.length;
+    const count = plural(n, 'company', 'companies');
+    const countAr = pluralAr(n, 'شركة واحدة', 'شركات');
+    return `      <a class="tile strip-tile" href="/sectors/${s.slug}/">
+        <span class="shot"><img src="/assets/img/${photo}-card.jpg" alt="" width="1000" height="750" loading="lazy"></span>
+        <span class="tcap">
+          <span class="strip-n micro"${t(count, countAr)}>${esc(count)}</span>
+          <span class="tname"${t(s.name, s.nameAr)}>${esc(s.name)}</span>
+        </span>
+      </a>`;
+  }).join('\n')}
+    </div>`;
+}
+
 function sectorBands(compact) {
   return `<div class="bands${compact ? " bands-tight" : ""}">
 ${SECTORS.map(s => {
@@ -1134,9 +1138,7 @@ ${body}
     <div class="aside">
       ${hasPhoto(s) && s.photoStyle === 'still' ? still(s.photo, s.photoCaption || s.short) : ''}
       ${n ? `<h3 data-ar="شركة المحفظة">Portfolio ${n === 1 ? 'company' : 'companies'}</h3>
-      <ol class="mini">
-${s.companies.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span class="n">${num(k)}</span><span><b${t(c.name, c.nameAr)}>${esc(c.name)}</b><em${t(c.role, c.roleAr)}>${esc(c.role)}</em></span></a></li>`).join('\n')}
-      </ol>` : `<h3 data-ar="قيد التطوير">In development</h3>
+${companyRail(cos)}` : `<h3 data-ar="قيد التطوير">In development</h3>
       <p class="prose" data-ar="لا توجد شركة في هذا القطاع بعد. إن كان لديك عمل أو مفهوم يناسبه، نودّ أن نسمع منك.">No company sits in this sector yet. If you have a business or concept that fits it, we would like to hear from you.</p>
       <a class="btn btn-ink" href="/partnerships/" data-ar="تحدّث إلينا">Talk to us</a>`}
     </div>

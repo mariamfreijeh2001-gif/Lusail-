@@ -87,9 +87,15 @@ function landPath(opts) {
       // Antarctica and the far south sit outside the frame entirely; drop the
       // ring rather than clipping it point by point, which leaves a smear
       // along the bottom edge.
-      let top = -90;
-      for (const p of r) if (p[1] > top) top = p[1];
+      let top = -90, bottom = 90;
+      for (const p of r) { if (p[1] > top) top = p[1]; if (p[1] < bottom) bottom = p[1]; }
       if (top < opts.latBottom) continue;
+
+      // Greenland, Svalbard and the Canadian and Russian Arctic islands sit in
+      // a row across the top and merge into what looks like a printing fault.
+      // A map about trade routes does not need them; the mainlands stay,
+      // because their rings reach far below this line.
+      if (opts.dropAbove != null && bottom > opts.dropAbove) continue;
 
       const pts = r.map(project);
       let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;

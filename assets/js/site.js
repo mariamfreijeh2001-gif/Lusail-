@@ -317,6 +317,35 @@
     });
   }
 
+
+  /* ---------- what makes it a group ---------------------------------------
+     A tablist: click or arrow between the statements, one panel at a time. */
+
+  var whyTabs = $$('.whyp-tab');
+  if (whyTabs.length) {
+    var showWhy = function (i, focus) {
+      whyTabs.forEach(function (t, k) {
+        var on = k === i;
+        t.setAttribute('aria-selected', String(on));
+        t.setAttribute('tabindex', on ? '0' : '-1');
+        var panel = document.getElementById(t.getAttribute('aria-controls'));
+        if (panel) panel.hidden = !on;
+      });
+      if (focus) whyTabs[i].focus();
+    };
+    whyTabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { showWhy(i); });
+      t.addEventListener('keydown', function (e) {
+        var n = whyTabs.length, i2 = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') i2 = (i + 1) % n;
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') i2 = (i - 1 + n) % n;
+        else if (e.key === 'Home') i2 = 0;
+        else if (e.key === 'End') i2 = n - 1;
+        if (i2 !== null) { e.preventDefault(); showWhy(i2, true); }
+      });
+    });
+  }
+
   /* ---------- boot -------------------------------------------------------- */
 
   var saved = 'en';
