@@ -410,6 +410,12 @@ const OPEN_ROLES = [];
 /* Flat list of every company, each carrying a back-reference to the sector it
    is defined in. A company appears here exactly once, however many sectors it
    is listed under. */
+/* The order the portfolio is listed in, wherever it is listed. The two
+   trading businesses lead: they are the ones that carry the Group outside
+   Qatar, and they are what an enquiry usually arrives about. Anything not
+   named here keeps its sector order, behind them. */
+const COMPANY_ORDER = ['lusail-commercial', 'roma-commercial'];
+
 const ALL_COMPANIES = SECTORS.flatMap(s =>
   s.companies.map(c => Object.assign({}, c, {
     sectorSlug: s.slug, sectorName: s.name, sectorNameAr: s.nameAr,
@@ -417,7 +423,10 @@ const ALL_COMPANIES = SECTORS.flatMap(s =>
     photo: c.photo || s.photo,
     photoStyle: c.photoStyle || s.photoStyle || 'none'
   }))
-);
+).sort((x, y) => {
+  const rank = s => { const i = COMPANY_ORDER.indexOf(s); return i === -1 ? COMPANY_ORDER.length : i; };
+  return rank(x.slug) - rank(y.slug);
+});
 
 /* Now add the cross-listed companies to the other sectors they work in. This
    runs after ALL_COMPANIES is built, so nothing is counted twice. */
@@ -429,6 +438,19 @@ SECTORS.forEach(s => {
 /* The markets the Group sources from today, through Lusail Commercial. Not
    every commodity comes from every country: the origin is chosen per product,
    per season and per set of terms. */
+/* Where each market sits, so the map can be drawn from the same list the
+   register reads from. [name, lon, lat]. */
+const REACH_POINTS = {
+  'Middle East': [['Qatar', 51.2, 25.3], ['UAE', 54, 24], ['Türkiye', 35, 39], ['Lebanon', 35.8, 33.9]],
+  'Europe & Black Sea': [['Ukraine', 31, 49], ['Bulgaria', 25.5, 42.7], ['Spain', -3.7, 40.4]],
+  'Asia & Central Asia': [['India', 78.9, 20.6], ['Indonesia', 113.9, -0.8], ['Vietnam', 108.3, 14.1], ['Singapore', 103.8, 1.4], ['Turkmenistan', 59.6, 39], ['Kazakhstan', 66.9, 48]],
+  'Africa': [['Ethiopia', 40.5, 9.1], ['Uganda', 32.3, 1.4], ['Libya', 17.2, 26.3]],
+  'The Americas': [['Canada', -106, 56], ['United States', -98, 39.8], ['Brazil', -51.9, -14.2], ['Colombia', -74.3, 4.6]],
+  'Oceania': [['Australia', 133.8, -25.3]],
+};
+
+const HUB = [51.53, 25.29];   // Doha
+
 const REACH = [
   { t: 'Middle East', tAr: 'الشرق الأوسط',
     d: 'Qatar · UAE · Türkiye · Lebanon', dAr: 'قطر · الإمارات · تركيا · لبنان' },
@@ -461,7 +483,7 @@ const WHY = [
 ];
 
 module.exports = {
-  SITE, SECTORS, ALL_COMPANIES, REACH, WHY,
+  SITE, SECTORS, ALL_COMPANIES, REACH, REACH_POINTS, HUB, WHY,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH,
   PARTNER_TYPES, CAREER_VALUES, OPEN_ROLES
 };

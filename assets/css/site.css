@@ -1098,62 +1098,98 @@ html[lang="ar"] .head-btn{letter-spacing:0;font-size:.9rem}
 
 .drawer{
   position:fixed;top:0;bottom:0;z-index:80;width:min(86vw,360px);
-  background:var(--navy);border-inline-end:1px solid var(--line);
+  background:#0B1430;
   overflow-y:auto;overscroll-behavior:contain;
   transition:transform .32s cubic-bezier(.2,.7,.2,1);
 }
 .drawer-l{inset-inline-start:0;transform:translateX(-102%)}
-.drawer-r{inset-inline-end:0;border-inline-end:0;border-inline-start:1px solid var(--line);transform:translateX(102%)}
+.drawer-r{inset-inline-end:0;transform:translateX(102%)}
 html[dir="rtl"] .drawer-l{transform:translateX(102%)}
 html[dir="rtl"] .drawer-r{transform:translateX(-102%)}
 .drawer.open{transform:none}
-.drawer-in{padding:22px var(--gutter) 40px;display:grid;gap:6px;align-content:start}
+.drawer-in{padding:20px 22px 34px;display:grid;gap:4px;align-content:start}
 
 .drawer-x{
   display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;
-  color:var(--gold);font:600 .78rem/1 var(--body);letter-spacing:.14em;text-transform:uppercase;
-  padding:12px 0;margin-bottom:14px;
+  color:var(--gold);font:700 .78rem/1 var(--body);letter-spacing:.15em;text-transform:uppercase;
+  padding:10px;margin-bottom:18px;
 }
 html[lang="ar"] .drawer-x{letter-spacing:0;font-size:.9rem}
 .drawer-x span[aria-hidden]{font-size:1.5rem;line-height:1}
-.drawer-r .drawer-x{justify-content:flex-end}
+.drawer-r .drawer-x{justify-content:space-between;width:100%;color:var(--on-dark)}
+.drawer-r .drawer-x:hover{color:var(--gold)}
 
-.dnav{display:grid;gap:2px}
+/* The panel is a slab: no rules between items, space doing the separating. */
+.dnav{display:grid;gap:0}
+
 .dcat-btn{
   display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;cursor:pointer;
-  color:var(--on-dark);font:500 .96rem/1.3 var(--body);text-align:start;
-  padding:14px 4px;border-bottom:1px solid var(--line);transition:color .2s;
+  color:var(--on-dark);text-align:start;padding:13px 10px;border-radius:2px;
+  transition:background .2s,color .2s;
 }
-.dcat-btn:hover{color:var(--gold)}
-.dcat-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--gold);stroke-width:1.2;stroke-linecap:square;stroke-linejoin:miter}
-.dcat-btn > span:not(.chev){flex:1 1 auto;min-width:0}
+.dcat-btn:hover,.dcat-btn:focus-visible{background:rgba(255,255,255,.05);color:var(--gold)}
+.dcat-btn svg{width:17px;height:17px;flex:none;fill:none;stroke:var(--gold);stroke-width:1.3;stroke-linecap:square;stroke-linejoin:miter}
+.dcat-id{flex:1 1 auto;min-width:0;display:grid;gap:1px}
+.dcat-nm{font:700 .8rem/1.25 var(--body);letter-spacing:.09em;text-transform:uppercase}
+html[lang="ar"] .dcat-nm{letter-spacing:0;text-transform:none;font-size:.95rem;font-weight:600}
+/* the Arabic line is decoration under the English one; in Arabic the name is
+   already Arabic, so printing it twice would be the same word repeated */
+.dcat-ar{font-size:.63rem;color:var(--ink-3);line-height:1.4}
+html[lang="ar"] .dcat-ar{display:none}
+
 .chev{
-  flex:none;width:9px;height:9px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;
-  transform:rotate(45deg);margin-top:-4px;transition:transform .25s;
+  flex:none;width:8px;height:8px;border-right:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);
+  transform:rotate(-45deg);transition:transform .25s;
 }
-.dcat.open .chev{transform:rotate(-135deg);margin-top:2px}
+html[dir="rtl"] .chev{transform:rotate(135deg)}
+.dcat.open .chev{transform:rotate(45deg)}
+html[dir="rtl"] .dcat.open .chev{transform:rotate(45deg)}
 
 /* grid-template-rows animates; height:auto does not */
 .dcat-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.7,.2,1)}
 .dcat.open .dcat-panel{grid-template-rows:1fr}
-.dcat-panel > div{overflow:hidden;display:grid}
+.dcat-panel > div{overflow:hidden;display:grid;padding-bottom:6px}
 
 .dlink{
-  display:block;padding:11px 4px 11px 30px;color:var(--ink-2);text-decoration:none;
-  font-size:.92rem;transition:color .2s;
+  display:block;padding:9px 10px 9px 39px;color:var(--on-dark);text-decoration:none;
+  font:700 .72rem/1.35 var(--body);letter-spacing:.08em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s,color .2s;
 }
-html[dir="rtl"] .dlink{padding:11px 30px 11px 4px}
-.dlink:hover{color:var(--gold)}
-.dlink-all{color:var(--gold-soft)}
-.dlink.soon{color:var(--ink-3)}
-.dlink-lg{
-  padding:16px 4px;font-family:var(--display);font-size:1.22rem;color:var(--on-dark);
-  border-bottom:1px solid var(--line);
-}
+html[dir="rtl"] .dlink{padding:9px 39px 9px 10px}
+html[lang="ar"] .dlink{letter-spacing:0;text-transform:none;font-size:.88rem;font-weight:500}
+.dlink:hover,.dlink:focus-visible{background:rgba(255,255,255,.05);color:var(--gold)}
+.dlink-all{color:var(--ink-3)}
 
-.drawer-foot{display:grid;gap:9px;margin-top:30px;font-size:.88rem;color:var(--ink-2)}
-.drawer-foot a{color:var(--ink-2);text-decoration:none}
-.drawer-foot a:hover{color:var(--gold)}
+/* ---- the right panel ---------------------------------------------------- */
+/* links at the top, the footer block on the floor, space between them */
+.drawer-r .drawer-in{min-height:100%;grid-template-rows:auto 1fr auto;gap:0}
+.dnav-corp{display:grid;gap:0;align-content:start;padding-top:6px}
+.clink{
+  display:block;padding:14px 10px;color:var(--on-dark);text-decoration:none;
+  font:700 .82rem/1.3 var(--body);letter-spacing:.1em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s,color .2s;
+}
+html[lang="ar"] .clink{letter-spacing:0;text-transform:none;font-size:1rem;font-weight:600}
+.clink:hover,.clink:focus-visible{background:rgba(255,255,255,.05);color:var(--gold)}
+
+.drawer-foot{
+  display:grid;gap:14px;justify-items:start;
+  border-top:1px solid var(--line-dark);padding-top:22px;margin-top:30px;
+}
+.drawer-foot p{margin:0;font-size:.82rem;line-height:1.6;color:var(--ink-3)}
+.drawer-cta{
+  width:100%;text-align:center;border-radius:2px;
+  font:700 .78rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:1.05em 1em;
+}
+html[lang="ar"] .drawer-cta{letter-spacing:0;text-transform:none;font-size:.95rem}
+.drawer-alt{font-size:.76rem}
+.drawer-alt a{color:var(--gold);text-decoration:none}
+.drawer-alt a:hover{text-decoration:underline}
+.drawer-social{
+  color:var(--on-dark);text-decoration:none;
+  font:700 .76rem/1 var(--body);letter-spacing:.09em;text-transform:uppercase;
+}
+.drawer-social:hover{color:var(--gold)}
 
 @media (max-width:760px){
   .site-head{padding-inline:18px}
@@ -1262,3 +1298,47 @@ html[dir="rtl"] .co-left::before{background:linear-gradient(to left, rgba(3,12,4
 .bands-tight .band-head{margin-bottom:14px}
 .bands-tight .tiles.n1{max-width:min(100%,300px)}
 .bands-tight .tiles.n2{max-width:min(100%,604px)}
+
+/* ==========================================================================
+   The reach map
+   Natural Earth land, projected at build time. The routes draw themselves
+   in once, the pins arrive behind them, and neither moves again.
+   ========================================================================== */
+
+.map{margin:clamp(26px,3vw,40px) 0 0;position:relative}
+.map svg{display:block;width:100%;height:auto;overflow:hidden}
+.land{fill:#DAD7D2;stroke:none}
+
+.route{
+  fill:none;stroke:var(--gold);stroke-width:1.1;opacity:.5;
+  stroke-dasharray:1 0;
+}
+.pin{fill:var(--gold-deep)}
+.hub-dot{fill:var(--navy)}
+.hub-ring{fill:none;stroke:var(--navy);stroke-width:1.6;opacity:.55}
+.pin:hover{fill:var(--navy)}
+
+.map-key{
+  display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:18px;
+  font:500 var(--t-micro)/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+}
+html[lang="ar"] .map-key{font-family:var(--body);letter-spacing:0;text-transform:none;font-size:.85rem}
+.map-key span{display:inline-flex;align-items:center;gap:8px}
+.map-key span::before{content:"";width:9px;height:9px;border-radius:50%;flex:none}
+.k-hub::before{background:var(--navy)}
+.k-pin::before{background:var(--gold-deep)}
+
+/* Drawn in once on load: the routes trace out, then the pins land. Held to
+   a single pass — a map that keeps pulsing is a map nobody can read. */
+@media (prefers-reduced-motion:no-preference){
+  .route{
+    stroke-dasharray:var(--len,1000);stroke-dashoffset:var(--len,1000);
+    animation:route-draw .9s cubic-bezier(.3,.7,.3,1) forwards;
+    animation-delay:calc(.15s + var(--i,0) * .045s);
+  }
+  .pin{opacity:0;animation:pin-land .4s ease-out forwards;animation-delay:calc(.5s + var(--i,0) * .045s)}
+  .hub-ring{transform-box:fill-box;transform-origin:center;animation:hub-in .6s ease-out .1s backwards}
+}
+@keyframes route-draw{to{stroke-dashoffset:0}}
+@keyframes pin-land{from{opacity:0}to{opacity:1}}
+@keyframes hub-in{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:.55}}

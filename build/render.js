@@ -19,8 +19,9 @@
 
 const fs = require('fs');
 const path = require('path');
+const { landPath, makeProjection } = require('./worldmap.js');
 const {
-  SITE, REACH, WHY, SECTORS, ALL_COMPANIES,
+  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH,
   PARTNER_TYPES, CAREER_VALUES, OPEN_ROLES
 } = require('../data/site.js');
@@ -177,14 +178,15 @@ function sectorsDrawer() {
 ${SECTORS.map(s => `      <div class="dcat">
         <button class="dcat-btn" type="button" aria-expanded="false">
           ${icon(SECTOR_ICON[s.slug] || 'sectors')}
-          <span${t(s.name, s.nameAr)}>${esc(s.name)}</span>
+          <span class="dcat-id">
+            <span class="dcat-nm"${t(s.name, s.nameAr)}>${esc(s.name)}</span>
+            <span class="dcat-ar" aria-hidden="true">${esc(s.nameAr)}</span>
+          </span>
           <span class="chev" aria-hidden="true"></span>
         </button>
         <div class="dcat-panel"><div>
-          <a class="dlink dlink-all" href="/sectors/${s.slug}/"${t('All of ' + s.name, 'كل ' + s.nameAr)}>All of ${esc(s.name)}</a>
-${s.companies.length
-    ? s.companies.map(co => `          <a class="dlink" href="/companies/${co.slug}/"${t(co.name, co.nameAr)}>${esc(co.name)}</a>`).join('\n')
-    : `          <span class="dlink soon" data-ar="قيد التطوير">In development</span>`}
+${s.companies.map(co => `          <a class="dlink" href="/companies/${co.slug}/"${t(co.name, co.nameAr)}>${esc(co.name)}</a>`).join('\n')}
+          <a class="dlink dlink-all" href="/sectors/${s.slug}/"${t('Sector overview', 'نظرة على القطاع')}>Sector overview</a>
         </div></div>
       </div>`).join('\n')}
     </nav>
@@ -198,22 +200,26 @@ function corporateDrawer() {
     ['Home', 'الرئيسية', '/'],
     ['The Group', 'المجموعة', '/about/'],
     ['Portfolio', 'المحفظة', '/companies/'],
+    ['Where We Operate', 'مجالات عملنا', '/sectors/'],
     ['Work With Us', 'اعمل معنا', '/partnerships/'],
-    ['Join Us', 'انضم إلينا', '/careers/'],
-    ['Get in Touch', 'تواصل معنا', '/contact/']
+    ['Join Us', 'انضم إلينا', '/careers/']
   ];
-  return `<aside class="drawer drawer-r" id="corpDrawer" aria-label="Corporate" hidden>
+  const social = SITE.contact.linkedin && SITE.contact.linkedin !== '#'
+    ? `      <a class="drawer-social" href="${SITE.contact.linkedin}" data-ar="تابعنا على لينكدإن">Connect on LinkedIn</a>`
+    : '';
+  return `<aside class="drawer drawer-r" id="corpDrawer" aria-label="The Group" hidden>
   <div class="drawer-in">
     <button class="drawer-x" type="button" data-close>
       <span data-ar="المجموعة">The Group</span><span aria-hidden="true">&times;</span>
     </button>
-    <nav class="dnav">
-${links.map(([en, ar, href]) => `      <a class="dlink dlink-lg" href="${href}"${t(en, ar)}>${esc(en)}</a>`).join('\n')}
+    <nav class="dnav dnav-corp">
+${links.map(([en, ar, href]) => `      <a class="clink" href="${href}"${t(en, ar)}>${esc(en)}</a>`).join('\n')}
     </nav>
     <div class="drawer-foot">
-      <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
-      <a href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a>
-      <span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span>
+      <p data-ar="شركات المجموعة تورّد وتوزّع وتتاجر في أنحاء قطر وخارجها.">The Group&rsquo;s companies supply, distribute and trade across Qatar and beyond.</p>
+      <a class="btn btn-gold drawer-cta" href="/contact/" data-ar="تواصل معنا">Get in Touch</a>
+      <p class="drawer-alt" data-ar="تورّد أو ترغب في شراكة؟ <a href=&quot;/partnerships/&quot;>اعمل معنا</a>">Supplying, or looking to partner? <a href="/partnerships/">Work with us</a></p>
+${social}
     </div>
   </div>
 </aside>`;
@@ -503,6 +509,55 @@ ${rows.map(r => `    <div><dd${t(r.v, r.vAr)}>${esc(r.v)}</dd><dt class="micro"$
 /* The markets the Group reaches. A list of places wants to read as a list of
    places, so this is a plain two-column register with a rule between rows —
    not another set of cards. */
+/* The map, drawn once at build time. */
+const MAP_BOX = { width: 1000, height: 430, latTop: 84, latBottom: -56 };
+
+function reachMap() {
+  const project = makeProjection(MAP_BOX);
+  const land = landPath(MAP_BOX);
+  const [hx, hy] = project(HUB).map(n => Math.round(n * 10) / 10);
+
+  const pins = [];
+  const routes = [];
+  Object.keys(REACH_POINTS).forEach((region, ri) => {
+    REACH_POINTS[region].forEach(([name, lon, lat], i) => {
+      const [x, y] = project([lon, lat]).map(n => Math.round(n * 10) / 10);
+      const isHub = Math.abs(x - hx) < 3 && Math.abs(y - hy) < 3;
+      if (isHub) return;
+
+      /* Bow each route away from the straight line, perpendicular to it, by a
+         fraction of its own length. Long routes bend more, so the lines fan
+         out instead of stacking. */
+      const mx = (x + hx) / 2, my = (y + hy) / 2;
+      const dx = x - hx, dy = y - hy;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const bow = Math.min(46, len * 0.17);
+      const cx = Math.round((mx + (-dy / len) * bow) * 10) / 10;
+      const cy = Math.round((my + (dx / len) * bow) * 10) / 10;
+
+      routes.push(`<path class="route" d="M${hx} ${hy}Q${cx} ${cy} ${x} ${y}" style="--i:${ri * 4 + i}"/>`);
+      pins.push(`<circle class="pin" cx="${x}" cy="${y}" r="3.4" style="--i:${ri * 4 + i}"><title>${esc(name)}</title></circle>`);
+    });
+  });
+
+  return `<figure class="map">
+      <svg viewBox="0 0 ${MAP_BOX.width} ${MAP_BOX.height}" role="img"
+           aria-label="The markets Lusail Corp sources from, drawn on a world map">
+        <path class="land" d="${land}"/>
+        <g class="routes">${routes.join('')}</g>
+        <g class="pins">${pins.join('')}</g>
+        <g class="hub">
+          <circle class="hub-ring" cx="${hx}" cy="${hy}" r="9"/>
+          <circle class="hub-dot" cx="${hx}" cy="${hy}" r="4.2"/>
+        </g>
+      </svg>
+      <figcaption class="map-key">
+        <span class="k-hub" data-ar="الدوحة، قطر">Doha, Qatar</span>
+        <span class="k-pin" data-ar="أسواق التوريد">Sourcing markets</span>
+      </figcaption>
+    </figure>`;
+}
+
 function reachList() {
   return `<dl class="reach">
 ${REACH.map(x => `      <div>
@@ -603,6 +658,7 @@ ${ALL_COMPANIES.map((c, k) => `        <li><a href="/companies/${c.slug}/"><span
       </div>
       <p class="lede" data-ar="ليست كل سلعة تأتي من كل بلد. يُختار المنشأ حسب المنتج والموسم والجودة والتوافر وشروط الصفقة.">Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.</p>
     </div>
+    ${reachMap()}
     ${reachList()}
   </div>
 </section>
