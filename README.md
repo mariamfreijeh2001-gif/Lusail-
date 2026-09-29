@@ -213,6 +213,27 @@ are ordinary buttons either way. The home page is 27 KB.
 
 `404.html` carries `noindex` and no canonical, so a soft 404 cannot be indexed.
 
+## Accessibility
+
+Measured rather than assumed. Every text colour clears WCAG AA against every
+ground it actually sits on — the palest each grey can be and still pass:
+
+| | drawn | shipped | ratio |
+|---|---|---|---|
+| `--ink-2` body copy | `#868585` | `#6c6b6b` | 4.55 on panel, 5.31 on white |
+| `--ink-3` the greyed word in a heading | `#c0bfbd` | `#8f8e8c` | 3.27 |
+| `--num` the oversized numerals | `#c2bebe` | `#8c8888` | 3.00 |
+| `--label` stat labels | `#939393` | `#6b6b6b` | 5.33 |
+
+The design drew all four paler; as drawn, body copy failed AA everywhere it
+appeared (3.15 to 1 on a panel) and the greyed word sat at 1.69 to 1.
+
+Anything that reveals content on focus answers plain `:focus`, not only
+`:focus-visible` — the company panels, the map pins and the bento claims.
+`:focus-visible` is right for drawing a focus ring, because it keeps the ring
+off mouse clicks, but content that only appears for "keyboard-like" focus is
+content some people never see. Every interactive target is at least 24px.
+
 ## Contact form
 
 The contact page carries the form. It validates in

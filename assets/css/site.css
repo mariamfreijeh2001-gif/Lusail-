@@ -17,10 +17,16 @@
      ground; --ink-2 is body copy; --ink-3 is the greyed word inside a
      heading, which is the system's one flourish. */
   --ink:#181717;
-  --ink-2:#868585;
-  --ink-3:#c0bfbd;
-  --num:#c2bebe;            /* the oversized numerals on the cards */
-  --label:#939393;          /* stat labels */
+  /* The design drew these three a good deal paler: #868585 body copy, #c0bfbd
+     for the greyed word in a heading, #c2bebe for the numerals. Measured
+     against the grounds they actually sit on they came out at 3.15, 1.69 and
+     1.58 to 1 — body copy that fails WCAG AA everywhere it appears, and a
+     greyed heading word barely separable from the paper. These are the
+     palest each can be and still clear AA (4.5 for copy, 3 for large text). */
+  --ink-2:#6c6b6b;
+  --ink-3:#8f8e8c;
+  --num:#8c8888;            /* the oversized numerals on the cards */
+  --label:#6b6b6b;          /* stat labels */
 
   /* Grounds. Sections alternate white and paper; panels sit a shade darker
      again, outlined rather than shadowed. */
@@ -600,20 +606,23 @@ textarea{min-height:140px;resize:vertical}
 .secmenu-eyebrow{
   display:block;margin:0;padding:15px 26px;border-bottom:1px solid #e9e9e9;
   font:500 .875rem/1.43 var(--ui);text-transform:uppercase;letter-spacing:.06em;
-  color:#9c9c9c;text-decoration:none;transition:color .2s;
+  color:#6f6f6f;text-decoration:none;transition:color .2s;
 }
 .secmenu-eyebrow:hover{color:#181717}
 .secmenu-eyebrow span{display:inline-block;transition:transform .2s}
 .secmenu-eyebrow:hover span{transform:translateX(4px)}
 .secmenu-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .secmenu-col{
-  display:grid;align-content:start;gap:15px;
+  display:grid;align-content:start;gap:9px;
   padding:27px 24px 30px;
 }
 .secmenu-col + .secmenu-col{border-inline-start:1px solid #e9e9e9}
 
+/* WCAG 2.2 asks for a 24px target. These were the text's own 20px, so each
+   one now carries a little height of its own. */
 .secmenu-head{
-  display:flex;align-items:center;gap:7px;text-decoration:none;margin-bottom:6px;
+  display:flex;align-items:center;gap:7px;text-decoration:none;
+  margin-bottom:2px;padding-block:4px;min-height:24px;
 }
 .secmenu-head svg{
   width:18px;height:18px;flex:none;fill:none;stroke:var(--ink);stroke-width:1.4;
@@ -623,7 +632,8 @@ textarea{min-height:140px;resize:vertical}
 .secmenu-head:hover span{color:#000}
 
 .secmenu-co{
-  font:500 1rem/1.25 var(--ui);color:#9c9c9c;text-decoration:none;
+  font:500 1rem/1.25 var(--ui);color:#767676;text-decoration:none;
+  display:flex;align-items:center;min-height:24px;padding-block:3px;
   transition:color .18s,padding-inline-start .18s;
 }
 .secmenu-co:hover,.secmenu-co:focus-visible{color:#181717;padding-inline-start:4px}
@@ -697,11 +707,13 @@ textarea{min-height:140px;resize:vertical}
 .foot-cols{display:flex;gap:clamp(28px,4vw,42px);flex-wrap:wrap}
 .foot-col{display:grid;gap:26px;align-content:start;min-width:199px}
 .foot-col h2{font:600 1.125rem/1.56 var(--ui);color:#fff}
-.foot-col ul{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.foot-col ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .foot-col a,.foot-col span{
-  font:500 .875rem/1.43 var(--ui);color:rgba(255,255,255,.5);text-decoration:none;
+  font:500 .875rem/1.43 var(--ui);color:rgba(255,255,255,.62);text-decoration:none;
   transition:color .2s;
 }
+/* an inline link is only as tall as its type; these need to be a target */
+.foot-col a{display:inline-flex;align-items:center;min-height:24px}
 .foot-col a:hover{color:#fff}
 .foot-legal{
   margin-top:clamp(36px,5vw,64px);
@@ -827,7 +839,7 @@ textarea{min-height:140px;resize:vertical}
   transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1),opacity .3s;
 }
 .bcard .say > div{overflow:hidden}
-.bcard:hover .say,.bcard:focus-visible .say,.bcard.on .say{grid-template-rows:1fr;opacity:1}
+.bcard:hover .say,.bcard:focus-visible .say,.bcard:focus .say,.bcard.on .say{grid-template-rows:1fr;opacity:1}
 
 .bcard-photo{
   grid-row:span 2;min-height:557px;background:var(--ink);border-color:transparent;
@@ -906,18 +918,21 @@ textarea{min-height:140px;resize:vertical}
 .pin-pop b{font:600 1rem/1.35 var(--body);color:#fff;white-space:nowrap}
 .pin-pop > span{font:500 .8125rem/1.5 var(--body);color:var(--ink-2);white-space:nowrap}
 
-.pin:hover .pin-nm,.pin:focus-visible .pin-nm,.pin.on .pin-nm{opacity:0}
-.pin:hover .pin-pop,.pin:focus-visible .pin-pop,.pin.on .pin-pop{
+.pin:hover .pin-nm,.pin:focus-visible .pin-nm,.pin:focus .pin-nm,.pin.on .pin-nm{opacity:0}
+.pin:hover .pin-pop,.pin:focus-visible .pin-pop,.pin:focus .pin-pop,.pin.on .pin-pop{
   opacity:1;visibility:visible;
 }
 .pin[data-anchor="mid"]:hover .pin-pop,
 .pin[data-anchor="mid"]:focus-visible .pin-pop,
+.pin[data-anchor="mid"]:focus .pin-pop,
 .pin[data-anchor="mid"].on .pin-pop{transform:translate(-50%,0)}
 .pin[data-anchor="start"]:hover .pin-pop,
 .pin[data-anchor="start"]:focus-visible .pin-pop,
+.pin[data-anchor="start"]:focus .pin-pop,
 .pin[data-anchor="start"].on .pin-pop,
 .pin[data-anchor="end"]:hover .pin-pop,
 .pin[data-anchor="end"]:focus-visible .pin-pop,
+.pin[data-anchor="end"]:focus .pin-pop,
 .pin[data-anchor="end"].on .pin-pop{transform:translate(0,0)}
 
 .pin-stem{
@@ -1224,8 +1239,8 @@ textarea{min-height:140px;resize:vertical}
 /* the first is open, until the row is pointed at and one of them wins */
 .lad:first-child{flex-grow:2.6}
 .ladder:hover .lad:first-child,.ladder:focus-within .lad:first-child{flex-grow:1}
-.ladder .lad:hover,.ladder .lad:focus-visible{flex-grow:2.6}
-.ladder .lad:hover .lad-bg,.ladder .lad:focus-visible .lad-bg{opacity:.7;transform:scale(1.04)}
+.ladder .lad:hover,.ladder .lad:focus-visible,.ladder .lad:focus{flex-grow:2.6}
+.ladder .lad:hover .lad-bg,.ladder .lad:focus-visible .lad-bg,.ladder .lad:focus .lad-bg{opacity:.7;transform:scale(1.04)}
 .lad:first-child .lad-bg{opacity:.7}
 
 .lad .n{
@@ -1258,7 +1273,7 @@ textarea{min-height:140px;resize:vertical}
 .lad:first-child .lad-say{opacity:1}
 .ladder:hover .lad:first-child .lad-say,
 .ladder:focus-within .lad:first-child .lad-say{opacity:0}
-.ladder .lad:hover .lad-say,.ladder .lad:focus-visible .lad-say{opacity:1}
+.ladder .lad:hover .lad-say,.ladder .lad:focus-visible .lad-say,.ladder .lad:focus .lad-say{opacity:1}
 
 @media (max-width:860px){
   .ladder{flex-direction:column}
