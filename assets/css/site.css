@@ -187,8 +187,6 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
   font-size:1.125rem;line-height:1.56;color:var(--ink-2);
 }
 .prose2 strong{color:var(--ink);font-weight:600}
-.wideshot{margin:clamp(34px,4.4vw,58px) 0 0;overflow:hidden}
-.wideshot img{width:100%;height:auto;aspect-ratio:21/9;object-fit:cover;background:var(--panel)}
 
 /* a single action closing a section */
 .after{margin-top:clamp(28px,3.4vw,44px)}
@@ -263,27 +261,35 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
    ========================================================================== */
 
 .vcreate{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+  border-top:1px solid var(--line);margin-top:clamp(28px,3.4vw,44px);
 }
 .vc{
+  grid-column:span 2;
   display:grid;gap:10px;align-content:start;
   padding:clamp(24px,2.8vw,34px) clamp(20px,2.4vw,34px) clamp(28px,3.2vw,40px) 0;
   border-bottom:1px solid var(--line);
 }
-.vc + .vc{padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
-.vc:nth-child(3n+1){border-inline-start:0;padding-inline-start:0}
-.vc-n{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
+/* the second row carries two of five, set in from both edges so the block
+   reads as one shape rather than a grid with a hole in it */
+.vc:nth-child(4){grid-column:2 / span 2;padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
+.vc:nth-child(5){grid-column:4 / span 2;padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
+.vc svg{
+  width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:1.4;
+  stroke-linecap:square;stroke-linejoin:miter;margin-bottom:2px;
+}
+.vc:nth-child(2),.vc:nth-child(3){padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
 .vc h3{font:500 1.125rem/1.39 var(--body);color:var(--ink)}
 .vc p{font:500 1rem/1.56 var(--body);color:var(--ink-2);max-width:40ch}
 @media (max-width:860px){
   .vcreate{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .vc:nth-child(3n+1){border-inline-start:1px solid var(--line);padding-inline-start:clamp(20px,2.4vw,34px)}
-  .vc:nth-child(odd){border-inline-start:0;padding-inline-start:0}
+  .vc,.vc:nth-child(4),.vc:nth-child(5){grid-column:span 1}
+  .vc:nth-child(even){padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
+  .vc:nth-child(odd){padding-inline-start:0;border-inline-start:0}
 }
 @media (max-width:560px){
   .vcreate{grid-template-columns:1fr}
-  .vc,.vc:nth-child(3n+1){border-inline-start:0;padding-inline-start:0}
+  .vc,.vc:nth-child(4),.vc:nth-child(5),.vc:nth-child(even){grid-column:span 1;padding-inline-start:0;border-inline-start:0}
 }
 
 /* ==========================================================================
@@ -544,31 +550,31 @@ textarea{min-height:140px;resize:vertical}
 .site-head .brand{display:flex;align-items:center;flex:none;text-decoration:none}
 .site-head .brand img{height:46px;width:auto}
 
-.nav{display:flex;align-items:center;gap:5px;margin-inline:auto}
+/* Set in sentence case at reading size with room around each item, rather
+   than small uppercase packed together: a navigation is a list of words
+   people read, not a row of labels. */
+.nav{display:flex;align-items:center;gap:clamp(4px,1.6vw,26px);margin-inline:auto}
 .nav-link,.nav-btn{
-  display:flex;align-items:center;gap:1px;height:40px;padding-inline:15px;
-  font:500 .875rem/1.43 var(--ui);text-transform:uppercase;
+  display:flex;align-items:center;gap:2px;height:44px;padding-inline:10px;
+  font:500 1.0625rem/1.4 var(--body);letter-spacing:0;
   color:var(--warm);text-decoration:none;
   background:none;border:0;cursor:pointer;
-  transition:color .2s,opacity .2s;
+  transition:color .2s;
 }
-.nav-link:hover,.nav-btn:hover,.nav-btn[aria-expanded="true"]{color:#fff}
-/* the current page keeps a hairline under it rather than a colour change,
-   which the palette has no room for */
-.nav-link[aria-current="page"]{position:relative}
-.nav-link[aria-current="page"]::after{
-  content:"";position:absolute;left:15px;right:15px;bottom:8px;height:1.5px;background:var(--pin);
-}
-.nav-btn svg{width:24px;height:24px;flex:none;fill:currentColor;transition:transform .25s}
+.nav-link:hover,.nav-btn:hover,.nav-btn[aria-expanded="true"]{color:var(--gold)}
+/* the page you are on is named in gold */
+.nav-link[aria-current="page"],.nav-btn[aria-current="true"]{color:var(--gold)}
+.nav-btn svg{width:22px;height:22px;flex:none;fill:currentColor;transition:transform .25s}
 .nav-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
 
+/* the one action on the bar, in the brand's own gold */
 .head-cta{
-  flex:none;background:var(--warm);border:1px solid #fff;color:#111;
-  font:600 .875rem/1.71 var(--ui);padding:9px 10px;min-width:138px;
-  text-align:center;text-decoration:none;
-  transition:background .2s,color .2s;
+  flex:none;background:var(--gold);border:1px solid var(--gold);color:#181717;
+  font:600 .8125rem/1.6 var(--ui);letter-spacing:.11em;text-transform:uppercase;
+  padding:12px 24px;text-align:center;text-decoration:none;white-space:nowrap;
+  transition:background .2s,border-color .2s,color .2s;
 }
-.head-cta:hover{background:#fff}
+.head-cta:hover,.head-cta:focus-visible{background:#c2963f;border-color:#c2963f}
 
 /* ---- the sectors panel --------------------------------------------------
    A white sheet the width of the measure, not a dropdown hanging off the
@@ -585,12 +591,20 @@ textarea{min-height:140px;resize:vertical}
   z-index:61;box-shadow:0 24px 48px rgba(17,15,15,.18);
 }
 .navwrap.open .secmenu{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0)}
+/* The pointer has to cross the bottom of the bar to reach the panel. This
+   strip belongs to the panel, so that journey never counts as leaving. */
+.secmenu::before{
+  content:"";position:absolute;left:0;right:0;top:-40px;height:40px;
+}
 
 .secmenu-eyebrow{
-  margin:0;padding:15px 26px;border-bottom:1px solid #e9e9e9;
-  font:500 .875rem/1.43 var(--ui);text-transform:uppercase;letter-spacing:.02em;
-  color:#9c9c9c;
+  display:block;margin:0;padding:15px 26px;border-bottom:1px solid #e9e9e9;
+  font:500 .875rem/1.43 var(--ui);text-transform:uppercase;letter-spacing:.06em;
+  color:#9c9c9c;text-decoration:none;transition:color .2s;
 }
+.secmenu-eyebrow:hover{color:#181717}
+.secmenu-eyebrow span{display:inline-block;transition:transform .2s}
+.secmenu-eyebrow:hover span{transform:translateX(4px)}
 .secmenu-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .secmenu-col{
   display:grid;align-content:start;gap:15px;
@@ -774,11 +788,7 @@ textarea{min-height:140px;resize:vertical}
   display:grid;gap:8px;justify-items:start;
 }
 .seccard-cap b{font:500 1.125rem/1.39 var(--body);color:#fff}
-.seccard-cap span{
-  font:500 .875rem/1.39 var(--body);color:#ede7e7;
-  text-decoration:underline;text-underline-offset:3px;
-}
-.seccard:hover .seccard-cap span{color:#fff}
+.seccard-cap{gap:6px}
 
 @media (max-width:900px){ .seccards{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:520px){ .seccards{grid-template-columns:minmax(0,1fr)} }
@@ -949,45 +959,6 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Building more than a portfolio — four panels, one open
-   The open panel carries its reasoning; the closed ones hold their number and
-   their name. Clicking moves the opening along the row.
-   ========================================================================== */
-
-.ladder{display:flex;gap:clamp(12px,2vw,28px);margin-top:clamp(30px,4vw,54px);align-items:stretch}
-.lad{
-  flex:1 1 0;min-width:0;position:relative;overflow:hidden;text-align:start;
-  background:var(--panel);border:1px solid var(--line);
-  min-height:477px;padding:0;
-  font:inherit;color:inherit;cursor:pointer;
-  transition:flex-grow .55s cubic-bezier(.2,.7,.2,1),background .3s,border-color .3s;
-}
-.lad:hover{background:#eae7e4}
-.lad[aria-expanded="true"]{flex-grow:2.9;background:#eae7e4;border-color:#d8d4d0}
-/* Number and name sit at the same height in every panel, open or closed, so
-   the row reads as one ruled band. The paragraph is laid out at the width it
-   will have when open and simply runs past the edge until it does. */
-.lad .n{
-  position:absolute;left:clamp(20px,2.4vw,33px);top:39px;
-  font:500 clamp(3rem,5.8vw,5.25rem)/1.01 var(--display);color:var(--num);letter-spacing:-.02em;
-}
-.lad-b{
-  position:absolute;left:clamp(20px,2.4vw,33px);top:318px;
-  display:grid;gap:10px;width:439px;
-}
-.lad h3{font:500 1.125rem/1.39 var(--body);color:var(--ink)}
-.lad p{font:500 1rem/1.56 var(--body);color:var(--ink-2);opacity:0;transition:opacity .35s}
-.lad[aria-expanded="true"] p{opacity:1}
-
-@media (max-width:860px){
-  .ladder{flex-direction:column}
-  .lad{min-height:0;padding:26px 22px;display:grid;gap:14px}
-  .lad[aria-expanded="true"]{flex-grow:1}
-  .lad .n,.lad-b{position:static;width:auto}
-  .lad p{opacity:1}
-}
-
-/* ==========================================================================
    What's next — the closing card, laid over a photograph
    ========================================================================== */
 
@@ -1111,66 +1082,212 @@ textarea{min-height:140px;resize:vertical}
 @media (prefers-reduced-motion:reduce){ .site-head.over{transition:none} }
 
 /* ==========================================================================
-   The sectors index — one full-width row per sector
-   The sector names itself on the left; the businesses inside it run along
-   the right. Four rows read straight down rather than a grid to scan.
+   The sectors index — a band per sector
+   The reading leads and the photograph follows it, because a sector is an
+   argument about a market rather than a picture of one. The businesses
+   inside it sit under the text as outlined plates, not thumbnails.
    ========================================================================== */
 
-.secrow{padding-block:clamp(40px,4.6vw,68px);border-top:1px solid var(--line)}
+.secrow{padding-block:clamp(44px,5.4vw,80px);border-top:1px solid var(--line)}
 .secrow.stone{background:var(--paper)}
 .secrow .wrap{
-  display:grid;gap:clamp(22px,3.4vw,56px);align-items:start;
-  grid-template-columns:minmax(0,300px) minmax(0,1fr);
+  display:grid;gap:clamp(26px,4.4vw,64px);align-items:start;
+  grid-template-columns:minmax(0,720fr) minmax(0,400fr);
 }
-.secrow-id{display:grid;gap:10px;align-content:start;justify-items:start}
-.secrow-id svg{
-  width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:1.3;
-  stroke-linecap:square;stroke-linejoin:miter;
+.secrow.flip .secrow-shot{order:-1}
+
+.secrow-shot{margin:0;overflow:hidden;position:sticky;top:calc(var(--head-h) + 24px)}
+.secrow-shot a{display:block}
+.secrow-shot img{
+  width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;background:var(--panel);
+  transition:transform .7s cubic-bezier(.2,.7,.2,1);
 }
+.secrow-shot a:hover img{transform:scale(1.04)}
+
+.secrow-body{display:grid;gap:14px;align-content:start;justify-items:start;min-width:0}
 .secrow-n{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
-.secrow-id h2{font-size:clamp(1.3rem,2.1vw,1.75rem);line-height:1.2}
-.secrow-id p{font:500 1rem/1.56 var(--body);color:var(--ink-2);max-width:34ch}
-.secrow-count{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)!important}
-.secrow-id .btn{margin-top:8px}
-.secrow .corail{margin-top:0}
-
-@media (max-width:900px){ .secrow .wrap{grid-template-columns:1fr;gap:22px} }
-
-/* ---- and the other sectors, at the foot of a sector page ---------------- */
-
-.secidx{display:grid;border-top:1px solid var(--line)}
-.secidx a{
-  display:grid;grid-template-columns:24px minmax(0,1fr) 1.5rem;
-  gap:clamp(14px,2vw,26px);align-items:center;
-  padding:clamp(20px,2.4vw,28px) 0;border-bottom:1px solid var(--line);
-  text-decoration:none;transition:background .25s;
+.secrow-body h2{
+  display:flex;align-items:center;gap:12px;
+  font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.2;
 }
-.secidx a:hover{background:var(--paper)}
-.secidx svg{
-  width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:1.3;
+.secrow-body h2 svg{
+  width:24px;height:24px;flex:none;fill:none;stroke:var(--ink);stroke-width:1.3;
   stroke-linecap:square;stroke-linejoin:miter;
 }
-.secidx b{display:block;font:500 1.125rem/1.39 var(--body);color:var(--ink)}
-.secidx em{
-  display:block;font:500 .9375rem/1.5 var(--body);font-style:normal;
-  color:var(--ink-2);margin-top:3px;max-width:60ch;
+.secrow-body h2 a{text-decoration:none;transition:color .2s}
+.secrow-body h2 a:hover{color:var(--ink-2)}
+.secrow-lede{font:500 1.1875rem/1.45 var(--body);color:var(--ink);max-width:52ch}
+.secrow-sub{font:500 1rem/1.62 var(--body);color:var(--ink-2);max-width:60ch}
+.secrow-body .btn{margin-top:10px}
+
+/* the businesses inside the sector: outlined, transparent, named */
+.secrow-cos{
+  display:grid;gap:8px;width:100%;margin-top:14px;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));
 }
-.secidx-go{justify-self:end;color:var(--ink);font-size:1.05rem;transition:transform .25s}
-.secidx a:hover .secidx-go{transform:translateX(5px)}
-@media (max-width:560px){
-  .secidx a{grid-template-columns:24px minmax(0,1fr);gap:14px}
-  .secidx-go{display:none}
+.secrow-cos-label{
+  grid-column:1/-1;font:500 var(--t-micro)/1.4 var(--mono);color:var(--label);
+  margin-bottom:2px;
+}
+.minico{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;
+  border:1px solid var(--line);background:none;padding:16px 18px;
+  text-decoration:none;transition:border-color .25s,background .25s;
+}
+.minico:hover,.minico:focus-visible{border-color:var(--ink);background:rgba(24,23,23,.03)}
+.minico-id{display:block;min-width:0}
+.minico b{display:block;font:500 1.0625rem/1.3 var(--body);color:var(--ink)}
+.minico em{
+  display:block;font:500 .875rem/1.4 var(--body);font-style:normal;
+  color:var(--ink-2);margin-top:4px;
+}
+.minico-go{color:var(--ink);font-size:1.05rem;transition:transform .25s}
+.minico:hover .minico-go{transform:translateX(4px)}
+
+@media (max-width:900px){
+  .secrow .wrap{grid-template-columns:1fr;gap:26px}
+  .secrow.flip .secrow-shot{order:0}
+  .secrow-shot{position:static}
+  .secrow-shot img{aspect-ratio:16/9}
 }
 
-/* the sector name on the index is a link, and the eyebrow over a company
-   page goes up to the sector it belongs to */
-.secrow-id h2 a{text-decoration:none;transition:color .2s}
-.secrow-id h2 a:hover{color:var(--ink-2)}
-.secrow-lede{font:500 1.0625rem/1.5 var(--body);color:var(--ink)!important;max-width:34ch}
-a.pagehead-eyebrow{text-decoration:none;transition:color .2s}
-a.pagehead-eyebrow:hover{color:#fff}
+/* ---- the platform section on About, and the map on Contact -------------- */
 
-/* a sector name can run to two lines; reserving both keeps the company
-   lists across the four columns on the same baseline */
-.secmenu-head{min-height:2.5em;align-items:flex-start}
-.secmenu-head svg{margin-top:1px}
+.platform-h{font-size:var(--t-h1);line-height:1.2;max-width:24ch}
+.twocol{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(28px,6vw,82px);margin-top:clamp(28px,3.2vw,41px);
+}
+.twocol p{font:500 1.125rem/1.39 var(--body);color:var(--ink-2)}
+.twocol p + p{margin-top:1.39em}
+@media (max-width:820px){ .twocol{grid-template-columns:1fr;gap:1.39em} }
+
+.bandshot{margin:clamp(34px,4.4vw,56px) 0 0;overflow:hidden}
+.bandshot img{width:100%;height:auto;aspect-ratio:1212/353;object-fit:cover;background:var(--panel)}
+@media (max-width:820px){ .bandshot img{aspect-ratio:16/9} }
+
+/* The map is an OpenStreetMap frame — no key, no tracking script. Greyed so
+   it sits in the palette rather than shouting over it, and it comes back to
+   full colour when someone actually reaches for it. */
+.placemap{margin:clamp(28px,3.4vw,44px) 0 0;border:1px solid var(--line)}
+.placemap iframe{
+  display:block;width:100%;height:clamp(300px,38vw,460px);border:0;
+  filter:grayscale(1) contrast(.92);transition:filter .3s;
+}
+.placemap:hover iframe,.placemap:focus-within iframe{filter:none}
+.placemap figcaption{
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:16px 18px;border-top:1px solid var(--line);background:var(--white);
+  font:500 1rem/1.4 var(--body);color:var(--ink);
+}
+.placemap figcaption a{color:var(--ink-2);text-decoration:none;transition:color .2s}
+.placemap figcaption a:hover{color:var(--ink)}
+
+/* the sector card carries what the sector is and who is in it, not just a
+   name and the word View */
+.seccard-say{
+  font:500 .875rem/1.45 var(--body);color:rgba(255,255,255,.82);
+  text-decoration:none;
+}
+.seccard-who{
+  font:500 .8125rem/1.4 var(--body);color:#ede7e7;margin-top:2px;
+  display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+}
+.seccard-who span{transition:transform .25s;display:inline-block}
+.seccard:hover .seccard-who span{transform:translateX(4px)}
+.seccard::after{height:78%}
+
+/* ==========================================================================
+   The four businesses — panels that open as you point at them
+   Each panel is a link, and the opening follows the pointer in CSS alone, so
+   it works before any script runs and under a keyboard. The first is open
+   until something else is pointed at.
+   ========================================================================== */
+
+.ladder{display:flex;gap:clamp(8px,1.2vw,14px);margin-top:clamp(30px,4vw,54px);align-items:stretch}
+.lad{
+  flex:1 1 0;min-width:0;position:relative;overflow:hidden;
+  min-height:clamp(380px,42vw,477px);
+  background:var(--ink);text-decoration:none;isolation:isolate;
+  display:grid;align-content:end;gap:10px;padding:clamp(20px,2.4vw,30px);
+  transition:flex-grow .55s cubic-bezier(.2,.7,.2,1);
+}
+.lad-bg{
+  position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;
+  transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .4s;
+  opacity:.55;
+}
+.lad::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to top,rgba(14,12,12,.94) 0%,rgba(14,12,12,.7) 42%,rgba(14,12,12,.32) 100%);
+}
+
+/* the first is open, until the row is pointed at and one of them wins */
+.lad:first-child{flex-grow:2.6}
+.ladder:hover .lad:first-child,.ladder:focus-within .lad:first-child{flex-grow:1}
+.ladder .lad:hover,.ladder .lad:focus-visible{flex-grow:2.6}
+.ladder .lad:hover .lad-bg,.ladder .lad:focus-visible .lad-bg{opacity:.7;transform:scale(1.04)}
+.lad:first-child .lad-bg{opacity:.7}
+
+.lad .n{
+  position:absolute;top:clamp(20px,2.4vw,30px);left:clamp(20px,2.4vw,30px);
+  font:500 var(--t-micro)/1.4 var(--mono);color:rgba(255,255,255,.6);
+}
+/* the name and the sector always fit, however narrow the panel: only the
+   description waits for the panel to open */
+.lad-b{display:grid;gap:8px;width:100%;min-width:0}
+.lad-sec,.lad-role,.lad h3{overflow-wrap:anywhere}
+/* a sector name can run to two lines; reserving both keeps the company names
+   level across the row */
+.lad-sec{font:500 var(--t-micro)/1.4 var(--mono);color:var(--gold);min-height:2.8em}
+.lad h3{font-size:clamp(1.15rem,1.7vw,1.5rem);line-height:1.2;color:#fff}
+.lad-role{font:500 .9375rem/1.4 var(--body);color:rgba(255,255,255,.72)}
+/* The description sits in a zone of fixed height that is always there, so
+   the company name never moves when a panel opens — only what is inside the
+   zone changes. A panel that shifts its own title as you point at it is the
+   thing that made this feel unsteady. */
+.lad-say{
+  display:block;height:7.6em;overflow:hidden;margin-top:2px;
+  opacity:0;transition:opacity .35s;
+}
+.lad-say-in{display:grid;gap:12px;align-content:start}
+.lad-p{
+  font:500 .9375rem/1.56 var(--body);color:rgba(255,255,255,.84);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.lad-go{font:600 .9375rem/1.4 var(--body);color:#fff}
+.lad:first-child .lad-say{opacity:1}
+.ladder:hover .lad:first-child .lad-say,
+.ladder:focus-within .lad:first-child .lad-say{opacity:0}
+.ladder .lad:hover .lad-say,.ladder .lad:focus-visible .lad-say{opacity:1}
+
+@media (max-width:860px){
+  .ladder{flex-direction:column}
+  .lad,.lad:first-child,.ladder .lad:hover{flex-grow:1;min-height:0;padding:24px 22px}
+  .lad-b{width:auto}
+  .lad-say,.ladder:hover .lad:first-child .lad-say{opacity:1;height:auto}
+  .lad-p{-webkit-line-clamp:none}
+  .lad-bg{opacity:.6}
+}
+@media (prefers-reduced-motion:reduce){
+  .lad,.lad-bg,.lad-say{transition:none}
+}
+
+/* ---- what the Group does with them: four plain cards -------------------- */
+
+.wwd{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(12px,1.6vw,20px);margin-top:clamp(30px,4vw,54px);
+}
+.wwd-card{
+  background:var(--panel);border:1px solid var(--line);
+  padding:clamp(24px,2.6vw,32px) clamp(20px,2.2vw,28px) clamp(28px,3vw,36px);
+  display:grid;gap:10px;align-content:start;
+  transition:border-color .3s,transform .3s;
+}
+.wwd-card:hover{border-color:var(--ink-3);transform:translateY(-3px)}
+.wwd-n{font:500 clamp(2.4rem,3.6vw,3.25rem)/1 var(--display);color:var(--num);letter-spacing:-.02em}
+.wwd-card h3{font:500 1.125rem/1.39 var(--body);color:var(--ink);margin-top:6px}
+.wwd-card p{font:500 .9375rem/1.6 var(--body);color:var(--ink-2)}
+@media (max-width:900px){ .wwd{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:520px){ .wwd{grid-template-columns:1fr} }

@@ -97,17 +97,29 @@ use Google Workspace / Microsoft 365 — before launch.
 > at all, so the published email address and every canonical URL pointed
 > nowhere. Both now use lusailcorp.com. If .qa is wanted, register it first.
 
-### 6. Three of the four home-page figures are unverified — *blocking*
+### 6. Facts that would make the writing materially stronger
 
-The stat band under the introduction reads **5+ Years Building · 10+ Markets
-Served · 50k+ Customers Served · 4 Operating Companies**.
+The copy was reviewed against current practice for corporate-group sites. It
+is now free of claims nobody can check — but it is thin on fact, because there
+are almost none to use. Each of these would earn its place on the site:
 
-Only the last is real — it counts the portfolio. The other three came from the
-Figma, not from the Group, and nobody has confirmed them. A wrong number on a
-corporate home page is worse than no number.
+| | Where it would go |
+|---|---|
+| **Founding year** of the Group, and of each company | the About opening, which currently has no date anywhere |
+| **The phone number** (still `+974 0000 0000`) | every page |
+| **LinkedIn and Instagram URLs** | the footer |
+| **Anything countable** — supplier relationships, customers ROMA delivers to, deliveries per week, headcount | the figures band, which now shows only what can be counted from the site itself |
+| **Confirmation of the 21 sourcing countries** — is every one a live origin today? | the map |
+| **Cavallo and Nero specifics** — location, hours, services, turnaround | their pages, which are the two thinnest |
+| **Registrations and licences** — commercial registration, freight forwarding, food safety | the company pages; their absence is conspicuous in trading and food |
+| **Any supplier, brand or customer that may be named** | worth more than the whole values section |
 
-Confirm or change them in `FIGURES` in [data/site.js](data/site.js). To drop a
-figure entirely, delete its line; the band re-centres on what is left.
+The home page's figures band previously read **5+ years · 10+ markets · 50k+
+customers · 4 companies**. Three of those came from the design file and nobody
+had confirmed them — and "10+ markets" contradicted the map on the same page,
+which pins 21 countries. All four figures are now counted from the content, so
+they cannot be wrong: **4 companies · 4 sectors · 6 sourcing regions · 21
+source countries**.
 
 ### 7. Arabic is off, and the old translations are stale
 

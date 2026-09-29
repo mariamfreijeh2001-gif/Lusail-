@@ -31,7 +31,7 @@ const { makeProjection, dotGrid } = require('./worldmap.js');
 const {
   SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
-  PARTNER_TYPES, OPEN_ROLES
+  PARTNER_TYPES
 } = require('../data/site.js');
 
 const ROOT = path.join(__dirname, '..');
@@ -140,7 +140,8 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 const NAV = [
   ['Home', '/'],
   ['Sectors', '/sectors/'],
-  ['About Us', '/about/']
+  ['About Us', '/about/'],
+  ['Work With Us', '/partnerships/']
 ];
 
 /* A mark per sector, drawn from the set already in ICON_PATHS. */
@@ -153,7 +154,7 @@ const SECTOR_ICON = {
 
 function sectorsPanel() {
   return `      <div class="secmenu" id="secmenu">
-        <p class="secmenu-eyebrow">Our sectors</p>
+        <a class="secmenu-eyebrow" href="/sectors/">Our sectors <span aria-hidden="true">&#8594;</span></a>
         <div class="secmenu-cols">
 ${SECTORS.map(s => `          <div class="secmenu-col">
             <a class="secmenu-head" href="/sectors/${s.slug}/">
@@ -303,11 +304,11 @@ function ctaBand() {
       <div class="next-card">
         <img class="watermark" src="/assets/logo/${B.markOnLight}" alt="" width="270" height="350" aria-hidden="true" loading="lazy">
         <div class="next-say">
-          <h2>What&rsquo;s Next for Lusail Corp?</h2>
-          <p>Our story is being built one business, one partnership and one opportunity at a time.</p>
+          <h2>Who we want to hear from</h2>
+          <p>Producers and exporters looking for a route into Qatar, buyers who need supply they can rely on, and operators with a business that fits the Group. Tell us which one you are.</p>
           <div class="next-act">
-            <a class="btn btn-light" href="/sectors/">Explore our sectors</a>
-            <a class="btn btn-ghost" href="/contact/">Talk to us</a>
+            <a class="btn btn-light" href="/contact/">Send an enquiry</a>
+            <a class="btn btn-ghost" href="/sectors/">Explore our sectors</a>
           </div>
         </div>
         <ul class="nexts">
@@ -438,17 +439,38 @@ ${WHY.slice(1).map((x, i) => card(x, i + 1)).join('\n')}
     </div>`;
 }
 
-/* One panel open at a time, widening to carry its paragraph while the rest
-   hold their number and their name. */
-function ladder() {
-  return `<div class="ladder" id="ladder">
-${WHAT_WE_DO.map((w, i) => `      <button class="lad" type="button" aria-expanded="${i === 0}">
+/* The four businesses, as panels that open one at a time. The first is open
+   until the pointer picks another, and each one is a link — so pointing at a
+   company previews it and clicking goes there. Pure CSS, so it works before
+   any script runs and on a keyboard. */
+function companyLadder() {
+  return `<div class="ladder">
+${ALL_COMPANIES.map((c, i) => `      <a class="lad" href="/companies/${c.slug}/">
+        <img class="lad-bg" src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy">
         <span class="n">${num(i)}</span>
         <span class="lad-b">
-          <h3>${esc(w.t)}</h3>
-          <p>${esc(w.d)}</p>
+          <span class="lad-sec">${esc(c.sectorName)}</span>
+          <h3>${esc(c.name)}</h3>
+          <span class="lad-role">${esc(c.role)}</span>
+          <span class="lad-say">
+            <span class="lad-say-in">
+              <span class="lad-p">${esc(c.short)}</span>
+              <span class="lad-go">Visit ${esc(c.name)} <span aria-hidden="true">&#8594;</span></span>
+            </span>
+          </span>
         </span>
-      </button>`).join('\n')}
+      </a>`).join('\n')}
+    </div>`;
+}
+
+/* What the Group does with them: four plain cards, no interaction. */
+function whatWeDo() {
+  return `<div class="wwd">
+${WHAT_WE_DO.map((w, i) => `      <div class="wwd-card rise d${Math.min(i, 3)}">
+        <span class="wwd-n">${num(i)}</span>
+        <h3>${esc(w.t)}</h3>
+        <p>${esc(w.d)}</p>
+      </div>`).join('\n')}
     </div>`;
 }
 
@@ -462,8 +484,15 @@ const SECTOR_SHOT = {
 };
 
 function pageHome() {
-  /* A figure with no value of its own counts the portfolio. */
-  const stats = FIGURES.map(f => [f.k, f.v == null ? String(ALL_COMPANIES.length) : f.v]);
+  /* Counted, not typed: every figure on the band is derived from the content
+     further down the same file, so it cannot contradict it. */
+  const tally = {
+    companies: ALL_COMPANIES.length,
+    sectors: SECTORS.length,
+    regions: Object.keys(REACH_POINTS).length,
+    countries: Object.values(REACH_POINTS).reduce((n, p) => n + p.length, 0)
+  };
+  const stats = FIGURES.map(f => [f.k, String(f.count ? tally[f.count] : f.v)]);
 
   return head({
     title: `${SITE.name} · ${SITE.tagline}`,
@@ -476,7 +505,7 @@ function pageHome() {
   <div class="wrap">
     <div class="hero-say">
       <h1>Building Businesses. Creating <em>Value</em>.</h1>
-      <p class="hero-lede">Lusail Corp is a Qatar-based diversified corporate group building, operating and supporting businesses across multiple sectors.</p>
+      <p class="hero-lede">A group of four companies in Qatar: commodity trading and international freight, food import and distribution, garment care, and a caf&eacute;.</p>
     </div>
     <div class="hero-cta">
       <a class="btn btn-light" href="/sectors/">Explore our sectors</a>
@@ -488,12 +517,12 @@ function pageHome() {
 <section class="section intro" aria-labelledby="introTitle">
   <div class="wrap">
     <div class="intro-top rise">
-      <h2 id="introTitle">One Group.<br>Multiple <span class="soft">Businesses.</span><br>Shared Ambition.</h2>
+      <h2 id="introTitle">We buy commodities<br>and we <span class="soft">move them.</span></h2>
       <div class="intro-note">
         <img src="/assets/logo/${B.markOnLight}" alt="" width="44" height="57" loading="lazy">
         <div>
-          <p>Our role goes beyond ownership. We provide strategic direction, commercial support and a shared platform from which our companies strengthen their operations, develop their markets and pursue new opportunities.</p>
-          <p>Today it spans commodity trading, food supply and distribution, consumer services and hospitality.</p>
+          <p>Because the freight sits in the same business as the buying, an enquiry can be answered with the origin, the specification and the route at once, rather than passed to a forwarder.</p>
+          <p>Alongside it the Group imports and distributes food across Qatar, and runs a laundry and a caf&eacute;. Sourcing, shipping and supplier relationships built in one company are open to the others.</p>
         </div>
       </div>
     </div>
@@ -509,17 +538,25 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
   <div class="wrap">
     <div class="sec-intro rise">
       <h2 id="secTitle">Diversified by Design</h2>
-      <p>Our portfolio reflects our belief that opportunities can exist across different industries, so we build businesses where we see strong commercial potential.</p>
+      <p>Four sectors, four companies. Each one sells into a market we can see from Qatar.</p>
     </div>
     <div class="seccards">
 ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="/sectors/${s.slug}/">
         <img src="/assets/img/${SECTOR_SHOT[s.slug] || 'card-trading'}.jpg" alt="" width="640" height="914" loading="lazy">
         <span class="seccard-cap">
           <b>${esc(s.name)}</b>
-          <span>View</span>
+          <span class="seccard-say">${esc(s.short)}</span>
+          <span class="seccard-who">${s.companies.map(c => esc(c.name)).join(' &middot; ')} <span aria-hidden="true">&#8594;</span></span>
         </span>
       </a>`).join('\n')}
     </div>
+  </div>
+</section>
+
+<section class="section stone" aria-labelledby="coTitle">
+  <div class="wrap">
+    ${head2('coTitle', 'The four <span class="soft">businesses</span>', 'Each runs in its own market with its own customers. Point at one to see it; click to go there.')}
+    ${companyLadder()}
   </div>
 </section>
 
@@ -541,7 +578,7 @@ ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="
 <section class="section" aria-labelledby="wwdTitle">
   <div class="wrap">
     ${head2('wwdTitle', 'Building <span class="soft">More</span> Than a Portfolio', 'We are an active owner. Each company is run independently, but none of them is run alone.')}
-    ${ladder()}
+    ${whatWeDo()}
   </div>
 </section>
 
@@ -570,28 +607,31 @@ ${VALUES.map((v, i) => `      <div class="val${i === 0 ? ' open' : ''}">
 function pageAbout() {
   return head({
     title: `About Us · ${SITE.name}`,
-    desc: 'Lusail Corp is a diversified corporate group registered in the State of Qatar, bringing together businesses across commodity trading, food supply, consumer services and hospitality.',
+    desc: 'Lusail Corp is a diversified corporate group based in the State of Qatar, bringing together commodity trading, food supply and distribution, consumer services and hospitality.',
     url: '/about/', image: 'hero-about'
   })
     + header('/about/')
     + pageHead({
       eyebrow: 'About Us',
       h1: 'Building a Group for the Future.',
-      lede: 'Lusail Corp is a diversified corporate group registered in the State of Qatar, bringing together businesses across consumer services, food and beverage, commercial distribution and international trade.',
+      lede: 'Lusail Corp is a diversified corporate group based in the State of Qatar, bringing together commodity trading, food supply and distribution, consumer services and hospitality.',
       photo: 'hero-about'
     })
-    + `<section class="section tight" aria-labelledby="whoTitle">
+    + `<section class="section tight stone" aria-labelledby="whoTitle">
   <div class="wrap">
-    <div class="head2 rise">
-      <h2 id="whoTitle">A Platform for Business Growth</h2>
-      <p>Four companies, one set of standards, and a shared platform underneath them.</p>
+    <h2 id="whoTitle" class="platform-h rise">A Platform for Business Growth</h2>
+    <div class="twocol rise">
+      <div>
+        <p>Lusail Corp was established with a straightforward ambition: to create, develop and support businesses with the potential to grow.</p>
+        <p>Our portfolio companies operate independently within their respective markets while sharing the strategic direction and broader capabilities of the Group.</p>
+      </div>
+      <div>
+        <p>This structure allows each business to keep its own identity, customers and commercial focus while benefiting from belonging to a diversified organisation.</p>
+        <p>As the Group develops, additional businesses and sectors will become part of the Lusail Corp portfolio.</p>
+      </div>
     </div>
-    <div class="prose2 rise">
-      <p>Lusail Corp was established to create, develop and support businesses with the potential to grow. Our companies operate independently in their own markets while sharing the Group&rsquo;s direction and capabilities.</p>
-      <p>That structure lets each business keep its own identity, customers and commercial focus, and still draw on relationships and knowledge built elsewhere in the Group. As Lusail Corp develops, further businesses and sectors will join the portfolio.</p>
-    </div>
-    <figure class="wideshot rise">
-      <img src="/assets/img/about-platform.jpg" alt="The Group at work" width="900" height="600" loading="lazy">
+    <figure class="bandshot rise">
+      <img src="/assets/img/about-platform.jpg" alt="" width="900" height="600" loading="lazy">
     </figure>
   </div>
 </section>
@@ -616,7 +656,7 @@ function pageAbout() {
 
 <section class="section" aria-labelledby="valTitle">
   <div class="wrap">
-    ${head2('valTitle', 'The values that <span class="soft">guide us</span>', 'The businesses we own are varied. The way they are run is not.')}
+    ${head2('valTitle', 'The values that <span class="soft">guide us</span>', 'Six of them, and we would rather be caught keeping these than talking about them.')}
     <div class="valwrap">
       ${valueList()}
       <figure class="valshot rise">
@@ -631,7 +671,7 @@ function pageAbout() {
     ${head2('vcTitle', 'How We <span class="soft">Create Value</span>', 'Growth is not adding companies to a list. It is making each one better than it was.')}
     <div class="vcreate">
 ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
-        <span class="vc-n">${num(i)}</span>
+        ${icon(v.icon)}
         <h3>${esc(v.t)}</h3>
         <p>${esc(v.d)}</p>
       </div>`).join('\n')}
@@ -639,18 +679,6 @@ ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
   </div>
 </section>
 
-<section class="section" id="work-with-us" aria-labelledby="pwTitle">
-  <div class="wrap">
-    ${head2('pwTitle', 'Who we want to <span class="soft">hear from</span>', 'Our companies depend on relationships across their markets. These are the ones we are looking for.')}
-    <div class="plines">
-${PARTNER_TYPES.map(p => `      <div class="pline rise">
-        <h3>${esc(p.t)}</h3>
-        <p>${esc(p.d)}</p>
-      </div>`).join('\n')}
-    </div>
-    <p class="after rise"><a class="btn btn-dark" href="/contact/">Start a conversation</a></p>
-  </div>
-</section>
 
 `
     + ctaBand()
@@ -757,18 +785,33 @@ function pageSectorsIndex() {
       lede: 'The Group operates across commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
       photo: 'hero-sector-trading'
     })
-    + SECTORS.map((s, i) => `<section class="secrow${i % 2 ? ' stone' : ''}" aria-labelledby="sec-${s.slug}">
+    + SECTORS.map((s, i) => `<section class="secrow${i % 2 ? ' stone flip' : ''}" aria-labelledby="sec-${s.slug}">
   <div class="wrap">
-    <div class="secrow-id rise">
+    <div class="secrow-body rise">
       <span class="secrow-n">${num(i)}</span>
-      ${icon(SECTOR_ICON[s.slug] || 'markets')}
-      <h2 id="sec-${s.slug}"><a href="/sectors/${s.slug}/">${esc(s.name)}</a></h2>
+      <h2 id="sec-${s.slug}">
+        ${icon(SECTOR_ICON[s.slug] || 'markets')}
+        <a href="/sectors/${s.slug}/">${esc(s.name)}</a>
+      </h2>
       <p class="secrow-lede">${esc(s.intro)}</p>
-      <p>${esc(s.short)}</p>
-      <p class="secrow-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</p>
-      <a class="btn btn-line" href="/sectors/${s.slug}/">Sector overview</a>
+${s.body.slice(0, 2).map(p => `      <p class="secrow-sub">${esc(p)}</p>`).join('\n')}
+      <div class="secrow-cos">
+        <span class="secrow-cos-label">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</span>
+${s.companies.map(c => `        <a class="minico" href="/companies/${c.slug}/">
+          <span class="minico-id">
+            <b>${esc(c.name)}</b>
+            <em>${esc(c.role)}</em>
+          </span>
+          <span class="minico-go" aria-hidden="true">&#8594;</span>
+        </a>`).join('\n')}
+      </div>
+      <a class="btn btn-line" href="/sectors/${s.slug}/">Read about ${esc(s.name)}</a>
     </div>
-    ${companyRail(s.companies.map(c => Object.assign({}, c, { sectorName: s.name })))}
+    <figure class="secrow-shot rise d1">
+      <a href="/sectors/${s.slug}/" tabindex="-1" aria-hidden="true">
+        <img src="/assets/img/${s.hero}.jpg" alt="" width="840" height="1200" loading="lazy">
+      </a>
+    </figure>
   </div>
 </section>
 
@@ -840,7 +883,77 @@ ${others.map(x => `      <a href="/sectors/${x.slug}/">
     + footer();
 }
 
+/* ---------- work with us -------------------------------------------------- */
+
+/* The Group buys, sells and ships for a living, so the people it most needs
+   to hear from are suppliers, producers and buyers. This page says who they
+   are and hands each of them to the right desk through the contact form.
+
+   It is deliberately not a careers page. There are no vacancies to list, and
+   a careers page with nothing on it reads as a company that is not hiring
+   rather than one that is growing. Speculative applications still have a
+   route: "Careers" is one of the options on the contact form. */
+function pagePartnerships() {
+  return head({
+    title: `Work With Us · ${SITE.name}`,
+    desc: 'Lusail Corp works with suppliers, producers, distributors and buyers in Qatar and international markets.',
+    url: '/partnerships/', image: 'why-group'
+  })
+    + header('/partnerships/')
+    + pageHead({
+      eyebrow: 'Work With Us',
+      h1: 'Most of what we do starts with someone else.',
+      lede: 'We buy from producers, sell to distributors, and move goods for both. If you are one of them, this is the page that says so.',
+      photo: 'why-group',
+      action: { href: '/contact/', label: 'Send an enquiry' }
+    })
+    + `<section class="section tight" aria-labelledby="pwTitle">
+  <div class="wrap">
+    ${head2('pwTitle', 'Who we want to <span class="soft">hear from</span>', 'Our companies depend on relationships across their markets. These are the ones we are looking for.')}
+    <div class="plines">
+${PARTNER_TYPES.map(p => `      <div class="pline rise">
+        <h3>${esc(p.t)}</h3>
+        <p>${esc(p.d)}</p>
+      </div>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="section stone" aria-labelledby="howTitle">
+  <div class="wrap">
+    ${head2('howTitle', 'How it <span class="soft">works</span>', '')}
+    <div class="vcreate">
+      <div class="vc rise">
+        ${icon('target')}
+        <h3>Tell us which you are</h3>
+        <p>The enquiry form asks for an area of interest. That is what routes your message — it is not a formality.</p>
+      </div>
+      <div class="vc rise d1">
+        ${icon('partnership')}
+        <h3>It reaches the right desk</h3>
+        <p>A supplier enquiry goes to the company that would buy from you, not to a general inbox that forwards it on.</p>
+      </div>
+      <div class="vc rise d2">
+        ${icon('cycle')}
+        <h3>We answer with specifics</h3>
+        <p>Where it is a commodity, that means the origin, the specification and the route together, because we hold the trading and the freight in one business.</p>
+      </div>
+    </div>
+    <p class="after rise"><a class="btn btn-dark" href="/contact/">Start a conversation</a></p>
+  </div>
+</section>
+
+`
+    + ctaBand()
+    + footer();
+}
+
 /* ---------- contact ------------------------------------------------------ */
+
+/* Where the pin goes on the contact page. Supplied by the client; replace
+   these two numbers when the registered address is confirmed. The map is an
+   OpenStreetMap frame, so it needs no key and no tracking script. */
+const MAP_AT = { lat: 25.312929645378233, lon: 51.51906267232219 };
 
 function pageContact() {
   /* The dropdown is built from the same list api/contact.js validates
@@ -896,6 +1009,23 @@ ${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('
         <span class="status" id="status" role="status"></span>
       </div>
     </form>
+  </div>
+</section>
+
+<section class="section tight stone" aria-labelledby="mapTitle">
+  <div class="wrap">
+    ${head2('mapTitle', 'Where to <span class="soft">find us</span>', '')}
+    <figure class="placemap rise">
+      <iframe
+        title="A map showing where Lusail Corp is, in Doha, Qatar"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=${MAP_AT.lon - 0.012}%2C${MAP_AT.lat - 0.008}%2C${MAP_AT.lon + 0.012}%2C${MAP_AT.lat + 0.008}&amp;layer=mapnik&amp;marker=${MAP_AT.lat}%2C${MAP_AT.lon}"
+        loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <figcaption>
+        <span>${esc(SITE.contact.location)}</span>
+        <a href="https://www.openstreetmap.org/?mlat=${MAP_AT.lat}&amp;mlon=${MAP_AT.lon}#map=16/${MAP_AT.lat}/${MAP_AT.lon}"
+           target="_blank" rel="noopener">Open the map &#8594;</a>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
@@ -994,6 +1124,7 @@ function build() {
   ALL_COMPANIES.forEach(c => write(`companies/${c.slug}/index.html`, pageCompany(c)));
   write('sectors/index.html', pageSectorsIndex());
   SECTORS.forEach(s => write(`sectors/${s.slug}/index.html`, pageSector(s)));
+  write('partnerships/index.html', pagePartnerships());
   write('contact/index.html', pageContact());
   write('404.html', page404());
 
@@ -1013,7 +1144,7 @@ function build() {
   console.log(`  ${images.size} photographs (${Math.round(bytes / 1024)} KB)`);
 
   const urls = ['/', '/about/', ...ALL_COMPANIES.map(c => `/companies/${c.slug}/`),
-    '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/contact/'];
+    '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/', '/contact/'];
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
     `User-agent: *\nAllow: /\n\nSitemap: ${SITE.domain}/sitemap.xml\n`);
   fs.writeFileSync(path.join(OUT, 'sitemap.xml'),

@@ -34,17 +34,34 @@
 
   var navwrap = $('#navwrap'), secBtn = $('#secBtn');
   if (navwrap && secBtn) {
+    var shut;
     var setSec = function (open) {
+      clearTimeout(shut);
       navwrap.classList.toggle('open', open);
       secBtn.setAttribute('aria-expanded', String(open));
     };
+    /* The panel hangs below the bar, so the pointer has to cross a strip of
+       header to reach it. Closing on the first mouseleave would shut the menu
+       on the way down, so leaving starts a short grace period instead and
+       coming back cancels it. */
+    var leave = function () {
+      clearTimeout(shut);
+      shut = setTimeout(function () { setSec(false); }, 260);
+    };
+
     secBtn.addEventListener('click', function (e) {
       e.preventDefault();
       setSec(secBtn.getAttribute('aria-expanded') !== 'true');
     });
     if (matchMedia('(hover: hover)').matches) {
       navwrap.addEventListener('mouseenter', function () { setSec(true); });
-      navwrap.addEventListener('mouseleave', function () { setSec(false); });
+      navwrap.addEventListener('mouseleave', leave);
+      /* the strip of bar between the button and the panel counts as being on
+         the way there, not as having left */
+      if (head) {
+        head.addEventListener('mouseleave', leave);
+        head.addEventListener('mouseenter', function () { clearTimeout(shut); });
+      }
     }
     navwrap.addEventListener('focusout', function (e) {
       if (!navwrap.contains(e.relatedTarget)) setSec(false);
@@ -90,32 +107,6 @@
       card.setAttribute('aria-expanded', String(on));
     });
   });
-
-  /* ---------- building more than a portfolio -------------------------------
-     One panel open at a time. Clicking a closed one moves the opening to it;
-     the open one stays open, so the row is never blank. */
-
-  var ladder = $('#ladder');
-  if (ladder) {
-    var panels = $$('.lad', ladder);
-    var openLad = function (i) {
-      panels.forEach(function (p, k) { p.setAttribute('aria-expanded', String(k === i)); });
-    };
-    panels.forEach(function (p, i) {
-      p.addEventListener('click', function () { openLad(i); });
-      /* on a pointer it follows the cursor, which reads as one continuous
-         object rather than four buttons */
-      if (matchMedia('(hover: hover)').matches && innerWidth > 860) {
-        p.addEventListener('mouseenter', function () { openLad(i); });
-      }
-      p.addEventListener('keydown', function (e) {
-        var n = panels.length, j = null;
-        if (e.key === 'ArrowRight') j = (i + 1) % n;
-        else if (e.key === 'ArrowLeft') j = (i - 1 + n) % n;
-        if (j !== null) { e.preventDefault(); openLad(j); panels[j].focus(); }
-      });
-    });
-  }
 
   /* ---------- the values ---------------------------------------------------
      One open at a time. The first is open in the markup, so the column has a

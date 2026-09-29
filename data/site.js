@@ -66,7 +66,7 @@ const SECTORS = [
   {
     slug: 'trading',
     name: 'Trading & Commodities',
-    short: 'Sourcing, importing and exporting commodities, and moving them.',
+    short: 'Edible oils, sugar, wheat, coffee and sulphur — bought abroad and shipped by sea, land and air.',
     headline: 'Global Supply, Commercially Answered',
     intro: 'The Group buys commodities internationally and carries them, which is one business rather than two.',
     hero: 'hero-sector-trading',
@@ -85,16 +85,16 @@ const SECTORS = [
         role: 'Trading & Logistics',
         headline: 'Global Trade. Reliable Logistics. Connected Markets.',
         short: 'Commodity trading and international freight — sourcing food and industrial commodities, and moving them by sea, land and air.',
-        intro: 'Lusail Commercial connects international trade with logistics, combining commodity sourcing with the freight capability to move it.',
+        intro: 'Lusail Commercial operates where international trade meets logistics, combining commodity sourcing with the freight capability to move it.',
         body: [
-          'The business operates across two connected sides. Commodity trading sources and moves edible oils, sugar, wheat, coffee and granular sulphur through a global supplier network. Logistics manages the cargo itself — ocean, road and air freight, vessel chartering, trailers and heavy transport.',
-          'Keeping both under one roof means purchasing and transport are handled as one commercial decision, connecting origin, specification and route in a single enquiry.',
+          'The business operates across two connected sides. Commodity trading sources and moves edible oils, sugar, wheat, coffee and granular sulphur from producers and suppliers across the regions below. Logistics manages the cargo itself — ocean, road and air freight, vessel chartering, trailers and heavy transport.',
+          'Keeping both under one roof is the point. Purchasing and transport are handled as one commercial question rather than two, so an enquiry can be answered with the origin, the specification and the route together.',
           'Sourcing spans the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia. Which origin is used depends on the product, the season, quality, availability and the terms of the transaction.'
         ],
         facts: [
           { k: 'Sector', v: 'Trading, Supply & Distribution' },
           { k: 'Activity', v: 'Commodity trading and international freight' },
-          { k: 'Market', v: 'Qatar, the GCC and international' },
+          { k: 'Market', v: 'Qatar and international' },
           { k: 'Transport', v: 'Sea, land, air and multimodal' }
         ],
         products: [
@@ -122,14 +122,14 @@ const SECTORS = [
   {
     slug: 'supply-distribution',
     name: 'Supply & Distribution',
-    short: 'Bringing food into Qatar and getting it to the businesses that sell and serve it.',
+    short: 'Fresh produce, rice and dry goods, imported and delivered to the businesses that sell and serve them.',
     headline: 'Connecting Supply With Demand',
     intro: 'Distribution is the link between a producer abroad and a kitchen, a shelf or a warehouse in Qatar.',
     hero: 'hero-sector-supply-distribution',
     body: [
-      'Qatar imports most of what it eats, so the work is in the chain rather than any single link: finding producers, getting the goods in, and putting them where the buyer needs them, in the condition the buyer expects.',
+      'Almost everything ROMA sells arrives by ship or by plane, so the work is in the chain rather than any single link: finding producers, getting the goods in, and putting them where the buyer needs them, in the condition the buyer expects.',
       'Fresh produce has a short commercial life and agricultural supply moves with the season, so this is a business of timing. Relationships across several growing regions matter more than a single cheap origin, because they are what let the supply shift when a season ends or availability tightens.',
-      'The customers are supermarkets, hotels, restaurants, caterers and wholesalers — businesses that need the same thing to arrive on the same day each week.'
+      'It sells into the retail and food-service trade: supermarkets, hotels, restaurants, caterers and wholesalers.'
     ],
     companies: [
       {
@@ -173,7 +173,7 @@ const SECTORS = [
   {
     slug: 'consumer-services',
     name: 'Consumer & Lifestyle Services',
-    short: 'Everyday services, judged on convenience and how consistently they are delivered.',
+    short: 'Garment care for households, judged on doing the same thing well every time.',
     headline: 'Everyday Services. Better Experiences.',
     intro: 'A service business is judged on whether it does the same thing well every time.',
     hero: 'hero-sector-consumer-services',
@@ -189,7 +189,7 @@ const SECTORS = [
         role: 'Professional Garment & Textile Care',
         headline: 'Professional Laundry & Garment Care',
         short: 'Professional laundry and garment care, built around convenience and consistency.',
-        intro: 'Cavallo Laundry operates within Lusail Corp’s consumer services portfolio.',
+        intro: 'Cavallo Laundry cleans, presses and returns clothes — everyday household laundry, and the pieces that need more care than that.',
         body: [
           'The business provides professional laundry and garment care, handling everyday household items and pieces that need specialist treatment.',
           'A laundry is judged on whether the same garment comes back the same way every time, so the work is built around turnaround, handling and consistency rather than volume alone.',
@@ -211,8 +211,8 @@ const SECTORS = [
   {
     slug: 'food-beverage',
     name: 'Food & Beverage',
-    short: 'Consumer-facing concepts built on the product, the service and the room.',
-    headline: 'Creating Consumer Brands',
+    short: 'A café, and the discipline of opening it every morning.',
+    headline: 'Where the Group Meets Its Customers',
     intro: 'Hospitality is where the Group meets its customers face to face.',
     hero: 'hero-sector-food-beverage',
     body: [
@@ -224,10 +224,10 @@ const SECTORS = [
       {
         slug: 'nero-cafe',
         name: 'Nero Café',
-        role: 'Coffee. Experience. Community.',
+        role: 'Coffee, service, and the room.',
         headline: 'A Coffee Concept Built Around Experience',
         short: 'A café concept built on quality coffee, service and the room it is served in.',
-        intro: 'Nero Café represents Lusail Corp’s presence within the food and beverage sector.',
+        intro: 'Nero Café is the Group’s coffee shop.',
         body: [
           'The café is built around three things that have to work together: the coffee itself, the service across the counter, and the room people choose to sit in.',
           'Qatar’s food and beverage market is busy and competitive, so the concept is aimed at being somewhere people return to rather than somewhere they pass through.',
@@ -264,15 +264,15 @@ const WHAT_WE_DO = [
 
 /* About: how the Group creates value */
 const VALUE_CREATION = [
-  { t: 'Strategic Direction',
+  { t: 'Strategic Direction', icon: 'target',
     d: 'We set the commercial priorities with each business and hold it to them.' },
-  { t: 'Operational Development',
+  { t: 'Operational Development', icon: 'solve',
     d: 'We put in the processes and systems a company needs before it needs them.' },
-  { t: 'Market Development',
+  { t: 'Market Development', icon: 'markets',
     d: 'We help each company find its customers, its partners and its next product.' },
-  { t: 'Group Capabilities',
+  { t: 'Group Capabilities', icon: 'partnership',
     d: 'Sourcing, logistics and commercial relationships built in one company are open to the others.' },
-  { t: 'Long-Term Perspective',
+  { t: 'Long-Term Perspective', icon: 'cycle',
     d: 'We build for businesses that still make sense in ten years, not only this one.' }
 ];
 
@@ -321,31 +321,20 @@ const PARTNER_TYPES = [
     d: 'Operators and founders with a business or an idea that fits where the Group is going.' }
 ];
 
-/* Careers page */
-const CAREER_VALUES = [
-  { icon: 'spark',       t: 'Entrepreneurial Thinking' },
-  { icon: 'shield',      t: 'Responsibility' },
-  { icon: 'partnership', t: 'Collaboration' },
-  { icon: 'target',      t: 'Customer Focus' },
-  { icon: 'solve',       t: 'Problem Solving' },
-  { icon: 'cycle',       t: 'Continuous Development' }
-];
-
-/* Set to [] to show the "no current opening" state, which the brief specifies. */
-const OPEN_ROLES = [];
-
 /* Home: the Group in four figures, on the band under the introduction.
 
-   THREE OF THESE ARE NOT VERIFIED. "5+ years", "10+ markets" and "50k+
-   customers" came from the design file, not from the Group, and no one has
-   confirmed them. Check them before launch or take them out; a wrong number
-   on a corporate home page is worse than no number. The fourth counts the
-   portfolio itself, so it is always right — leave v null to have it counted. */
+   Every one of these is counted from the content below rather than typed in,
+   so none of them can be wrong and none can drift as the portfolio changes.
+   The design called for "5+ years", "10+ markets" and "50k+ customers"; those
+   were nobody's numbers — they came from the design file and no one at the
+   Group had confirmed them. These say less and are true.
+
+   `count` names what to count: companies, sectors, regions or countries. */
 const FIGURES = [
-  { k: 'Years Building', v: '5+' },
-  { k: 'Markets Served', v: '10+' },
-  { k: 'Customers Served', v: '50k+' },
-  { k: 'Operating Companies', v: null }
+  { k: 'Operating companies', count: 'companies' },
+  { k: 'Business sectors', count: 'sectors' },
+  { k: 'Sourcing regions', count: 'regions' },
+  { k: 'Source countries', count: 'countries' }
 ];
 
 /* The order the portfolio is listed in, wherever it is listed. The two
@@ -434,5 +423,5 @@ const WHY = [
 module.exports = {
   SITE, SECTORS, ALL_COMPANIES, REACH, REACH_POINTS, HUB, WHY,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
-  PARTNER_TYPES, CAREER_VALUES, OPEN_ROLES
+  PARTNER_TYPES
 };

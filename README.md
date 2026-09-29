@@ -21,7 +21,8 @@ Commercial appears under both Trading and Supply & Distribution.
 | `/sectors/` | The four sectors, each with the businesses inside it |
 | `/sectors/<slug>/` | One sector |
 | `/companies/<slug>/` | One company |
-| `/about/` | The Group: what it is, what it believes, who it wants to hear from |
+| `/about/` | The Group: what it is and what it believes |
+| `/partnerships/` | Work With Us — who the Group wants to hear from |
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
