@@ -248,64 +248,6 @@
     }
   }
 
-  /* ---------- company filter ------------------------------------------------
-     One list of every company, sliced by sector without a page reload. */
-
-  var grid = $('#coGrid'), countEl = $('#count'), emptyEl = $('#empty');
-
-  if (grid) {
-    var chips = $$('.chip');
-    var cards = $$('a[data-sector]', grid);
-    var active = 'all';
-
-    var refreshCount = function () {
-      var shown = cards.filter(function (c) { return !c.hidden; }).length;
-      var label = chips.filter(function (c) { return c.dataset.filter === active; })[0];
-      /* the chip carries its own name, so the count does not have to pick it
-         back out of the markup */
-      var where = label && active !== 'all' ? ' in ' + label.dataset.label : '';
-      countEl.textContent = active === 'all'
-        ? 'Showing all ' + shown + ' companies'
-        : 'Showing ' + shown + (shown === 1 ? ' company' : ' companies') + where;
-    };
-
-    var filter = function (slug) {
-      active = slug;
-      cards.forEach(function (c) {
-        // data-sector is a space-separated list: a company can sit in more
-        // than one sector and should match either filter
-        var secs = (c.dataset.sector || '').split(' ');
-        c.hidden = !(slug === 'all' || secs.indexOf(slug) !== -1);
-      });
-      chips.forEach(function (c) {
-        c.setAttribute('aria-pressed', String(c.dataset.filter === slug));
-      });
-      var shown = cards.filter(function (c) { return !c.hidden; }).length;
-      if (emptyEl) emptyEl.hidden = shown > 0;
-      refreshCount();
-
-      // Keep the URL shareable: /companies/?sector=food
-      try {
-        var u = new URL(location.href);
-        if (slug === 'all') u.searchParams.delete('sector');
-        else u.searchParams.set('sector', slug);
-        history.replaceState(null, '', u);
-      } catch (e) {}
-    };
-
-    chips.forEach(function (c) {
-      c.addEventListener('click', function () { filter(c.dataset.filter); });
-    });
-
-    // Honour ?sector= on load, so a filtered view can be linked to.
-    var initial = 'all';
-    try {
-      var s = new URLSearchParams(location.search).get('sector');
-      if (s && chips.some(function (c) { return c.dataset.filter === s; })) initial = s;
-    } catch (e) {}
-    if (initial !== 'all') filter(initial);
-  }
-
   /* ---------- contact form -----------------------------------------------
      Posts to the serverless function in api/contact.js, which relays through
      Resend. If it is unreachable, or CONTACT_ENDPOINT is emptied, the form

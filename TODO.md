@@ -120,40 +120,17 @@ The old strings are in git history at `7f548c4`. Bringing Arabic back means
 translating the current English and rendering it, not reviving those fields.
 Nothing in the templates assumes one language any more.
 
-### 8. Photography still to replace
+### 8. Two companies borrow a photograph
 
-- `careers-a|b|c.jpg` are placeholders, as agreed. Replace them one at a time,
-  same filenames, no code change.
-- Cavallo Laundry and Nero Café have no upright photograph of their own, so
-  they borrow `lifestyle-wide.jpg` and `coffee-still.jpg` for the shot beside
-  their opening paragraphs. A picture of each business would be better.
+Cavallo Laundry and Nero Café have no upright photograph of their own, so they
+borrow `lifestyle-wide.jpg` and `coffee-still.jpg` for the shot beside their
+opening paragraphs. A picture of each business would be better. Everything
+else on the site now has its own.
 
-### 9. Six pages were removed — check the redirects once it is live
+### 9. Pages were removed — check the redirects once it is live
 
-The sector pages and the partnerships page are gone; `vercel.json` sends their
-URLs to the filtered portfolio and to `/about/#work-with-us`. Worth spot
-checking after the first deploy, since search engines still hold the old ones.
-
----
-
-## Done
-
-- **Redirects** — 33 rules in [vercel.json](vercel.json). Covers the URLs
-  people guess (`/about-us`, `/our-sectors`, `/contact-us`), singular forms
-  (`/sector/x`, `/company/x`), the removed News section, and every historical
-  slug from the placeholder era (`/sectors/logistics`,
-  `/companies/lusail-coffee` and the rest) so old indexed links still land.
-  All destinations verified against the real routes; none shadow a live page.
-- **Contact form no longer claims a false send** — see item 2.
-- **Dead `#` links removed** — see item 1.
-- **Option 2 logo** across header, footer and favicons.
-
----
-
-## Notes
-
-- Content lives in **one file**, [data/site.js](data/site.js). Sectors,
-  companies, nav and contact details are all there; the pages rebuild from it.
-- `npm run build` regenerates `dist/`. Vercel runs this on every push.
-- A company can sit in more than one sector via `alsoIn` — this is how Lusail
-  Commercial appears under both Trading and Supply & Distribution.
+The portfolio index, the careers page and the partnerships page are gone.
+`vercel.json` sends `/companies/` and `/portfolio/` to `/sectors/`, `/careers/`
+and `/jobs/` to `/contact/`, and `/partnerships/` to the "Who we want to hear
+from" section on `/about/`. Worth spot checking after the first deploy, since
+search engines still hold the old URLs.

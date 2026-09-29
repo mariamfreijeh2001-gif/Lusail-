@@ -69,6 +69,12 @@ const SECTORS = [
     short: 'Sourcing, importing and exporting commodities, and moving them.',
     headline: 'Global Supply, Commercially Answered',
     intro: 'The Group buys commodities internationally and carries them, which is one business rather than two.',
+    hero: 'hero-sector-trading',
+    body: [
+      'This is the part of the Group that works outside Qatar. It sources edible oils, sugar, wheat, coffee and granular sulphur from producers and suppliers across the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia.',
+      'It also moves them. Ocean, road and air freight, vessel chartering and heavy transport sit in the same business as the buying, so an enquiry about a commodity can be answered with the origin, the specification and the route at the same time.',
+      'Which origin is used is a commercial decision, not a standing arrangement: it depends on the product, the season, quality, availability and the terms on the day.'
+    ],
     companies: [
       {
         slug: 'lusail-commercial',
@@ -119,6 +125,12 @@ const SECTORS = [
     short: 'Bringing food into Qatar and getting it to the businesses that sell and serve it.',
     headline: 'Connecting Supply With Demand',
     intro: 'Distribution is the link between a producer abroad and a kitchen, a shelf or a warehouse in Qatar.',
+    hero: 'hero-sector-supply-distribution',
+    body: [
+      'Qatar imports most of what it eats, so the work is in the chain rather than any single link: finding producers, getting the goods in, and putting them where the buyer needs them, in the condition the buyer expects.',
+      'Fresh produce has a short commercial life and agricultural supply moves with the season, so this is a business of timing. Relationships across several growing regions matter more than a single cheap origin, because they are what let the supply shift when a season ends or availability tightens.',
+      'The customers are supermarkets, hotels, restaurants, caterers and wholesalers — businesses that need the same thing to arrive on the same day each week.'
+    ],
     companies: [
       {
         slug: 'roma-commercial',
@@ -164,6 +176,12 @@ const SECTORS = [
     short: 'Everyday services, judged on convenience and how consistently they are delivered.',
     headline: 'Everyday Services. Better Experiences.',
     intro: 'A service business is judged on whether it does the same thing well every time.',
+    hero: 'hero-sector-consumer-services',
+    body: [
+      'This is where the Group serves households rather than businesses. The work is ordinary and frequent, which is exactly why it is hard: a customer notices the one time it goes wrong far more than the fifty times it went right.',
+      'So the standards that matter here are unglamorous ones — turnaround, careful handling, and a result that does not vary. A service people use every week has to earn that place every week.',
+      'It is also the part of the portfolio closest to the public, and the part that teaches the Group most about what customers in Qatar actually want.'
+    ],
     companies: [
       {
         slug: 'cavallo-laundry',
@@ -196,6 +214,12 @@ const SECTORS = [
     short: 'Consumer-facing concepts built on the product, the service and the room.',
     headline: 'Creating Consumer Brands',
     intro: 'Hospitality is where the Group meets its customers face to face.',
+    hero: 'hero-sector-food-beverage',
+    body: [
+      'Qatar’s food and beverage market is busy and competitive, and a concept survives in it by being somewhere people come back to rather than somewhere they pass through once.',
+      'That depends on three things working together — the product itself, the service across the counter, and the room people choose to sit in. Any one of them being wrong is enough.',
+      'Running a hospitality business also gives the Group something the trading side cannot: daily contact with customers, and the operational discipline that comes with opening every morning.'
+    ],
     companies: [
       {
         slug: 'nero-cafe',

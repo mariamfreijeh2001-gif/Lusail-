@@ -18,24 +18,23 @@ Commercial appears under both Trading and Supply & Distribution.
 | URL | |
 |---|---|
 | `/` | Home |
-| `/about/` | The Group: what it is, what it believes, who it wants to hear from |
-| `/companies/` | The portfolio, filterable by sector |
+| `/sectors/` | The four sectors, each with the businesses inside it |
+| `/sectors/<slug>/` | One sector |
 | `/companies/<slug>/` | One company |
-| `/careers/` | Working here, and how to apply |
+| `/about/` | The Group: what it is, what it believes, who it wants to hear from |
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
-**A sector has no page of its own.** There are four sectors and four
-companies, so a sector page would only have said what its company page
-already says. Sectors survive as a heading and a filter:
-`/companies/?sector=trading` is where "Trading & Commodities" goes, and
-`vercel.json` redirects the old `/sectors/` URLs there. The partnerships page
-is now the "Who we want to hear from" section on `/about/`.
+There is **no portfolio index and no careers page**. Every company is reached
+from the sectors menu, the sectors index or its own sector's page, which is
+one move from anywhere on the site. Applications and partnership enquiries go
+through the contact form, which routes on the "area of interest" field. The
+old `/companies/`, `/careers/` and `/partnerships/` URLs redirect.
 
 Adding a company to a sector means adding one object to that sector's
-`companies` array. The sectors panel in the bar, the filter chips and their
-counts, the home page's sector cards, the footer, the contact dropdown (and
-the email routing behind it) and the sitemap all follow.
+`companies` array. The sectors menu, the sectors index, the sector page, the
+home page's sector cards, the footer, the contact dropdown (and the email
+routing behind it) and the sitemap all follow.
 
 ## Where things live
 
@@ -45,7 +44,7 @@ build/render.js       templates + generator
 build/worldmap.js     decodes the land data and projects the home-page map
 api/contact.js        Vercel function: validates the form, emails it via Resend
 assets/css/site.css   one stylesheet; design tokens at the top
-assets/js/site.js     nav, map pins, panels, filter, contact form, reveals
+assets/js/site.js     nav, sector menu, map pins, panels, form, reveals
 site-assets/logo/     the logo kit (SVG) + favicons
 site-assets/img/      web-sized photography
 site-assets/geo/      Natural Earth 110m land, TopoJSON (public domain)
@@ -93,7 +92,7 @@ them live in `site-assets/img/` as `.jpg`:
 
 | Name | Used by | Shape |
 |---|---|---|
-| `hero-<page>` | the photograph behind a page title | wide, ~1600px |
+| `hero-<page>`, `hero-sector-<slug>` | the photograph behind a page title | wide |
 | `still-<company>` | the upright shot beside a company's opening | ~900px |
 | `prod-<product>` | one product card in the rail | 640px, 4:3 |
 | `card-<sector>` | the home page's sector cards | 640px, tall |

@@ -47,42 +47,42 @@
     },
     {
       "source": "/our-companies/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/our-companies",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/subsidiaries/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/subsidiaries",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/our-sectors/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/our-sectors",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/our-business/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/our-business",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
@@ -106,33 +106,13 @@
       "permanent": true
     },
     {
-      "source": "/jobs/",
-      "destination": "/careers/",
-      "permanent": true
-    },
-    {
-      "source": "/jobs",
-      "destination": "/careers/",
-      "permanent": true
-    },
-    {
-      "source": "/vacancies/",
-      "destination": "/careers/",
-      "permanent": true
-    },
-    {
-      "source": "/vacancies",
-      "destination": "/careers/",
-      "permanent": true
-    },
-    {
       "source": "/sector/:slug/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/sector/:slug",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
@@ -147,82 +127,82 @@
     },
     {
       "source": "/sectors/coffee/",
-      "destination": "/companies/?sector=food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/coffee",
-      "destination": "/companies/?sector=food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/food/",
-      "destination": "/companies/?sector=food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/food",
-      "destination": "/companies/?sector=food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply/",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/distribution/",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/distribution",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/logistics/",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/logistics",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/shipping/",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/shipping",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/contracting/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/sectors/contracting",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/sectors/energy/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/sectors/energy",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
@@ -277,22 +257,22 @@
     },
     {
       "source": "/companies/lusail-contracting/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/companies/lusail-contracting",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/companies/lusail-energy/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/companies/lusail-energy",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
@@ -337,62 +317,32 @@
     },
     {
       "source": "/sectors/future-ventures/",
-      "destination": "/companies/",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/sectors/future-ventures",
-      "destination": "/companies/",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/",
-      "destination": "/companies/",
-      "permanent": true
-    },
-    {
-      "source": "/sectors",
-      "destination": "/companies/",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/trading/",
-      "destination": "/companies/?sector=trading",
+      "destination": "/sectors/",
       "permanent": true
     },
     {
       "source": "/sectors/trading",
-      "destination": "/companies/?sector=trading",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/supply-distribution/",
-      "destination": "/companies/?sector=supply-distribution",
+      "destination": "/sectors/trading/",
       "permanent": true
     },
     {
       "source": "/sectors/supply-distribution",
-      "destination": "/companies/?sector=supply-distribution",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/consumer-services/",
-      "destination": "/companies/?sector=consumer-services",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/consumer-services",
-      "destination": "/companies/?sector=consumer-services",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/food-beverage/",
-      "destination": "/companies/?sector=food-beverage",
+      "destination": "/sectors/consumer-services/",
       "permanent": true
     },
     {
       "source": "/sectors/food-beverage",
-      "destination": "/companies/?sector=food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
@@ -403,6 +353,61 @@
     {
       "source": "/partnerships",
       "destination": "/about/#work-with-us",
+      "permanent": true
+    },
+    {
+      "source": "/sectors",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/careers",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/jobs/",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/jobs",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/vacancies/",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/vacancies",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/companies/",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/companies",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio/",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio",
+      "destination": "/sectors/",
       "permanent": true
     }
   ]
