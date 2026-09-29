@@ -19,7 +19,7 @@ linkedin: 'https://www.linkedin.com/company/…',
 instagram: 'https://www.instagram.com/…',
 ```
 
-The links reappear in the footer automatically.
+The links appear in the footer automatically.
 
 ### 2. Contact form — set the Resend key in Vercel
 
@@ -97,20 +97,42 @@ use Google Workspace / Microsoft 365 — before launch.
 > at all, so the published email address and every canonical URL pointed
 > nowhere. Both now use lusailcorp.com. If .qa is wanted, register it first.
 
-### 6. ROMA Commercial has no photograph
-Every other company has imagery. ROMA renders in the typographic style, which
-looks deliberate rather than broken, but a photo would balance the set. Food
-distribution, warehousing or packaged goods would fit.
+### 6. Three of the four home-page figures are unverified — *blocking*
 
-### 7. Careers images are placeholders
-`careers-a.jpg`, `careers-b.jpg`, `careers-c.jpg` are stand-ins to show the
-layout, as agreed. Replace them one at a time — same filenames, no code change.
+The stat band under the introduction reads **5+ Years Building · 10+ Markets
+Served · 50k+ Customers Served · 4 Operating Companies**.
 
-### 8. Arabic needs a native review
-Every Arabic string on the site is my translation. The structure and RTL
-behaviour are sound, but the **wording should be read by a native speaker**
-before launch, particularly the company descriptions and the value statements.
-All of it sits in `data-ar` attributes in [data/site.js](data/site.js).
+Only the last is real — it counts the portfolio. The other three came from the
+Figma, not from the Group, and nobody has confirmed them. A wrong number on a
+corporate home page is worse than no number.
+
+Confirm or change them in `FIGURES` in [data/site.js](data/site.js). To drop a
+figure entirely, delete its line; the band re-centres on what is left.
+
+### 7. Arabic is off, and the old translations are stale
+
+The site renders **English only**. The translations were removed when the copy
+was rewritten: every one of them described text that no longer exists, and a
+stale translation is worse than none — switched back on, it would silently
+mistranslate the new wording.
+
+The old strings are in git history at `7f548c4`. Bringing Arabic back means
+translating the current English and rendering it, not reviving those fields.
+Nothing in the templates assumes one language any more.
+
+### 8. Photography still to replace
+
+- `careers-a|b|c.jpg` are placeholders, as agreed. Replace them one at a time,
+  same filenames, no code change.
+- Cavallo Laundry and Nero Café have no upright photograph of their own, so
+  they borrow `lifestyle-wide.jpg` and `coffee-still.jpg` for the shot beside
+  their opening paragraphs. A picture of each business would be better.
+
+### 9. Six pages were removed — check the redirects once it is live
+
+The sector pages and the partnerships page are gone; `vercel.json` sends their
+URLs to the filtered portfolio and to `/about/#work-with-us`. Worth spot
+checking after the first deploy, since search engines still hold the old ones.
 
 ---
 

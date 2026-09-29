@@ -67,32 +67,32 @@
     },
     {
       "source": "/our-sectors/",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/our-sectors",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/our-business/",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/our-business",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/partnership/",
-      "destination": "/partnerships/",
+      "destination": "/about/#work-with-us",
       "permanent": true
     },
     {
       "source": "/partnership",
-      "destination": "/partnerships/",
+      "destination": "/about/#work-with-us",
       "permanent": true
     },
     {
@@ -127,12 +127,12 @@
     },
     {
       "source": "/sector/:slug/",
-      "destination": "/sectors/:slug/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/sector/:slug",
-      "destination": "/sectors/:slug/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
@@ -147,82 +147,82 @@
     },
     {
       "source": "/sectors/coffee/",
-      "destination": "/sectors/food-beverage/",
+      "destination": "/companies/?sector=food-beverage",
       "permanent": true
     },
     {
       "source": "/sectors/coffee",
-      "destination": "/sectors/food-beverage/",
+      "destination": "/companies/?sector=food-beverage",
       "permanent": true
     },
     {
       "source": "/sectors/food/",
-      "destination": "/sectors/food-beverage/",
+      "destination": "/companies/?sector=food-beverage",
       "permanent": true
     },
     {
       "source": "/sectors/food",
-      "destination": "/sectors/food-beverage/",
+      "destination": "/companies/?sector=food-beverage",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply/",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/distribution/",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/distribution",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/logistics/",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/logistics",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/shipping/",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/shipping",
-      "destination": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
       "permanent": true
     },
     {
       "source": "/sectors/contracting/",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/sectors/contracting",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/sectors/energy/",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/sectors/energy",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
@@ -337,12 +337,72 @@
     },
     {
       "source": "/sectors/future-ventures/",
-      "destination": "/sectors/",
+      "destination": "/companies/",
       "permanent": true
     },
     {
       "source": "/sectors/future-ventures",
-      "destination": "/sectors/",
+      "destination": "/companies/",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/",
+      "destination": "/companies/",
+      "permanent": true
+    },
+    {
+      "source": "/sectors",
+      "destination": "/companies/",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/trading/",
+      "destination": "/companies/?sector=trading",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/trading",
+      "destination": "/companies/?sector=trading",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/supply-distribution/",
+      "destination": "/companies/?sector=supply-distribution",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/supply-distribution",
+      "destination": "/companies/?sector=supply-distribution",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/consumer-services/",
+      "destination": "/companies/?sector=consumer-services",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/consumer-services",
+      "destination": "/companies/?sector=consumer-services",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/food-beverage/",
+      "destination": "/companies/?sector=food-beverage",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/food-beverage",
+      "destination": "/companies/?sector=food-beverage",
+      "permanent": true
+    },
+    {
+      "source": "/partnerships/",
+      "destination": "/about/#work-with-us",
+      "permanent": true
+    },
+    {
+      "source": "/partnerships",
+      "destination": "/about/#work-with-us",
       "permanent": true
     }
   ]

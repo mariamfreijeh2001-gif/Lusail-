@@ -132,4 +132,60 @@ function landPath(opts) {
   return parts.join('');
 }
 
-module.exports = { landPath, makeProjection };
+/* ---- dotted map --------------------------------------------------------- */
+
+/* The design draws the world as a grid of dots rather than filled coastline.
+   Exporting that from the design file gives a 900KB SVG; generating it from
+   the land we already decode gives the same picture in a few KB.
+
+   The test is a scanline: project every ring once, then for each row of the
+   grid find where the edges cross it. Sorted crossings pair up into spans of
+   land (even-odd, so lakes punch out), and a dot lands on every grid column
+   inside a span. */
+function dotGrid(opts) {
+  const file = opts.file || path.join(__dirname, '..', 'site-assets/geo/land-110m.json');
+  const topo = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const project = makeProjection(opts);
+  const pitch = opts.pitch || 5;
+  const r = opts.dot == null ? 1.15 : opts.dot;
+
+  const rings = [];
+  for (const poly of polygons(topo, Object.keys(topo.objects)[0])) {
+    for (const ring of poly) {
+      if (ring.length < 4) continue;
+      // drop the far south: the frame stops short of Antarctica
+      let top = -90;
+      for (const p of ring) if (p[1] > top) top = p[1];
+      if (top < opts.latBottom) continue;
+      rings.push(ring.map(project));
+    }
+  }
+
+  const parts = [];
+  for (let cy = pitch / 2; cy < opts.height; cy += pitch) {
+    const xs = [];
+    for (const ring of rings) {
+      for (let i = 0, n = ring.length; i < n; i++) {
+        const a = ring[i], b = ring[(i + 1) % n];
+        if ((a[1] <= cy) === (b[1] <= cy)) continue;      // edge does not cross
+        xs.push(a[0] + (cy - a[1]) / (b[1] - a[1]) * (b[0] - a[0]));
+      }
+    }
+    if (!xs.length) continue;
+    xs.sort((p, q) => p - q);
+
+    const y = Math.round(cy * 10) / 10;
+    for (let i = 0; i + 1 < xs.length; i += 2) {
+      const from = Math.ceil((xs[i] - pitch / 2) / pitch) * pitch + pitch / 2;
+      for (let x = from; x <= xs[i + 1]; x += pitch) {
+        if (x < 0 || x > opts.width) continue;
+        parts.push('M' + (Math.round(x * 10) / 10) + ' ' + y + 'h.01');
+      }
+    }
+  }
+  /* Every dot is a zero-length segment on one path with a round line cap, so
+     the whole map is a single element and each dot costs about ten bytes. */
+  return { d: parts.join(''), r, count: parts.length };
+}
+
+module.exports = { landPath, makeProjection, dotGrid };

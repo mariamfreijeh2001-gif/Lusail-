@@ -4,25 +4,33 @@
    Reads /data/site.js, writes finished HTML into /dist. No dependencies.
    Run with:  npm run build
 
-   Two tiers: a sector holds any number of companies, including none.
-     /sectors/            every sector
-     /sectors/<slug>/     one sector and the companies in it
-     /companies/          every company, filterable by sector
-     /companies/<slug>/   one company
-     /partnerships/       who the Group wants to hear from
+   PAGES
+     /                     home
+     /about/               the Group: what it is, what it believes, who it
+                           wants to hear from
+     /companies/           the portfolio, filterable by sector
+     /companies/<slug>/    one company
+     /careers/             working here
+     /contact/             channels and the enquiry form
+     /404.html
 
-   Design is editorial: pages open with type on paper, never with text over a
-   photograph. Photography appears as a captioned plate where it is strong, a
-   contained still where the source is a cutout product shot, and not at all
-   where there is no honest picture of the business.
+   A sector has no page of its own. There are four sectors and four
+   companies, so a sector page would have said what its company page already
+   says. Sectors survive as a heading and a filter: /companies/?sector=trading
+   is where "Trading & Commodities" goes, and vercel.json redirects the old
+   /sectors/ URLs there.
+
+   DESIGN
+   Built to the Figma. Every page opens on a photograph with its title over a
+   dark wash; the reading below sits on white and warm off-white in turn.
    ========================================================================== */
 
 const fs = require('fs');
 const path = require('path');
-const { landPath, makeProjection } = require('./worldmap.js');
+const { makeProjection, dotGrid } = require('./worldmap.js');
 const {
   SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES,
-  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH,
+  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
   PARTNER_TYPES, CAREER_VALUES, OPEN_ROLES
 } = require('../data/site.js');
 
@@ -34,49 +42,28 @@ const OUT = path.join(ROOT, 'dist');
 const esc = s => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-// Bilingual node: English is the content, Arabic rides in data-ar.
-// A translatable element must never contain another — the toggle rewrites
-// textContent, which would destroy the child.
-const t = (en, ar) => ar ? ` data-ar="${esc(ar)}"` : '';
+const num = i => String(i + 1).padStart(2, '0');
+const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
 
-/* The logo appears only where a logo belongs — header, footer, favicon — and
-   never as a decorative element the layout is built around, so the design
-   survives a rebrand. Filenames come from SITE.brand. */
-/* A social link is only rendered once it points somewhere. While the
-   handles are unset the row simply is not there, rather than being a
-   link to '#'. */
-const social = () => [
-  ['LinkedIn', 'لينكدإن', SITE.contact.linkedin],
-  ['Instagram', 'إنستغرام', SITE.contact.instagram]
-]
-  .filter(([, , href]) => href && href !== '#')
-  .map(([en, ar, href]) =>
-    `          <li><a href="${href}"${t(en, ar)}>${en}</a></li>`)
-  .join('\n');
+/* A social link is only rendered once it points somewhere. While the handles
+   are unset the link simply is not there, rather than a link to '#'. */
+const SOCIAL = () => [
+  ['LinkedIn', SITE.contact.linkedin],
+  ['Instagram', SITE.contact.instagram]
+].filter(([, href]) => href && href !== '#');
 
+/* The logo appears in the header, the footer, the favicon, beside the home
+   introduction and as a watermark on the closing card — never as a shape the
+   layout is built around, so the design survives a rebrand. Filenames come
+   from SITE.brand. Both bars are carbon, so both take the reversed lockup. */
 const B = SITE.brand;
-const logoImg = file =>
-  `<img src="/assets/logo/${file}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
-const LOGO_DARK = logoImg(B.logoOnLight);
-const LOGO_LIGHT = logoImg(B.logoOnDark);
+const LOGO = `<img src="/assets/logo/${B.logoOnDark}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
 
 /* Icons, drawn here rather than pulled from a set, so they share the site's
    geometry: 24x24, hairline strokes, square caps, mitre joins, no rounding.
    They are decorative — the label beside each one carries the meaning — so
    they are aria-hidden. */
 const ICON_PATHS = {
-  // a building going up, with a plus: founding something new
-  found: '<path d="M3.5 20.5V8.5h9v12"/><path d="M6 12h1.5M10 12h1.5M6 15.5h1.5M10 15.5h1.5"/><path d="M17.5 3v7M14 6.5h7"/>',
-  // four corners pushing outward: growing what is already there
-  expand: '<path d="M4 9.5v-5.5h5.5M14.5 4H20v5.5M20 14.5V20h-5.5M9.5 20H4v-5.5"/><path d="M4 4l5 5M20 4l-5 5M20 20l-5-5M4 20l5-5"/>',
-  // three squares held, a fourth taken: entering a new sector
-  sectors: '<path d="M3.5 3.5h7v7h-7zM13.5 3.5h7v7h-7zM3.5 13.5h7v7h-7z"/><path d="M13.5 13.5h7v7h-7z" fill="currentColor" stroke="none"/>',
-  // two rings overlapping: a partnership, not an acquisition
-  partnership: '<circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/>',
-  // three points, all connected: suppliers, the group, buyers
-  supply: '<circle cx="4.6" cy="6" r="1.9"/><circle cx="19.4" cy="6" r="1.9"/><circle cx="12" cy="19" r="1.9"/><path d="M6.5 6h11M5.5 7.7l5.5 9.6M18.5 7.7L13 17.3"/>',
-  // a globe: markets beyond Qatar
-  markets: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.7 3.3 2.7 13.7 0 17M12 3.5c-2.7 3.3-2.7 13.7 0 17"/>',
   // a shield: taking responsibility for the outcome
   shield: '<path d="M12 2.6 20 5.4v6.2c0 4.6-3.2 8.3-8 9.8-4.8-1.5-8-5.2-8-9.8V5.4z"/><path d="M8.6 12.1l2.4 2.4 4.6-4.9"/>',
   // a target: knowing who the customer is
@@ -85,35 +72,31 @@ const ICON_PATHS = {
   solve: '<path d="M3.5 3.5h17v17h-17z"/><path d="M3.5 14.5h5v-5h7v5h5"/>',
   // a loop that keeps going: continuous development
   cycle: '<path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20.5 3v4.5H16"/>',
-  // a leaf: growers and producers
-  leaf: '<path d="M20 4c0 9-5 13-11 13H4.5C4.5 9 10 4 20 4z"/><path d="M15 8.5C10.5 10.5 7 14 5 20"/>',
-  // a route with a stop on it: moving goods to a buyer
-  route: '<path d="M3.5 18.5h6a4 4 0 0 0 0-8h-5a4 4 0 0 1 0-8h6"/><circle cx="18" cy="16.5" r="3"/><path d="M18 2.5v5M15.5 5h5"/>',
+  // two rings overlapping: a partnership, not an acquisition
+  partnership: '<circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/>',
   // a spark: founders and new concepts
-  spark: '<path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5M5.2 5.2l3.5 3.5M15.3 15.3l3.5 3.5M18.8 5.2l-3.5 3.5M8.7 15.3l-3.5 3.5"/><circle cx="12" cy="12" r="2.6"/>',
-  // two companies joined: connections inside the portfolio
-  network: '<path d="M3.5 3.5h6v6h-6zM14.5 14.5h6v6h-6z"/><path d="M9.5 6.5h4.5a3 3 0 0 1 3 3v5"/>'
+  spark: '<path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5M5.2 5.2l3.5 3.5M15.3 15.3l3.5 3.5M18.8 5.2l-3.5 3.5M8.7 15.3l-3.5 3.5"/><circle cx="12" cy="12" r="2.6"/>'
 };
 const icon = name => ICON_PATHS[name]
   ? `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICON_PATHS[name]}</svg>`
   : '';
 
-const num = i => String(i + 1).padStart(2, '0');
-const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
-const pluralAr = (n, one, many) => n === 1 ? one : n + ' ' + many;
-const hasPhoto = o => o && o.photo && o.photoStyle && o.photoStyle !== 'none';
+const BULLET = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="currentColor" fill-opacity=".5"><path d="M4 8L8 4L12 8L8 12L4 8Z"/><path d="M8 2a6 6 0 1 1 0 12A6 6 0 0 1 8 2Zm0-1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Z"/></svg>`;
+const CARET = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0Z"/></svg>`;
+const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg>`;
+const CHEV = `<svg viewBox="0 0 18 18" aria-hidden="true" focusable="false"><path d="M4 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
 
 /* ---------- chrome ----------------------------------------------------- */
 
 function head({ title, desc, url, image }) {
   return `<!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#181717">
 <link rel="canonical" href="${SITE.domain}${url}">
 
 <meta property="og:type" content="website">
@@ -121,7 +104,7 @@ function head({ title, desc, url, image }) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${SITE.domain}${url}">
-${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}">` : ''}
+${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}.jpg">` : ''}
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="/assets/logo/${B.faviconSvg}" type="image/svg+xml">
@@ -130,131 +113,100 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Inter:wght@500;600&family=Space+Grotesk:wght@500&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/site.css">
-
-<script>
-/* Language before first paint, so the page never flashes the wrong script. */
-(function(){
-  try{
-    var q = new URLSearchParams(location.search).get('lang');
-    var l = (q === 'ar' || q === 'en') ? q : localStorage.getItem('lc-lang');
-    if(l === 'ar'){ document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; }
-  }catch(e){}
-})();
-</script>
 </head>
 <body>
-<a class="skip" href="#main" data-ar="تخطَّ إلى المحتوى">Skip to content</a>
+<a class="skip" href="#main">Skip to content</a>
 `;
 }
 
-/* Hovering "Our Sectors" opens the whole portfolio at once. */
-function megaMenu() {
-  return `      <div class="mega" id="mega" hidden>
-        <div class="wrap mega-in">
-${SECTORS.map(s => `          <div class="mega-col">
-            <a class="mega-sec" href="/sectors/${s.slug}/"${t(s.name, s.nameAr)}>${esc(s.name)}</a>
-            <ul>
-${s.companies.length
-      ? s.companies.map(c => `              <li><a href="/companies/${c.slug}/"${t(c.name, c.nameAr)}>${esc(c.name)}</a></li>`).join('\n')
-      : `              <li><span class="soon" data-ar="قريباً">In development</span></li>`}
-            </ul>
-          </div>`).join('\n')}
-        </div>
+/* The bar carries four links and one action. "Sectors" opens a panel rather
+   than a page: each sector goes to the portfolio filtered to it, and the
+   companies inside it go straight to their own pages. */
+const NAV = [
+  ['Home', '/'],
+  ['Sectors', '/companies/'],
+  ['About Us', '/about/'],
+  ['Join Us', '/careers/']
+];
+
+function sectorsPanel() {
+  return `      <div class="secmenu" id="secmenu">
+${SECTORS.map(s => `        <div class="secmenu-col">
+          <a class="secmenu-head" href="/companies/?sector=${s.slug}">${esc(s.name)}</a>
+${s.companies.map(c => `          <a class="secmenu-co" href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('\n')}
+        </div>`).join('\n')}
       </div>`;
 }
 
-const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg>`;
-
-/* The left drawer: every sector, opening to the companies inside it. */
-function sectorsDrawer() {
-  return `<aside class="drawer drawer-l" id="sectorsDrawer" aria-label="Sectors" hidden>
-  <div class="drawer-in">
-    <button class="drawer-x" type="button" data-close>
-      <span aria-hidden="true">&times;</span><span data-ar="القطاعات">Sectors</span>
-    </button>
-    <nav class="dnav">
-${SECTORS.map(s => `      <div class="dcat">
-        <button class="dcat-btn" type="button" aria-expanded="false">
-          ${icon(SECTOR_ICON[s.slug] || 'sectors')}
-          <span class="dcat-id">
-            <span class="dcat-nm"${t(s.name, s.nameAr)}>${esc(s.name)}</span>
-            <span class="dcat-ar" aria-hidden="true">${esc(s.nameAr)}</span>
-          </span>
-          <span class="chev" aria-hidden="true"></span>
-        </button>
-        <div class="dcat-panel"><div>
-${s.companies.map(co => `          <a class="dlink" href="/companies/${co.slug}/"${t(co.name, co.nameAr)}>${esc(co.name)}</a>`).join('\n')}
-          <a class="dlink dlink-all" href="/sectors/${s.slug}/"${t('Sector overview', 'نظرة على القطاع')}>Sector overview</a>
-        </div></div>
-      </div>`).join('\n')}
-    </nav>
-  </div>
-</aside>`;
-}
-
-/* The right drawer: everything that is not a sector. */
-function corporateDrawer() {
-  const links = [
-    ['Home', 'الرئيسية', '/'],
-    ['The Group', 'المجموعة', '/about/'],
-    ['Portfolio', 'المحفظة', '/companies/'],
-    ['Where We Operate', 'مجالات عملنا', '/sectors/'],
-    ['Work With Us', 'اعمل معنا', '/partnerships/'],
-    ['Join Us', 'انضم إلينا', '/careers/']
-  ];
-  const social = SITE.contact.linkedin && SITE.contact.linkedin !== '#'
-    ? `      <a class="drawer-social" href="${SITE.contact.linkedin}" data-ar="تابعنا على لينكدإن">Connect on LinkedIn</a>`
-    : '';
-  return `<aside class="drawer drawer-r" id="corpDrawer" aria-label="The Group" hidden>
-  <div class="drawer-in">
-    <button class="drawer-x" type="button" data-close>
-      <span data-ar="المجموعة">The Group</span><span aria-hidden="true">&times;</span>
-    </button>
-    <nav class="dnav dnav-corp">
-${links.map(([en, ar, href]) => `      <a class="clink" href="${href}"${t(en, ar)}>${esc(en)}</a>`).join('\n')}
-    </nav>
-    <div class="drawer-foot">
-      <p data-ar="شركات المجموعة تورّد وتوزّع وتتاجر في أنحاء قطر وخارجها.">The Group&rsquo;s companies supply, distribute and trade across Qatar and beyond.</p>
-      <a class="btn btn-gold drawer-cta" href="/contact/" data-ar="تواصل معنا">Contact Us</a>
-      <p class="drawer-alt" data-ar="تورّد أو ترغب في شراكة؟ <a href=&quot;/partnerships/&quot;>اعمل معنا</a>">Supplying, or looking to partner? <a href="/partnerships/">Work with us</a></p>
-${social}
-    </div>
-  </div>
-</aside>`;
-}
-
+/* overHero: the home page opens on a photograph that runs under the bar, so
+   the bar starts transparent over it and fills as the page moves. Every other
+   page puts its photograph below a solid bar, as they are drawn. */
 function header(current, overHero) {
+  const link = ([label, href]) => {
+    const here = href === current ? ' aria-current="page"' : '';
+    return label === 'Sectors'
+      ? `      <div class="navwrap" id="navwrap">
+        <button class="nav-btn" type="button" id="secBtn" aria-expanded="false" aria-controls="secmenu">
+          Sectors${CARET}
+        </button>
+${sectorsPanel()}
+      </div>`
+      : `      <a class="nav-link" href="${href}"${here}>${esc(label)}</a>`;
+  };
+
   return `<header class="site-head${overHero ? ' over' : ''}" id="top">
-  <button class="head-btn" type="button" id="sectorsBtn" aria-expanded="false" aria-controls="sectorsDrawer">
-    ${BURGER}<span data-ar="القطاعات">Sectors</span>
+  <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}</a>
+  <nav class="nav" aria-label="Main">
+${NAV.map(link).join('\n')}
+  </nav>
+  <a class="head-cta" href="/contact/">Contact us</a>
+  <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu">
+    ${BURGER}
   </button>
-  <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_LIGHT}</a>
-  <div class="head-right">
-    <button class="lang" id="langBtn" type="button" aria-label="Switch language">عربي</button>
-    <button class="head-btn" type="button" id="corpBtn" aria-expanded="false" aria-controls="corpDrawer">
-      <span data-ar="المجموعة">The Group</span>${BURGER}
-    </button>
-  </div>
 </header>
-<div class="scrim" id="scrim" hidden></div>
-${sectorsDrawer()}
-${corporateDrawer()}
+<div class="menu" id="menu">
+  <a href="/">Home</a>
+  <a href="/companies/">Portfolio</a>
+${SECTORS.map(s => `  <a class="sub" href="/companies/?sector=${s.slug}">${esc(s.name)}</a>`).join('\n')}
+  <a href="/about/">About Us</a>
+  <a href="/careers/">Join Us</a>
+  <a class="btn btn-light" href="/contact/">Contact us</a>
+</div>
 <main id="main">
 `;
 }
 
 function footer() {
-  /* The footer is gone. Both drawers reach every page from any scroll
-     position, so it was repeating the navigation; what is left is the line a
-     company site has to carry.  */
+  const social = SOCIAL();
   return `</main>
 <footer class="site-foot">
-  <div class="wrap legal">
-    <span data-ar="© لوسيل كورب. جميع الحقوق محفوظة.">© ${esc(SITE.name)}. All Rights Reserved.</span>
-    <span class="legal-mid"><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a><span${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</span></span>
-    <span data-ar="سياسة الخصوصية · الشروط والأحكام">Privacy Policy · Terms &amp; Conditions</span>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-id">
+        <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}</a>
+        <p>${esc(SITE.tagline)}<br>${esc(SITE.blurb)}</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h2>Sectors</h2>
+          <ul>
+${SECTORS.map(s => `            <li><a href="/companies/?sector=${s.slug}">${esc(s.name)}</a></li>`).join('\n')}
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h2>Contact</h2>
+          <ul>
+            <li><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></li>
+            <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></li>
+            <li><span>${esc(SITE.contact.location)}</span></li>
+${social.map(([label, href]) => `            <li><a href="${href}">${esc(label)}</a></li>`).join('\n')}
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="foot-legal">© ${esc(SITE.name)}. All Rights Reserved.</p>
   </div>
 </footer>
 <script src="/assets/js/site.js" defer></script>
@@ -265,396 +217,281 @@ function footer() {
 
 /* ---------- reusable blocks -------------------------------------------- */
 
-function opener({ crumb, crumbAr, h1, h1Ar, lede, ledeAr, meta }) {
-  return `<section class="opener">
+/* Every page but the home page opens the same way: a photograph, a dark
+   wash, and the title sitting on it. */
+function pageHead({ eyebrow, h1, lede, photo, action }) {
+  return `<section class="pagehead">
+  <img class="pagehead-bg" src="/assets/img/${photo}.jpg" alt="" width="1600" height="1066" fetchpriority="high">
   <div class="wrap">
-    <span class="crumb"${t(crumb, crumbAr)}>${esc(crumb)}</span>
-    <h1${t(h1, h1Ar)}>${esc(h1)}</h1>
-    ${lede ? `<p class="lede"${t(lede, ledeAr)}>${esc(lede)}</p>` : ''}
-    ${meta ? `<p class="op-meta">${meta}</p>` : ''}
+    <span class="pagehead-eyebrow">${esc(eyebrow)}</span>
+    <h1>${esc(h1)}</h1>
+    ${lede ? `<p class="pagehead-lede">${esc(lede)}</p>` : ''}
+${action ? `    <a class="btn btn-light pagehead-cta" href="${action.href}">${esc(action.label)}</a>` : ''}
   </div>
 </section>
+
 `;
 }
 
-/* The caption text is kept, as alt. It describes the picture for anyone who
-   cannot see it, without printing a credit line under the photograph. */
-function plate(photo, caption) {
-  return `<figure class="plate">
-      <img src="/assets/img/${photo}-wide.jpg" alt="${esc(caption)}" width="2400" height="1029" loading="lazy">
-    </figure>`;
-}
-
-function still(photo, caption) {
-  return `<figure class="still">
-        <img src="/assets/img/${photo}-still.jpg" alt="${esc(caption)}" width="1100" height="1100" loading="lazy">
-      </figure>`;
-}
-
-// Renders whichever treatment the source photograph deserves, or nothing.
-function figureFor(o) {
-  if (!hasPhoto(o)) return '';
-  const cap = o.photoCaption || o.short;
-  return o.photoStyle === 'still' ? still(o.photo, cap) : plate(o.photo, cap);
-}
-
-/* A process, read across. Used once, for what the Group does. */
-function steps(items) {
-  return `<div class="steps">
-${items.map((v, i) => `      <div class="step">
-        <span class="n" aria-hidden="true">${num(i)}</span>
-        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
-        <p${t(v.d, v.dAr)}>${esc(v.d)}</p>
-      </div>`).join('\n')}
-    </div>`;
-}
-
-/* A definition list. Used once, for how value is created. */
-function defList(items) {
-  return `<dl class="deflist">
-${items.map((v, i) => `      <div>
-        <span class="n" aria-hidden="true">${num(i)}</span>
-        <dt${t(v.t, v.tAr)}>${esc(v.t)}</dt>
-        <dd${t(v.d, v.dAr)}>${esc(v.d)}</dd>
-      </div>`).join('\n')}
-    </dl>`;
-}
-
-/* Icon rows. Used once, for who the Group wants to hear from. */
-function iconRows(items) {
-  return `<div class="plines">
-${items.map(v => `      <div class="pline">
-        ${icon(v.icon)}
-        <div>
-          <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
-          <p${t(v.d, v.dAr)}>${esc(v.d)}</p>
-        </div>
-      </div>`).join('\n')}
-    </div>`;
-}
-
-/* Two products, given room. Used once, on the trading company. */
-function prodBlocks(items) {
-  return `<div class="prods">
-${items.map(v => `      <div class="prod">
-        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
-        <p${t(v.d, v.dAr)}>${esc(v.d)}</p>
-      </div>`).join('\n')}
-    </div>`;
-}
-
-/* The numbered cards now appear once only, on the About values section,
-   which is the treatment the client picked out as a reference. Every other
-   section that used to reuse them has its own component above. */
-function numberedCards(items, mod) {
-  return `<div class="vgrid${mod ? ' ' + mod : ''}">
-${items.map((v, i) => `      <div class="vcard">
-        <span class="n" aria-hidden="true">${num(i)}</span>
-        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
-        ${v.d ? `<p${t(v.d, v.dAr)}>${esc(v.d)}</p>` : ''}
-      </div>`).join('\n')}
-    </div>`;
-}
-
-/* The sectors as cards that keep moving. The track holds each sector twice
-   and slides exactly -50%, so the join is invisible; the second copy is
-   aria-hidden and untabbable so a screen reader hears each sector once.
-   It pauses on hover and on focus, in CSS, and does not animate at all under
-   prefers-reduced-motion. */
-function sectorMarquee() {
-  /* The marquee shows the sectors the Group actually operates in. Future
-     Ventures has no business in it yet, so it would ride along as an empty
-     card; it still has its own row on /sectors/ and its own page. */
-  const shown = SECTORS.filter(s => s.companies.length);
-
-  const card = (s, clone) => {
-    const n = s.companies.length;
-    const hide = clone ? ' aria-hidden="true" tabindex="-1"' : '';
-    const count = plural(n, 'company', 'companies');
-    const countAr = pluralAr(n, 'شركة واحدة', 'شركات');
-
-    /* A sector with no photograph gets no picture area at all. An empty
-       rectangle reads as a broken image; a solid card reads as a choice. */
-    const pic = hasPhoto(s)
-      ? `<span class="pic">
-          <span class="n" aria-hidden="true">${num(SECTORS.indexOf(s))}</span>
-          <img src="/assets/img/${s.photo}-card.jpg" alt="${clone ? '' : esc(s.name)}" width="1000" height="750" loading="lazy">
-        </span>`
-      : '';
-
-    return `      <a class="mcard${hasPhoto(s) ? '' : ' plain'}" href="/sectors/${s.slug}/"${hide}>
-        ${pic}
-        <span class="body">
-          ${hasPhoto(s) ? '' : `<span class="n" aria-hidden="true">${num(SECTORS.indexOf(s))}</span>`}
-          <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
-          <span class="meta"${t(count, countAr)}>${esc(count)}</span>
-          <span class="sub"${t(s.short, s.shortAr)}>${esc(s.short)}</span>
-          <span class="go" data-ar="عرض القطاع">View sector</span>
-        </span>
-      </a>`;
-  };
-
-  return `<div class="marquee" id="mq">
-    <div class="track">
-${shown.map(s => card(s, false)).join('\n')}
-${shown.map(s => card(s, true)).join('\n')}
-    </div>
-  </div>`;
-}
-
-function sectorIndex(list) {
-  return `<div class="idx">
-${list.map(s => {
-    const i = SECTORS.indexOf(s);
-    const n = s.companies.length;
-    const count = n ? plural(n, 'company', 'companies') : 'In development';
-    const countAr = n ? pluralAr(n, 'شركة واحدة', 'شركات') : 'قيد التطوير';
-    return `      <a href="/sectors/${s.slug}/">
-        <span class="n">${num(i)}</span>
-        <span>
-          <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
-          <span class="sub"${t(s.short, s.shortAr)}>${esc(s.short)}</span>
-        </span>
-        <span class="meta"${t(count, countAr)}>${esc(count)}</span>
-        <span class="go" aria-hidden="true">&#8594;</span>
-      </a>`;
-  }).join('\n')}
+/* A section head: the statement on the left with one word greyed out, and
+   the qualifying line held to the right of it. */
+function head2(id, html, aside) {
+  return `<div class="head2 rise">
+      <h2 id="${id}">${html}</h2>
+${aside ? `      <p>${esc(aside)}</p>` : ''}
     </div>`;
 }
 
 /* The card. Every company listing on the site is made of these. */
 function coCard(c) {
-  const photo = c.photo || (SECTORS.find(s => s.slug === c.sectorSlug) || {}).photo || 'skyline';
-  /* the portfolio filter reads this: a company can sit in more than one
-     sector, so it is a space-separated list */
+  /* a company can sit in more than one sector, so this is a space-separated
+     list and the filter matches any of them */
   const inSectors = (c.sectors || [c.sectorSlug]).join(' ');
   return `      <a class="cocard" href="/companies/${c.slug}/" data-sector="${inSectors}">
-        <span class="cocard-shot"><img src="/assets/img/${photo}-card.jpg" alt="" width="1000" height="750" loading="lazy"></span>
+        <span class="cocard-shot"><img src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy"></span>
         <span class="cocard-body">
-          <span class="cocard-sector micro"${t(c.sectorName, c.sectorNameAr)}>${esc(c.sectorName)}</span>
-          <span class="cocard-name"${t(c.name, c.nameAr)}>${esc(c.name)}</span>
-          <span class="cocard-role"${t(c.role, c.roleAr)}>${esc(c.role)}</span>
+          <span class="cocard-sector">${esc(c.sectorName)}</span>
+          <span class="cocard-name">${esc(c.name)}</span>
+          <span class="cocard-role">${esc(c.role)}</span>
         </span>
       </a>`;
 }
 
-/* A rail: the cards sit side by side and the row scrolls when it has to. */
 function companyRail(list, id) {
   return `<div class="corail"${id ? ` id="${id}"` : ''}>
 ${list.map(coCard).join('\n')}
     </div>`;
 }
 
-/* kept for the pages that still call it */
-function companyIndex(list) {
-  return companyRail(list);
-}
-
-function doesSpread() {
-  return `<div class="does">
-${WHAT_WE_DO.map(w => `      <section>
-        <h3${t(w.t, w.tAr)}>${esc(w.t)}</h3>
-        <p${t(w.d, w.dAr)}>${esc(w.d)}</p>
-      </section>`).join('\n')}
-    </div>`;
-}
-
+/* The closing card: the picture runs the width, the carbon panel sits over
+   its right two thirds, and the list of what comes next fills the floor. */
 function ctaBand() {
-  return `<section class="cta">
+  return `<section class="next">
   <div class="wrap">
-    <div class="cta-say">
-      <h2 data-ar="ما التالي للوسيل كورب؟">What&rsquo;s Next for Lusail Corp?</h2>
-      <p data-ar="تُبنى قصتنا عملاً تلو الآخر، وشراكة تلو الأخرى، وفرصة تلو الأخرى.">Our story is being built one business, one partnership and one opportunity at a time.</p>
-      <div class="cta-actions">
-        <a class="btn btn-gold" href="/companies/" data-ar="استكشف شركاتنا">Explore Our Companies</a>
-        <a class="btn btn-ink" href="/partnerships/" data-ar="كن شريكاً لنا">Partner With Us</a>
+    <div class="next-frame rise">
+      <img class="next-bg" src="/assets/img/cta-towers.jpg" alt="" width="800" height="1200" loading="lazy">
+      <div class="next-card">
+        <img class="watermark" src="/assets/logo/${B.markOnLight}" alt="" width="270" height="350" aria-hidden="true" loading="lazy">
+        <div class="next-say">
+          <h2>What&rsquo;s Next for Lusail Corp?</h2>
+          <p>Our story is being built one business, one partnership and one opportunity at a time.</p>
+          <div class="next-act">
+            <a class="btn btn-light" href="/companies/">Explore our companies</a>
+            <a class="btn btn-ghost" href="/contact/">Talk to us</a>
+          </div>
+        </div>
+        <ul class="nexts">
+${GROWTH.map(g => `          <li>${BULLET}<span>${esc(g.t)}</span></li>`).join('\n')}
+        </ul>
       </div>
     </div>
-    <ul class="nexts">
-${GROWTH.map(g => `      <li>${icon(g.icon)}<span${t(g.t, g.tAr)}>${esc(g.t)}</span></li>`).join('\n')}
-    </ul>
   </div>
 </section>
+
 `;
 }
 
-/* The Group at a glance. One line, not a grid of boxes: only one of these
-   four is actually a number. */
-function glanceBand() {
-  const rows = [
-    { v: String(ALL_COMPANIES.length), vAr: String(ALL_COMPANIES.length), k: 'Operating Companies', kAr: 'شركات تشغيلية' },
-    { v: 'Multiple', vAr: 'متعددة', k: 'Business Sectors', kAr: 'قطاعات الأعمال' },
-    { v: 'Qatar', vAr: 'قطر', k: 'Our Home Market', kAr: 'سوقنا الأساسي' },
-    { v: 'One', vAr: 'واحدة', k: 'Shared Vision', kAr: 'رؤية مشتركة' }
-  ];
-  return `<section class="ribbon" aria-label="The Group at a glance">
-  <dl class="wrap">
-${rows.map(r => `    <div><dd${t(r.v, r.vAr)}>${esc(r.v)}</dd><dt class="micro"${t(r.k, r.kAr)}>${esc(r.k)}</dt></div>`).join('\n')}
-  </dl>
-</section>
-`;
+/* ---------- the map ----------------------------------------------------- */
+
+/* The markets the Group reaches: a dotted map drawn once at build time from
+   the same list the register underneath reads from, so a market cannot
+   appear in one and not the other. */
+const MAP_BOX = { width: 1052, height: 343, latTop: 78, latBottom: -56, pitch: 5 };
+
+/* A region's pin goes at the mean of the places inside it, which puts it on
+   or beside the landmass being named without anyone placing it by hand. */
+function regionPoint(region) {
+  const pts = REACH_POINTS[region] || [];
+  if (!pts.length) return null;
+  const lon = pts.reduce((a, p) => a + p[1], 0) / pts.length;
+  const lat = pts.reduce((a, p) => a + p[2], 0) / pts.length;
+  return [lon, lat];
 }
-
-/* ---------- pages ------------------------------------------------------ */
-
-/* The markets the Group reaches. A list of places wants to read as a list of
-   places, so this is a plain two-column register with a rule between rows —
-   not another set of cards. */
-/* The map, drawn once at build time. */
-const MAP_BOX = { width: 1000, height: 430, latTop: 84, latBottom: -56, minArea: 45 };
 
 function reachMap() {
   const project = makeProjection(MAP_BOX);
-  const land = landPath(MAP_BOX);
-  const [hx, hy] = project(HUB).map(n => Math.round(n * 10) / 10);
+  const map = dotGrid(MAP_BOX);
 
-  const pins = [];
-  const routes = [];
-  Object.keys(REACH_POINTS).forEach((region, ri) => {
-    REACH_POINTS[region].forEach(([name, lon, lat], i) => {
-      const [x, y] = project([lon, lat]).map(n => Math.round(n * 10) / 10);
-      const isHub = Math.abs(x - hx) < 3 && Math.abs(y - hy) < 3;
-      if (isHub) return;
+  /* Europe, the Middle East and Central Asia sit close together, so their
+     labels would print on top of one another. Each pin gets a stem long
+     enough to lift its label clear of the ones already placed: the pins stay
+     on their markets and the names stay readable.
 
-      pins.push(
-        `<g class="pin-g" transform="translate(${x} ${y})" style="--i:${ri * 4 + i}">` +
-        `<path class="pin" d="M0 0c-3.1-4.9-7.6-8.2-7.6-12.8a7.6 7.6 0 1 1 15.2 0C7.6-8.2 3.1-4.9 0 0Z"/>` +
-        `<circle class="pin-eye" cy="-12.8" r="2.6"/>` +
-        `<title>${esc(name)}</title>` +
-        `</g>`);
-    });
-  });
+     The test is done in the measure the map is drawn into, because the pins
+     scale with the map while the labels are a fixed size on top of it. */
+  const SCALE = 1210 / MAP_BOX.width;
+  const LAB_H = 30, STEM_0 = 26, LANE = 34;
 
-  return `<figure class="map">
-      <svg viewBox="0 58 ${MAP_BOX.width} ${MAP_BOX.height - 74}" role="img"
-           aria-label="The markets Lusail Corp sources from, drawn on a world map">
-        <path class="land" d="${land}"/>
-        <g class="routes">${routes.join('')}</g>
-        <g class="pins">${pins.join('')}</g>
-        <g class="hub">
-          <path class="hub-pin" transform="translate(${hx} ${hy})" d="M0 0c-4-6.3-9.8-10.6-9.8-16.5a9.8 9.8 0 1 1 19.6 0C9.8-10.6 4-6.3 0 0Z"/>
-          <circle class="hub-eye" cx="${hx}" cy="${hy - 16.5}" r="3.4"/>
-        </g>
+  const placed = REACH.map(r => {
+    const at = regionPoint(r.t);
+    if (!at) return null;
+    const [x, y] = project(at);
+    return { r, x, y, px: x * SCALE, py: y * SCALE, w: r.t.length * 7.6 + 26, lane: 0 };
+  }).filter(Boolean);
+
+  const done = [];
+  for (const p of placed.slice().sort((a, b) => a.px - b.px)) {
+    for (let lane = 0; lane < 6; lane++) {
+      const bot = p.py - (STEM_0 + lane * LANE), top = bot - LAB_H;
+      const near = q => Math.abs(q.px - p.px) < (q.w + p.w) / 2 + 12;
+      const overlaps = q => !(bot < q.top - 6 || top > q.bot + 6);
+      /* a label must clear the other labels, and must not be parked on top
+         of someone else's dot */
+      const onDot = q => Math.abs(q.px - p.px) < p.w / 2 + 7 &&
+        q.py > top - 7 && q.py < bot + 7;
+      const clash = done.some(q => (near(q) && overlaps(q)) || onDot(q));
+      if (clash && lane < 5) continue;
+      p.lane = lane; p.top = top; p.bot = bot; done.push(p);
+      break;
+    }
+  }
+
+  const pins = placed.map(p => `      <button class="pin" type="button" data-region="${esc(p.r.t)}"
+        style="left:${(p.x / MAP_BOX.width * 100).toFixed(2)}%;top:${(p.y / MAP_BOX.height * 100).toFixed(2)}%;--stem:${STEM_0 + p.lane * LANE}px">
+        <span class="pin-lab">
+          <span class="pin-nm">${esc(p.r.t)}</span>
+          <span class="pin-co"><span>${esc(p.r.d)}</span></span>
+        </span>
+        <span class="pin-stem" aria-hidden="true"></span>
+        <span class="pin-dot" aria-hidden="true"></span>
+      </button>`).join('\n');
+
+  return `<div class="mapwrap" id="mapwrap">
+      <svg viewBox="0 0 ${MAP_BOX.width} ${MAP_BOX.height}" role="img"
+           aria-label="A world map marking the regions Lusail Corp sources from">
+        <path class="dots" d="${map.d}"/>
       </svg>
-      <figcaption class="map-key">
-        <span class="k-hub" data-ar="الدوحة، قطر">Doha, Qatar</span>
-        <span class="k-pin" data-ar="أسواق التوريد">Sourcing markets</span>
-      </figcaption>
-    </figure>`;
+${pins}
+    </div>`;
 }
 
+/* The same markets again, as a register that can be read straight down. */
 function reachList() {
-  return `<dl class="reach">
-${REACH.map(x => `      <div>
-        <dt${t(x.t, x.tAr)}>${esc(x.t)}</dt>
-        <dd${t(x.d, x.dAr)}>${esc(x.d)}</dd>
+  return `<div class="reg">
+${REACH.map(x => `      <div data-region="${esc(x.t)}">
+        <h3>${esc(x.t)}</h3>
+        <p>${esc(x.d)}</p>
       </div>`).join('\n')}
-    </dl>`;
+    </div>`;
 }
 
-/* Four statements about the Group, set as an ordered argument rather than a
-   grid of tiles. */
-/* Four statements, one open at a time. The list is the control; the panel
-   beside it is what changes. */
-function whyPanel() {
-  return `<div class="whyp">
-      <div class="whyp-tabs" role="tablist" aria-label="What makes it a group">
-${WHY.map((x, i) => `        <button class="whyp-tab" type="button" role="tab" id="whyt${i}"
-          aria-controls="whyp${i}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}">
-          <span class="whyp-n" aria-hidden="true">${num(i)}</span>
-          <span${t(x.t, x.tAr)}>${esc(x.t)}</span>
-        </button>`).join('\n')}
-      </div>
-      <div class="whyp-panels">
-${WHY.map((x, i) => `        <div class="whyp-panel" role="tabpanel" id="whyp${i}" aria-labelledby="whyt${i}"${i === 0 ? '' : ' hidden'}>
-          <p${t(x.d, x.dAr)}>${esc(x.d)}</p>
-        </div>`).join('\n')}
+/* ---------- home -------------------------------------------------------- */
+
+/* Four claims about the Group. The first is stated outright over the
+   photograph; the other three name themselves and give their reasoning when
+   asked, so the row reads as four headings rather than four paragraphs. */
+function bento() {
+  const card = (x, i) => `        <button class="bcard${i === 0 ? ' bcard-photo' : ''}" type="button" aria-expanded="${i === 0}">
+${i === 0 ? '          <img src="/assets/img/why-group.jpg" alt="" width="1000" height="561" loading="lazy">\n' : ''}          <span class="n">${num(i)}</span>
+          <h3>${esc(x.t)}</h3>
+          ${i === 0
+    ? `<p>${esc(x.d)}</p>`
+    : `<span class="say"><div><p>${esc(x.d)}</p></div></span>`}
+        </button>`;
+
+  return `<div class="bento">
+${card(WHY[0], 0)}
+      <div class="bento-col">
+${WHY.slice(1).map((x, i) => card(x, i + 1)).join('\n')}
       </div>
     </div>`;
 }
 
-function whyList() {
-  return `<div class="why">
-${WHY.map((x, i) => `      <section>
-        <span class="why-n" aria-hidden="true">${num(i)}</span>
-        <h3${t(x.t, x.tAr)}>${esc(x.t)}</h3>
-        <p${t(x.d, x.dAr)}>${esc(x.d)}</p>
-      </section>`).join('\n')}
+/* One panel open at a time, widening to carry its paragraph while the rest
+   hold their number and their name. */
+function ladder() {
+  return `<div class="ladder" id="ladder">
+${WHAT_WE_DO.map((w, i) => `      <button class="lad" type="button" aria-expanded="${i === 0}">
+        <span class="n">${num(i)}</span>
+        <span class="lad-b">
+          <h3>${esc(w.t)}</h3>
+          <p>${esc(w.d)}</p>
+        </span>
+      </button>`).join('\n')}
     </div>`;
 }
+
+/* The four sectors, each behind the photograph of the business that leads
+   it, going to the portfolio filtered to that sector. */
+const SECTOR_SHOT = {
+  'trading': 'card-trading',
+  'supply-distribution': 'card-supply',
+  'consumer-services': 'card-consumer',
+  'food-beverage': 'card-food'
+};
 
 function pageHome() {
+  /* A figure with no value of its own counts the portfolio. */
+  const stats = FIGURES.map(f => [f.k, f.v == null ? String(ALL_COMPANIES.length) : f.v]);
+
   return head({
     title: `${SITE.name} · ${SITE.tagline}`,
-    desc: 'Lusail Corp is a Qatar-based diversified corporate group building and supporting businesses across consumer services, food and beverage, commercial distribution and international trade.',
-    url: '/', image: 'coffee-still.jpg'
+    desc: 'Lusail Corp is a Qatar-based diversified corporate group building and supporting businesses across commodity trading, food supply and distribution, consumer services and hospitality.',
+    url: '/', image: 'hero-doha'
   })
     + header('/', true)
     + `<section class="hero">
-  <img class="hero-bg" src="/assets/img/skyline-tall.jpg" alt="" width="1000" height="1333" fetchpriority="high">
+  <img class="hero-bg" src="/assets/img/hero-doha.jpg" alt="" width="1585" height="992" fetchpriority="high">
   <div class="wrap">
-      <span class="crumb"${t(SITE.name + ' — ' + SITE.supporting, SITE.nameAr + ' — ' + SITE.supportingAr)}>${esc(SITE.name)} — ${esc(SITE.supporting)}</span>
-      <h1${t(SITE.tagline, SITE.taglineAr)}>${esc(SITE.tagline)}</h1>
-      <p class="lede" data-ar="لوسيل كورب مجموعة شركات قطرية متنوعة، تبني وتدير وتدعم أعمالاً في قطاعات متعددة.">Lusail Corp is a Qatar-based diversified corporate group building, operating and supporting businesses across multiple sectors.</p>
-            <div class="hero-cta">
-        <a class="btn btn-gold" href="/companies/" data-ar="استكشف شركاتنا">Explore Our Companies</a>
-        <a class="btn btn-ghost" href="/about/" data-ar="تعرّف على لوسيل كورب">Discover Lusail Corp</a>
-      </div>
+    <div class="hero-say">
+      <h1>Building Businesses. Creating <em>Value</em>.</h1>
+      <p class="hero-lede">Lusail Corp is a Qatar-based diversified corporate group building, operating and supporting businesses across multiple sectors.</p>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-light" href="/companies/">Explore our companies</a>
+      <a class="btn btn-ghost" href="/about/">Discover Lusail Corp</a>
+    </div>
   </div>
 </section>
 
-`
-    + `
 <section class="section intro" aria-labelledby="introTitle">
   <div class="wrap">
-    <div class="intro-text">
-      <span class="eyebrow" data-ar="مقدمة">Introduction</span>
-      <h2 id="introTitle" class="intro-say"${t(SITE.supporting, SITE.supportingAr)}>${esc(SITE.supporting)}</h2>
-      <p class="intro-lede" data-ar="ودورنا يتجاوز الملكية. نوفّر التوجيه الاستراتيجي والدعم التجاري ومنصة مشتركة تستطيع شركاتنا من خلالها تقوية عملياتها وتطوير أسواقها واقتناص فرص جديدة.">Our role goes beyond ownership. We provide strategic direction, commercial support and a shared platform from which our companies strengthen their operations, develop their markets and pursue new opportunities.</p>
-      <p class="intro-now" data-ar="تمتد المحفظة اليوم عبر خدمات المستهلك والأغذية والمشروبات وتوريد الأغذية وتجارة السلع الدولية.">Today it spans consumer services, food and beverage, food supply and international commodity trading.</p>
-      <a class="tl intro-more" href="/about/" data-ar="المزيد عن المجموعة">More about the Group</a>
+    <div class="intro-top rise">
+      <h2 id="introTitle">One Group.<br>Multiple <span class="soft">Businesses.</span><br>Shared Ambition.</h2>
+      <div class="intro-note">
+        <img src="/assets/logo/${B.markOnLight}" alt="" width="44" height="57" loading="lazy">
+        <div>
+          <p>Our role goes beyond ownership. We provide strategic direction, commercial support and a shared platform from which our companies strengthen their operations, develop their markets and pursue new opportunities.</p>
+          <p>Today it spans commodity trading, food supply and distribution, consumer services and hospitality.</p>
+        </div>
+      </div>
     </div>
-    <div class="intro-mark" aria-hidden="true">
-      <img src="/assets/logo/${B.markOnLight}" alt="" width="240" height="240" loading="lazy">
+    <div class="stats rise" id="stats">
+      <dl>
+${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">${esc(v)}</dd></div>`).join('\n')}
+      </dl>
     </div>
   </div>
 </section>
 
-<section class="section band-wrap" aria-labelledby="secTitle">
+<section class="section sectors" aria-labelledby="secTitle">
   <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="قطاعاتنا">Our Sectors</span>
-        <h2 id="secTitle" data-ar="متنوّعون بالتصميم">Diversified by Design</h2>
-      </div>
-      <p class="lede" data-ar="تعكس محفظتنا إيماننا بأن الفرص قد توجد في صناعات مختلفة، فنبني الأعمال حيث نرى إمكانات تجارية قوية.">Our portfolio reflects our belief that opportunities can exist across different industries, so we build businesses where we see strong commercial potential.</p>
+    <div class="sec-intro rise">
+      <h2 id="secTitle">Diversified by Design</h2>
+      <p>Our portfolio reflects our belief that opportunities can exist across different industries, so we build businesses where we see strong commercial potential.</p>
     </div>
-    ${sectorStrip()}
+    <div class="seccards">
+${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="/companies/?sector=${s.slug}">
+        <img src="/assets/img/${SECTOR_SHOT[s.slug] || 'card-trading'}.jpg" alt="" width="640" height="914" loading="lazy">
+        <span class="seccard-cap">
+          <b>${esc(s.name)}</b>
+          <span>View</span>
+        </span>
+      </a>`).join('\n')}
+    </div>
   </div>
 </section>
 
 <section class="section" aria-labelledby="whyTitle">
   <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="لماذا لوسيل كورب">Why Lusail Corp</span>
-        <h2 id="whyTitle" data-ar="ما الذي يجعلها مجموعة">What makes it a group</h2>
-      </div>
-      <p class="lede" data-ar="الشركات التي نملكها متنوعة. أما طريقة إدارتها فليست كذلك.">The businesses we own are varied. The way they are run is not.</p>
-    </div>
-    ${whyPanel()}
+    ${head2('whyTitle', 'What makes it a <span class="soft">group</span>', 'The businesses we own are varied. The way they are run is not.')}
+    ${bento()}
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="reachTitle">
+<section class="section src" aria-labelledby="srcTitle">
   <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="الامتداد الدولي">Global Reach</span>
-        <h2 id="reachTitle" data-ar="من أين نورّد">Where we source from</h2>
-      </div>
-      <p class="lede" data-ar="ليست كل سلعة تأتي من كل بلد. يُختار المنشأ حسب المنتج والموسم والجودة والتوافر وشروط الصفقة.">Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.</p>
-    </div>
+    ${head2('srcTitle', 'Where we <span class="soft">source</span> from', 'Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.')}
     ${reachMap()}
     ${reachList()}
   </div>
@@ -662,105 +499,115 @@ function pageHome() {
 
 <section class="section" aria-labelledby="wwdTitle">
   <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="ما نقوم به">What We Do</span>
-        <h2 id="wwdTitle" data-ar="أكثر من مجرد محفظة">Building More Than a Portfolio</h2>
-      </div>
-      <p class="lede" data-ar="نحن مالك فاعل. تُدار كل شركة بشكل مستقل، ولكن ليست بمفردها.">We are an active owner. Each company is run independently, but none of them is run alone.</p>
-    </div>
-    ${steps(WHAT_WE_DO)}
+    ${head2('wwdTitle', 'Building <span class="soft">More</span> Than a Portfolio', 'We are an active owner. Each company is run independently, but none of them is run alone.')}
+    ${ladder()}
   </div>
 </section>
 
 `
     + ctaBand()
     + footer();
+}
+
+/* ---------- about ------------------------------------------------------- */
+
+/* Six values, one open at a time, with a photograph holding the column
+   beside them. */
+function valueList() {
+  return `<div class="valacc" id="valacc">
+${VALUES.map((v, i) => `      <div class="val${i === 0 ? ' open' : ''}">
+        <button class="val-btn" type="button" aria-expanded="${i === 0}" aria-controls="val${i}">
+          <span class="val-n">${num(i)}</span>
+          <span class="val-t">${esc(v.t)}</span>
+          ${CHEV}
+        </button>
+        <div class="val-panel" id="val${i}"><div><p>${esc(v.d)}</p></div></div>
+      </div>`).join('\n')}
+    </div>`;
 }
 
 function pageAbout() {
   return head({
     title: `About Us · ${SITE.name}`,
-    desc: 'Lusail Corp is a diversified corporate group registered in the State of Qatar, bringing together businesses across consumer services, food and beverage, commercial distribution and international trade.',
-    url: '/about/', image: 'coffee-still.jpg'
+    desc: 'Lusail Corp is a diversified corporate group registered in the State of Qatar, bringing together businesses across commodity trading, food supply, consumer services and hospitality.',
+    url: '/about/', image: 'hero-about'
   })
     + header('/about/')
-    + opener({
-      crumb: 'About Us', crumbAr: 'من نحن',
-      h1: 'Building a Group for the Future.', h1Ar: 'نبني مجموعة للمستقبل.',
+    + pageHead({
+      eyebrow: 'About Us',
+      h1: 'Building a Group for the Future.',
       lede: 'Lusail Corp is a diversified corporate group registered in the State of Qatar, bringing together businesses across consumer services, food and beverage, commercial distribution and international trade.',
-      ledeAr: 'لوسيل كورب مجموعة شركات متنوعة مسجّلة في دولة قطر، تجمع أعمالاً في خدمات المستهلك والأغذية والمشروبات والتوزيع التجاري والتجارة الدولية.'
+      photo: 'hero-about'
     })
-    // Deliberately not the prose-plus-aside layout Home already uses for its
-    // introduction: this one runs the statement full measure and sets the copy
-    // in two columns, so the two pages do not read as the same page twice.
     + `<section class="section tight" aria-labelledby="whoTitle">
   <div class="wrap">
-    <span class="eyebrow" data-ar="من نحن">Who We Are</span>
-    <h2 id="whoTitle" class="wide-statement" data-ar="منصّة لنمو الأعمال">A Platform for Business Growth</h2>
-    <div class="prose cols">
-      <p data-ar="تأسست لوسيل كورب بطموح واضح: إنشاء وتطوير ودعم أعمال لديها القدرة على النمو.">Lusail Corp was established with a straightforward ambition: to create, develop and support businesses with the potential to grow.</p>
-      <p data-ar="تعمل شركات محفظتنا باستقلالية في أسواقها، وتتشارك في الوقت نفسه التوجيه الاستراتيجي وقدرات المجموعة الأوسع.">Our portfolio companies operate independently within their respective markets while sharing the strategic direction and broader capabilities of the Group.</p>
-      <p data-ar="يتيح هذا الهيكل لكل شركة الاحتفاظ بهويتها وعملائها وتركيزها التجاري، مع استفادتها من الانتماء إلى منظومة متنوعة.">This structure allows each business to maintain its own identity, customers and commercial focus while benefiting from belonging to a diversified organization.</p>
-      <p data-ar="ومع تطوّر المجموعة، ستنضم أعمال وقطاعات إضافية إلى محفظة لوسيل كورب.">As the Group develops, additional businesses and sectors will become part of the Lusail Corp portfolio.</p>
+    <div class="head2 rise">
+      <h2 id="whoTitle">A Platform for Business Growth</h2>
+      <p>Four companies, one set of standards, and a shared platform underneath them.</p>
     </div>
-  </div>
-</section>
-
-<section class="section stone">
-  <div class="wrap vm-grid">
-    <div class="vm">
-      <span class="eyebrow" data-ar="رؤيتنا">Our Vision</span>
-      <h2 data-ar="أن نبني مجموعة متنوعة من الأعمال القوية والمستدامة.">To Build a Diversified Group of Strong and Sustainable Businesses.</h2>
-      <p data-ar="نسعى إلى تطوير لوسيل كورب لتصبح مجموعة معروفة لها مصالح في قطاعات تجارية متعددة في قطر وخارجها.">We aim to develop Lusail Corp into a recognized corporate group with interests across multiple commercial sectors in Qatar and beyond.</p>
+    <div class="prose2 rise">
+      <p>Lusail Corp was established to create, develop and support businesses with the potential to grow. Our companies operate independently in their own markets while sharing the Group&rsquo;s direction and capabilities.</p>
+      <p>That structure lets each business keep its own identity, customers and commercial focus, and still draw on relationships and knowledge built elsewhere in the Group. As Lusail Corp develops, further businesses and sectors will join the portfolio.</p>
     </div>
-    <div class="vm">
-      <span class="eyebrow" data-ar="مهمتنا">Our Mission</span>
-      <h2 data-ar="أن نكتشف الفرص ونبني القدرات ونصنع قيمة تجارية دائمة.">To Identify Opportunities, Build Capabilities and Create Lasting Commercial Value.</h2>
-      <p data-ar="نطوّر الأعمال عبر إدارة مسؤولة وشراكات قوية وعمليات كفؤة وتركيز مستمر على العملاء والأسواق.">We develop businesses through responsible management, strong partnerships, efficient operations and a continuous focus on customers and markets.</p>
-    </div>
-  </div>
-</section>
-
-<section class="section tight" aria-labelledby="apprTitle">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="نهجنا">Our Approach</span>
-      <h2 id="apprTitle" class="statement" data-ar="روح ريادية. انضباط في التنفيذ.">Entrepreneurial at Heart. Disciplined in Execution.</h2>
-      <div class="prose">
-        <p data-ar="تجمع لوسيل كورب بين نهج ريادي تجاه الفرص ونهج منظّم في بناء الشركات.">Lusail Corp combines an entrepreneurial approach to opportunity with a structured approach to building companies.</p>
-        <p data-ar="نبحث عن الأعمال والأسواق التي نعتقد أن بإمكاننا الإسهام فيها من خلال التنفيذ القوي والعلاقات التجارية والقدرة التشغيلية والتفكير بعيد المدى.">We look for businesses and markets where we believe we can contribute through strong execution, commercial relationships, operational capability and long-term thinking.</p>
-        <p><strong data-ar="نحن لا نُعرَّف بصناعة واحدة. نُعرَّف بطريقة بنائنا.">We are not defined by one industry. We are defined by how we build.</strong></p>
-      </div>
-    </div>
-    <figure class="port-fig">
-      <img src="/assets/img/approach-tall.jpg" alt="Group management at work" width="1000" height="1333" loading="lazy">
+    <figure class="wideshot rise">
+      <img src="/assets/img/about-platform.jpg" alt="The Group at work" width="900" height="600" loading="lazy">
     </figure>
   </div>
 </section>
 
-<section class="section values" aria-labelledby="valTitle">
+<section class="section stone" aria-labelledby="vmTitle">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow" data-ar="قيمنا">Our Values</span>
-      <!-- two sibling spans: a translatable element must never contain another -->
-      <h2 id="valTitle"><span data-ar="القيم التي">The values that</span> <span class="mark" data-ar="توجّهنا">guide us</span></h2>
+    <h2 id="vmTitle" class="sr-only">Vision and mission</h2>
+    <div class="vm-grid">
+      <div class="vm rise">
+        <span class="vm-label">Our Vision</span>
+        <h3>To build a diversified group of strong and sustainable businesses.</h3>
+        <p>To grow Lusail Corp into a recognised corporate group with interests across several commercial sectors, in Qatar and beyond it.</p>
+      </div>
+      <div class="vm rise d1">
+        <span class="vm-label">Our Mission</span>
+        <h3>To find opportunities, build capability and create lasting commercial value.</h3>
+        <p>We develop businesses through responsible management, strong partnerships, efficient operations and a continuous focus on customers and markets.</p>
+      </div>
     </div>
-    ${numberedCards(VALUES, 'three')}
   </div>
 </section>
 
-`
-    + `<section class="section stone" aria-labelledby="vcTitle">
+<section class="section" aria-labelledby="valTitle">
   <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="خلق القيمة">Value Creation</span>
-        <h2 id="vcTitle" data-ar="كيف نصنع القيمة">How We Create Value</h2>
-      </div>
-      <p class="lede" data-ar="النمو ليس مجرد إضافة شركات إلى محفظة. النمو عندنا يعني بناء أعمال أفضل.">Growth is not simply about adding more companies to a portfolio. For Lusail Corp, growth means building better businesses.</p>
+    ${head2('valTitle', 'The values that <span class="soft">guide us</span>', 'The businesses we own are varied. The way they are run is not.')}
+    <div class="valwrap">
+      ${valueList()}
+      <figure class="valshot rise">
+        <img src="/assets/img/card-trading.jpg" alt="" width="640" height="914" loading="lazy">
+      </figure>
     </div>
-    ${defList(VALUE_CREATION)}
+  </div>
+</section>
+
+<section class="section stone" aria-labelledby="vcTitle">
+  <div class="wrap">
+    ${head2('vcTitle', 'How We <span class="soft">Create Value</span>', 'Growth is not adding companies to a list. It is making each one better than it was.')}
+    <div class="vcreate">
+${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
+        <span class="vc-n">${num(i)}</span>
+        <h3>${esc(v.t)}</h3>
+        <p>${esc(v.d)}</p>
+      </div>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="work-with-us" aria-labelledby="pwTitle">
+  <div class="wrap">
+    ${head2('pwTitle', 'Who we want to <span class="soft">hear from</span>', 'Our companies depend on relationships across their markets. These are the ones we are looking for.')}
+    <div class="plines">
+${PARTNER_TYPES.map(p => `      <div class="pline rise">
+        <h3>${esc(p.t)}</h3>
+        <p>${esc(p.d)}</p>
+      </div>`).join('\n')}
+    </div>
+    <p class="after rise"><a class="btn btn-dark" href="/contact/">Start a conversation</a></p>
   </div>
 </section>
 
@@ -769,33 +616,35 @@ function pageAbout() {
     + footer();
 }
 
+/* ---------- the portfolio ----------------------------------------------- */
+
 function pageCompaniesIndex() {
   const chips = [
-    `      <button type="button" class="chip" data-filter="all" aria-pressed="true"><span data-ar="الكل">All</span> <em>${ALL_COMPANIES.length}</em></button>`,
+    `      <button type="button" class="chip" data-filter="all" aria-pressed="true">All <em>${ALL_COMPANIES.length}</em></button>`,
     ...SECTORS.filter(s => s.companies.length).map(s =>
-      `      <button type="button" class="chip" data-filter="${s.slug}" aria-pressed="false"><span${t(s.name, s.nameAr)}>${esc(s.name)}</span> <em>${s.companies.length}</em></button>`)
+      `      <button type="button" class="chip" data-filter="${s.slug}" data-label="${esc(s.name)}" aria-pressed="false">${esc(s.name)} <em>${s.companies.length}</em></button>`)
   ].join('\n');
 
   return head({
     title: `Our Companies · ${SITE.name}`,
-    desc: 'The Lusail Corp portfolio: Cavallo Laundry, Nero Café, ROMA Commercial and Lusail Commercial.',
-    url: '/companies/', image: 'coffee-still.jpg'
+    desc: 'The Lusail Corp portfolio: Lusail Commercial, ROMA Commercial, Cavallo Laundry and Nero Café.',
+    url: '/companies/', image: 'card-trading'
   })
     + header('/companies/')
-    + opener({
-      crumb: 'Our Companies', crumbAr: 'شركاتنا',
-      h1: 'Our Portfolio', h1Ar: 'محفظتنا',
-      lede: 'A growing collection of businesses serving different markets under one shared corporate direction.',
-      ledeAr: 'مجموعة متنامية من الأعمال تخدم أسواقاً مختلفة تحت توجّه مؤسسي واحد.'
+    + pageHead({
+      eyebrow: 'Our Companies',
+      h1: 'Four businesses, one group.',
+      lede: 'Each company runs in its own market with its own customers. What they share is the platform underneath them.',
+      photo: 'hero-lusail-commercial'
     })
     + `<section class="section tight">
   <div class="wrap">
     <div class="filters" role="group" aria-label="Filter companies by sector">
 ${chips}
     </div>
-    <span class="count" id="count" role="status" data-ar="عرض جميع الشركات">Showing all ${ALL_COMPANIES.length} companies</span>
+    <span class="count" id="count" role="status">Showing all ${ALL_COMPANIES.length} companies</span>
     ${companyRail(ALL_COMPANIES, 'coGrid')}
-    <p class="empty" id="empty" hidden data-ar="لا توجد شركات في هذا القطاع.">No companies in that sector.</p>
+    <p class="empty" id="empty" hidden>No companies in that sector.</p>
   </div>
 </section>
 
@@ -804,136 +653,79 @@ ${chips}
     + footer();
 }
 
-/* The widest crop that exists for a photograph. Not every picture was cut at
-   every size, so ask the disk rather than assume. */
-function wideSrc(photo) {
-  const wide = path.join(ROOT, 'site-assets/img', photo + '-wide.jpg');
-  return '/assets/img/' + photo + (fs.existsSync(wide) ? '-wide' : '-card') + '.jpg';
-}
+/* ---------- one company -------------------------------------------------- */
 
-/* A company's opening. Which one it gets is named in data/site.js, so a new
-   company picks a template rather than inheriting the last one's. */
-function companyHero(c, sector) {
-  const variant = c.template || 'left-aligned';
-  const img = hasPhoto(c) ? wideSrc(c.photo) : null;
-  if (!img) return '';
-
-  const label = `<a class="co-sector" href="/sectors/${sector.slug}/"${t(sector.name, sector.nameAr)}>${esc(sector.name)}</a>`;
-  const title = `<h1${t(c.name, c.nameAr)}>${esc(c.name)}</h1>`;
-  const sub = `<p class="co-head-lede"${t(c.headline, c.headlineAr)}>${esc(c.headline)}</p>`;
-
-  if (variant === 'split') {
-    return `<section class="co-head co-split">
-  <div class="co-split-text">
-    ${label}
-    ${title}
-    ${sub}
-  </div>
-  <div class="co-split-shot"><img src="${img}" alt="" width="2400" height="1029" fetchpriority="high"></div>
-</section>
-
-`;
-  }
-
-  const cls = variant === 'fullscreen' ? 'co-full'
-    : variant === 'compact' ? 'co-compact' : 'co-left';
-
-  return `<section class="co-head ${cls}">
-  <img class="co-head-bg" src="${img}" alt="" width="2400" height="1029" fetchpriority="high">
-  <div class="wrap">
-    ${label}
-    ${title}
-    ${sub}
-  </div>
-</section>
-
-`;
-}
-
-function pageCompany(c, sector) {
-  const body = c.body.map((p, k) => `        <p${t(p, c.bodyAr && c.bodyAr[k])}>${esc(p)}</p>`).join('\n');
-
-  const facts = (c.facts || []).map(f =>
-    `        <div><dt${t(f.k, f.kAr)}>${esc(f.k)}</dt><dd${t(f.v, f.vAr)}>${esc(f.v)}</dd></div>`).join('\n');
+function pageCompany(c) {
+  const others = ALL_COMPANIES.filter(x => x.slug !== c.slug);
 
   const products = c.products && c.products.length
     ? `<section class="section stone" aria-labelledby="prodTitle">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow" data-ar="المنتجات الحالية">Current Products</span>
-      <h2 id="prodTitle" data-ar="ما نتاجر به اليوم">What we trade today</h2>
+    ${head2('prodTitle', 'What we trade <span class="soft">today</span>', '')}
+    <div class="prodrail" id="prodrail">
+${c.products.map(p => `      <article class="prod">
+        <img src="/assets/img/${p.img}.jpg" alt="" width="640" height="480" loading="lazy">
+        <h3>${esc(p.t)}</h3>
+        <p>${esc(p.d)}</p>
+      </article>`).join('\n')}
     </div>
-    ${prodBlocks(c.products)}
+    <div class="railnav">
+      <button class="railbtn" type="button" data-rail="prodrail" data-dir="-1" aria-label="Previous">&#8592;</button>
+      <button class="railbtn" type="button" data-rail="prodrail" data-dir="1" aria-label="Next">&#8594;</button>
+    </div>
   </div>
 </section>
 
-` : '';
+`
+    : '';
 
   const activities = c.activities && c.activities.length
     ? `<section class="section tight" aria-labelledby="actTitle">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow" data-ar="الأنشطة">Activities</span>
-      <h2 id="actTitle" data-ar="ما تتولاه هذه الشركة">What this company handles</h2>
-    </div>
-    <ul class="tags">
-${c.activities.map((a, k) => `      <li${t(a, c.activitiesAr && c.activitiesAr[k])}>${esc(a)}</li>`).join('\n')}
+    ${head2('actTitle', 'What this company <span class="soft">handles</span>', '')}
+    <ul class="tags rise">
+${c.activities.map(a => `      <li>${esc(a)}</li>`).join('\n')}
     </ul>
   </div>
 </section>
 
-` : '';
-
-  const others = ALL_COMPANIES.filter(x => x.slug !== c.slug);
+`
+    : '';
 
   return head({
     title: `${c.name} · ${SITE.name}`, desc: c.short,
-    url: `/companies/${c.slug}/`,
-    image: hasPhoto(c) ? `${c.photo}-${c.photoStyle === 'still' ? 'still' : 'wide'}.jpg` : undefined
+    url: `/companies/${c.slug}/`, image: c.hero
   })
-    + header('/companies/', hasPhoto(c) && c.template !== 'split')
-    + (hasPhoto(c) ? companyHero(c, sector) : opener({
-      crumb: sector.name, crumbAr: sector.nameAr,
-      h1: c.name, h1Ar: c.nameAr,
-      lede: c.headline, ledeAr: c.headlineAr,
-      meta: `<span${t(c.role, c.roleAr)}>${esc(c.role)}</span> &middot; <a href="/sectors/${sector.slug}/"${t(sector.name, sector.nameAr)}>${esc(sector.name)}</a>`
-    }))
+    + header('/companies/')
+    + pageHead({
+      eyebrow: c.sectorName,
+      h1: c.name,
+      lede: c.headline,
+      photo: c.hero,
+      action: { href: `/contact/?company=${c.slug}`, label: 'Contact us' }
+    })
     + `<section class="section tight">
-  <div class="wrap${hasPhoto(c) ? ' split' : ''}">
-    <div>
-      <span class="eyebrow" data-ar="الشركة">The company</span>
-      <p class="lead-para"${t(c.intro, c.introAr)}>${esc(c.intro)}</p>
-      <div class="prose${hasPhoto(c) ? '' : ' co-solo'}">
-${body}
+  <div class="wrap">
+    <p class="lead-para rise">${esc(c.intro)}</p>
+    <div class="cosplit">
+      <figure class="costill rise">
+        <img src="/assets/img/${c.still}.jpg" alt="" width="900" height="1125" loading="lazy">
+      </figure>
+      <div class="prose rise d1">
+${c.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
       </div>
     </div>
-    ${hasPhoto(c) ? `<div class="co-aside">
-      ${c.photoStyle === 'still'
-      ? still(c.photo, c.short, c.shortAr)
-      : `<figure class="port-fig">
-        <img src="/assets/img/${c.photo}-card.jpg" alt="${esc(c.name)}" width="1000" height="750" loading="lazy">
-      </figure>`}
-      <a class="btn btn-gold" href="/contact/?company=${c.slug}"${t(c.cta, c.ctaAr)}>${esc(c.cta)}</a>
-    </div>` : ''}
-  </div>
-  <div class="wrap">
-    <dl class="factstrip">
-${facts}
+    <dl class="factstrip rise">
+${c.facts.map(f => `      <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
     </dl>
-    ${hasPhoto(c) ? '' : `<p style="margin-top:clamp(28px,3.5vw,44px)"><a class="btn btn-gold" href="/contact/?company=${c.slug}"${t(c.cta, c.ctaAr)}>${esc(c.cta)}</a></p>`}
+    <p class="after rise"><a class="btn btn-dark" href="/contact/?company=${c.slug}">${esc(c.cta)}</a></p>
   </div>
 </section>
 
 ${products}${activities}<section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="المحفظة">The portfolio</span>
-        <h2 id="othTitle" data-ar="الشركات الأخرى">The other companies</h2>
-      </div>
-      <a class="btn btn-ink" href="/companies/" data-ar="عرض الكل">View all</a>
-    </div>
-    ${companyIndex(others)}
+    ${head2('othTitle', 'The other <span class="soft">companies</span>', '')}
+    ${companyRail(others)}
   </div>
 </section>
 
@@ -942,332 +734,7 @@ ${products}${activities}<section class="section tight" aria-labelledby="othTitle
     + footer();
 }
 
-/* A mark per sector, drawn from the set already in ICON_PATHS. */
-const SECTOR_ICON = {
-  'consumer-services': 'cycle',
-  'food-beverage': 'leaf',
-  'supply-distribution': 'supply',
-  'trading': 'markets'
-};
-
-/* Sector bands: the sector names itself, then the companies inside it. */
-/* One tile per sector, four across. The companies inside them are on the
-   sectors page; here the point is only that there are four of them. */
-function sectorStrip() {
-  return `<div class="strip">
-${SECTORS.map(s => {
-    const lead = s.companies[0];
-    const photo = (lead && lead.photo) || s.photo || 'skyline';
-    const n = s.companies.length;
-    const count = plural(n, 'company', 'companies');
-    const countAr = pluralAr(n, 'شركة واحدة', 'شركات');
-    return `      <a class="tile strip-tile" href="/sectors/${s.slug}/">
-        <span class="shot"><img src="/assets/img/${photo}-card.jpg" alt="" width="1000" height="750" loading="lazy"></span>
-        <span class="tcap">
-          <span class="strip-n micro"${t(count, countAr)}>${esc(count)}</span>
-          <span class="tname"${t(s.name, s.nameAr)}>${esc(s.name)}</span>
-        </span>
-      </a>`;
-  }).join('\n')}
-    </div>`;
-}
-
-/* One row per sector: the sector on one side, its companies on the other. */
-function sectorRows() {
-  return SECTORS.map((s, i) => {
-    const n = s.companies.length;
-    const count = plural(n, 'company', 'companies');
-    const countAr = pluralAr(n, 'شركة واحدة', 'شركات');
-
-    /* the cards want to know which sector they are being shown under */
-    const cos = s.companies.map(co => Object.assign({}, co, {
-      sectorSlug: s.slug, sectorName: s.name, sectorNameAr: s.nameAr
-    }));
-
-    return `<section class="secrow${i % 2 ? ' stone' : ''}" aria-labelledby="sec-${s.slug}">
-  <div class="wrap">
-    <div class="secrow-id">
-      ${icon(SECTOR_ICON[s.slug] || 'sectors')}
-      <h2 id="sec-${s.slug}"${t(s.name, s.nameAr)}>${esc(s.name)}</h2>
-      <span class="count micro"${t(count, countAr)}>${esc(count)}</span>
-      <p${t(s.short, s.shortAr)}>${esc(s.short)}</p>
-      <a class="tl" href="/sectors/${s.slug}/"${t('About ' + s.name, 'عن ' + s.nameAr)}>About ${esc(s.name)}</a>
-    </div>
-    ${companyRail(cos)}
-  </div>
-</section>
-
-`;
-  }).join('');
-}
-
-function sectorBands(compact) {
-  return `<div class="bands${compact ? " bands-tight" : ""}">
-${SECTORS.map(s => {
-    const n = s.companies.length;
-    const count = n ? plural(n, 'company', 'companies') : 'In development';
-    const countAr = n ? pluralAr(n, 'شركة واحدة', 'شركات') : 'قيد التطوير';
-
-    /* A sector with no company yet still gets a tile, pointing at its own
-       page, so the row reads as deliberate rather than unfinished. */
-    const tiles = n
-      ? s.companies.map(co => `        <a class="tile" href="/companies/${co.slug}/">
-          <span class="shot"><img src="/assets/img/${co.photo || s.photo || 'skyline-tall'}-card.jpg" alt="" width="1000" height="750" loading="lazy"></span>
-          <span class="tcap"><span class="tname"${t(co.name, co.nameAr)}>${esc(co.name)}</span></span>
-        </a>`).join('\n')
-      : `        <a class="tile" href="/sectors/${s.slug}/">
-          <span class="shot"><img src="/assets/img/skyline-tall.jpg" alt="" width="1000" height="1333" loading="lazy"></span>
-          <span class="tcap"><span class="tname" data-ar="ما نبنيه بعد ذلك">What we build next</span></span>
-        </a>`;
-
-    return `      <section class="band">
-        <div class="band-head">
-          ${icon(SECTOR_ICON[s.slug] || 'sectors')}
-          <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
-          <span class="rule" aria-hidden="true"></span>
-          <span class="count micro"${t(count, countAr)}>${esc(count)}</span>
-        </div>
-        ${compact ? "" : `<p class="band-lede"${t(s.short, s.shortAr)}>${esc(s.short)}</p>`}
-        <div class="tiles n${Math.min(n || 1, 3)}">
-${tiles}
-        </div>
-        ${compact ? "" : `<p class="band-more"><a class="tl" href="/sectors/${s.slug}/"${t('Read about ' + s.name, 'اقرأ عن ' + s.nameAr)}>Read about ${esc(s.name)}</a></p>`}
-      </section>`;
-  }).join('\n')}
-    </div>`;
-}
-
-function pageSectorsIndex() {
-  return head({
-    title: `Our Sectors · ${SITE.name}`,
-    desc: 'Lusail Corp operates across consumer services, food and beverage, food supply, trading and commodities, with new sectors in development.',
-    url: '/sectors/', image: 'grain-still.jpg'
-  })
-    + header('/sectors/')
-    + opener({
-      crumb: 'Our Sectors', crumbAr: 'قطاعاتنا',
-      h1: 'Diverse Businesses. Connected Thinking.', h1Ar: 'أعمال متنوعة. تفكير مترابط.',
-      lede: 'Lusail Corp operates across multiple industries while maintaining one common focus: building commercially sound businesses capable of sustainable growth.',
-      ledeAr: 'تعمل لوسيل كورب في صناعات متعددة مع تركيز واحد مشترك: بناء أعمال سليمة تجارياً وقادرة على النمو المستدام.'
-    })
-    + `${sectorRows()}`
-    + ctaBand()
-    + footer();
-}
-
-/* The sectors index opens in place: each row expands to show the companies
-   inside it as cards, so the whole portfolio can be read without leaving the
-   page, while each sector still has its own address. */
-function sectorAccordion() {
-  return `<div class="acc">
-${SECTORS.map((s, i) => {
-    const n = s.companies.length;
-    const count = n ? plural(n, 'company', 'companies') : 'In development';
-    const countAr = n ? pluralAr(n, 'شركة واحدة', 'شركات') : 'قيد التطوير';
-    const open = false;   // every sector starts closed
-
-    const cards = n ? `<div class="cocards">
-${s.companies.map(c => {
-      const pic = hasPhoto(c)
-        ? `<span class="pic"><img src="/assets/img/${c.photo}-card.jpg" alt="${esc(c.name)}" width="1000" height="750" loading="lazy"></span>`
-        : '';
-      return `            <a class="cocard" href="/companies/${c.slug}/">
-              ${pic}
-              <span class="body">
-                <span class="role micro"${t(c.role, c.roleAr)}>${esc(c.role)}</span>
-                <h4${t(c.name, c.nameAr)}>${esc(c.name)}</h4>
-                <p${t(c.short, c.shortAr)}>${esc(c.short)}</p>
-                <span class="go" data-ar="عرض الشركة">View company</span>
-              </span>
-            </a>`;
-    }).join('\n')}
-          </div>`
-      : `<p class="acc-empty" data-ar="لا توجد شركة في هذا القطاع بعد. إن كان لديك عمل أو مفهوم يناسبه، نودّ أن نسمع منك.">No company sits in this sector yet. If you have a business or concept that fits it, we would like to hear from you.</p>`;
-
-    return `      <div class="acc-item${open ? ' open' : ''}" id="sec-${s.slug}">
-        <button class="acc-btn" type="button" aria-expanded="${open}" aria-controls="panel-${s.slug}">
-          <span class="n">${num(i)}</span>
-          <span>
-            <h3${t(s.name, s.nameAr)}>${esc(s.name)}</h3>
-            <span class="sub"${t(s.short, s.shortAr)}>${esc(s.short)}</span>
-          </span>
-          <span class="meta"${t(count, countAr)}>${esc(count)}</span>
-          <span class="plus" aria-hidden="true"></span>
-        </button>
-        <div class="acc-panel" id="panel-${s.slug}" role="region">
-          <div><div class="acc-inner">
-            ${cards}
-            <p style="margin-top:22px"><a class="tl" href="/sectors/${s.slug}/"${t('Read about ' + s.name, 'اقرأ عن ' + s.nameAr)}>Read about ${esc(s.name)}</a></p>
-          </div></div>
-        </div>
-      </div>`;
-  }).join('\n')}
-    </div>`;
-}
-
-function pageSector(s, i) {
-  const others = SECTORS.filter(x => x.slug !== s.slug);
-  const cos = s.companies.map(c => Object.assign({}, c, {
-    sectorSlug: s.slug, sectorName: s.name, sectorNameAr: s.nameAr
-  }));
-  const body = s.body.map((p, k) => `        <p${t(p, s.bodyAr && s.bodyAr[k])}>${esc(p)}</p>`).join('\n');
-  const n = s.companies.length;
-  const count = n ? plural(n, 'company in this sector', 'companies in this sector') : 'In development';
-  const countAr = n ? pluralAr(n, 'شركة واحدة في هذا القطاع', 'شركات في هذا القطاع') : 'قيد التطوير';
-
-  return head({
-    title: `${s.name} · ${SITE.name}`, desc: s.short,
-    url: `/sectors/${s.slug}/`,
-    image: hasPhoto(s) ? `${s.photo}-${s.photoStyle === 'still' ? 'still' : 'wide'}.jpg` : undefined
-  })
-    + header('/sectors/')
-    + opener({
-      crumb: `Our Sectors — ${num(i)}`, crumbAr: `قطاعاتنا — ${num(i)}`,
-      h1: s.headline, h1Ar: s.headlineAr,
-      lede: s.intro, ledeAr: s.introAr,
-      meta: `<span${t(s.name, s.nameAr)}>${esc(s.name)}</span> &middot; <span${t(count, countAr)}>${esc(count)}</span>`
-    })
-    // a real photograph runs full width with its caption under it; a cutout
-    // product shot is contained in the aside instead
-    + (hasPhoto(s) && s.photoStyle === 'plate' ? `<section class="section tight">
-  <div class="wrap">
-    ${plate(s.photo, s.photoCaption || s.short)}
-  </div>
-</section>
-
-` : '')
-    + `<section class="section tight">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="القطاع">The sector</span>
-      <div class="prose">
-${body}
-      </div>
-    </div>
-    <div class="aside">
-      ${hasPhoto(s) && s.photoStyle === 'still' ? still(s.photo, s.photoCaption || s.short) : ''}
-      ${n ? `<h3 data-ar="شركة المحفظة">Portfolio ${n === 1 ? 'company' : 'companies'}</h3>
-${companyRail(cos)}` : `<h3 data-ar="قيد التطوير">In development</h3>
-      <p class="prose" data-ar="لا توجد شركة في هذا القطاع بعد. إن كان لديك عمل أو مفهوم يناسبه، نودّ أن نسمع منك.">No company sits in this sector yet. If you have a business or concept that fits it, we would like to hear from you.</p>
-      <a class="btn btn-ink" href="/partnerships/" data-ar="تحدّث إلينا">Talk to us</a>`}
-    </div>
-  </div>
-</section>
-
-${n ? `<section class="section stone" aria-labelledby="coTitle">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow" data-ar="الشركات">Companies</span>
-      <h2 id="coTitle"${n === 1 ? ' data-ar="الشركة العاملة في هذا القطاع"' : ' data-ar="الشركات العاملة في هذا القطاع"'}>${n === 1 ? 'The company working here' : 'The companies working here'}</h2>
-    </div>
-    ${companyIndex(cos, { showSector: false })}
-  </div>
-</section>
-
-` : ''}<section class="section tight" aria-labelledby="othTitle">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow" data-ar="بقية المجموعة">The rest of the Group</span>
-      <h2 id="othTitle" data-ar="القطاعات الأخرى">The other sectors</h2>
-    </div>
-    ${sectorIndex(others)}
-  </div>
-</section>
-
-`
-    + ctaBand()
-    + footer();
-}
-
-function pagePartnerships() {
-  return head({
-    title: `Partnerships · ${SITE.name}`,
-    desc: 'Lusail Corp works with suppliers, producers, distributors, business partners and entrepreneurs in Qatar and international markets.',
-    url: '/partnerships/', image: 'grain-still.jpg'
-  })
-    + header('/partnerships/')
-    + opener({
-      crumb: 'Partnerships', crumbAr: 'الشراكات',
-      h1: 'Better Opportunities Begin With Strong Partnerships.',
-      h1Ar: 'الفرص الأفضل تبدأ بشراكات قوية.',
-      lede: 'Lusail Corp works with businesses, suppliers and commercial partners in Qatar and international markets.',
-      ledeAr: 'تعمل لوسيل كورب مع شركات وموردين وشركاء تجاريين في قطر والأسواق الدولية.'
-    })
-    + `<section class="section tight" aria-labelledby="ptTitle">
-  <div class="wrap">
-    <div class="sec-head row">
-      <div>
-        <span class="eyebrow" data-ar="لنبنِ معاً">Let&rsquo;s build business together</span>
-        <h2 id="ptTitle" data-ar="من نودّ التحدث إليه">Who we want to hear from</h2>
-      </div>
-      <p class="lede" data-ar="تعتمد شركاتنا على علاقات قوية في أسواقها، ونحن مهتمون بتطوير علاقات مع:">Our companies depend on strong relationships across their respective markets. We are interested in developing relationships with:</p>
-    </div>
-    ${iconRows(PARTNER_TYPES)}
-  </div>
-</section>
-
-<section class="section stone" aria-labelledby="philTitle">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="فلسفتنا في الشراكة">Our partnership philosophy</span>
-      <h2 id="philTitle" class="statement" data-ar="علاقات مبنية للمدى الطويل">Relationships Built for the Long Term</h2>
-      <div class="prose">
-        <p data-ar="نؤمن بأن الشراكات الناجحة تقوم على الشفافية وتوافق المصالح والتنفيذ الموثوق.">We believe successful partnerships are based on transparency, aligned interests and reliable execution.</p>
-        <p data-ar="هدفنا ليس مجرد إتمام الصفقات، بل بناء علاقات تجارية قادرة على النمو مع الوقت.">Our objective is not simply to complete transactions. It is to build commercial relationships that have the potential to grow over time.</p>
-      </div>
-    </div>
-    <div class="aside">
-      <h3 data-ar="ابدأ الحديث">Start a conversation</h3>
-      <dl>
-        <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a class="tl" href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
-        <div><dt data-ar="الهاتف">Phone</dt><dd><a class="tl" href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a></dd></div>
-      </dl>
-      <a class="btn btn-gold" href="/contact/" data-ar="ابدأ الحديث">Start a Conversation</a>
-    </div>
-  </div>
-</section>
-
-`
-    + `<section class="section stone" aria-labelledby="pfTitle">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="تحدّث إلينا">Talk to us</span>
-      <h2 id="pfTitle" data-ar="أخبرنا بما تقترحه">Tell us what you are proposing</h2>
-      <p class="lede" data-ar="سواء كنت منتجاً أو مورّداً أو موزّعاً أو شركة تبحث عن شريك في قطر، أرسل التفاصيل وسيرد عليك الفريق المعني.">Whether you are a producer, a supplier, a distributor or a business looking for a partner in Qatar, send the detail and the right desk will answer.</p>
-      <dl class="channels">
-        <div><dt data-ar="الموردون الدوليون">International suppliers</dt><dd data-ar="المنتجون والمصدّرون الراغبون في الوصول إلى السوق القطري.">Producers and exporters seeking access to the Qatar market.</dd></div>
-        <div><dt data-ar="التوريد والتوزيع">Supply and distribution</dt><dd data-ar="الشركات التي تبحث عن توريد غذائي أو تجاري موثوق داخل قطر.">Businesses looking for dependable food or commercial supply inside Qatar.</dd></div>
-        <div><dt data-ar="الشراكات التجارية">Commercial partnerships</dt><dd data-ar="المشغّلون وأصحاب العلامات والشركاء التجاريون على المدى الطويل.">Operators, brand owners and long-term commercial partners.</dd></div>
-      </dl>
-    </div>
-    <form id="form" novalidate data-mailto="${SITE.contact.email}">
-      <div class="hp" aria-hidden="true">
-        <label for="pSite">Website</label>
-        <input id="pSite" name="website" type="text" tabindex="-1" autocomplete="off">
-      </div>
-      <div class="field"><label for="pName" data-ar="الاسم الكامل">Full Name</label><input id="pName" name="name" autocomplete="name" required></div>
-      <div class="field"><label for="pCompany" data-ar="الشركة">Company</label><input id="pCompany" name="company" autocomplete="organization"></div>
-      <div class="field"><label for="pMail" data-ar="البريد الإلكتروني">Email Address</label><input id="pMail" name="email" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="pPhone" data-ar="رقم الهاتف">Phone Number</label><input id="pPhone" name="phone" type="tel" autocomplete="tel"></div>
-      <div class="field full"><label for="pArea" data-ar="نوع الشراكة">Type of partnership</label>
-        <select id="pArea" name="area">
-          <option value="partnership" data-ar="شراكة تجارية">Business Partnership</option>
-          <option value="supplier" data-ar="فرصة توريد">Supplier Opportunity</option>
-          <option value="other" data-ar="أخرى">Other</option>
-        </select></div>
-      <div class="field full"><label for="pMsg" data-ar="ما الذي تقترحه؟">What are you proposing?</label><textarea id="pMsg" name="message" required></textarea></div>
-      <div class="form-end">
-        <button class="btn btn-gold" type="submit" data-ar="إرسال الاقتراح">Send Proposal</button>
-        <span class="status" id="status" role="status"></span>
-      </div>
-    </form>
-  </div>
-</section>
-
-`
-    + ctaBand()
-    + footer();
-}
+/* ---------- careers ------------------------------------------------------ */
 
 function pageCareers() {
   const roles = OPEN_ROLES.length
@@ -1276,47 +743,37 @@ ${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.email}?
         <h3>${esc(r.t)}</h3>
         <span class="meta">${esc(r.co)}</span>
         <span class="meta">${esc(r.loc)}</span>
-        <span class="go" data-ar="تقديم">Apply</span>
+        <span class="go">Apply</span>
       </a>`).join('\n')}
     </div>`
-    : `<div class="split">
+    : `<div class="noroles rise">
       <div>
-        <h3 class="statement" data-ar="لا توجد وظيفة شاغرة حالياً؟">No Current Opening?</h3>
-        <div class="prose" style="margin-top:20px">
-          <p data-ar="يسعدنا دائماً التعرّف على الكفاءات.">We are always interested in meeting talented people.</p>
-          <p data-ar="أرسل سيرتك الذاتية وأخبرنا كيف يمكنك الإسهام في لوسيل كورب أو في إحدى شركات المحفظة.">Send your CV and tell us how you believe you could contribute to Lusail Corp or one of our portfolio companies.</p>
-        </div>
+        <h3>No current opening?</h3>
+        <p>We are always interested in meeting people who are good at what they do. Send your CV and tell us which company or area interests you, and what you would want to work on.</p>
+        <p class="after"><a class="btn btn-dark" href="mailto:${SITE.contact.email}?subject=${encodeURIComponent('Speculative application')}">Send your CV</a></p>
       </div>
-      <div class="aside">
-        <h3 data-ar="أرسل سيرتك الذاتية">Send your CV</h3>
-        <dl>
-          <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a class="tl" href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
-          <div><dt data-ar="أرفق">Include</dt><dd data-ar="سيرتك الذاتية، والشركة أو المجال الذي يهمّك.">Your CV, and which company or area interests you.</dd></div>
-        </dl>
-      </div>
+      <dl class="channels">
+        <div><dt>Email</dt><dd><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></dd></div>
+        <div><dt>Include</dt><dd>Your CV, and the company or area that interests you.</dd></div>
+      </dl>
     </div>`;
 
   return head({
-    title: `Careers · ${SITE.name}`,
-    desc: 'Lusail Corp is building businesses across multiple industries, creating opportunities for people with different backgrounds, skills and ambitions.',
-    url: '/careers/', image: 'coffee-still.jpg'
+    title: `Join Us · ${SITE.name}`,
+    desc: 'Lusail Corp is building businesses across several industries in Qatar, which makes room for people with different backgrounds and skills.',
+    url: '/careers/', image: 'hero-contact'
   })
     + header('/careers/')
-    + opener({
-      crumb: 'Careers', crumbAr: 'الوظائف',
-      h1: 'Build With Us.', h1Ar: 'ابنِ معنا.',
-      lede: 'Lusail Corp is building businesses across multiple industries, creating opportunities for people with different backgrounds, skills and ambitions.',
-      ledeAr: 'تبني لوسيل كورب أعمالاً في صناعات متعددة، وتخلق فرصاً لأصحاب الخلفيات والمهارات والطموحات المختلفة.'
+    + pageHead({
+      eyebrow: 'Join Us',
+      h1: 'Build with us.',
+      lede: 'We are building businesses across several industries, which makes room for people with different backgrounds, skills and ambitions.',
+      photo: 'hero-contact'
     })
     + `<section class="section tight">
   <div class="wrap">
-    <p class="lead-para" data-ar="سواء كان العمل مع المجموعة مباشرة أو داخل إحدى شركات المحفظة، فإن موظفينا جزء من منظومة متنامية تُقدَّر فيها المبادرة والتنفيذ.">Whether working directly with the Group or within one of our portfolio companies, our people are part of a growing organization where initiative and execution matter.</p>
-  </div>
-</section>
-
-<section class="section tight">
-  <div class="wrap">
-    <div class="imgrow">
+    <p class="lead-para rise">Whether the work is with the Group directly or inside one of our companies, our people are part of a growing organisation where initiative counts and the results are visible.</p>
+    <div class="imgrow rise">
       <figure><img src="/assets/img/careers-a.jpg" alt="" width="1000" height="750" loading="lazy"></figure>
       <figure><img src="/assets/img/careers-b.jpg" alt="" width="1000" height="750" loading="lazy"></figure>
       <figure><img src="/assets/img/careers-c.jpg" alt="" width="1000" height="750" loading="lazy"></figure>
@@ -1326,14 +783,11 @@ ${OPEN_ROLES.map(r => `      <a class="role" href="mailto:${SITE.contact.email}?
 
 <section class="section stone" aria-labelledby="cvTitle">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow" data-ar="ما نقدّره">What We Value</span>
-      <h2 id="cvTitle" data-ar="الصفات التي نبحث عنها">The qualities we look for</h2>
-    </div>
+    ${head2('cvTitle', 'The qualities we <span class="soft">look for</span>', '')}
     <div class="vals">
-${CAREER_VALUES.map(v => `      <div class="val">
+${CAREER_VALUES.map(v => `      <div class="val-q rise">
         ${icon(v.icon)}
-        <h3${t(v.t, v.tAr)}>${esc(v.t)}</h3>
+        <h3>${esc(v.t)}</h3>
       </div>`).join('\n')}
     </div>
   </div>
@@ -1341,67 +795,69 @@ ${CAREER_VALUES.map(v => `      <div class="val">
 
 <section class="section tight" aria-labelledby="joinTitle">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow" data-ar="انضم إلينا">Join Our Group</span>
-      <h2 id="joinTitle" data-ar="كلما نمت المحفظة، نمت الفرص داخلها.">As our portfolio grows, so will the opportunities within it.</h2>
-    </div>
+    ${head2('joinTitle', 'As the portfolio grows, so do the <span class="soft">openings in it</span>', '')}
     ${roles}
   </div>
 </section>
 
 `
+    + ctaBand()
     + footer();
 }
 
+/* ---------- contact ------------------------------------------------------ */
+
 function pageContact() {
+  /* The dropdown is built from the same list api/contact.js validates
+     against, so a new company appears in both at once. */
   const areas = [
-    { v: 'general', t: 'General Enquiry', tAr: 'استفسار عام' },
-    ...ALL_COMPANIES.map(c => ({ v: c.slug, t: c.name, tAr: c.nameAr })),
-    { v: 'supplier', t: 'Supplier Opportunity', tAr: 'فرصة توريد' },
-    { v: 'partnership', t: 'Business Partnership', tAr: 'شراكة تجارية' },
-    { v: 'careers', t: 'Careers', tAr: 'الوظائف' },
-    { v: 'other', t: 'Other', tAr: 'أخرى' }
+    { v: 'general', t: 'General enquiry' },
+    ...ALL_COMPANIES.map(c => ({ v: c.slug, t: c.name })),
+    { v: 'supplier', t: 'Supplier opportunity' },
+    { v: 'partnership', t: 'Business partnership' },
+    { v: 'careers', t: 'Careers' },
+    { v: 'other', t: 'Other' }
   ];
 
   return head({
     title: `Contact · ${SITE.name}`,
     desc: 'Contact Lusail Corp about our companies, supply, commercial opportunities or careers.',
-    url: '/contact/', image: 'coffee-still.jpg'
+    url: '/contact/', image: 'hero-contact'
   })
     + header('/contact/')
-    + opener({
-      crumb: 'Contact', crumbAr: 'تواصل معنا',
-      h1: 'Let’s Connect.', h1Ar: 'لنتواصل.',
-      lede: 'Whether you are interested in working with one of our companies, becoming a supplier, discussing a commercial opportunity or learning more about Lusail Corp, we would be pleased to hear from you.',
-      ledeAr: 'سواء كنت مهتماً بالعمل مع إحدى شركاتنا أو أن تصبح مورّداً أو مناقشة فرصة تجارية أو معرفة المزيد عن لوسيل كورب، يسعدنا أن نسمع منك.'
+    + pageHead({
+      eyebrow: 'Contact',
+      h1: 'Let’s connect.',
+      lede: 'Whether you want to work with one of our companies, supply them, propose something commercial, or just understand the Group better — this reaches us.',
+      photo: 'hero-contact'
     })
     + `<section class="section tight">
-  <div class="wrap split">
-    <div>
-      <span class="eyebrow" data-ar="تواصل مباشر">Direct contact</span>
+  <div class="wrap cosplit contactwrap">
+    <div class="rise">
+      <h2 class="h3">Get in touch</h2>
       <dl class="channels">
-        <div><dt data-ar="البريد الإلكتروني">Email</dt><dd><a href="mailto:${SITE.contact.email}">${SITE.contact.email}</a></dd></div>
-        <div><dt data-ar="الهاتف">Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}" dir="ltr">${esc(SITE.contact.phone)}</a></dd></div>
-        <div><dt data-ar="الموقع">Location</dt><dd${t(SITE.contact.location, SITE.contact.locationAr)}>${esc(SITE.contact.location)}</dd></div>
-        <div><dt data-ar="التوجيه">Routing</dt><dd data-ar="اختر مجال الاهتمام وسنحوّل رسالتك إلى القسم المختص.">Pick an area of interest and we route your message to the right desk.</dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></dd></div>
+        <div><dt>Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></dd></div>
+        <div><dt>Location</dt><dd>${esc(SITE.contact.location)}</dd></div>
+        <div><dt>Routing</dt><dd>Pick an area of interest and the message goes to the desk that can answer it.</dd></div>
       </dl>
     </div>
-    <form id="form" novalidate data-mailto="${SITE.contact.email}">
+    <form id="form" class="rise d1" novalidate data-mailto="${SITE.contact.email}">
       <div class="hp" aria-hidden="true">
         <label for="fSite">Website</label>
         <input id="fSite" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
-      <div class="field"><label for="fName" data-ar="الاسم الكامل">Full Name</label><input id="fName" name="name" autocomplete="name" required></div>
-      <div class="field"><label for="fCompany" data-ar="الشركة">Company</label><input id="fCompany" name="company" autocomplete="organization"></div>
-      <div class="field"><label for="fMail" data-ar="البريد الإلكتروني">Email Address</label><input id="fMail" name="email" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="fPhone" data-ar="رقم الهاتف">Phone Number</label><input id="fPhone" name="phone" type="tel" autocomplete="tel"></div>
-      <div class="field full"><label for="fArea" data-ar="مجال الاهتمام">Area of Interest</label>
+      <div class="field"><label for="fName">Full name</label><input id="fName" name="name" autocomplete="name" required></div>
+      <div class="field"><label for="fCompany">Company</label><input id="fCompany" name="company" autocomplete="organization"></div>
+      <div class="field"><label for="fMail">Email address</label><input id="fMail" name="email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="fPhone">Phone number</label><input id="fPhone" name="phone" type="tel" autocomplete="tel"></div>
+      <div class="field full"><label for="fArea">Area of interest</label>
         <select id="fArea" name="area">
-${areas.map(a => `          <option value="${a.v}"${t(a.t, a.tAr)}>${esc(a.t)}</option>`).join('\n')}
+${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('\n')}
         </select></div>
-      <div class="field full"><label for="fMsg" data-ar="الرسالة">Message</label><textarea id="fMsg" name="message" required></textarea></div>
+      <div class="field full"><label for="fMsg">Message</label><textarea id="fMsg" name="message" required></textarea></div>
       <div class="form-end">
-        <button class="btn btn-gold" type="submit" data-ar="إرسال الاستفسار">Submit Enquiry</button>
+        <button class="btn btn-dark" type="submit">Send enquiry</button>
         <span class="status" id="status" role="status"></span>
       </div>
     </form>
@@ -1415,17 +871,17 @@ ${areas.map(a => `          <option value="${a.v}"${t(a.t, a.tAr)}>${esc(a.t)}</
 function page404() {
   return head({ title: `Page not found · ${SITE.name}`, desc: 'That page does not exist.', url: '/404.html' })
     + header('')
-    + opener({
-      crumb: '404', crumbAr: '404',
-      h1: 'That page does not exist', h1Ar: 'الصفحة غير موجودة',
-      lede: 'The link may have changed. Try our companies, or go back to the home page.',
-      ledeAr: 'ربما تغيّر الرابط. جرّب صفحة الشركات أو عد إلى الصفحة الرئيسية.'
+    + pageHead({
+      eyebrow: '404',
+      h1: 'That page does not exist.',
+      lede: 'The link may have changed. Try the portfolio, or go back to the home page.',
+      photo: 'hero-contact'
     })
     + `<section class="section tight">
   <div class="wrap">
-    <div class="hero-cta" style="margin-top:0">
-      <a class="btn btn-gold" href="/" data-ar="الصفحة الرئيسية">Home</a>
-      <a class="btn btn-ink" href="/companies/" data-ar="شركاتنا">Our Companies</a>
+    <div class="hero-cta">
+      <a class="btn btn-dark" href="/">Home</a>
+      <a class="btn btn-line" href="/companies/">Our companies</a>
     </div>
   </div>
 </section>
@@ -1450,7 +906,48 @@ function copyDir(from, to) {
   }
 }
 
+/* Every photograph a page asks for, by name. The build checks they all exist
+   before writing anything — a missing image is a broken page, and it is
+   cheaper to fail here than to find out from the live site. The same list
+   decides what gets copied, so photography that no page uses stays in the
+   repository without being shipped to every visitor. */
+function usedImages() {
+  const want = new Set([
+    'hero-doha', 'hero-about', 'hero-contact', 'why-group', 'cta-towers',
+    'about-platform', 'careers-a', 'careers-b', 'careers-c'
+  ]);
+  ALL_COMPANIES.forEach(c => {
+    want.add(c.hero); want.add(c.still);
+    (c.products || []).forEach(p => want.add(p.img));
+  });
+  Object.values(SECTOR_SHOT).forEach(v => want.add(v));
+
+  const have = new Set(fs.readdirSync(path.join(ROOT, 'site-assets/img'))
+    .map(f => f.replace(/\.jpg$/, '')));
+  const missing = [...want].filter(v => v && !have.has(v));
+  if (missing.length) {
+    console.error('\n  missing images in site-assets/img:\n    ' + missing.join('\n    ') + '\n');
+    process.exit(1);
+  }
+
+  /* Two pages showing the identical photograph reads as a mistake, and it is
+     hard to spot by eye once the names differ. Compare the bytes. */
+  const seen = new Map();
+  for (const name of want) {
+    const sum = require('crypto').createHash('sha1')
+      .update(fs.readFileSync(path.join(ROOT, 'site-assets/img', name + '.jpg'))).digest('hex');
+    if (seen.has(sum)) {
+      console.error(`\n  ${name}.jpg and ${seen.get(sum)}.jpg are the same picture.` +
+        '\n  Give one of them its own photograph, or point both at one name.\n');
+      process.exit(1);
+    }
+    seen.set(sum, name);
+  }
+  return want;
+}
+
 function build() {
+  const images = usedImages();
   fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(OUT, { recursive: true });
 
@@ -1460,12 +957,7 @@ function build() {
   write('companies/index.html', pageCompaniesIndex());
   // one page per company, from the flat list, so a company listed in two
   // sectors is still written exactly once
-  ALL_COMPANIES.forEach(c =>
-    write(`companies/${c.slug}/index.html`,
-      pageCompany(c, SECTORS.find(s => s.slug === c.sectorSlug))));
-  write('sectors/index.html', pageSectorsIndex());
-  SECTORS.forEach((s, i) => write(`sectors/${s.slug}/index.html`, pageSector(s, i)));
-  write('partnerships/index.html', pagePartnerships());
+  ALL_COMPANIES.forEach(c => write(`companies/${c.slug}/index.html`, pageCompany(c)));
   write('careers/index.html', pageCareers());
   write('contact/index.html', pageContact());
   write('404.html', page404());
@@ -1474,10 +966,19 @@ function build() {
   copyDir(path.join(ROOT, 'assets/css'), path.join(OUT, 'assets/css'));
   copyDir(path.join(ROOT, 'assets/js'), path.join(OUT, 'assets/js'));
   copyDir(path.join(ROOT, 'site-assets/logo'), path.join(OUT, 'assets/logo'));
-  copyDir(path.join(ROOT, 'site-assets/img'), path.join(OUT, 'assets/img'));
+
+  const imgOut = path.join(OUT, 'assets/img');
+  fs.mkdirSync(imgOut, { recursive: true });
+  let bytes = 0;
+  for (const name of images) {
+    const from = path.join(ROOT, 'site-assets/img', name + '.jpg');
+    fs.copyFileSync(from, path.join(imgOut, name + '.jpg'));
+    bytes += fs.statSync(from).size;
+  }
+  console.log(`  ${images.size} photographs (${Math.round(bytes / 1024)} KB)`);
 
   const urls = ['/', '/about/', '/companies/', ...ALL_COMPANIES.map(c => `/companies/${c.slug}/`),
-    '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/', '/careers/', '/contact/'];
+    '/careers/', '/contact/'];
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
     `User-agent: *\nAllow: /\n\nSitemap: ${SITE.domain}/sitemap.xml\n`);
   fs.writeFileSync(path.join(OUT, 'sitemap.xml'),
@@ -1486,7 +987,7 @@ function build() {
     `\n</urlset>\n`);
 
   console.log('  robots.txt, sitemap.xml (' + urls.length + ' urls)');
-  console.log(`done -> dist/  (${SECTORS.length} sectors, ${ALL_COMPANIES.length} companies)`);
+  console.log(`done -> dist/  (${urls.length + 1} pages, ${ALL_COMPANIES.length} companies)`);
 }
 
 build();

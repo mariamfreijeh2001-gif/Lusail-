@@ -18,133 +18,191 @@ Commercial appears under both Trading and Supply & Distribution.
 | URL | |
 |---|---|
 | `/` | Home |
-| `/about/` | Who we are, vision, mission, approach, values |
+| `/about/` | The Group: what it is, what it believes, who it wants to hear from |
 | `/companies/` | The portfolio, filterable by sector |
 | `/companies/<slug>/` | One company |
-| `/sectors/` | Every sector |
-| `/sectors/<slug>/` | One sector, and the companies in it |
-| `/partnerships/` | Who the Group wants to hear from |
 | `/careers/` | Working here, and how to apply |
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
+**A sector has no page of its own.** There are four sectors and four
+companies, so a sector page would only have said what its company page
+already says. Sectors survive as a heading and a filter:
+`/companies/?sector=trading` is where "Trading & Commodities" goes, and
+`vercel.json` redirects the old `/sectors/` URLs there. The partnerships page
+is now the "Who we want to hear from" section on `/about/`.
+
 Adding a company to a sector means adding one object to that sector's
-`companies` array. The mega-menu, the filter chips and their counts, the home
-marquee, the sector pages, the footer, the contact dropdown and the sitemap all
-resize themselves.
+`companies` array. The sectors panel in the bar, the filter chips and their
+counts, the home page's sector cards, the footer, the contact dropdown (and
+the email routing behind it) and the sitemap all follow.
 
 ## Where things live
 
 ```
-data/site.js          ALL content — sectors, companies, values, partners, nav
+data/site.js          ALL content — sectors, companies, values, reach, contact
 build/render.js       templates + generator
+build/worldmap.js     decodes the land data and projects the home-page map
+api/contact.js        Vercel function: validates the form, emails it via Resend
 assets/css/site.css   one stylesheet; design tokens at the top
-assets/js/site.js     language, mega-menu, company filter, contact form
+assets/js/site.js     nav, map pins, panels, filter, contact form, reveals
 site-assets/logo/     the logo kit (SVG) + favicons
 site-assets/img/      web-sized photography
+site-assets/geo/      Natural Earth 110m land, TopoJSON (public domain)
 dist/                 generated — never edit, never commit
 ```
 
 ## Editing content
 
-Everything is in [data/site.js](data/site.js). A sector:
+Everything is in [data/site.js](data/site.js) — including `FIGURES`, the four
+numbers on the home page's stat band. **Three of those four are unverified**:
+they came from the design file, not from the Group. See [TODO.md](TODO.md).
+
+A sector:
 
 ```js
 {
   slug: 'trading',
-  name: 'Trading & Commodities', nameAr: '…',
-  headline, short, intro, body[],      // each with an -Ar counterpart
-  photo: 'grain', photoStyle: 'still', // 'plate' | 'still' | 'none'
-  companies: [ … ]                     // zero or more
+  name: 'Trading & Commodities',
+  short, headline, intro,              // the sector's line, used in listings
+  companies: [ … ]                     // one or more
 }
 ```
 
-A company adds `role`, `facts[]`, `cta`, and optionally `products[]` and
-`activities[]` (only Lusail Commercial uses those today).
+A company:
 
-Every text field has an `-Ar` counterpart. Both languages must be present or
-the toggle will blank that node.
+```js
+{
+  slug: 'lusail-commercial',
+  name, role, headline, short, intro,
+  body: [ … ],                         // the paragraphs beside the photograph
+  facts: [{ k, v }, … ],               // the strip under them
+  products: [{ t, d, img }, … ],       // optional; becomes the rail
+  activities: [ … ],                   // optional; becomes the tags
+  alsoIn: ['supply-distribution'],     // optional second sector
+  cta: 'Partner with Lusail Commercial',
+  hero: 'hero-lusail-commercial',      // wide, behind the title
+  still: 'still-lusail-commercial'     // upright, beside the reading
+}
+```
 
-### Photography is honest about what it has
+### Photography
 
-`photoStyle` is one of:
+Images are named for where they appear, not for what they show, and all of
+them live in `site-assets/img/` as `.jpg`:
 
-- **`plate`** — a strong photograph, full width, caption underneath
-- **`still`** — a cutout product shot, contained on its own white
-- **`none`** — no photograph at all
+| Name | Used by | Shape |
+|---|---|---|
+| `hero-<page>` | the photograph behind a page title | wide, ~1600px |
+| `still-<company>` | the upright shot beside a company's opening | ~900px |
+| `prod-<product>` | one product card in the rail | 640px, 4:3 |
+| `card-<sector>` | the home page's sector cards | 640px, tall |
+| `hero-doha`, `why-group`, `cta-towers`, `about-platform` | the home and about pages | — |
 
-**Cavallo Laundry and ROMA Commercial are set to `none`.** The supplied folder
-contains no laundry imagery and no fresh-produce imagery, so those pages are
-typographic rather than illustrated with a picture that is not of their
-business. Supply real photography and switch them to `plate`.
+**The build fails if a page asks for an image that is not there**, rather than
+shipping a broken page — see `checkImages()` in
+[build/render.js](build/render.js). Add the file, then add the name.
 
-Adding a photo means, in `site-assets/img/`:
-
-- `<photo>-wide.jpg` at 2400×1029 (21:9) for a plate, **or**
-  `<photo>-still.jpg` at 1100×1100 for a cutout product shot
-- `<photo>-card.jpg` at 1000×750 (4:3) for the marquee card
+There is no image tooling on a typical machine here, so the JPEGs were
+converted from the design file's PNGs through headless Chrome's canvas
+encoder. 8.6 MB of PNG became 690 KB of JPEG.
 
 ### Before launch
 
-- **Arabic is mine, not yours.** Every `-Ar` field was written for this build
-  and reads correctly, but no native speaker on your side has reviewed it.
-- Email addresses (`info@`, `partnerships@`, `careers@`) are assumed.
-- LinkedIn and Instagram in `SITE.contact` are `#` placeholders.
+- **Three of the four home-page figures are unverified** — `5+` years, `10+`
+  markets and `50k+` customers came from the design, not from the Group.
+  Confirm or remove them in `FIGURES`.
+- `info@lusailcorp.com` is the one published address, and has no mailbox
+  behind it yet.
+- LinkedIn and Instagram in `SITE.contact` are `#`, and stay hidden until they
+  are real URLs. Set them and they appear in the footer.
+- The phone number is a placeholder.
 - `OPEN_ROLES` is `[]`, which renders the "No Current Opening?" state the
   brief specifies. Add roles to that array when there are any.
 - `SITE.domain` feeds the canonical URL, OpenGraph tags and the sitemap.
 
+See [TODO.md](TODO.md) for the full list.
+
 ## Design
 
-Editorial and typographic: type and white space carry the page, on white.
-The palette is deep navy `#030C2B`, gold `#D3A750`, grey `#D0CECC` and white.
-Navy anchors the footer and sets the type colour; gold carries the identity;
-a warm sand band sits behind the values. Tokens are at the top of
-`assets/css/site.css` — changing the brand is changing those.
+Built to the Figma. Near-monochrome and typographic: sections alternate white
+and a warm off-white, and carbon `#181717` carries the hero, the sourcing map,
+the closing card and the footer. A heading states itself and greys out one
+word — "What makes it a *group*" — which is the system's only ornament.
+Tokens are at the top of `assets/css/site.css`; changing the brand is changing
+those.
 
-**Nothing is written over a photograph**, anywhere. And **nothing in the layout
-is derived from the logo**, which appears only in the header, the footer and the
-favicon. `SITE.brand` holds those filenames, so swapping the logo is one edit
-and the design survives a rebrand. The neutral black/white logo variants are
-used deliberately, so the mark does not clash if the palette changes again.
+| | |
+|---|---|
+| `--ink` | `#181717` carbon — headings and every dark ground |
+| `--ink-2` | `#868585` body copy |
+| `--ink-3` | `#c0bfbd` the greyed word inside a heading |
+| `--paper` / `--panel` | `#f6f5f3` / `#efedeb` alternating grounds |
+| `--line` | `#e3e0dd` card outlines |
+| `--pin` | `#fb8449` the sourcing pins, and the one accent |
 
-Type is Marcellus for display with IBM Plex Sans for body, and Noto Kufi Arabic
-/ IBM Plex Sans Arabic for Arabic, so both scripts are typographic siblings.
+The frame is 1440 with 115px gutters, leaving the 1210px measure every section
+is set to. `--wrap` is the frame, padding included.
+
+Type is **Archivo** for display and body, **Inter** for navigation and buttons,
+**Space Grotesk** for the small stat labels, and **Playfair Display** italic for
+the one accent word in the hero.
+
+The logo appears in the header and footer (the reversed lockup, on carbon),
+the favicon, beside the home introduction, and as a faint watermark on the
+closing card. Nothing in the layout is derived from its shape. `SITE.brand`
+holds the filenames, so swapping the logo is one edit.
 
 ### Interactive parts
 
-- **Mega-menu** — hovering "Our Sectors" opens every sector and company at
-  once. Keyboard accessible, closes on Escape, never opens on touch.
-- **Sector marquee** — the sectors are cards that move continuously. The track
-  holds each sector twice and slides exactly −50%, so the loop is seamless; the
-  second copy is `aria-hidden` and untabbable so a screen reader hears each
-  sector once. It pauses on hover and on keyboard focus, in CSS alone, and
-  under `prefers-reduced-motion` it does not animate at all — the clones are
-  dropped and the track becomes a wrapping grid.
+- **The bar** — the mark, four links and one action. *Sectors* opens a panel
+  listing all four rather than a page; it opens on hover with a pointer, on
+  click without one, and closes on Escape or a click outside. Below 1080px it
+  collapses to a full-screen menu. Over the home photograph the bar starts
+  transparent and fills as the page moves.
+- **The figures** — written into the HTML, so they are right before the script
+  runs and right if it never does; they count up once when scrolled into view.
+- **What makes it a group** — four claims as a bento. The photograph states
+  the first outright; the other three name themselves and open their reasoning
+  on hover, on focus or on a tap.
+- **Building more than a portfolio** — a row of four panels with one open,
+  widening to carry its paragraph. Click, hover or use the arrow keys.
+- **Where we source from** — a dotted world map generated at build time from
+  Natural Earth data (no map library ships to the browser). Each region has a
+  pin whose label opens to its countries, and lighting a pin lights its row in
+  the register below. Pin labels are laid out at build time so they clear one
+  another.
 - **Company filter** — `/companies/` slices the portfolio by sector without a
   reload, keeps a live count, and writes `?sector=` so a view can be linked to.
-- **Hero** — type beside a photograph, sized so that header + hero is exactly
-  one screen on desktop. The display size is clamped against viewport *height*
-  as well as width, so a short window does not push the buttons below the fold.
+- **Arrival** — each band lifts in once. Hiding is scoped to a `.js` class the
+  script adds, so nothing is ever invisible if the script does not run, and a
+  band already scrolled past is simply there.
 
-## Bilingual
+Under `prefers-reduced-motion` nothing animates.
 
-English and Arabic with full RTL. Each translatable element holds English as
-its content and Arabic in `data-ar`; the toggle swaps them, sets `lang`/`dir`,
-and remembers the choice. An inline script in `<head>` applies the saved
-language before first paint, and `?lang=ar` deep-links into Arabic.
+## Language
 
-**A translatable element must never contain another.** The toggle rewrites
-`textContent`, so a nested `data-ar` child is destroyed on the first switch.
-Split the line into sibling spans instead — see the values heading.
+The site is **English only**. It carried Arabic until the copy was rewritten,
+at which point every translation described text that no longer existed — and
+a stale translation is worse than none, because it would silently mistranslate
+the new copy if it were switched back on. The old strings are in git history
+at `7f548c4`; they describe the old wording, not this one.
+
+Putting Arabic back therefore means translating the current text and rendering
+it, not reviving those fields. Nothing in the templates assumes one language:
+there is no `data-ar`, no toggle, no RTL rule and no pre-paint script left.
 
 ## Contact form
 
-Validates in the browser, then `POST`s the whole form as JSON to
-`CONTACT_ENDPOINT` — [api/contact.js](api/contact.js), a Vercel serverless
-function that relays through Resend. The payload carries `area`, the dropdown
-value, so an enquiry can be routed to the right company; the function turns
-that code into the company's real name and puts it in the subject line.
+The contact page carries the form. It validates in
+the browser, then `POST`s the whole form as JSON to `CONTACT_ENDPOINT` —
+[api/contact.js](api/contact.js), a Vercel serverless function that relays
+through Resend. The payload carries `area`, the dropdown value, so an enquiry
+can be routed to the right company; the function turns that code into the
+company's name and puts it in the subject line.
+
+Each company page's button links to `/contact/?company=<slug>`, which opens the
+form with that company already selected.
 
 The function needs `RESEND_API_KEY` set in the Vercel project. `CONTACT_TO`
 and `CONTACT_FROM` are optional overrides.
@@ -157,5 +215,6 @@ silently lost.
 ## Deploying
 
 `vercel.json` is committed, so Vercel needs no manual configuration — it runs
-`npm run build` and serves `dist/`. Any other static host works the same way:
-build, then upload `dist/`.
+`npm run build`, serves `dist/`, and applies the redirects for old and guessed
+URLs. Any other static host works the same way: build, then upload `dist/`
+(the form then needs its own endpoint, or falls back to email).

@@ -1,50 +1,47 @@
 /* ==========================================================================
    Lusail Corp — all site content.
 
-   STRUCTURE: two tiers, sector -> companies.
-   A sector holds any number of companies.
+   STRUCTURE: two tiers, sector -> companies. A sector is a heading, not a
+   page: it groups the portfolio and filters it. Every sector's story is told
+   on the pages of the companies that work in it.
 
-       /sectors/<slug>/            the sector, and the companies in it
        /companies/                 every company, filterable by sector
        /companies/<slug>/          one company
 
-   PHOTOGRAPHY
-   photoStyle is 'plate' (full-width captioned photograph), 'still' (a cutout
-   product shot, contained on white) or 'none' (typographic only). Two of the
-   four companies have no usable photography in the supplied folder — there is
-   no laundry imagery and no fresh-produce imagery at all — so they are set to
-   'none' rather than given a picture that is not of their business.
+   WRITING
+   Plain sentences, concrete nouns, no filler. Say what a business does, what
+   it moves and where from. Nothing here should be a claim nobody could check.
 
-   ARABIC
-   Every -Ar field is a translation written for this build. It reads correctly
-   but has not been reviewed on the client side; check it before launch.
+   PHOTOGRAPHY
+   `hero` is the wide photograph behind a page's title; `still` is the upright
+   one beside its opening paragraphs; a product's `img` is its card. All of
+   them live in site-assets/img/ and are named for where they appear.
+
+   LANGUAGE
+   English only. The site carried Arabic until the content was rewritten, at
+   which point every translation described text that no longer existed. They
+   are in git history at 7f548c4 if they are ever wanted back — but they
+   describe the old copy, not this.
    ========================================================================== */
 
 const SITE = {
   name: 'Lusail Corp',
-  nameAr: 'لوسيل كورب',
   tagline: 'Building Businesses. Creating Value.',
-  taglineAr: 'نبني الأعمال. نصنع القيمة.',
   supporting: 'One Group. Multiple Businesses. Shared Ambition.',
-  supportingAr: 'مجموعة واحدة. أعمال متعددة. طموح مشترك.',
   blurb: 'A diversified corporate group based in the State of Qatar.',
-  blurbAr: 'مجموعة شركات متنوعة مقرها دولة قطر.',
   domain: 'https://www.lusailcorp.com',
 
   /* The logo is an asset, not a design ingredient. Nothing in the layout is
      derived from its shape, so swapping these files re-brands the site.
      Paths are relative to site-assets/logo/. */
   brand: {
-    /* The full-colour lockup on the paper header and the reversed one on the
-       navy footer — the two cuts the brand sheet itself shows. The header sits
-       on the warm paper ground rather than pure white, which is kinder to the
-       silver C. */
+    /* Both bars are carbon, so both take the reversed lockup. */
     logoOnLight: 'lusail-corp-horizontal-full-color.svg',
     logoOnDark: 'lusail-corp-horizontal-reversed.svg',
     logoWidth: 564, logoHeight: 142,
-      /* The monogram on its own, used large and decoratively. */
+    /* The monogram on its own, used large and quietly. */
     markOnLight: 'lusail-corp-mark-full-color.svg',
-  faviconSvg: 'favicon.svg',
+    faviconSvg: 'favicon.svg',
     faviconIco: 'favicon.ico',
     appleTouch: 'apple-touch-icon.png'
   },
@@ -54,20 +51,11 @@ const SITE = {
      message belongs to. The phone number is a placeholder: replace the zeros. */
   contact: {
     location: 'State of Qatar',
-    locationAr: 'دولة قطر',
     email: 'info@lusailcorp.com',
     phone: '+974 0000 0000',
     linkedin: '#',
     instagram: '#'
-  },
-
-  nav: [
-    { href: '/about/', label: 'The Group', labelAr: 'المجموعة' },
-    { href: '/companies/', label: 'Portfolio', labelAr: 'المحفظة' },
-    { href: '/sectors/', label: 'Where We Operate', labelAr: 'مجالات عملنا', mega: true },
-      { href: '/careers/', label: 'Join Us', labelAr: 'انضم إلينا' },
-    { href: '/contact/', label: 'Contact Us', labelAr: 'تواصل معنا' }
-  ]
+  }
 };
 
 /* --------------------------------------------------------------------------
@@ -76,227 +64,160 @@ const SITE = {
 
 const SECTORS = [
   {
-    slug: 'consumer-services',
-    name: 'Consumer & Lifestyle Services', nameAr: 'خدمات المستهلك ونمط الحياة',
-    short: 'Businesses designed around everyday customer needs, convenience and service.',
-    shortAr: 'أعمال مبنية على احتياجات العملاء اليومية والراحة وجودة الخدمة.',
-    headline: 'Everyday Services. Better Experiences.',
-    headlineAr: 'خدمات يومية. تجربة أفضل.',
-    intro: 'Our consumer-service businesses focus on practical customer needs and service quality.',
-    introAr: 'تركّز أعمالنا في خدمات المستهلك على الاحتياجات العملية للعملاء وعلى جودة الخدمة.',
-    body: [
-      'Through concepts such as Cavallo Laundry, we aim to develop reliable service businesses capable of building strong relationships with their customers.'
-    ],
-    bodyAr: [
-      'من خلال مفاهيم مثل مغسلة كافالو، نسعى إلى بناء شركات خدمات موثوقة قادرة على تكوين علاقات قوية مع عملائها.'
-    ],
-    /* Supplied by the client. Swap lifestyle-wide.jpg / -card.jpg to change it. */
-    photo: 'lifestyle', photoStyle: 'plate',
-    photoCaption: 'Garment care for everyday Qatari life.',
-    photoCaptionAr: 'العناية بالملابس في الحياة القطرية اليومية.',
+    slug: 'trading',
+    name: 'Trading & Commodities',
+    short: 'Sourcing, importing and exporting commodities, and moving them.',
+    headline: 'Global Supply, Commercially Answered',
+    intro: 'The Group buys commodities internationally and carries them, which is one business rather than two.',
     companies: [
       {
-        slug: 'cavallo-laundry',
-        template: 'split',
-        name: 'Cavallo Laundry', nameAr: 'مغسلة كافالو',
-        role: 'Professional Garment & Textile Care', roleAr: 'العناية الاحترافية بالملابس والمنسوجات',
-        headline: 'Professional Laundry & Garment Care',
-        headlineAr: 'غسيل وعناية احترافية بالملابس',
-        short: 'Professional laundry and garment-care services, focused on convenience, consistency and service quality.',
-        shortAr: 'خدمات غسيل وعناية احترافية بالملابس، تركّز على الراحة والثبات وجودة الخدمة.',
-        intro: 'Cavallo Laundry operates within Lusail Corp’s consumer services portfolio.',
-        introAr: 'تعمل مغسلة كافالو ضمن محفظة خدمات المستهلك في لوسيل كورب.',
+        slug: 'lusail-commercial',
+        /* Defined here, in its primary sector. It also operates in supply and
+           distribution, so it is cross-listed there too. */
+        alsoIn: ['supply-distribution'],
+        name: 'Lusail Commercial',
+        role: 'Trading & Logistics',
+        headline: 'Global Trade. Reliable Logistics. Connected Markets.',
+        short: 'Commodity trading and international freight — sourcing food and industrial commodities, and moving them by sea, land and air.',
+        intro: 'Lusail Commercial connects international trade with logistics, combining commodity sourcing with the freight capability to move it.',
         body: [
-          'The business provides professional laundry and garment-care services, combining practical service delivery with a focus on convenience and consistency.',
-          'The company represents Lusail Corp’s presence in the consumer and lifestyle services sector.'
-        ],
-        bodyAr: [
-          'تقدّم الشركة خدمات غسيل وعناية احترافية بالملابس، وتجمع بين تقديم الخدمة بشكل عملي والتركيز على الراحة والثبات.',
-          'وتمثّل الشركة حضور لوسيل كورب في قطاع خدمات المستهلك ونمط الحياة.'
+          'The business operates across two connected sides. Commodity trading sources and moves edible oils, sugar, wheat, coffee and granular sulphur through a global supplier network. Logistics manages the cargo itself — ocean, road and air freight, vessel chartering, trailers and heavy transport.',
+          'Keeping both under one roof means purchasing and transport are handled as one commercial decision, connecting origin, specification and route in a single enquiry.',
+          'Sourcing spans the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia. Which origin is used depends on the product, the season, quality, availability and the terms of the transaction.'
         ],
         facts: [
-          { k: 'Sector', kAr: 'القطاع', v: 'Consumer & Lifestyle Services', vAr: 'خدمات المستهلك ونمط الحياة' },
-          { k: 'Activity', kAr: 'النشاط', v: 'Laundry and Garment Care', vAr: 'الغسيل والعناية بالملابس' },
-          { k: 'Market', kAr: 'السوق', v: 'Qatar', vAr: 'قطر' }
+          { k: 'Sector', v: 'Trading, Supply & Distribution' },
+          { k: 'Activity', v: 'Commodity trading and international freight' },
+          { k: 'Market', v: 'Qatar, the GCC and international' },
+          { k: 'Transport', v: 'Sea, land, air and multimodal' }
         ],
-        cta: 'Visit Cavallo Laundry', ctaAr: 'زيارة مغسلة كافالو',
-        photo: 'lifestyle', photoStyle: 'plate'
-      }
-    ]
-  },
-
-  {
-    slug: 'food-beverage',
-    name: 'Food & Beverage', nameAr: 'الأغذية والمشروبات',
-    short: 'Consumer-facing concepts centred on quality products, service and experience.',
-    shortAr: 'مفاهيم موجّهة للمستهلك ترتكز على جودة المنتج والخدمة والتجربة.',
-    headline: 'Creating Consumer Brands',
-    headlineAr: 'نبني علامات استهلاكية',
-    intro: 'Food and beverage is an important part of our developing portfolio.',
-    introAr: 'تشكّل الأغذية والمشروبات جزءاً مهماً من محفظتنا المتنامية.',
-    body: [
-      'Through Nero Café, Lusail Corp is building direct experience in customer-facing hospitality and café operations.'
-    ],
-    bodyAr: [
-      'من خلال نيرو كافيه، تبني لوسيل كورب خبرة مباشرة في الضيافة وتشغيل المقاهي.'
-    ],
-    photo: 'coffee', photoStyle: 'still',
-    photoCaption: 'Coffee, the product the café is built around.',
-    photoCaptionAr: 'البن، المنتج الذي يقوم عليه المقهى.',
-    companies: [
-      {
-        slug: 'nero-cafe',
-        template: 'fullscreen',
-        name: 'Nero Café', nameAr: 'نيرو كافيه',
-        role: 'Coffee. Experience. Community.', roleAr: 'قهوة. تجربة. مجتمع.',
-        headline: 'A Coffee Concept Built Around Experience',
-        headlineAr: 'مفهوم قهوة يقوم على التجربة',
-        short: 'A café concept built around quality coffee, service and atmosphere.',
-        shortAr: 'مفهوم مقهى يقوم على جودة القهوة والخدمة وأجواء المكان.',
-        intro: 'Nero Café represents Lusail Corp’s presence within the food and beverage sector.',
-        introAr: 'يمثّل نيرو كافيه حضور لوسيل كورب في قطاع الأغذية والمشروبات.',
-        body: [
-          'Built around coffee, service and atmosphere, the café aims to create a welcoming experience for customers and establish a distinctive identity within Qatar’s dynamic food and beverage market.',
-          'The brand focuses on creating an inviting café experience where quality products, service and atmosphere come together.'
+        products: [
+          { t: 'Ocean Freight', img: 'prod-ocean-freight',
+            d: 'Full and part container loads, bulk, breakbulk and project cargo between Qatar and international ports.' },
+          { t: 'Vessel Chartering', img: 'prod-vessel-chartering',
+            d: 'Marine capacity arranged with shipping partners for bulk commodities and large-volume shipments.' },
+          { t: 'Land Freight', img: 'prod-land-freight',
+            d: 'Heavy trucks, flatbed and low-bed trailers and container movement within Qatar and across regional borders.' },
+          { t: 'Air Freight', img: 'prod-air-freight',
+            d: 'For urgent, high-value or time-sensitive cargo between Qatar and major international markets.' },
+          { t: 'Food & Agricultural Commodities', img: 'prod-food-commodities',
+            d: 'Edible oils, sugar, wheat and grains, and coffee, sourced by specification, origin and season.' },
+          { t: 'Industrial Commodities', img: 'prod-industrial-commodities',
+            d: 'Granular solid sulphur in bulk for industrial and commercial use, with the shipping arranged alongside.' }
         ],
-        bodyAr: [
-          'يقوم المقهى على القهوة والخدمة والأجواء، ويهدف إلى تقديم تجربة مرحّبة للعملاء وبناء هوية مميزة داخل سوق الأغذية والمشروبات النشط في قطر.',
-          'تركّز العلامة على خلق تجربة مقهى جاذبة تجتمع فيها جودة المنتج والخدمة والأجواء.'
-        ],
-        facts: [
-          { k: 'Sector', kAr: 'القطاع', v: 'Food & Beverage', vAr: 'الأغذية والمشروبات' },
-          { k: 'Activity', kAr: 'النشاط', v: 'Café & Coffee', vAr: 'المقهى والقهوة' },
-          { k: 'Market', kAr: 'السوق', v: 'Qatar', vAr: 'قطر' }
-        ],
-        cta: 'Discover Nero Café', ctaAr: 'اكتشف نيرو كافيه',
-        photo: 'coffee', photoStyle: 'still'
+        activities: ['Ocean Freight', 'Land Freight', 'Air Freight', 'Vessel Chartering', 'Multimodal Logistics', 'Commodity Trading', 'Import & Export', 'Global Sourcing'],
+        cta: 'Partner with Lusail Commercial',
+        hero: 'hero-lusail-commercial',
+        still: 'still-lusail-commercial'
       }
     ]
   },
 
   {
     slug: 'supply-distribution',
-    name: 'Supply & Distribution', nameAr: 'التوريد والتوزيع',
-    short: 'Commercial activities connecting producers and products with the Qatar market.',
-    shortAr: 'أنشطة تجارية تربط المنتجين والمنتجات بالسوق القطري.',
+    name: 'Supply & Distribution',
+    short: 'Bringing food into Qatar and getting it to the businesses that sell and serve it.',
     headline: 'Connecting Supply With Demand',
-    headlineAr: 'نربط العرض بالطلب',
-    intro: 'Distribution plays an important role in connecting producers, suppliers, businesses and customers.',
-    introAr: 'يؤدي التوزيع دوراً مهماً في الربط بين المنتجين والموردين والشركات والعملاء.',
-    body: [
-      'The sector currently operates in food. ROMA Commercial supplies fresh fruit and vegetables within Qatar, creating a foundation from which the product range and customer network can continue to develop.'
-    ],
-    bodyAr: [
-      'يعمل القطاع حالياً في مجال الأغذية. تورّد روما التجارية الفواكه والخضار الطازجة داخل قطر، بما يوفّر أساساً تتوسع منه تشكيلة المنتجات وشبكة العملاء.'
-    ],
-    /* Container ship at berth, from the supplied folder. Swap the file at
-       site-assets/img/port-wide.jpg and port-card.jpg to change the picture. */
-    photo: 'shipping', photoStyle: 'plate',
-    photoCaption: 'Containerised cargo arriving into the Qatar market.',
-    photoCaptionAr: 'بضائع بالحاويات تصل إلى السوق القطري.',
+    intro: 'Distribution is the link between a producer abroad and a kitchen, a shelf or a warehouse in Qatar.',
     companies: [
       {
         slug: 'roma-commercial',
-        template: 'left-aligned',
-        name: 'ROMA Commercial', nameAr: 'روما التجارية',
-        role: 'Food Import & Distribution', roleAr: 'استيراد وتوزيع الأغذية',
-        headline: 'From Global Farms to Qatar\u2019s Market',
-        headlineAr: 'من مزارع العالم إلى السوق القطري',
+        name: 'ROMA Commercial',
+        role: 'Food Import & Distribution',
+        headline: 'From Global Farms to Qatar’s Market',
         short: 'Import and distribution of fresh produce, rice and essential foods across the Qatar market.',
-        shortAr: 'استيراد وتوزيع المنتجات الطازجة والأرز والأغذية الأساسية في السوق القطري.',
-        intro: 'ROMA Commercial connects international producers and suppliers with businesses across Qatar, importing fresh fruit and vegetables, rice and essential food products.',
-        introAr: 'تربط روما التجارية المنتجين والموردين الدوليين بالشركات في أنحاء قطر، من خلال استيراد الفواكه والخضار الطازجة والأرز والمنتجات الغذائية الأساسية.',
+        intro: 'ROMA Commercial imports fresh fruit and vegetables, rice and essential foods, and distributes them to businesses across Qatar.',
         body: [
-          'Quality food distribution begins long before a product reaches the market. ROMA works across the supply chain: sourcing from suitable producers and international suppliers, coordinating import into Qatar, and distributing according to what the local market requires.',
-          'Agricultural products are seasonal, so sourcing has to move with the harvest. Rather than depending on a single origin, the company builds relationships across different growing regions, which lets it shift as seasons end, quality changes or availability tightens.',
-          'Fresh produce has a limited commercial life. The operating approach is therefore built around removing delay between source, import and distribution — so products reach supermarkets, hotels, restaurants, caterers and wholesalers in the condition the buyer expects.'
-        ],
-        bodyAr: [
-          'تعمل الشركة في التوريد والإمداد لتلبية احتياجات سوق الأغذية في قطر.',
-          'ومن خلال مصادر توريد موثوقة وعلاقات تجارية راسخة، تربط الشركة المنتجات الجيدة باحتياجات الشركات والعملاء في أنحاء قطر.',
-          'ومع تطوّر روما التجارية، تهدف الشركة إلى توسيع علاقاتها التجارية وفئات منتجاتها وقدراتها التوريدية.'
+          'Quality food distribution begins long before a product reaches the market. ROMA works across the supply chain: sourcing from producers and international suppliers, coordinating import into Qatar, and distributing to what the local market requires.',
+          'Agricultural products are seasonal, so sourcing moves with the harvest. Rather than depending on a single origin, the company builds relationships across different growing regions, which lets it shift as seasons end, quality changes or availability tightens.',
+          'Fresh produce has a short commercial life. The operating approach is built around removing delay between source, import and distribution, so products reach supermarkets, hotels, restaurants, caterers and wholesalers in the condition the buyer expects.'
         ],
         facts: [
-          { k: 'Sector', kAr: 'القطاع', v: 'Supply & Distribution', vAr: 'التوريد والتوزيع' },
-          { k: 'Activity', kAr: 'النشاط', v: 'Food import, wholesale and distribution', vAr: 'استيراد الأغذية والبيع بالجملة والتوزيع' },
-          { k: 'Market', kAr: 'السوق', v: 'Qatar', vAr: 'قطر' },
-          { k: 'Customers', kAr: 'العملاء', v: 'Retail, wholesale, hospitality and food service', vAr: 'التجزئة والجملة والضيافة وخدمات الأغذية' }
+          { k: 'Sector', v: 'Supply & Distribution' },
+          { k: 'Activity', v: 'Food import, wholesale and distribution' },
+          { k: 'Market', v: 'Qatar' },
+          { k: 'Customers', v: 'Retail, wholesale, hospitality and food service' }
         ],
         products: [
-          { t: 'Fresh Vegetables', tAr: 'الخضار الطازجة', d: 'A changing selection sourced by season, origin and customer demand — tomatoes, potatoes, onions, peppers, cucumbers and leafy produce among them.', dAr: 'تشكيلة متغيّرة يتم توريدها حسب الموسم والمنشأ وطلب العملاء — من الطماطم والبطاطس والبصل والفلفل والخيار والورقيات.' },
-          { t: 'Fresh Fruits', tAr: 'الفواكه الطازجة', d: 'Fruit sourced from international growing regions as seasons allow — apples, citrus, bananas, grapes, melons and stone fruit.', dAr: 'فواكه من مناطق زراعية دولية بحسب المواسم — التفاح والحمضيات والموز والعنب والبطيخ والفواكه ذات النواة.' },
-          { t: 'Rice', tAr: 'الأرز', d: 'Basmati, long-grain, parboiled and white rice, sourced by variety, grade and pack size for retail, food service and hospitality.', dAr: 'أرز بسمتي وطويل الحبة ومسلوق وأبيض، حسب الصنف والدرجة وحجم التعبئة للتجزئة وخدمات الأغذية والضيافة.' },
-          { t: 'Grains & Pulses', tAr: 'الحبوب والبقوليات', d: 'Lentils, chickpeas, beans, peas and wheat products, adapted to what customers in Qatar require.', dAr: 'العدس والحمص والفاصولياء والبازلاء ومنتجات القمح، بما يتوافق مع احتياجات العملاء في قطر.' },
-          { t: 'Dry Food Products', tAr: 'الأغذية الجافة', d: 'Shelf-stable and essential food categories sourced and imported according to commercial demand.', dAr: 'فئات غذائية أساسية وطويلة الصلاحية يتم توريدها واستيرادها حسب الطلب التجاري.' }
+          { t: 'Fresh Vegetables', img: 'prod-fresh-vegetables',
+            d: 'Sourced by season, origin and demand — tomatoes, potatoes, onions, peppers, cucumbers and leafy produce among them.' },
+          { t: 'Fresh Fruits', img: 'prod-fresh-fruits',
+            d: 'Apples, citrus, bananas, grapes, melons and stone fruit, from international growing regions as the seasons allow.' },
+          { t: 'Rice', img: 'prod-rice',
+            d: 'Basmati, long-grain, parboiled and white rice, by variety, grade and pack size for retail, food service and hospitality.' },
+          { t: 'Grains & Pulses', img: 'prod-grains-pulses',
+            d: 'Lentils, chickpeas, beans, peas and wheat products, adapted to what customers in Qatar require.' },
+          { t: 'Dry Food Products', img: 'prod-dry-food',
+            d: 'Shelf-stable staples sourced and imported to commercial demand.' }
         ],
         activities: ['International Sourcing', 'Food Import', 'Wholesale Supply', 'Qatar Distribution', 'Seasonal Sourcing', 'Supplier Development'],
-        activitiesAr: ['التوريد الدولي', 'استيراد الأغذية', 'التوريد بالجملة', 'التوزيع في قطر', 'التوريد الموسمي', 'تطوير الموردين'],
-        cta: 'Contact ROMA Commercial', ctaAr: 'تواصل مع روما التجارية',
-        photo: 'grain', photoStyle: 'plate'
+        cta: 'Talk to ROMA Commercial',
+        hero: 'hero-roma-commercial',
+        still: 'still-roma-commercial'
       }
     ]
   },
 
   {
-    slug: 'trading',
-    name: 'Trading & Commodities', nameAr: 'التجارة والسلع',
-    short: 'International sourcing, import, export and commercial trading across selected commodity categories.',
-    shortAr: 'التوريد الدولي والاستيراد والتصدير والتجارة في فئات مختارة من السلع.',
-    headline: 'Connecting Global Supply With Commercial Opportunity',
-    headlineAr: 'نربط التوريد العالمي بالفرصة التجارية',
-    intro: 'Lusail Commercial develops international sourcing, importing and exporting activities across selected product categories.',
-    introAr: 'تطوّر لوسيل التجارية أنشطة التوريد الدولي والاستيراد والتصدير في فئات مختارة من المنتجات.',
-    body: [
-      'Coffee and wheat currently form the initial focus of this business, with the potential for additional commodities and commercial activities as the company develops.'
-    ],
-    bodyAr: [
-      'يشكّل البن والقمح محور التركيز الأولي لهذا النشاط، مع إمكانية إضافة سلع وأنشطة تجارية أخرى مع تطوّر الشركة.'
-    ],
-    photo: 'grain', photoStyle: 'still',
-    photoCaption: 'Wheat and coffee, the initial focus of the Group’s trading business.',
-    photoCaptionAr: 'القمح والبن، محور التركيز الأولي لنشاط التجارة في المجموعة.',
+    slug: 'consumer-services',
+    name: 'Consumer & Lifestyle Services',
+    short: 'Everyday services, judged on convenience and how consistently they are delivered.',
+    headline: 'Everyday Services. Better Experiences.',
+    intro: 'A service business is judged on whether it does the same thing well every time.',
     companies: [
       {
-        slug: 'lusail-commercial',
-        template: 'compact',
-        /* Defined here, in its primary sector. It also operates in supply and
-           distribution, so it is cross-listed there too. */
-        alsoIn: ['supply-distribution'],
-        name: 'Lusail Commercial', nameAr: 'لوسيل التجارية',
-        role: 'Trading & Logistics', roleAr: 'التجارة والخدمات اللوجستية',
-        headline: 'Global Trade. Reliable Logistics. Connected Markets.',
-        headlineAr: 'تجارة عالمية. لوجستيات موثوقة. أسواق مترابطة.',
-        short: 'Commodity trading and international freight — moving goods by sea, land and air, and sourcing food and industrial commodities.',
-        shortAr: 'تجارة السلع والشحن الدولي — نقل البضائع بحراً وبراً وجواً، وتوريد السلع الغذائية والصناعية.',
-        intro: 'Lusail Commercial operates where international trade meets logistics, combining commodity sourcing with the freight capability to move it.',
-        introAr: 'تعمل لوسيل التجارية عند تقاطع التجارة الدولية مع الخدمات اللوجستية، جامعةً بين توريد السلع والقدرة على نقلها.',
+        slug: 'cavallo-laundry',
+        name: 'Cavallo Laundry',
+        role: 'Professional Garment & Textile Care',
+        headline: 'Professional Laundry & Garment Care',
+        short: 'Professional laundry and garment care, built around convenience and consistency.',
+        intro: 'Cavallo Laundry operates within Lusail Corp’s consumer services portfolio.',
         body: [
-          'The business runs on two sides that support each other. Commodity trading sources and moves edible oils, sugar, wheat, coffee and granular sulphur through an international network of producers and suppliers. Logistics coordinates the cargo itself — ocean, road and air freight, vessel chartering, trailers and heavy transport.',
-          'Keeping both under one roof is the point. Purchasing and transport are handled as one commercial question rather than two, so an enquiry can be answered with the origin, the specification and the route together.',
-          'Sourcing reaches across the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia. Which origin is used depends on the product, the season, quality, availability and the terms of the transaction.'
+          'The business provides professional laundry and garment care, handling everyday household items and pieces that need specialist treatment.',
+          'A laundry is judged on whether the same garment comes back the same way every time, so the work is built around turnaround, handling and consistency rather than volume alone.',
+          'Cavallo is the Group’s presence in consumer and lifestyle services, the part of the portfolio that serves households directly.'
         ],
-        bodyAr: [
-          'تركّز الشركة على استيراد وتصدير سلع مختارة، تشمل في البداية البن والقمح.',
-          'ومن خلال علاقاتها مع الموردين والشركاء التجاريين، تعمل لوسيل التجارية على تحديد فرص التوريد وبناء قنوات تجارية موثوقة بين الأسواق الدولية والعملاء.'
-        ],
-        products: [
-          { t: 'Ocean Freight', tAr: 'الشحن البحري', d: 'Full and part container loads, bulk, breakbulk and project cargo between Qatar and international ports.', dAr: 'حاويات كاملة وجزئية وبضائع سائبة وعامة وشحنات المشاريع بين قطر والموانئ الدولية.' },
-          { t: 'Vessel Chartering', tAr: 'استئجار السفن', d: 'Marine capacity arranged with shipping partners for bulk commodities and large-volume shipments.', dAr: 'تأمين سعة بحرية بالتعاون مع شركاء الشحن للسلع السائبة والشحنات كبيرة الحجم.' },
-          { t: 'Land Freight', tAr: 'الشحن البري', d: 'Heavy trucks, flatbed and low-bed trailers and container movement within Qatar and across regional borders.', dAr: 'شاحنات ثقيلة ومقطورات مسطحة ومنخفضة ونقل الحاويات داخل قطر وعبر الحدود الإقليمية.' },
-          { t: 'Air Freight', tAr: 'الشحن الجوي', d: 'For urgent, high-value or time-sensitive cargo between Qatar and major international markets.', dAr: 'للشحنات العاجلة أو عالية القيمة أو الحساسة للوقت بين قطر والأسواق الدولية الرئيسية.' },
-          { t: 'Food & Agricultural Commodities', tAr: 'السلع الغذائية والزراعية', d: 'Edible oils, sugar, wheat and grains, and coffee, sourced by specification, origin and season.', dAr: 'الزيوت الصالحة للأكل والسكر والقمح والحبوب والبن، حسب المواصفات والمنشأ والموسم.' },
-          { t: 'Industrial Commodities', tAr: 'السلع الصناعية', d: 'Granular solid sulphur in bulk for industrial and commercial applications, with the shipping arranged alongside.', dAr: 'الكبريت الصلب المحبب السائب للاستخدامات الصناعية والتجارية، مع تنسيق الشحن معه.' }
-        ],
-        activities: ['Ocean Freight', 'Land Freight', 'Air Freight', 'Vessel Chartering', 'Multimodal Logistics', 'Commodity Trading', 'Import & Export', 'Global Sourcing'],
-        activitiesAr: ['الشحن البحري', 'الشحن البري', 'الشحن الجوي', 'استئجار السفن', 'النقل متعدد الوسائط', 'تجارة السلع', 'الاستيراد والتصدير', 'التوريد العالمي'],
         facts: [
-          { k: 'Sector', kAr: 'القطاع', v: 'Trading, Supply & Distribution', vAr: 'التجارة والتوريد والتوزيع' },
-          { k: 'Activity', kAr: 'النشاط', v: 'Commodity trading and international freight', vAr: 'تجارة السلع والشحن الدولي' },
-          { k: 'Market', kAr: 'السوق', v: 'Qatar, the GCC and international', vAr: 'قطر ودول الخليج والأسواق الدولية' },
-          { k: 'Transport', kAr: 'النقل', v: 'Sea, land, air and multimodal', vAr: 'بحراً وبراً وجواً ومتعدد الوسائط' }
+          { k: 'Sector', v: 'Consumer & Lifestyle Services' },
+          { k: 'Activity', v: 'Laundry and garment care' },
+          { k: 'Market', v: 'Qatar' }
         ],
-        cta: 'Partner With Lusail Commercial', ctaAr: 'كن شريكاً للوسيل التجارية',
-        photo: 'shipping', photoStyle: 'plate'
+        activities: ['Garment Care', 'Textile Cleaning', 'Everyday Laundry', 'Specialist Treatment'],
+        cta: 'Ask about Cavallo Laundry',
+        hero: 'hero-cavallo-laundry',
+        still: 'lifestyle-wide'
+      }
+    ]
+  },
+
+  {
+    slug: 'food-beverage',
+    name: 'Food & Beverage',
+    short: 'Consumer-facing concepts built on the product, the service and the room.',
+    headline: 'Creating Consumer Brands',
+    intro: 'Hospitality is where the Group meets its customers face to face.',
+    companies: [
+      {
+        slug: 'nero-cafe',
+        name: 'Nero Café',
+        role: 'Coffee. Experience. Community.',
+        headline: 'A Coffee Concept Built Around Experience',
+        short: 'A café concept built on quality coffee, service and the room it is served in.',
+        intro: 'Nero Café represents Lusail Corp’s presence within the food and beverage sector.',
+        body: [
+          'The café is built around three things that have to work together: the coffee itself, the service across the counter, and the room people choose to sit in.',
+          'Qatar’s food and beverage market is busy and competitive, so the concept is aimed at being somewhere people return to rather than somewhere they pass through.',
+          'Nero gives the Group direct experience of running a customer-facing business — daily operations, staffing and standards — which is different from trading and distribution, and useful to it.'
+        ],
+        facts: [
+          { k: 'Sector', v: 'Food & Beverage' },
+          { k: 'Activity', v: 'Café and coffee' },
+          { k: 'Market', v: 'Qatar' }
+        ],
+        activities: ['Café Operations', 'Coffee', 'Hospitality', 'Customer Experience'],
+        cta: 'Ask about Nero Café',
+        hero: 'hero-nero-cafe',
+        still: 'coffee-still'
       }
     ]
   }
@@ -307,122 +228,115 @@ const SECTORS = [
    -------------------------------------------------------------------------- */
 
 const WHAT_WE_DO = [
-  { t: 'Build', tAr: 'نبني',
-    d: 'We identify opportunities to create and develop businesses that respond to real commercial and consumer demand.',
-    dAr: 'نحدّد الفرص لإنشاء وتطوير أعمال تستجيب لطلب تجاري واستهلاكي حقيقي.' },
-  { t: 'Operate', tAr: 'ندير',
-    d: 'We support companies with strategic direction, commercial oversight and the systems required for effective operations.',
-    dAr: 'ندعم الشركات بالتوجيه الاستراتيجي والإشراف التجاري والأنظمة اللازمة للتشغيل الفعّال.' },
-  { t: 'Grow', tAr: 'ننمّي',
-    d: 'We help our companies strengthen their market presence, improve their capabilities and pursue sustainable expansion.',
-    dAr: 'نساعد شركاتنا على تعزيز حضورها في السوق وتطوير قدراتها والسعي إلى توسّع مستدام.' },
-  { t: 'Partner', tAr: 'نشارك',
-    d: 'We develop relationships with suppliers, operators, businesses and international partners that can create mutual commercial value.',
-    dAr: 'نبني علاقات مع الموردين والمشغّلين والشركات والشركاء الدوليين بما يخلق قيمة تجارية متبادلة.' }
+  { t: 'Build',
+    d: 'We start businesses where we can see demand in the market rather than where a category looks attractive.' },
+  { t: 'Operate',
+    d: 'We give each company commercial direction, oversight and the systems it needs to run day to day.' },
+  { t: 'Grow',
+    d: 'We help each company widen its market, sharpen what it is good at, and expand where the numbers support it.' },
+  { t: 'Partner',
+    d: 'We build relationships with suppliers, operators and international partners that are worth something to both sides.' }
 ];
 
-/* Home: how the Group creates value */
+/* About: how the Group creates value */
 const VALUE_CREATION = [
-  { t: 'Strategic Direction', tAr: 'التوجيه الاستراتيجي',
-    d: 'We establish clear commercial priorities and support each business in defining its path forward.',
-    dAr: 'نضع أولويات تجارية واضحة وندعم كل شركة في تحديد مسارها.' },
-  { t: 'Operational Development', tAr: 'التطوير التشغيلي',
-    d: 'We encourage efficient processes, appropriate systems and stronger operating structures across our businesses.',
-    dAr: 'نشجّع على العمليات الكفؤة والأنظمة المناسبة والهياكل التشغيلية الأقوى في جميع أعمالنا.' },
-  { t: 'Market Development', tAr: 'تطوير السوق',
-    d: 'We support our companies as they identify customers, partnerships, products and opportunities for expansion.',
-    dAr: 'ندعم شركاتنا في تحديد العملاء والشراكات والمنتجات وفرص التوسّع.' },
-  { t: 'Group Capabilities', tAr: 'قدرات المجموعة',
-    d: 'Where appropriate, our companies can benefit from shared knowledge, commercial relationships and group-level capabilities.',
-    dAr: 'حيثما كان ملائماً، تستفيد شركاتنا من المعرفة المشتركة والعلاقات التجارية وقدرات المجموعة.' },
-  { t: 'Long-Term Perspective', tAr: 'نظرة بعيدة المدى',
-    d: 'We aim to develop businesses with lasting commercial foundations rather than focusing only on short-term opportunities.',
-    dAr: 'نسعى إلى بناء أعمال ذات أسس تجارية راسخة بدل التركيز على الفرص قصيرة الأجل وحدها.' }
+  { t: 'Strategic Direction',
+    d: 'We set the commercial priorities with each business and hold it to them.' },
+  { t: 'Operational Development',
+    d: 'We put in the processes and systems a company needs before it needs them.' },
+  { t: 'Market Development',
+    d: 'We help each company find its customers, its partners and its next product.' },
+  { t: 'Group Capabilities',
+    d: 'Sourcing, logistics and commercial relationships built in one company are open to the others.' },
+  { t: 'Long-Term Perspective',
+    d: 'We build for businesses that still make sense in ten years, not only this one.' }
 ];
 
 /* About: the Group's values */
 const VALUES = [
-  { t: 'Integrity', tAr: 'النزاهة',
-    d: 'We believe sustainable business begins with responsible decisions, transparency and respect for our partners, customers and people.',
-    dAr: 'نؤمن بأن العمل المستدام يبدأ بقرارات مسؤولة وشفافية واحترام لشركائنا وعملائنا وموظفينا.' },
-  { t: 'Execution', tAr: 'التنفيذ',
-    d: 'Ideas create opportunities. Execution turns those opportunities into businesses. We value action, accountability and measurable progress.',
-    dAr: 'الأفكار تصنع الفرص، والتنفيذ يحوّلها إلى أعمال. نقدّر المبادرة والمساءلة والتقدّم القابل للقياس.' },
-  { t: 'Customer Focus', tAr: 'التركيز على العميل',
-    d: 'Every company within our portfolio ultimately exists to serve a market. Understanding customers and delivering real value remain central to our approach.',
-    dAr: 'كل شركة في محفظتنا موجودة في النهاية لخدمة سوق. ويظل فهم العملاء وتقديم قيمة حقيقية في صميم نهجنا.' },
-  { t: 'Agility', tAr: 'المرونة',
-    d: 'Markets evolve quickly. We encourage our companies to remain responsive, practical and willing to adapt when new opportunities emerge.',
-    dAr: 'تتغيّر الأسواق بسرعة. نشجّع شركاتنا على البقاء سريعة الاستجابة وعملية ومستعدة للتكيّف عند ظهور فرص جديدة.' },
-  { t: 'Partnership', tAr: 'الشراكة',
-    d: 'Strong businesses are built through strong relationships. We value lasting relationships with suppliers, clients, employees and commercial partners.',
-    dAr: 'تُبنى الأعمال القوية على علاقات قوية. نقدّر العلاقات الدائمة مع الموردين والعملاء والموظفين والشركاء التجاريين.' },
-  { t: 'Long-Term Thinking', tAr: 'التفكير بعيد المدى',
-    d: 'We aim to create businesses with strong foundations and the ability to develop over time.',
-    dAr: 'نسعى إلى بناء أعمال ذات أسس متينة وقدرة على التطوّر مع الوقت.' }
+  { t: 'Integrity',
+    d: 'Responsible decisions, straight answers, and respect for the partners, customers and people we work with.' },
+  { t: 'Execution',
+    d: 'Ideas are cheap. We value the follow-through: action, accountability and progress that can be measured.' },
+  { t: 'Customer Focus',
+    d: 'Every company here exists to serve a market. Understanding that market is the whole job.' },
+  { t: 'Agility',
+    d: 'Markets move. Our companies are expected to move with them rather than wait for the year to end.' },
+  { t: 'Partnership',
+    d: 'Strong businesses are built on relationships that last longer than a single transaction.' },
+  { t: 'Long-Term Thinking',
+    d: 'We would rather build something with foundations than something with momentum.' }
 ];
 
 /* Home: what the Group is actively looking to do next */
 const GROWTH = [
-  { icon: 'found',       t: 'Establish new businesses.', tAr: 'تأسيس أعمال جديدة.' },
-  { icon: 'expand',      t: 'Expand existing companies.', tAr: 'توسيع الشركات القائمة.' },
-  { icon: 'sectors',     t: 'Enter new commercial sectors.', tAr: 'دخول قطاعات تجارية جديدة.' },
-  { icon: 'partnership', t: 'Develop strategic partnerships.', tAr: 'تطوير شراكات استراتيجية.' },
-  { icon: 'supply',      t: 'Build supplier and distribution relationships.', tAr: 'بناء علاقات توريد وتوزيع.' },
-  { icon: 'markets',     t: 'Explore new regional and international markets.', tAr: 'استكشاف أسواق إقليمية ودولية جديدة.' },
-  { icon: 'network',     t: 'Strengthen connections between our portfolio companies.', tAr: 'تعزيز الروابط بين شركات المحفظة.' }
+  { t: 'Establish new businesses.' },
+  { t: 'Expand existing companies.' },
+  { t: 'Enter new commercial sectors.' },
+  { t: 'Develop strategic partnerships.' },
+  { t: 'Build supplier and distribution relationships.' },
+  { t: 'Explore new regional and international markets.' },
+  { t: 'Strengthen connections between our portfolio companies.' }
 ];
 
-/* Partnerships page */
+/* About: who the Group wants to hear from. The partnerships page was a whole
+   page saying this; it is a section now, and the contact form routes each of
+   these to the right desk. */
 const PARTNER_TYPES = [
-  { icon: 'markets', t: 'International Suppliers', tAr: 'الموردون الدوليون',
-    d: 'Companies seeking reliable commercial relationships and market opportunities.',
-    dAr: 'شركات تبحث عن علاقات تجارية موثوقة وفرص في السوق.' },
-  { icon: 'found', t: 'Local Suppliers & Businesses', tAr: 'الموردون والشركات المحلية',
-    d: 'Organizations interested in supplying or collaborating with our portfolio companies.',
-    dAr: 'جهات ترغب في التوريد لشركات محفظتنا أو التعاون معها.' },
-  { icon: 'leaf', t: 'Producers & Exporters', tAr: 'المنتجون والمصدّرون',
-    d: 'Producers of food, agricultural products, coffee, wheat and other future trading categories.',
-    dAr: 'منتجو الأغذية والمنتجات الزراعية والبن والقمح وفئات تجارية أخرى مستقبلاً.' },
-  { icon: 'route', t: 'Distributors & Buyers', tAr: 'الموزعون والمشترون',
-    d: 'Businesses looking for commercial supply relationships within Qatar or international markets.',
-    dAr: 'شركات تبحث عن علاقات توريد تجاري داخل قطر أو في الأسواق الدولية.' },
-  { icon: 'partnership', t: 'Business Partners', tAr: 'الشركاء التجاريون',
-    d: 'Organizations interested in joint commercial opportunities, new concepts or strategic cooperation.',
-    dAr: 'جهات مهتمة بفرص تجارية مشتركة أو مفاهيم جديدة أو تعاون استراتيجي.' },
-  { icon: 'spark', t: 'Entrepreneurs', tAr: 'روّاد الأعمال',
-    d: 'Operators and founders with businesses or concepts that may complement the future direction of Lusail Corp.',
-    dAr: 'مشغّلون ومؤسسون لديهم أعمال أو مفاهيم قد تكمّل اتجاه لوسيل كورب المستقبلي.' }
+  { t: 'International Suppliers',
+    d: 'Producers and exporters looking for a route into the Qatar market.' },
+  { t: 'Local Suppliers & Businesses',
+    d: 'Companies that want to supply our businesses, or work alongside them.' },
+  { t: 'Producers & Exporters',
+    d: 'Growers and processors of food, agricultural products, coffee, wheat and the commodities we trade.' },
+  { t: 'Distributors & Buyers',
+    d: 'Businesses looking for reliable supply inside Qatar or in international markets.' },
+  { t: 'Business Partners',
+    d: 'Joint ventures, new concepts and long-term commercial cooperation.' },
+  { t: 'Entrepreneurs',
+    d: 'Operators and founders with a business or an idea that fits where the Group is going.' }
 ];
 
 /* Careers page */
 const CAREER_VALUES = [
-  { icon: 'spark',       t: 'Entrepreneurial Thinking', tAr: 'التفكير الريادي' },
-  { icon: 'shield',      t: 'Responsibility', tAr: 'المسؤولية' },
-  { icon: 'partnership', t: 'Collaboration', tAr: 'التعاون' },
-  { icon: 'target',      t: 'Customer Focus', tAr: 'التركيز على العميل' },
-  { icon: 'solve',       t: 'Problem Solving', tAr: 'حل المشكلات' },
-  { icon: 'cycle',       t: 'Continuous Development', tAr: 'التطوير المستمر' }
+  { icon: 'spark',       t: 'Entrepreneurial Thinking' },
+  { icon: 'shield',      t: 'Responsibility' },
+  { icon: 'partnership', t: 'Collaboration' },
+  { icon: 'target',      t: 'Customer Focus' },
+  { icon: 'solve',       t: 'Problem Solving' },
+  { icon: 'cycle',       t: 'Continuous Development' }
 ];
 
 /* Set to [] to show the "no current opening" state, which the brief specifies. */
 const OPEN_ROLES = [];
 
-/* Flat list of every company, each carrying a back-reference to the sector it
-   is defined in. A company appears here exactly once, however many sectors it
-   is listed under. */
+/* Home: the Group in four figures, on the band under the introduction.
+
+   THREE OF THESE ARE NOT VERIFIED. "5+ years", "10+ markets" and "50k+
+   customers" came from the design file, not from the Group, and no one has
+   confirmed them. Check them before launch or take them out; a wrong number
+   on a corporate home page is worse than no number. The fourth counts the
+   portfolio itself, so it is always right — leave v null to have it counted. */
+const FIGURES = [
+  { k: 'Years Building', v: '5+' },
+  { k: 'Markets Served', v: '10+' },
+  { k: 'Customers Served', v: '50k+' },
+  { k: 'Operating Companies', v: null }
+];
+
 /* The order the portfolio is listed in, wherever it is listed. The two
    trading businesses lead: they are the ones that carry the Group outside
    Qatar, and they are what an enquiry usually arrives about. Anything not
    named here keeps its sector order, behind them. */
 const COMPANY_ORDER = ['lusail-commercial', 'roma-commercial'];
 
+/* Flat list of every company, each carrying a back-reference to the sector it
+   is defined in. A company appears here exactly once, however many sectors it
+   is listed under. */
 const ALL_COMPANIES = SECTORS.flatMap(s =>
   s.companies.map(c => Object.assign({}, c, {
-    sectorSlug: s.slug, sectorName: s.name, sectorNameAr: s.nameAr,
-    sectors: [s.slug].concat(c.alsoIn || []),
-    photo: c.photo || s.photo,
-    photoStyle: c.photoStyle || s.photoStyle || 'none'
+    sectorSlug: s.slug, sectorName: s.name,
+    sectors: [s.slug].concat(c.alsoIn || [])
   }))
 ).sort((x, y) => {
   const rank = s => { const i = COMPANY_ORDER.indexOf(s); return i === -1 ? COMPANY_ORDER.length : i; };
@@ -436,10 +350,6 @@ SECTORS.forEach(s => {
   if (extra.length) s.companies = s.companies.concat(extra);
 });
 
-/* One ordering, applied in both directions. COMPANY_ORDER puts the two
-   trading businesses at the head of any list of companies — including the
-   list inside each sector — and the sectors those two work in lead the list
-   of sectors, so the Group opens on the part of it that trades abroad. */
 const rankCompany = slug => {
   const i = COMPANY_ORDER.indexOf(slug);
   return i === -1 ? COMPANY_ORDER.length : i;
@@ -450,15 +360,16 @@ SECTORS.forEach(s => {
 });
 
 SECTORS.sort((x, y) => {
-  /* a sector ranks by the best-ranked company in it */
+  /* A sector ranks by the best-ranked company that actually belongs to it.
+     A cross-listed company does not lend its rank to the other sector, or
+     Supply & Distribution would tie with Trading on the strength of a
+     company that is only visiting. */
   const best = s => s.companies.reduce(
-    (m, c) => Math.min(m, rankCompany(c.slug)), COMPANY_ORDER.length);
+    (m, c) => (c.sectorSlug && c.sectorSlug !== s.slug)
+      ? m : Math.min(m, rankCompany(c.slug)), COMPANY_ORDER.length);
   return best(x) - best(y);
 });
 
-/* The markets the Group sources from today, through Lusail Commercial. Not
-   every commodity comes from every country: the origin is chosen per product,
-   per season and per set of terms. */
 /* Where each market sits, so the map can be drawn from the same list the
    register reads from. [name, lon, lat]. */
 const REACH_POINTS = {
@@ -467,44 +378,37 @@ const REACH_POINTS = {
   'Asia & Central Asia': [['India', 78.9, 20.6], ['Indonesia', 113.9, -0.8], ['Vietnam', 108.3, 14.1], ['Singapore', 103.8, 1.4], ['Turkmenistan', 59.6, 39], ['Kazakhstan', 66.9, 48]],
   'Africa': [['Ethiopia', 40.5, 9.1], ['Uganda', 32.3, 1.4], ['Libya', 17.2, 26.3]],
   'The Americas': [['Canada', -106, 56], ['United States', -98, 39.8], ['Brazil', -51.9, -14.2], ['Colombia', -74.3, 4.6]],
-  'Oceania': [['Australia', 133.8, -25.3]],
+  'Oceania': [['Australia', 133.8, -25.3]]
 };
 
 const HUB = [51.53, 25.29];   // Doha
 
+/* The markets the Group sources from today, through Lusail Commercial. Not
+   every commodity comes from every country: the origin is chosen per product,
+   per season and per set of terms. */
 const REACH = [
-  { t: 'Middle East', tAr: 'الشرق الأوسط',
-    d: 'Qatar · UAE · Türkiye · Lebanon', dAr: 'قطر · الإمارات · تركيا · لبنان' },
-  { t: 'Europe & Black Sea', tAr: 'أوروبا والبحر الأسود',
-    d: 'Ukraine · Bulgaria · Spain', dAr: 'أوكرانيا · بلغاريا · إسبانيا' },
-  { t: 'Asia & Central Asia', tAr: 'آسيا وآسيا الوسطى',
-    d: 'India · Indonesia · Vietnam · Singapore · Turkmenistan · Kazakhstan', dAr: 'الهند · إندونيسيا · فيتنام · سنغافورة · تركمانستان · كازاخستان' },
-  { t: 'Africa', tAr: 'إفريقيا',
-    d: 'Ethiopia · Uganda · Libya', dAr: 'إثيوبيا · أوغندا · ليبيا' },
-  { t: 'The Americas', tAr: 'الأمريكتان',
-    d: 'Canada · United States · Brazil · Colombia', dAr: 'كندا · الولايات المتحدة · البرازيل · كولومبيا' },
-  { t: 'Oceania', tAr: 'أوقيانوسيا',
-    d: 'Australia', dAr: 'أستراليا' }
+  { t: 'Middle East', d: 'Qatar · UAE · Türkiye · Lebanon' },
+  { t: 'Europe & Black Sea', d: 'Ukraine · Bulgaria · Spain' },
+  { t: 'Asia & Central Asia', d: 'India · Indonesia · Vietnam · Singapore · Turkmenistan · Kazakhstan' },
+  { t: 'Africa', d: 'Ethiopia · Uganda · Libya' },
+  { t: 'The Americas', d: 'Canada · United States · Brazil · Colombia' },
+  { t: 'Oceania', d: 'Australia' }
 ];
 
 /* What the Group is, as distinct from the businesses inside it. */
 const WHY = [
-  { t: 'One group, not a holding list', tAr: 'مجموعة واحدة، لا قائمة ملكيات',
-    d: 'The businesses are run as parts of one group. Sourcing, logistics and commercial relationships developed in one company are available to the others.',
-    dAr: 'تُدار الأعمال كأجزاء من مجموعة واحدة. فالتوريد والخدمات اللوجستية والعلاقات التجارية التي تبنيها إحدى الشركات متاحة لبقيتها.' },
-  { t: 'Trade and logistics together', tAr: 'التجارة واللوجستيات معاً',
-    d: 'Buying a commodity and moving it are one question, not two. Holding both means an enquiry can be answered with the origin, the specification and the route at once.',
-    dAr: 'شراء السلعة ونقلها سؤال واحد لا سؤالان. وامتلاك الاثنين معاً يعني أن الاستفسار يُجاب بالمنشأ والمواصفات والمسار في آنٍ واحد.' },
-  { t: 'Built on the Qatar market', tAr: 'مبنية على السوق القطري',
-    d: 'Every business here serves demand we can see directly — households, kitchens, retailers and wholesalers in Qatar — before it looks further out.',
-    dAr: 'كل عمل هنا يخدم طلباً نراه مباشرة — المنازل والمطابخ وتجار التجزئة والجملة في قطر — قبل أن ينظر إلى أبعد من ذلك.' },
-  { t: 'Room to add', tAr: 'مساحة للإضافة',
-    d: 'The sector names are deliberately broad. They describe where we operate now and leave room for what the Group takes on next.',
-    dAr: 'أسماء القطاعات واسعة عن قصد. فهي تصف موقعنا الحالي وتترك مساحة لما ستتولاه المجموعة لاحقاً.' }
+  { t: 'One group, not a holding list',
+    d: 'The businesses are run as parts of one group. Sourcing, logistics and commercial relationships developed in one company are available to the others.' },
+  { t: 'Trade and logistics together',
+    d: 'Buying a commodity and moving it are one question, not two. Holding both means an enquiry can be answered with the origin, the specification and the route at once.' },
+  { t: 'Built on the Qatar market',
+    d: 'Every business here serves demand we can see directly — households, kitchens, retailers and wholesalers in Qatar — before it looks further out.' },
+  { t: 'Room to add',
+    d: 'The sector names are deliberately broad. They describe where we operate now and leave room for what the Group takes on next.' }
 ];
 
 module.exports = {
   SITE, SECTORS, ALL_COMPANIES, REACH, REACH_POINTS, HUB, WHY,
-  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH,
+  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
   PARTNER_TYPES, CAREER_VALUES, OPEN_ROLES
 };

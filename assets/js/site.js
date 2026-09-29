@@ -1,6 +1,9 @@
 /* ==========================================================================
    Lusail Corp — site behaviour.
-   Language, header, mega menu, company filter, contact form.
+
+   Every interaction here has a resting state that works without it: the
+   panels are open in the markup where it matters, the map is a picture, the
+   figures are already written out. This layer only makes them move.
    ========================================================================== */
 
 (function () {
@@ -8,188 +11,262 @@
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var still = matchMedia('(prefers-reduced-motion: reduce)');
 
-  /* ---------- language ---------------------------------------------------
-     Every translatable node carries English as its content and Arabic in
-     data-ar. The first switch stores the English so it can come back. */
+  /* Nothing is hidden for the sake of an animation until this line proves
+     the script is running and can put it back. */
+  document.documentElement.classList.add('js');
 
-  var lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
-  var T = function (en, ar) { return lang === 'ar' ? ar : en; };
-
-  function setLang(l) {
-    lang = l;
-    document.documentElement.lang = l;
-    document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
-
-    $$('[data-ar]').forEach(function (el) {
-      if (el.dataset.en === undefined) el.dataset.en = el.textContent;
-      el.textContent = l === 'ar' ? el.dataset.ar : el.dataset.en;
-    });
-
-    var btn = $('#langBtn');
-    if (btn) {
-      btn.textContent = l === 'ar' ? 'English' : 'عربي';
-      btn.setAttribute('aria-label', l === 'ar' ? 'Switch to English' : 'التبديل إلى العربية');
-    }
-    if (typeof refreshCount === 'function') refreshCount();
-    try { localStorage.setItem('lc-lang', l); } catch (e) {}
-  }
-
-  var langBtn = $('#langBtn');
-  if (langBtn) langBtn.addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en'); });
-
-  /* ---------- header ----------------------------------------------------- */
+  /* ---------- the bar ------------------------------------------------------
+     Over the home photograph it starts transparent; a few pixels of scroll
+     fills it in so the links stay legible against whatever is behind them. */
 
   var head = $('.site-head');
   if (head) {
     var onScroll = function () { head.classList.toggle('scrolled', window.scrollY > 8); };
-    window.addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('scroll', onScroll, { passive: true });
     onScroll();
   }
 
-  /* ---------- drawers ------------------------------------------------------
-     Two panels, one each side. Only one is ever open. Escape closes, so does
-     the scrim and any link inside. Focus moves into the panel on open and
-     back to the button that opened it on close. */
+  /* ---------- the sectors panel -------------------------------------------
+     Opens on hover with a pointer, on click or Enter without one, and closes
+     on Escape or on a click outside. */
 
-  var scrim = $('#scrim');
-  var openDrawer = null, opener = null;
-
-  var closeDrawer = function (restore) {
-    if (!openDrawer) return;
-    openDrawer.classList.remove('open');
-    var panel = openDrawer;
-    setTimeout(function () { if (!panel.classList.contains('open')) panel.hidden = true; }, 260);
-    if (scrim) { scrim.classList.remove('open'); setTimeout(function () { if (!openDrawer) scrim.hidden = true; }, 260); }
-    if (opener) opener.setAttribute('aria-expanded', 'false');
-    document.documentElement.style.overflow = '';
-    if (restore && opener) opener.focus();
-    openDrawer = null; opener = null;
-  };
-
-  var showDrawer = function (panel, btn) {
-    if (openDrawer === panel) { closeDrawer(true); return; }
-    if (openDrawer) closeDrawer(false);
-    panel.hidden = false;
-    if (scrim) scrim.hidden = false;
-    /* next frame, so the transition has a start state to move from */
-    requestAnimationFrame(function () {
-      panel.classList.add('open');
-      if (scrim) scrim.classList.add('open');
+  var navwrap = $('#navwrap'), secBtn = $('#secBtn');
+  if (navwrap && secBtn) {
+    var setSec = function (open) {
+      navwrap.classList.toggle('open', open);
+      secBtn.setAttribute('aria-expanded', String(open));
+    };
+    secBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      setSec(secBtn.getAttribute('aria-expanded') !== 'true');
     });
-    btn.setAttribute('aria-expanded', 'true');
-    document.documentElement.style.overflow = 'hidden';
-    openDrawer = panel; opener = btn;
-    var first = panel.querySelector('[data-close]');
-    if (first) first.focus();
-  };
+    if (matchMedia('(hover: hover)').matches) {
+      navwrap.addEventListener('mouseenter', function () { setSec(true); });
+      navwrap.addEventListener('mouseleave', function () { setSec(false); });
+    }
+    navwrap.addEventListener('focusout', function (e) {
+      if (!navwrap.contains(e.relatedTarget)) setSec(false);
+    });
+    document.addEventListener('click', function (e) {
+      if (!navwrap.contains(e.target)) setSec(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && navwrap.classList.contains('open')) { setSec(false); secBtn.focus(); }
+    });
+  }
 
-  [['#sectorsBtn', '#sectorsDrawer'], ['#corpBtn', '#corpDrawer']].forEach(function (pair) {
-    var btn = $(pair[0]), panel = $(pair[1]);
-    if (!btn || !panel) return;
-    btn.addEventListener('click', function () { showDrawer(panel, btn); });
-    panel.addEventListener('click', function (e) {
-      if (e.target.closest('[data-close]') || e.target.closest('a')) closeDrawer(false);
+  /* ---------- the small-screen menu ---------------------------------------- */
+
+  var burger = $('#burger'), menu = $('#menu');
+  if (burger && menu) {
+    var setMenu = function (open) {
+      menu.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+    };
+    burger.addEventListener('click', function () {
+      setMenu(burger.getAttribute('aria-expanded') !== 'true');
+    });
+    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); }
+    });
+    addEventListener('resize', function () {
+      if (innerWidth > 1080 && menu.classList.contains('open')) setMenu(false);
+    });
+  }
+
+  /* ---------- what makes it a group ----------------------------------------
+     The reasoning opens on hover in CSS. This adds the same on a tap, and
+     keeps aria-expanded honest for anyone listening. */
+
+  $$('.bcard').forEach(function (card) {
+    if (card.classList.contains('bcard-photo')) return;    // its text is always out
+    card.addEventListener('click', function () {
+      var on = !card.classList.contains('on');
+      card.classList.toggle('on', on);
+      card.setAttribute('aria-expanded', String(on));
     });
   });
 
-  if (scrim) scrim.addEventListener('click', function () { closeDrawer(true); });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && openDrawer) closeDrawer(true);
-  });
+  /* ---------- building more than a portfolio -------------------------------
+     One panel open at a time. Clicking a closed one moves the opening to it;
+     the open one stays open, so the row is never blank. */
 
-  /* a sector opens to the companies inside it */
-  $$('.dcat-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var on = btn.getAttribute('aria-expanded') === 'true';
-      $$('.dcat-btn').forEach(function (o) {
-        if (o !== btn) { o.setAttribute('aria-expanded', 'false'); o.parentNode.classList.remove('open'); }
-      });
-      btn.setAttribute('aria-expanded', String(!on));
-      btn.parentNode.classList.toggle('open', !on);
-    });
-  });
-
-  /* open the sector the current page belongs to */
-  (function () {
-    var here = location.pathname;
-    $$('.dcat').forEach(function (cat) {
-      if ([].some.call(cat.querySelectorAll('a'), function (x) { return x.getAttribute('href') === here; })) {
-        cat.classList.add('open');
-        var b = cat.querySelector('.dcat-btn');
-        if (b) b.setAttribute('aria-expanded', 'true');
+  var ladder = $('#ladder');
+  if (ladder) {
+    var panels = $$('.lad', ladder);
+    var openLad = function (i) {
+      panels.forEach(function (p, k) { p.setAttribute('aria-expanded', String(k === i)); });
+    };
+    panels.forEach(function (p, i) {
+      p.addEventListener('click', function () { openLad(i); });
+      /* on a pointer it follows the cursor, which reads as one continuous
+         object rather than four buttons */
+      if (matchMedia('(hover: hover)').matches && innerWidth > 860) {
+        p.addEventListener('mouseenter', function () { openLad(i); });
       }
-    });
-  })();
-
-  /* ---------- sector marquee ----------------------------------------------
-     The cards move on their own. WCAG 2.2.2 asks for a way to stop motion
-     that runs longer than five seconds, so besides pausing on hover and on
-     keyboard focus (both CSS), this is a real control. Under
-     prefers-reduced-motion the track never animates and the button is
-     hidden, so there is nothing to stop. */
-
-  var mq = $('#mq'), mqBtn = $('#mqBtn');
-  if (mq && mqBtn) {
-    var label = mqBtn.querySelector('span:last-child');
-    mqBtn.addEventListener('click', function () {
-      var paused = mq.dataset.paused !== 'true';
-      mq.dataset.paused = String(paused);
-      mqBtn.setAttribute('aria-pressed', String(paused));
-      var en = paused ? 'Play' : 'Pause';
-      var ar = paused ? 'تشغيل' : 'إيقاف';
-      label.dataset.en = en;
-      label.dataset.ar = ar;
-      label.textContent = T(en, ar);
+      p.addEventListener('keydown', function (e) {
+        var n = panels.length, j = null;
+        if (e.key === 'ArrowRight') j = (i + 1) % n;
+        else if (e.key === 'ArrowLeft') j = (i - 1 + n) % n;
+        if (j !== null) { e.preventDefault(); openLad(j); panels[j].focus(); }
+      });
     });
   }
 
-  /* ---------- sector accordion --------------------------------------------
-     Each sector opens in place to show the companies inside it. The panel
-     animates on grid-template-rows, so it works without knowing the height,
-     and the global reduced-motion rule turns the animation off. */
+  /* ---------- the values ---------------------------------------------------
+     One open at a time. The first is open in the markup, so the column has a
+     shape before this runs and keeps one if it never does. */
 
-  var acc = $('.acc');
-  if (acc) {
-    acc.addEventListener('click', function (e) {
-      var btn = e.target.closest('.acc-btn');
-      if (!btn) return;
-      var item = btn.closest('.acc-item');
-      var open = !item.classList.contains('open');
-      item.classList.toggle('open', open);
-      btn.setAttribute('aria-expanded', String(open));
+  var valacc = $('#valacc');
+  if (valacc) {
+    var vals = $$('.val', valacc);
+    vals.forEach(function (item) {
+      var btn = $('.val-btn', item);
+      btn.addEventListener('click', function () {
+        var open = !item.classList.contains('open');
+        vals.forEach(function (o) {
+          o.classList.remove('open');
+          $('.val-btn', o).setAttribute('aria-expanded', 'false');
+        });
+        item.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+      });
     });
   }
 
-  /* ---------- company filter ---------------------------------------------
+  /* ---------- the product rail ---------------------------------------------
+     The rail scrolls on its own; these two buttons move it a card at a time
+     and grey themselves out at each end. */
+
+  $$('.railbtn').forEach(function (btn) {
+    var rail = document.getElementById(btn.dataset.rail);
+    if (!rail) return;
+    btn.addEventListener('click', function () {
+      var card = rail.firstElementChild;
+      var step = card ? card.getBoundingClientRect().width + 18 : 320;
+      rail.scrollBy({ left: step * +btn.dataset.dir, behavior: 'smooth' });
+    });
+  });
+
+  $$('.prodrail').forEach(function (rail) {
+    var btns = $$('.railbtn[data-rail="' + rail.id + '"]');
+    if (!btns.length) return;
+    var sync = function () {
+      var max = rail.scrollWidth - rail.clientWidth;
+      btns.forEach(function (b) {
+        b.disabled = +b.dataset.dir < 0 ? rail.scrollLeft < 4 : rail.scrollLeft > max - 4;
+      });
+    };
+    rail.addEventListener('scroll', sync, { passive: true });
+    addEventListener('resize', sync);
+    sync();
+  });
+
+  /* ---------- where we source from -----------------------------------------
+     A pin and its row in the register below are the same market, so lighting
+     one lights the other. */
+
+  var mapwrap = $('#mapwrap');
+  if (mapwrap) {
+    var rows = $$('.reg > div');
+    var mark = function (region, on) {
+      rows.forEach(function (r) {
+        if (r.dataset.region === region) r.classList.toggle('on', on);
+      });
+    };
+    $$('.pin', mapwrap).forEach(function (pin) {
+      var region = pin.dataset.region;
+      pin.addEventListener('mouseenter', function () { mark(region, true); });
+      pin.addEventListener('mouseleave', function () { mark(region, false); });
+      pin.addEventListener('focus', function () { mark(region, true); });
+      pin.addEventListener('blur', function () { mark(region, false); });
+      pin.addEventListener('click', function () {
+        var on = !pin.classList.contains('on');
+        $$('.pin', mapwrap).forEach(function (p) {
+          p.classList.remove('on');
+          mark(p.dataset.region, false);
+        });
+        pin.classList.toggle('on', on);
+        mark(region, on);
+      });
+    });
+  }
+
+  /* ---------- the four figures ---------------------------------------------
+     They are written into the HTML, so they are right before this runs and
+     right if it never does. This only counts them up the first time they
+     come into view. */
+
+  var stats = $('#stats');
+  if (stats && !still.matches && 'IntersectionObserver' in window) {
+    var run = function () {
+      $$('dd', stats).forEach(function (el) {
+        var raw = el.dataset.to || el.textContent;
+        var m = raw.match(/^(\d+)(.*)$/);
+        if (!m) return;
+        var end = +m[1], suffix = m[2], t0 = 0;
+        var step = function (ts) {
+          if (!t0) t0 = ts;
+          var p = Math.min(1, (ts - t0) / 900);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(end * eased) + suffix;
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    };
+    var so = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { run(); so.disconnect(); } });
+    }, { threshold: .4 });
+    so.observe(stats);
+  }
+
+  /* ---------- arrival -------------------------------------------------------
+     Each band lifts in once. Without an observer, or with reduced motion,
+     everything is simply already there. */
+
+  var rise = $$('.rise');
+  if (rise.length) {
+    if (still.matches || !('IntersectionObserver' in window)) {
+      rise.forEach(function (el) { el.classList.add('in'); });
+    } else {
+      var ro = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          /* Arriving by anchor, or jumping down the page, leaves bands above
+             the viewport that never intersect. Anything already passed is
+             simply there. */
+          if (!e.isIntersecting && e.boundingClientRect.top > 0) return;
+          e.target.classList.add('in');
+          ro.unobserve(e.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: .12 });
+      rise.forEach(function (el) { ro.observe(el); });
+    }
+  }
+
+  /* ---------- company filter ------------------------------------------------
      One list of every company, sliced by sector without a page reload. */
 
   var grid = $('#coGrid'), countEl = $('#count'), emptyEl = $('#empty');
-  var refreshCount;
 
   if (grid) {
     var chips = $$('.chip');
     var cards = $$('a[data-sector]', grid);
     var active = 'all';
 
-    refreshCount = function () {
+    var refreshCount = function () {
       var shown = cards.filter(function (c) { return !c.hidden; }).length;
       var label = chips.filter(function (c) { return c.dataset.filter === active; })[0];
-      var secEn = '', secAr = '';
-      if (label && active !== 'all') {
-        var sp = label.querySelector('span');
-        secEn = ' in ' + (sp.dataset.en || sp.textContent);
-        secAr = ' في ' + (sp.dataset.ar || sp.textContent);
-      }
-      var en = active === 'all'
+      /* the chip carries its own name, so the count does not have to pick it
+         back out of the markup */
+      var where = label && active !== 'all' ? ' in ' + label.dataset.label : '';
+      countEl.textContent = active === 'all'
         ? 'Showing all ' + shown + ' companies'
-        : 'Showing ' + shown + (shown === 1 ? ' company' : ' companies') + secEn;
-      var ar = active === 'all'
-        ? 'عرض جميع الشركات (' + shown + ')'
-        : 'عرض ' + shown + (shown === 1 ? ' شركة' : ' شركات') + secAr;
-      countEl.dataset.en = en;
-      countEl.dataset.ar = ar;
-      countEl.textContent = T(en, ar);
+        : 'Showing ' + shown + (shown === 1 ? ' company' : ' companies') + where;
     };
 
     var filter = function (slug) {
@@ -230,12 +307,10 @@
   }
 
   /* ---------- contact form -----------------------------------------------
-     Set CONTACT_ENDPOINT to a URL that accepts a JSON POST to make this live.
-     While it is empty the form validates and confirms but sends nothing. */
+     Posts to the serverless function in api/contact.js, which relays through
+     Resend. If it is unreachable, or CONTACT_ENDPOINT is emptied, the form
+     falls back to the visitor's mail client, so an enquiry is never lost. */
 
-  /* The serverless function in api/contact.js, which relays through Resend.
-     If it is unreachable the form falls back to the visitor's mail client,
-     so an enquiry is never simply lost. */
   var CONTACT_ENDPOINT = '/api/contact';
 
   var form = $('#form');
@@ -245,28 +320,38 @@
       status.className = isError ? 'status err' : 'status';
       status.textContent = msg;
     };
+    var areaSel = form.querySelector('select[name="area"]');
 
-    /* Build a mailto the visitor can simply send. Keeps the enquiry alive
-       while CONTACT_ENDPOINT is empty. */
+    /* A company page links here as /contact/?company=<slug>; start the
+       dropdown on that company so the enquiry is routed to it. */
+    try {
+      var pre = new URLSearchParams(location.search).get('company');
+      if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) {
+        areaSel.value = pre;
+      }
+    } catch (e) {}
+
+    /* Build a mailto the visitor can simply send. */
     var handOff = function () {
       var to = form.getAttribute('data-mailto');
-      if (!to) { say(T('Please email us directly.', 'يرجى مراسلتنا مباشرة.'), true); return; }
+      if (!to) { say('Please email us directly.', true); return; }
       var f = {};
       new FormData(form).forEach(function (v, k) { f[k] = v; });
-      var subject = T('Website enquiry', 'استفسار من الموقع') + (f.area ? ' \u2014 ' + f.area : '');
+      // the option's visible label, not its routing code
+      if (areaSel && areaSel.selectedIndex > -1) f.area = areaSel.options[areaSel.selectedIndex].textContent;
+      var subject = 'Website enquiry' + (f.area ? ' — ' + f.area : '');
       var lines = [
-        T('Name', 'الاسم') + ': ' + (f.name || ''),
-        T('Company', 'الشركة') + ': ' + (f.company || ''),
-        T('Email', 'البريد الإلكتروني') + ': ' + (f.email || ''),
-        T('Phone', 'الهاتف') + ': ' + (f.phone || ''),
-        T('Area of interest', 'مجال الاهتمام') + ': ' + (f.area || ''),
+        'Name: ' + (f.name || ''),
+        'Company: ' + (f.company || ''),
+        'Email: ' + (f.email || ''),
+        'Phone: ' + (f.phone || ''),
+        'Area of interest: ' + (f.area || ''),
         '', (f.message || '')
       ].join('\n');
-      window.location.href = 'mailto:' + to +
+      location.href = 'mailto:' + to +
         '?subject=' + encodeURIComponent(subject) +
         '&body=' + encodeURIComponent(lines);
-      say(T('Opening your email app to send this to us.',
-            'يتم فتح تطبيق البريد لديك لإرسال الرسالة إلينا.'));
+      say('Opening your email app to send this to us.');
     };
 
     form.addEventListener('submit', function (e) {
@@ -278,25 +363,20 @@
 
       if (missing) {
         say(missing.type === 'email'
-          ? T('Enter a valid email address, like name@company.qa.', 'أدخل بريداً إلكترونياً صحيحاً، مثل name@company.qa.')
-          : T('Fill in your name, email and message to send.', 'أكمل الاسم والبريد الإلكتروني والرسالة للإرسال.'), true);
+          ? 'Enter a valid email address, like name@company.qa.'
+          : 'Fill in your name, email and message to send.', true);
         missing.focus();
         return;
       }
 
-      var sent = T('Message sent. We reply within two working days.', 'تم إرسال الرسالة. نرد خلال يومي عمل.');
-
-      /* No endpoint yet. Rather than confirm a send that did not happen,
-         hand the message to the visitor's mail client, already filled in. */
       if (!CONTACT_ENDPOINT) { handOff(); return; }
 
       var btn = form.querySelector('button[type="submit"]');
       btn.disabled = true;
-      say(T('Sending…', 'جارٍ الإرسال…'));
+      say('Sending…');
 
       var body = {};
       new FormData(form).forEach(function (v, k) { body[k] = v; });
-      body.lang = lang;
 
       fetch(CONTACT_ENDPOINT, {
         method: 'POST',
@@ -304,54 +384,16 @@
         body: JSON.stringify(body)
       }).then(function (res) {
         if (!res.ok) throw new Error(res.status);
-        say(sent); form.reset();
+        say('Message sent. We reply within two working days.');
+        form.reset();
       }).catch(function () {
         /* Do not make them retype it — open their mail client with the
            message already filled in. */
-        say(T('We could not send that. Opening your email app instead.',
-              'تعذّر الإرسال. يتم فتح تطبيق البريد لديك.'), true);
+        say('We could not send that. Opening your email app instead.', true);
         setTimeout(handOff, 900);
       }).then(function () {
         btn.disabled = false;
       });
     });
   }
-
-
-  /* ---------- what makes it a group ---------------------------------------
-     A tablist: click or arrow between the statements, one panel at a time. */
-
-  var whyTabs = $$('.whyp-tab');
-  if (whyTabs.length) {
-    var showWhy = function (i, focus) {
-      whyTabs.forEach(function (t, k) {
-        var on = k === i;
-        t.setAttribute('aria-selected', String(on));
-        t.setAttribute('tabindex', on ? '0' : '-1');
-        var panel = document.getElementById(t.getAttribute('aria-controls'));
-        if (panel) panel.hidden = !on;
-      });
-      if (focus) whyTabs[i].focus();
-    };
-    whyTabs.forEach(function (t, i) {
-      t.addEventListener('click', function () { showWhy(i); });
-      t.addEventListener('keydown', function (e) {
-        var n = whyTabs.length, i2 = null;
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') i2 = (i + 1) % n;
-        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') i2 = (i - 1 + n) % n;
-        else if (e.key === 'Home') i2 = 0;
-        else if (e.key === 'End') i2 = n - 1;
-        if (i2 !== null) { e.preventDefault(); showWhy(i2, true); }
-      });
-    });
-  }
-
-  /* ---------- boot -------------------------------------------------------- */
-
-  var saved = 'en';
-  try {
-    var q = new URLSearchParams(location.search).get('lang');
-    saved = (q === 'ar' || q === 'en') ? q : (localStorage.getItem('lc-lang') || 'en');
-  } catch (e) {}
-  if (saved === 'ar') setLang('ar');
 })();
