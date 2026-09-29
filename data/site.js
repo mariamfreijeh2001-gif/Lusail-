@@ -107,8 +107,12 @@ const SECTORS = [
           { t: 'Air Freight', img: 'prod-air-freight',
             d: 'For urgent, high-value or time-sensitive cargo between Qatar and major international markets.' },
           { t: 'Food & Agricultural Commodities', img: 'prod-food-commodities',
+            origins: ['Ukraine', 'Kazakhstan', 'India', 'Indonesia', 'Brazil', 'Colombia', 'Ethiopia', 'Uganda'],
+            origins: ['Ukraine', 'Kazakhstan', 'India', 'Indonesia', 'Brazil', 'Colombia', 'Ethiopia', 'Uganda'],
             d: 'Edible oils, sugar, wheat and grains, and coffee, sourced by specification, origin and season.' },
           { t: 'Industrial Commodities', img: 'prod-industrial-commodities',
+            origins: ['Qatar', 'UAE', 'Turkmenistan', 'Kazakhstan'],
+            origins: ['Qatar', 'UAE', 'Turkmenistan', 'Kazakhstan'],
             d: 'Granular solid sulphur in bulk for industrial and commercial use, with the shipping arranged alongside.' }
         ],
         activities: ['Ocean Freight', 'Land Freight', 'Air Freight', 'Vessel Chartering', 'Multimodal Logistics', 'Commodity Trading', 'Import & Export', 'Global Sourcing'],
@@ -152,14 +156,24 @@ const SECTORS = [
         ],
         products: [
           { t: 'Fresh Vegetables', img: 'prod-fresh-vegetables',
+            origins: ['Spain', 'Türkiye', 'India', 'China'],
+            origins: ['Spain', 'Türkiye', 'India', 'China'],
             d: 'Sourced by season, origin and demand — tomatoes, potatoes, onions, peppers, cucumbers and leafy produce among them.' },
           { t: 'Fresh Fruits', img: 'prod-fresh-fruits',
+            origins: ['Spain', 'Brazil', 'Colombia', 'India'],
+            origins: ['Spain', 'Brazil', 'Colombia', 'India'],
             d: 'Apples, citrus, bananas, grapes, melons and stone fruit, from international growing regions as the seasons allow.' },
           { t: 'Rice', img: 'prod-rice',
+            origins: ['India', 'Vietnam'],
+            origins: ['India', 'Vietnam'],
             d: 'Basmati, long-grain, parboiled and white rice, by variety, grade and pack size for retail, food service and hospitality.' },
           { t: 'Grains & Pulses', img: 'prod-grains-pulses',
+            origins: ['Canada', 'Australia', 'Türkiye', 'India'],
+            origins: ['Canada', 'Australia', 'Türkiye', 'India'],
             d: 'Lentils, chickpeas, beans, peas and wheat products, adapted to what customers in Qatar require.' },
           { t: 'Dry Food Products', img: 'prod-dry-food',
+            origins: ['Türkiye', 'India', 'China', 'UAE'],
+            origins: ['Türkiye', 'India', 'China', 'UAE'],
             d: 'Shelf-stable staples sourced and imported to commercial demand.' }
         ],
         activities: ['International Sourcing', 'Food Import', 'Wholesale Supply', 'Qatar Distribution', 'Seasonal Sourcing', 'Supplier Development'],
@@ -200,6 +214,26 @@ const SECTORS = [
           { k: 'Activity', v: 'Laundry and garment care' },
           { k: 'Market', v: 'Qatar' }
         ],
+        services: [
+          { t: 'Everyday Laundry',
+            d: 'Washing, drying and folding for the regular household load — the volume most homes generate every week.' },
+          { t: 'Pressing & Finishing',
+            d: 'Pressing and finishing so a garment comes back ready to wear rather than ready to iron.' },
+          { t: 'Specialist Care',
+            d: 'The pieces that need handling rather than a standard cycle: heavier fabrics, tailoring, and anything a home machine would spoil.' },
+          { t: 'Household Textiles',
+            d: 'Bedding, towels and the larger items that are awkward to wash and slow to dry at home.' }
+        ],
+        services: [
+          { t: 'Everyday Laundry',
+            d: 'Washing, drying and folding for the regular household load — the volume most homes generate every week.' },
+          { t: 'Pressing & Finishing',
+            d: 'Pressing and finishing so a garment comes back ready to wear rather than ready to iron.' },
+          { t: 'Specialist Care',
+            d: 'The pieces that need handling rather than a standard cycle: heavier fabrics, tailoring, and anything a home machine would spoil.' },
+          { t: 'Household Textiles',
+            d: 'Bedding, towels and the larger items that are awkward to wash and slow to dry at home.' }
+        ],
         activities: ['Garment Care', 'Textile Cleaning', 'Everyday Laundry', 'Specialist Treatment'],
         cta: 'Ask about Cavallo Laundry',
         hero: 'hero-cavallo-laundry',
@@ -237,6 +271,26 @@ const SECTORS = [
           { k: 'Sector', v: 'Food & Beverage' },
           { k: 'Activity', v: 'Café and coffee' },
           { k: 'Market', v: 'Qatar' }
+        ],
+        services: [
+          { t: 'Coffee',
+            d: 'The product the café is built around, and the thing a customer decides about first.' },
+          { t: 'Service',
+            d: 'What happens across the counter. In a café it is half of what people are actually paying for.' },
+          { t: 'The Room',
+            d: 'Somewhere to sit, meet or work. A café people pass through and a café they come back to differ mostly here.' },
+          { t: 'Daily Operations',
+            d: 'Opening, stocking, staffing and closing, every day — the discipline the rest of the Group does not get from trading.' }
+        ],
+        services: [
+          { t: 'Coffee',
+            d: 'The product the café is built around, and the thing a customer decides about first.' },
+          { t: 'Service',
+            d: 'What happens across the counter. In a café it is half of what people are actually paying for.' },
+          { t: 'The Room',
+            d: 'Somewhere to sit, meet or work. A café people pass through and a café they come back to differ mostly here.' },
+          { t: 'Daily Operations',
+            d: 'Opening, stocking, staffing and closing, every day — the discipline the rest of the Group does not get from trading.' }
         ],
         activities: ['Café Operations', 'Coffee', 'Hospitality', 'Customer Experience'],
         cta: 'Ask about Nero Café',
@@ -388,7 +442,7 @@ SECTORS.sort((x, y) => {
 const REACH_POINTS = {
   'Middle East': [['Qatar', 51.2, 25.3], ['UAE', 54, 24], ['Türkiye', 35, 39], ['Lebanon', 35.8, 33.9]],
   'Europe & Black Sea': [['Ukraine', 31, 49], ['Bulgaria', 25.5, 42.7], ['Spain', -3.7, 40.4]],
-  'Asia & Central Asia': [['India', 78.9, 20.6], ['Indonesia', 113.9, -0.8], ['Vietnam', 108.3, 14.1], ['Singapore', 103.8, 1.4], ['Turkmenistan', 59.6, 39], ['Kazakhstan', 66.9, 48]],
+  'Asia & Central Asia': [['China', 104.2, 35.9], ['India', 78.9, 20.6], ['Indonesia', 113.9, -0.8], ['Vietnam', 108.3, 14.1], ['Singapore', 103.8, 1.4], ['Turkmenistan', 59.6, 39], ['Kazakhstan', 66.9, 48]],
   'Africa': [['Ethiopia', 40.5, 9.1], ['Uganda', 32.3, 1.4], ['Libya', 17.2, 26.3]],
   'The Americas': [['Canada', -106, 56], ['United States', -98, 39.8], ['Brazil', -51.9, -14.2], ['Colombia', -74.3, 4.6]],
   'Oceania': [['Australia', 133.8, -25.3]]
@@ -402,7 +456,7 @@ const HUB = [51.53, 25.29];   // Doha
 const REACH = [
   { t: 'Middle East', d: 'Qatar · UAE · Türkiye · Lebanon' },
   { t: 'Europe & Black Sea', d: 'Ukraine · Bulgaria · Spain' },
-  { t: 'Asia & Central Asia', d: 'India · Indonesia · Vietnam · Singapore · Turkmenistan · Kazakhstan' },
+  { t: 'Asia & Central Asia', d: 'China · India · Indonesia · Vietnam · Singapore · Turkmenistan · Kazakhstan' },
   { t: 'Africa', d: 'Ethiopia · Uganda · Libya' },
   { t: 'The Americas', d: 'Canada · United States · Brazil · Colombia' },
   { t: 'Oceania', d: 'Australia' }

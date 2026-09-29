@@ -6,19 +6,19 @@
 
    PAGES
      /                     home
-     /about/               the Group: what it is, what it believes, who it
-                           wants to hear from
-     /companies/           the portfolio, filterable by sector
+     /sectors/             the four sectors, each with the businesses in it
+     /sectors/<slug>/      one sector
      /companies/<slug>/    one company
-     /careers/             working here
-     /contact/             channels and the enquiry form
+     /about/               the Group: what it is and what it believes
+     /partnerships/        Work With Us: who the Group wants to hear from
+     /contact/             channels, the enquiry form and the map
      /404.html
 
-   A sector has no page of its own. There are four sectors and four
-   companies, so a sector page would have said what its company page already
-   says. Sectors survive as a heading and a filter: /companies/?sector=trading
-   is where "Trading & Commodities" goes, and vercel.json redirects the old
-   /sectors/ URLs there.
+   There is no portfolio index and no careers page. Every company is reached
+   from the sectors menu, the sectors index or its own sector's page, which is
+   one move from anywhere. Applications and partnership enquiries route
+   through the contact form's "area of interest" field, and vercel.json
+   redirects the URLs those pages used to have.
 
    DESIGN
    Built to the Figma. Every page opens on a photograph with its title over a
@@ -98,9 +98,100 @@ const CARET = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><pa
 const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg>`;
 const CHEV = `<svg viewBox="0 0 18 18" aria-hidden="true" focusable="false"><path d="M4 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
 
+
+/* ---------- structured data ---------------------------------------------
+
+   What a search engine is told about the Group, in its own vocabulary. It is
+   built from the same data the pages are, so it cannot drift from what a
+   visitor reads.
+
+   The phone number and the social handles are placeholders, so 'telephone'
+   and 'sameAs' are left out entirely rather than published wrong — they
+   appear the moment SITE.contact holds real values. Cavallo and Nero are
+   plain Organizations rather than LocalBusiness subtypes for the same
+   reason: a laundry or a cafe wants a street address and opening hours, and
+   claiming to be a local business without them earns nothing. */
+
+const ORG_ID = SITE.domain + '/#organization';
+const abs = p => SITE.domain + p;
+const coId = c => abs('/companies/' + c.slug + '/') + '#organization';
+
+function orgSchema() {
+  const social = SOCIAL().map(([, href]) => href);
+  const org = {
+    '@type': 'Organization',
+    '@id': ORG_ID,
+    name: SITE.name,
+    url: SITE.domain + '/',
+    logo: {
+      '@type': 'ImageObject',
+      url: abs('/assets/logo/favicon-512px.png'),
+      width: 512, height: 512
+    },
+    image: abs('/assets/img/hero-doha.jpg'),
+    description: SITE.blurb + ' ' + SITE.supporting,
+    slogan: SITE.tagline,
+    address: { '@type': 'PostalAddress', addressCountry: 'QA', addressRegion: SITE.contact.location },
+    areaServed: { '@type': 'Country', name: 'Qatar' },
+    contactPoint: [{
+      '@type': 'ContactPoint', contactType: 'sales',
+      email: SITE.contact.email, availableLanguage: ['en']
+    }],
+    knowsAbout: [
+      'Commodity trading', 'International freight forwarding', 'Ocean freight',
+      'Vessel chartering', 'Food import and distribution', 'Garment care'
+    ],
+    subOrganization: ALL_COMPANIES.map(c => ({ '@id': coId(c) }))
+  };
+  if (SITE.contact.phone && !/0{4}/.test(SITE.contact.phone)) {
+    org.telephone = SITE.contact.phone.replace(/\s/g, '');
+  }
+  if (social.length) org.sameAs = social;
+  return org;
+}
+
+function companySchema(c) {
+  const org = {
+    '@type': 'Organization',
+    '@id': coId(c),
+    name: c.name,
+    url: abs('/companies/' + c.slug + '/'),
+    image: abs('/assets/img/' + c.hero + '.jpg'),
+    description: c.short,
+    parentOrganization: { '@id': ORG_ID },
+    address: { '@type': 'PostalAddress', addressCountry: 'QA' },
+    areaServed: { '@type': 'Country', name: 'Qatar' }
+  };
+  const offers = (c.products || c.services || []).map(p => ({
+    '@type': 'Offer', itemOffered: { '@type': 'Service', name: p.t }
+  }));
+  if (offers.length) {
+    org.hasOfferCatalog = {
+      '@type': 'OfferCatalog', name: c.name + ' — what it offers', itemListElement: offers
+    };
+  }
+  return org;
+}
+
+/* A trail of where the page sits. The last step names the current page and
+   deliberately carries no url. */
+function crumbs(steps) {
+  return {
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: SITE.domain + '/' }]
+      .concat(steps.map((st, i) => {
+        const item = { '@type': 'ListItem', position: i + 2, name: st.name };
+        if (st.url) item.item = abs(st.url);
+        return item;
+      }))
+  };
+}
+
+const graph = (...nodes) => ({ '@context': 'https://schema.org', '@graph': nodes.filter(Boolean) });
+
 /* ---------- chrome ----------------------------------------------------- */
 
-function head({ title, desc, url, image }) {
+function head({ title, desc, url, image, schema, noindex }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,14 +200,16 @@ function head({ title, desc, url, image }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <meta name="theme-color" content="#181717">
-<link rel="canonical" href="${SITE.domain}${url}">
+${noindex ? '<meta name="robots" content="noindex">\n' : `<link rel="canonical" href="${SITE.domain}${url}">`}
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${esc(SITE.name)}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${SITE.domain}${url}">
-${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}.jpg">` : ''}
+${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}.jpg">
+<meta property="og:image:alt" content="${esc(title)}">` : ''}
+<meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="/assets/logo/${B.faviconSvg}" type="image/svg+xml">
@@ -127,6 +220,7 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Inter:wght@500;600&family=Space+Grotesk:wght@500&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/site.css">
+${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -162,7 +256,6 @@ ${SECTORS.map(s => `          <div class="secmenu-col">
               <span>${esc(s.name)}</span>
             </a>
 ${s.companies.map(c => `            <a class="secmenu-co" href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('\n')}
-            <a class="secmenu-all" href="/sectors/${s.slug}/">Sector overview</a>
           </div>`).join('\n')}
         </div>
       </div>`;
@@ -218,13 +311,13 @@ function footer() {
       </div>
       <div class="foot-cols">
         <div class="foot-col">
-          <h2>Sectors</h2>
+          <p class="foot-h">Sectors</p>
           <ul>
 ${SECTORS.map(s => `            <li><a href="/sectors/${s.slug}/">${esc(s.name)}</a></li>`).join('\n')}
           </ul>
         </div>
         <div class="foot-col">
-          <h2>Contact</h2>
+          <p class="foot-h">Contact</p>
           <ul>
             <li><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></li>
             <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></li>
@@ -279,7 +372,7 @@ function coCard(c) {
      list and the filter matches any of them */
   const inSectors = (c.sectors || [c.sectorSlug]).join(' ');
   return `      <a class="cocard" href="/companies/${c.slug}/" data-sector="${inSectors}">
-        <span class="cocard-shot"><img src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy"></span>
+        <span class="cocard-shot"><img src="/assets/img/${c.hero}.jpg" alt="${esc(c.name)}" width="640" height="480" loading="lazy"></span>
         <span class="cocard-body">
           <span class="cocard-sector">${esc(c.sectorName)}</span>
           <span class="cocard-name">${esc(c.name)}</span>
@@ -304,7 +397,7 @@ function ctaBand() {
       <div class="next-card">
         <img class="watermark" src="/assets/logo/${B.markOnLight}" alt="" width="270" height="350" aria-hidden="true" loading="lazy">
         <div class="next-say">
-          <h2>Who we want to hear from</h2>
+          <h2>Tell us which one you are</h2>
           <p>Producers and exporters looking for a route into Qatar, buyers who need supply they can rely on, and operators with a business that fits the Group. Tell us which one you are.</p>
           <div class="next-act">
             <a class="btn btn-light" href="/contact/">Send an enquiry</a>
@@ -341,7 +434,6 @@ function regionPoint(region) {
 
 function reachMap() {
   const project = makeProjection(MAP_BOX);
-  const map = dotGrid(MAP_BOX);
 
   /* Europe, the Middle East and Central Asia sit close together, so their
      labels would print on top of one another. Each pin gets a stem long
@@ -398,18 +490,20 @@ function reachMap() {
       </button>`;
   }).join('\n');
 
+  /* The dot grid is 65KB of path data. Inline it once and it is 70% of the
+     home page's HTML, re-downloaded on every visit and parsed before the
+     footer is even seen. As a file it is cached, and the pins on top of it
+     are ordinary buttons either way. */
   return `<div class="mapwrap" id="mapwrap">
-      <svg viewBox="0 0 ${MAP_BOX.width} ${MAP_BOX.height}" role="img"
-           aria-label="A world map marking the regions Lusail Corp sources from">
-        <path class="dots" d="${map.d}"/>
-      </svg>
+      <img class="mapdots" src="/assets/img/worldmap.svg" width="${MAP_BOX.width}" height="${MAP_BOX.height}"
+           alt="A world map with the regions Lusail Corp sources from marked on it" loading="lazy">
 ${pins}
     </div>`;
 }
 
 /* The same markets again, as a register that can be read straight down. */
 function reachList() {
-  return `<div class="reg">
+  return `<div class="reg" id="markets">
 ${REACH.map(x => `      <div data-region="${esc(x.t)}">
         <h3>${esc(x.t)}</h3>
         <p>${esc(x.d)}</p>
@@ -424,7 +518,7 @@ ${REACH.map(x => `      <div data-region="${esc(x.t)}">
    asked, so the row reads as four headings rather than four paragraphs. */
 function bento() {
   const card = (x, i) => `        <button class="bcard${i === 0 ? ' bcard-photo' : ''}" type="button" aria-expanded="${i === 0}">
-${i === 0 ? '          <img src="/assets/img/why-group.jpg" alt="" width="1000" height="561" loading="lazy">\n' : ''}          <span class="n">${num(i)}</span>
+${i === 0 ? '          <img src="/assets/img/why-group.jpg" alt="Two people shaking hands over a table" width="1000" height="561" loading="lazy">\n' : ''}          <span class="n">${num(i)}</span>
           <h3>${esc(x.t)}</h3>
           ${i === 0
     ? `<p>${esc(x.d)}</p>`
@@ -446,7 +540,7 @@ ${WHY.slice(1).map((x, i) => card(x, i + 1)).join('\n')}
 function companyLadder() {
   return `<div class="ladder">
 ${ALL_COMPANIES.map((c, i) => `      <a class="lad" href="/companies/${c.slug}/">
-        <img class="lad-bg" src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy">
+        <img class="lad-bg" src="/assets/img/${c.hero}.jpg" alt="${esc(c.name)}" width="640" height="480" loading="lazy">
         <span class="n">${num(i)}</span>
         <span class="lad-b">
           <span class="lad-sec">${esc(c.sectorName)}</span>
@@ -496,8 +590,13 @@ function pageHome() {
 
   return head({
     title: `${SITE.name} · ${SITE.tagline}`,
-    desc: 'Lusail Corp is a Qatar-based diversified corporate group building and supporting businesses across commodity trading, food supply and distribution, consumer services and hospitality.',
-    url: '/', image: 'hero-doha'
+    desc: 'A Qatar-based group of four companies: commodity trading and international freight, food import and distribution, garment care and a café.',
+    url: '/', image: 'hero-doha',
+    schema: graph(orgSchema(), {
+      '@type': 'WebSite', '@id': SITE.domain + '/#website',
+      url: SITE.domain + '/', name: SITE.name, inLanguage: 'en',
+      publisher: { '@id': ORG_ID }
+    })
   })
     + header('/', true)
     + `<section class="hero">
@@ -517,7 +616,7 @@ function pageHome() {
 <section class="section intro" aria-labelledby="introTitle">
   <div class="wrap">
     <div class="intro-top rise">
-      <h2 id="introTitle">We buy commodities<br>and we <span class="soft">move them.</span></h2>
+      <h2 id="introTitle">We buy commodities <br>and we <span class="soft">move them.</span></h2>
       <div class="intro-note">
         <img src="/assets/logo/${B.markOnLight}" alt="" width="44" height="57" loading="lazy">
         <div>
@@ -542,7 +641,7 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
     </div>
     <div class="seccards">
 ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="/sectors/${s.slug}/">
-        <img src="/assets/img/${SECTOR_SHOT[s.slug] || 'card-trading'}.jpg" alt="" width="640" height="914" loading="lazy">
+        <img src="/assets/img/${SECTOR_SHOT[s.slug] || 'card-trading'}.jpg" alt="${esc(s.name)}" width="640" height="914" loading="lazy">
         <span class="seccard-cap">
           <b>${esc(s.name)}</b>
           <span class="seccard-say">${esc(s.short)}</span>
@@ -607,8 +706,10 @@ ${VALUES.map((v, i) => `      <div class="val${i === 0 ? ' open' : ''}">
 function pageAbout() {
   return head({
     title: `About Us · ${SITE.name}`,
-    desc: 'Lusail Corp is a diversified corporate group based in the State of Qatar, bringing together commodity trading, food supply and distribution, consumer services and hospitality.',
-    url: '/about/', image: 'hero-about'
+    desc: 'How Lusail Corp is put together: what the Group does for its four companies, what it believes, and who it wants to hear from.',
+    url: '/about/', image: 'hero-about',
+    schema: graph({ '@type': 'AboutPage', url: abs('/about/'), name: 'About ' + SITE.name,
+      mainEntity: { '@id': ORG_ID } }, crumbs([{ name: 'About Us' }]))
   })
     + header('/about/')
     + pageHead({
@@ -660,7 +761,7 @@ function pageAbout() {
     <div class="valwrap">
       ${valueList()}
       <figure class="valshot rise">
-        <img src="/assets/img/card-trading.jpg" alt="" width="640" height="914" loading="lazy">
+        <img src="/assets/img/card-trading.jpg" alt="Colleagues around a table in a meeting" width="640" height="914" loading="lazy">
       </figure>
     </div>
   </div>
@@ -696,14 +797,35 @@ function pageCompany(c) {
     ${head2('prodTitle', 'What we trade <span class="soft">today</span>', '')}
     <div class="prodrail" id="prodrail">
 ${c.products.map(p => `      <article class="prod">
-        <img src="/assets/img/${p.img}.jpg" alt="" width="640" height="480" loading="lazy">
+        <img src="/assets/img/${p.img}.jpg" alt="${esc(p.t)}" width="640" height="480" loading="lazy">
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
+${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
+    `<a href="/sectors/trading/#markets">${esc(o)}</a>`).join('')}</p>` : ''}
       </article>`).join('\n')}
     </div>
     <div class="railnav">
       <button class="railbtn" type="button" data-rail="prodrail" data-dir="-1" aria-label="Previous">&#8592;</button>
       <button class="railbtn" type="button" data-rail="prodrail" data-dir="1" aria-label="Next">&#8594;</button>
+    </div>
+  </div>
+</section>
+
+`
+    : '';
+
+  /* A company with no product list still has to say what it does. These are
+     the named services, spelled out. */
+  const services = c.services && c.services.length
+    ? `<section class="section stone" aria-labelledby="svcTitle">
+  <div class="wrap">
+    ${head2('svcTitle', 'What we <span class="soft">do</span>', `The work ${esc(c.name)} is actually asked for.`)}
+    <div class="svcs">
+${c.services.map((s, i) => `      <div class="svc rise d${Math.min(i, 3)}">
+        <span class="svc-n">${num(i)}</span>
+        <h3>${esc(s.t)}</h3>
+        <p>${esc(s.d)}</p>
+      </div>`).join('\n')}
     </div>
   </div>
 </section>
@@ -726,7 +848,12 @@ ${c.activities.map(a => `      <li>${esc(a)}</li>`).join('\n')}
 
   return head({
     title: `${c.name} · ${SITE.name}`, desc: c.short,
-    url: `/companies/${c.slug}/`, image: c.hero
+    url: `/companies/${c.slug}/`, image: c.hero,
+    schema: graph(companySchema(c), crumbs([
+      { name: 'Our Sectors', url: '/sectors/' },
+      { name: c.sectorName, url: '/sectors/' + c.sectorSlug + '/' },
+      { name: c.name }
+    ]))
   })
     + header(`/sectors/${c.sectorSlug}/`)
     + pageHead({
@@ -742,7 +869,7 @@ ${c.activities.map(a => `      <li>${esc(a)}</li>`).join('\n')}
     <p class="lead-para rise">${esc(c.intro)}</p>
     <div class="cosplit">
       <figure class="costill rise">
-        <img src="/assets/img/${c.still}.jpg" alt="" width="900" height="1125" loading="lazy">
+        <img src="/assets/img/${c.still}.jpg" alt="${esc(c.name)}" width="900" height="1125" loading="lazy">
       </figure>
       <div class="prose rise d1">
 ${c.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
@@ -755,7 +882,7 @@ ${c.facts.map(f => `      <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).
   </div>
 </section>
 
-${products}${activities}<section class="section tight" aria-labelledby="othTitle">
+${products}${services}${activities}<section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
     ${head2('othTitle', 'The other <span class="soft">companies</span>', '')}
     ${companyRail(others)}
@@ -776,7 +903,13 @@ function pageSectorsIndex() {
   return head({
     title: `Our Sectors · ${SITE.name}`,
     desc: 'Lusail Corp operates across commodity trading, food supply and distribution, consumer services and hospitality.',
-    url: '/sectors/', image: 'hero-sector-trading'
+    url: '/sectors/', image: 'hero-sector-trading',
+    schema: graph(crumbs([{ name: 'Our Sectors' }]), {
+      '@type': 'ItemList', name: 'Lusail Corp sectors',
+      itemListElement: SECTORS.map((s, i) => ({
+        '@type': 'ListItem', position: i + 1, name: s.name, url: abs('/sectors/' + s.slug + '/')
+      }))
+    })
   })
     + header('/sectors/')
     + pageHead({
@@ -794,22 +927,22 @@ function pageSectorsIndex() {
         <a href="/sectors/${s.slug}/">${esc(s.name)}</a>
       </h2>
       <p class="secrow-lede">${esc(s.intro)}</p>
-${s.body.slice(0, 2).map(p => `      <p class="secrow-sub">${esc(p)}</p>`).join('\n')}
+${s.body.map(p => `      <p class="secrow-sub">${esc(p)}</p>`).join('\n')}
       <div class="secrow-cos">
         <span class="secrow-cos-label">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</span>
 ${s.companies.map(c => `        <a class="minico" href="/companies/${c.slug}/">
+          <img src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy">
           <span class="minico-id">
             <b>${esc(c.name)}</b>
-            <em>${esc(c.role)}</em>
+            <em>${esc(c.short)}</em>
           </span>
           <span class="minico-go" aria-hidden="true">&#8594;</span>
         </a>`).join('\n')}
       </div>
-      <a class="btn btn-line" href="/sectors/${s.slug}/">Read about ${esc(s.name)}</a>
     </div>
     <figure class="secrow-shot rise d1">
       <a href="/sectors/${s.slug}/" tabindex="-1" aria-hidden="true">
-        <img src="/assets/img/${s.hero}.jpg" alt="" width="840" height="1200" loading="lazy">
+        <img src="/assets/img/${s.hero}.jpg" alt="${esc(s.name)}" width="840" height="1200" loading="lazy">
       </a>
     </figure>
   </div>
@@ -832,19 +965,26 @@ function pageSector(s) {
 
   return head({
     title: `${s.name} · ${SITE.name}`, desc: s.short,
-    url: `/sectors/${s.slug}/`, image: s.hero
+    url: `/sectors/${s.slug}/`, image: s.hero,
+    schema: graph(crumbs([{ name: 'Our Sectors', url: '/sectors/' }, { name: s.name }]), {
+      '@type': 'ItemList', name: s.name + ' — companies',
+      itemListElement: s.companies.map((c, i) => ({
+        '@type': 'ListItem', position: i + 1, name: c.name, url: abs('/companies/' + c.slug + '/')
+      }))
+    })
   })
     + header(`/sectors/${s.slug}/`)
     + pageHead({
       eyebrow: 'Our Sectors',
-      h1: s.headline,
-      lede: s.intro,
+      eyebrowHref: '/sectors/',
+      h1: s.name,
+      lede: s.headline + ' — ' + s.intro,
       photo: s.hero
     })
     + `<section class="section tight">
   <div class="wrap">
     <div class="head2 rise">
-      <h2 id="secTitle">${esc(s.name)}</h2>
+      <h2 id="secTitle">What the Group does <span class="soft">here</span></h2>
       <p>${esc(s.short)}</p>
     </div>
     <div class="prose2 rise">
@@ -853,6 +993,14 @@ ${s.body.map(p => `      <p>${esc(p)}</p>`).join('\n')}
   </div>
 </section>
 
+${s.slug === 'trading' ? `<section class="section stone src" aria-labelledby="mktTitle">
+  <div class="wrap">
+    ${head2('mktTitle', 'The markets we <span class="soft">source from</span>', 'Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.')}
+    ${reachList()}
+  </div>
+</section>
+
+` : ''}
 <section class="section stone" aria-labelledby="coTitle">
   <div class="wrap">
     ${head2('coTitle', `The ${n === 1 ? 'company' : 'companies'} working <span class="soft">here</span>`,
@@ -897,7 +1045,8 @@ function pagePartnerships() {
   return head({
     title: `Work With Us · ${SITE.name}`,
     desc: 'Lusail Corp works with suppliers, producers, distributors and buyers in Qatar and international markets.',
-    url: '/partnerships/', image: 'why-group'
+    url: '/partnerships/', image: 'why-group',
+    schema: graph(crumbs([{ name: 'Work With Us' }]))
   })
     + header('/partnerships/')
     + pageHead({
@@ -970,7 +1119,10 @@ function pageContact() {
   return head({
     title: `Contact · ${SITE.name}`,
     desc: 'Contact Lusail Corp about our companies, supply, commercial opportunities or careers.',
-    url: '/contact/', image: 'hero-contact'
+    url: '/contact/', image: 'hero-contact',
+    schema: graph({ '@type': 'ContactPage', url: abs('/contact/'),
+      name: 'Contact ' + SITE.name, mainEntity: { '@id': ORG_ID } },
+      crumbs([{ name: 'Contact' }]))
   })
     + header('/contact/')
     + pageHead({
@@ -1034,7 +1186,8 @@ ${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('
 }
 
 function page404() {
-  return head({ title: `Page not found · ${SITE.name}`, desc: 'That page does not exist.', url: '/404.html' })
+  return head({ title: `Page not found · ${SITE.name}`, desc: 'That page does not exist.',
+    url: '/404.html', noindex: true })
     + header('')
     + pageHead({
       eyebrow: '404',
@@ -1133,6 +1286,11 @@ function build() {
   copyDir(path.join(ROOT, 'assets/js'), path.join(OUT, 'assets/js'));
   copyDir(path.join(ROOT, 'site-assets/logo'), path.join(OUT, 'assets/logo'));
 
+  /* the dotted map, written once as a cacheable file rather than inlined
+     into the page that uses it */
+  const map = dotGrid(MAP_BOX);
+  const mapSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MAP_BOX.width} ${MAP_BOX.height}" width="${MAP_BOX.width}" height="${MAP_BOX.height}" role="img" aria-label="World map"><path d="${map.d}" fill="none" stroke="#3a3838" stroke-width="2.3" stroke-linecap="round"/></svg>`;
+
   const imgOut = path.join(OUT, 'assets/img');
   fs.mkdirSync(imgOut, { recursive: true });
   let bytes = 0;
@@ -1141,15 +1299,17 @@ function build() {
     fs.copyFileSync(from, path.join(imgOut, name + '.jpg'));
     bytes += fs.statSync(from).size;
   }
-  console.log(`  ${images.size} photographs (${Math.round(bytes / 1024)} KB)`);
+  fs.writeFileSync(path.join(imgOut, 'worldmap.svg'), mapSvg);
+  console.log(`  ${images.size} photographs (${Math.round(bytes / 1024)} KB) + worldmap.svg (${Math.round(mapSvg.length / 1024)} KB)`);
 
   const urls = ['/', '/about/', ...ALL_COMPANIES.map(c => `/companies/${c.slug}/`),
     '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/', '/contact/'];
+  const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
     `User-agent: *\nAllow: /\n\nSitemap: ${SITE.domain}/sitemap.xml\n`);
   fs.writeFileSync(path.join(OUT, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    urls.map(u => `  <url><loc>${SITE.domain}${u}</loc></url>`).join('\n') +
+    urls.map(u => `  <url><loc>${SITE.domain}${u}</loc><lastmod>${today}</lastmod></url>`).join('\n') +
     `\n</urlset>\n`);
 
   console.log('  robots.txt, sitemap.xml (' + urls.length + ' urls)');

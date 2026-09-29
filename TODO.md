@@ -7,6 +7,23 @@ Everything still outstanding on the site, and where each one lives. Items under
 
 ## Needs you
 
+### 0. Product origins are indicative — confirm them before launch *— blocking*
+
+Every product on the Lusail Commercial and ROMA pages now shows **"Sourced
+from"** with a list of countries. Those pairings are **mine, not yours.**
+
+What is solid: every country used is already on the Group's own declared
+sourcing list, so nothing new was introduced, and the build refuses any origin
+that is not on that list. What is not solid: *which* commodity comes from
+*which* of those countries. I paired them by what is ordinary in the trade —
+rice from India and Vietnam, coffee origins in Africa and the Americas,
+sulphur from the Gulf and Central Asia — not from anything you have told me.
+
+A buyer may read these as a statement about your actual supply chain. Go
+through `origins` in [data/site.js](data/site.js) and correct or delete them.
+Deleting is safe: a product with no `origins` simply renders without the row.
+
+
 ### 1. Social media handles — *footer*
 LinkedIn and Instagram were pointing at `#`, a dead link. They are now **hidden
 until real URLs exist**, so nothing broken is published in the meantime.

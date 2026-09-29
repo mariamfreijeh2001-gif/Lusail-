@@ -622,13 +622,12 @@ textarea{min-height:140px;resize:vertical}
 .secmenu-head span{font:600 1rem/1.25 var(--ui);color:#181717}
 .secmenu-head:hover span{color:#000}
 
-.secmenu-co,.secmenu-all{
+.secmenu-co{
   font:500 1rem/1.25 var(--ui);color:#9c9c9c;text-decoration:none;
   transition:color .18s,padding-inline-start .18s;
 }
-.secmenu-co:hover,.secmenu-co:focus-visible,
-.secmenu-all:hover,.secmenu-all:focus-visible{color:#181717;padding-inline-start:4px}
-.secmenu-all{margin-top:2px}
+.secmenu-co:hover,.secmenu-co:focus-visible{color:#181717;padding-inline-start:4px}
+
 .secmenu a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
 /* the panel is a pointer affordance; below the breakpoint the whole bar
@@ -871,8 +870,7 @@ textarea{min-height:140px;resize:vertical}
 .src .head2 > p{color:var(--ink-2)}
 
 .mapwrap{position:relative;margin-top:clamp(28px,4.4vw,62px)}
-.mapwrap svg{display:block;width:100%;height:auto;overflow:visible}
-.dots{fill:none;stroke:#3a3838;stroke-width:2.3;stroke-linecap:round}
+.mapdots{display:block;width:100%;height:auto}
 
 .pin{
   position:absolute;transform:translate(-50%,-100%);
@@ -1092,14 +1090,14 @@ textarea{min-height:140px;resize:vertical}
 .secrow.stone{background:var(--paper)}
 .secrow .wrap{
   display:grid;gap:clamp(26px,4.4vw,64px);align-items:start;
-  grid-template-columns:minmax(0,720fr) minmax(0,400fr);
+  grid-template-columns:minmax(0,820fr) minmax(0,300fr);
 }
 .secrow.flip .secrow-shot{order:-1}
 
 .secrow-shot{margin:0;overflow:hidden;position:sticky;top:calc(var(--head-h) + 24px)}
 .secrow-shot a{display:block}
 .secrow-shot img{
-  width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;background:var(--panel);
+  width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;background:var(--panel);
   transition:transform .7s cubic-bezier(.2,.7,.2,1);
 }
 .secrow-shot a:hover img{transform:scale(1.04)}
@@ -1123,22 +1121,23 @@ textarea{min-height:140px;resize:vertical}
 /* the businesses inside the sector: outlined, transparent, named */
 .secrow-cos{
   display:grid;gap:8px;width:100%;margin-top:14px;
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));
+  grid-template-columns:minmax(0,1fr);max-width:620px;
 }
 .secrow-cos-label{
   grid-column:1/-1;font:500 var(--t-micro)/1.4 var(--mono);color:var(--label);
   margin-bottom:2px;
 }
 .minico{
-  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;
-  border:1px solid var(--line);background:none;padding:16px 18px;
+  display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:14px;
+  border:1px solid var(--line);background:none;padding:12px 16px 12px 12px;
   text-decoration:none;transition:border-color .25s,background .25s;
 }
+.minico img{width:64px;height:52px;object-fit:cover;background:var(--panel)}
 .minico:hover,.minico:focus-visible{border-color:var(--ink);background:rgba(24,23,23,.03)}
 .minico-id{display:block;min-width:0}
 .minico b{display:block;font:500 1.0625rem/1.3 var(--body);color:var(--ink)}
 .minico em{
-  display:block;font:500 .875rem/1.4 var(--body);font-style:normal;
+  display:block;font:500 .8125rem/1.45 var(--body);font-style:normal;
   color:var(--ink-2);margin-top:4px;
 }
 .minico-go{color:var(--ink);font-size:1.05rem;transition:transform .25s}
@@ -1291,3 +1290,49 @@ textarea{min-height:140px;resize:vertical}
 .wwd-card p{font:500 .9375rem/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){ .wwd{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:520px){ .wwd{grid-template-columns:1fr} }
+
+/* ---- where a product comes from ----------------------------------------- */
+/* Each origin is a link back to the sourcing register, so "Sourced from
+   Ukraine" is a thing you can follow rather than a word on a card. */
+.prod-from{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-top:4px;
+}
+.prod-from > span{
+  font:500 var(--t-micro)/1.4 var(--mono);color:var(--label);
+  width:100%;margin-bottom:2px;
+}
+.prod-from a{
+  font:500 .8125rem/1 var(--body);color:var(--ink-2);text-decoration:none;
+  border:1px solid var(--line);padding:5px 9px;
+  transition:border-color .2s,color .2s,background .2s;
+}
+.prod-from a:hover,.prod-from a:focus-visible{
+  border-color:var(--ink);color:var(--ink);background:var(--white);
+}
+
+/* ---- the named services on a company with no product list --------------- */
+.svcs{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  border-top:1px solid var(--line);margin-top:clamp(28px,3.4vw,44px);
+}
+.svc{
+  display:grid;gap:10px;align-content:start;
+  padding:clamp(24px,2.8vw,34px) clamp(20px,2.4vw,30px) clamp(28px,3.2vw,40px) 0;
+  border-bottom:1px solid var(--line);
+}
+.svc + .svc{padding-inline-start:clamp(20px,2.4vw,30px);border-inline-start:1px solid var(--line)}
+.svc-n{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
+.svc h3{font:500 1.125rem/1.39 var(--body);color:var(--ink)}
+.svc p{font:500 .9375rem/1.6 var(--body);color:var(--ink-2)}
+@media (max-width:900px){
+  .svcs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .svc:nth-child(odd){padding-inline-start:0;border-inline-start:0}
+  .svc:nth-child(even){padding-inline-start:clamp(20px,2.4vw,30px);border-inline-start:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .svcs{grid-template-columns:1fr}
+  .svc,.svc + .svc{padding-inline-start:0;border-inline-start:0}
+}
+
+/* the footer column labels are labels, not page sections */
+.foot-h{font:600 1.125rem/1.56 var(--ui);color:#fff;margin:0}

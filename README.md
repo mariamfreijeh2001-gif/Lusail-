@@ -192,6 +192,27 @@ Putting Arabic back therefore means translating the current text and rendering
 it, not reviving those fields. Nothing in the templates assumes one language:
 there is no `data-ar`, no toggle, no RTL rule and no pre-paint script left.
 
+## Search
+
+Every page carries JSON-LD built from the same data it renders, so the markup
+cannot drift from the words: an `Organization` for the Group with each company
+as a `subOrganization`, an `Organization` per company with its services as an
+`OfferCatalog`, and a `BreadcrumbList` on everything below the top level.
+
+**The placeholders are deliberately withheld.** `telephone` and `sameAs` only
+appear once `SITE.contact` holds a real number and real profile URLs — a made-up
+phone number in structured data is worse than none. Cavallo and Nero are plain
+`Organization`, not `DryCleaningOrLaundry`/`CafeOrCoffeeShop`: those want a
+street address and opening hours, and claiming to be a local business without
+them earns nothing.
+
+The dotted world map is written once to `/assets/img/worldmap.svg` rather than
+inlined. It is 65 KB of path data — inline it and it was 70% of the home page's
+HTML, re-downloaded every visit. As a file it is cached, and the pins over it
+are ordinary buttons either way. The home page is 27 KB.
+
+`404.html` carries `noindex` and no canonical, so a soft 404 cannot be indexed.
+
 ## Contact form
 
 The contact page carries the form. It validates in

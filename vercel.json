@@ -87,12 +87,12 @@
     },
     {
       "source": "/partnership/",
-      "destination": "/about/#work-with-us",
+      "destination": "/partnerships/",
       "permanent": true
     },
     {
       "source": "/partnership",
-      "destination": "/about/#work-with-us",
+      "destination": "/partnerships/",
       "permanent": true
     },
     {
@@ -112,6 +112,86 @@
     },
     {
       "source": "/sector/:slug",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-coffee",
+      "destination": "/companies/nero-cafe/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-coffee/",
+      "destination": "/companies/nero-cafe/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-foods",
+      "destination": "/companies/roma-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-foods/",
+      "destination": "/companies/roma-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-commodities",
+      "destination": "/companies/lusail-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-commodities/",
+      "destination": "/companies/lusail-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-distribution",
+      "destination": "/companies/lusail-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-distribution/",
+      "destination": "/companies/lusail-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-shipping",
+      "destination": "/companies/lusail-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-shipping/",
+      "destination": "/companies/lusail-commercial/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-contracting",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-contracting/",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-energy",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/company/lusail-energy/",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/company/",
+      "destination": "/sectors/",
+      "permanent": true
+    },
+    {
+      "source": "/company",
       "destination": "/sectors/",
       "permanent": true
     },
@@ -322,41 +402,6 @@
     },
     {
       "source": "/sectors/future-ventures",
-      "destination": "/sectors/",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/trading",
-      "destination": "/sectors/trading/",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/supply-distribution",
-      "destination": "/sectors/supply-distribution/",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/consumer-services",
-      "destination": "/sectors/consumer-services/",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/food-beverage",
-      "destination": "/sectors/food-beverage/",
-      "permanent": true
-    },
-    {
-      "source": "/partnerships/",
-      "destination": "/about/#work-with-us",
-      "permanent": true
-    },
-    {
-      "source": "/partnerships",
-      "destination": "/about/#work-with-us",
-      "permanent": true
-    },
-    {
-      "source": "/sectors",
       "destination": "/sectors/",
       "permanent": true
     },
