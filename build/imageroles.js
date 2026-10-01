@@ -20,12 +20,11 @@ module.exports = {
   'why-group': ['hero'],
   'about-platform': ['hero'],
 
-  // a sector: behind its own page title, and the plate beside it on /sectors/
-  'hero-sector-trading': ['hero', 'wide'],
-  'hero-sector-supply-distribution': ['hero', 'wide'],
-  'hero-sector-consumer-services': ['hero', 'wide'],
-  'hero-sector-food-beverage': ['hero', 'wide'],
-  'shipping-wide': ['wide'],
+  // a sector: the photograph behind its own page title
+  'hero-sector-trading': ['hero'],
+  'hero-sector-supply-distribution': ['hero'],
+  'hero-sector-consumer-services': ['hero'],
+  'hero-sector-food-beverage': ['hero'],
 
   // a company: its page title, its card, its panel in the row, its plate
   'hero-lusail-commercial': ['hero', 'plate', 'panel', 'thumb'],

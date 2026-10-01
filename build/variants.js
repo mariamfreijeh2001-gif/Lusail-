@@ -30,7 +30,6 @@ const QUALITY = 0.8;
    original is skipped — nothing is ever upscaled. */
 const WIDTHS = {
   hero: [1400, 980, 760],   // full-bleed, behind a page title
-  wide: [1500, 1100, 740],  // the landscape plate beside a sector
   still: [1180, 760],       // the upright shot beside a company's opening
   card: [880, 700, 560, 440],   // the home page's sector cards
   panel: [1060, 800, 620, 440], // a company panel in the row of four
@@ -48,7 +47,6 @@ const ASPECT = {
   plate: 4 / 3,       // .cocard-shot img
   thumb: 93 / 88,     // .minico img
   still: 6 / 5,       // .costill img
-  wide: 746 / 451,    // .secblk-shot img
 };
 
 /* Which role each photograph plays. An image used in two places takes the

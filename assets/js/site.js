@@ -139,33 +139,7 @@
      One open at a time. The first is open in the markup, so the column has a
      shape before this runs and keeps one if it never does. */
 
-  /* ---------- the product rail ---------------------------------------------
-     The rail scrolls on its own; these two buttons move it a card at a time
-     and grey themselves out at each end. */
 
-  $$('.railbtn').forEach(function (btn) {
-    var rail = document.getElementById(btn.dataset.rail);
-    if (!rail) return;
-    btn.addEventListener('click', function () {
-      var card = rail.firstElementChild;
-      var step = card ? card.getBoundingClientRect().width + 18 : 320;
-      rail.scrollBy({ left: step * +btn.dataset.dir, behavior: 'smooth' });
-    });
-  });
-
-  $$('.prodrail').forEach(function (rail) {
-    var btns = $$('.railbtn[data-rail="' + rail.id + '"]');
-    if (!btns.length) return;
-    var sync = function () {
-      var max = rail.scrollWidth - rail.clientWidth;
-      btns.forEach(function (b) {
-        b.disabled = +b.dataset.dir < 0 ? rail.scrollLeft < 4 : rail.scrollLeft > max - 4;
-      });
-    };
-    rail.addEventListener('scroll', sync, { passive: true });
-    addEventListener('resize', sync);
-    sync();
-  });
 
   /* ---------- where we source from -----------------------------------------
      A pin and its row in the register below are the same market, so lighting

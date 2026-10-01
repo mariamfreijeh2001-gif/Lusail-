@@ -255,9 +255,12 @@ holds the filenames, so swapping the logo is one edit.
   pin whose label opens to its countries, and lighting a pin lights its row in
   the register below. Pin labels are laid out at build time so they clear one
   another.
-- **The sectors index** — a numbered list of the four sectors stands beside
-  the reading and stays there as the page moves, marking whichever sector is
-  on screen. The entries are quiet until the reading reaches them; the one
+- **The sectors index** — each sector holds one screen and carries its own
+  ground, so the page changes under you as you read down it. None of the four
+  grounds is darker than : that is the palest ground the body grey
+  was measured against, and anything deeper drops it under 4.5:1. A numbered
+  list of the four stands beside the reading and stays there as the page
+  moves, marking whichever sector is on screen. The entries are quiet until the reading reaches them; the one
   you are in goes to full carbon and puts a marker in the margin, which sits
   outside the text so nothing shifts when it appears. It is a list rather
   than a boxed table of contents — cells, dividers and a filled row drew
@@ -269,6 +272,18 @@ holds the filenames, so swapping the logo is one edit.
 - **Arrival** — each band lifts in once. Hiding is scoped to a `.js` class the
   script adds, so nothing is ever invisible if the script does not run, and a
   band already scrolled past is simply there.
+
+**Nothing scrolls sideways any more.** The products, the companies in a
+sector and the other companies were all horizontal rails. A rail keeps most
+of its list behind the right edge, cuts the last card in half, and the
+product rail hid its own Prev/Next buttons below 700px — on the screen where
+swiping was the only way left. All three are grids that wrap, so every card
+is on the page and the row count follows the width.
+
+The companies inside a sector are names side by side rather than a
+photograph, a name and a sentence stacked down the column, which repeated
+what the sector paragraph above had just said. A logo goes in each tile when
+there are logos to put in them.
 
 **Everything that can be pointed at says so.** Twenty-two components are
 driven with a real pointer in the test suite and each has to change something

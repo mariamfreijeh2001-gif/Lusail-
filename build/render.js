@@ -462,7 +462,7 @@ function coCard(c) {
 }
 
 function companyRail(list, id) {
-  return `<div class="corail"${id ? ` id="${id}"` : ''}>
+  return `<div class="cogrid"${id ? ` id="${id}"` : ''}>
 ${list.map(coCard).join('\n')}
     </div>`;
 }
@@ -886,18 +886,14 @@ function pageCompany(c) {
     ? `<section class="section stone" aria-labelledby="prodTitle">
   <div class="wrap">
     ${head2('prodTitle', 'What we trade <span class="soft">today</span>', '')}
-    <div class="prodrail" id="prodrail">
+    <div class="prodgrid">
 ${c.products.map(p => `      <article class="prod">
-        <span class="prod-pic">${pic(p.img, '260px', `alt="${esc(p.t)}" loading="lazy"`)}</span>
+        <span class="prod-pic">${pic(p.img, '(max-width:520px) 90vw, (max-width:820px) 44vw, (max-width:1100px) 29vw, 290px', `alt="${esc(p.t)}" loading="lazy"`)}</span>
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
 ${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
     `<a href="/sectors/trading/#markets">${esc(o)}</a>`).join('')}</p>` : ''}
       </article>`).join('\n')}
-    </div>
-    <div class="railnav">
-      <button class="railbtn" type="button" data-rail="prodrail" data-dir="-1" aria-label="Previous">&#8592;</button>
-      <button class="railbtn" type="button" data-rail="prodrail" data-dir="1" aria-label="Next">&#8594;</button>
     </div>
   </div>
 </section>
@@ -1025,28 +1021,20 @@ ${SECTORS.map((s, i) => `      <li><a href="#sec-${s.slug}"${i === 0 ? ' aria-cu
     </ol>
   </nav>
 
-${SECTORS.map((s, i) => `  <section class="secblk${i % 2 ? ' stone' : ''}" id="sec-${s.slug}" aria-labelledby="h-${s.slug}">
+${SECTORS.map((s, i) => `  <section class="secblk" data-tone="${i % 4}" id="sec-${s.slug}" aria-labelledby="h-${s.slug}">
     <div class="secblk-col rise">
       <h2 id="h-${s.slug}"><a href="/sectors/${s.slug}/">${esc(s.name)}</a></h2>
       <p class="secblk-lede">${esc(s.intro)}</p>
-${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join('\n')}
+${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join(String.fromCharCode(10))}
 
       <h3 class="secblk-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</h3>
-${s.companies.map(c => `      <a class="minico" href="/companies/${c.slug}/">
-        ${pic(c.hero, '93px', 'alt="" loading="lazy"')}
-        <span class="minico-id">
-          <b>${esc(c.name)}</b>
-          <em>${esc(c.short)}</em>
-        </span>
-      </a>`).join('\n')}
+      <div class="cotiles">
+${s.companies.map(c => `        <a class="cotile" href="/companies/${c.slug}/">${esc(c.name)}</a>`).join(String.fromCharCode(10))}
+      </div>
 
       <p class="secblk-more"><a href="/sectors/${s.slug}/">More on ${esc(s.name)} <span aria-hidden="true">&#8594;</span></a></p>
-
-      <figure class="secblk-shot">
-        ${pic(s.shot || s.hero, '(max-width:900px) 100vw, 746px', `alt="${esc(s.name)}" loading="lazy"`)}
-      </figure>
     </div>
-  </section>`).join('\n\n')}
+  </section>`).join(String.fromCharCode(10) + String.fromCharCode(10))}
 </div>
 
 `

@@ -320,50 +320,55 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
    How we create value — five numbered statements across the measure
    ========================================================================== */
 
+/* Cards, not cells divided by rules. The rules made a table of it and the
+   nth-child arithmetic underneath was holding five items in a six-column grid
+   by hand. A card says "this is one idea", answers a pointer, and does not
+   care how many of them there are. */
 .vcreate{
-  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
-  border-top:1px solid var(--line);margin-top:clamp(28px,3.4vw,44px);
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(12px,1.6vw,20px);margin-top:clamp(28px,3.4vw,44px);
 }
 .vc{
-  grid-column:span 2;
+  background:var(--panel);border:1px solid var(--line);
+  padding:clamp(24px,2.6vw,32px) clamp(20px,2.2vw,28px) clamp(28px,3vw,36px);
   display:grid;gap:10px;align-content:start;
-  padding:clamp(24px,2.8vw,34px) clamp(20px,2.4vw,34px) clamp(28px,3.2vw,40px) 0;
-  border-bottom:1px solid var(--line);
+  transition:border-color .3s,transform .3s;
 }
-/* the second row carries two of five, set in from both edges so the block
-   reads as one shape rather than a grid with a hole in it */
-.vc:nth-child(4){grid-column:2 / span 2;padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
-.vc:nth-child(5){grid-column:4 / span 2;padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
-.vc .ico{width:20px;height:20px;color:var(--ink);margin-bottom:2px}
-.vc:nth-child(2),.vc:nth-child(3){padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
+.vc:hover{border-color:var(--ink-3);transform:translateY(-3px)}
+.vc .ico{width:22px;height:22px;color:var(--ink-2);margin-bottom:2px;transition:color .3s}
+.vc:hover .ico{color:var(--ink)}
 .vc h3{font:500 var(--t-lg)/1.39 var(--body);color:var(--ink)}
-.vc p{font:500 var(--t-body)/1.56 var(--body);color:var(--ink-2);max-width:40ch}
-@media (max-width:860px){
-  .vcreate{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .vc,.vc:nth-child(4),.vc:nth-child(5){grid-column:span 1}
-  .vc:nth-child(even){padding-inline-start:clamp(20px,2.4vw,34px);border-inline-start:1px solid var(--line)}
-  .vc:nth-child(odd){padding-inline-start:0;border-inline-start:0}
-}
-@media (max-width:560px){
-  .vcreate{grid-template-columns:1fr}
-  .vc,.vc:nth-child(4),.vc:nth-child(5),.vc:nth-child(even){grid-column:span 1;padding-inline-start:0;border-inline-start:0}
+.vc p{font:500 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
+@media (max-width:900px){ .vcreate{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .vcreate{grid-template-columns:minmax(0,1fr)} }
+@media (prefers-reduced-motion:reduce){
+  .vc{transition:none}
+  .vc:hover{transform:none}
 }
 
 /* ==========================================================================
-   Who we want to hear from — two columns of plain statements
+   Who we want to hear from — one card each
    ========================================================================== */
 
 .plines{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:0 clamp(28px,4vw,64px);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(12px,1.6vw,20px);margin-top:clamp(28px,3.4vw,44px);
 }
 .pline{
+  background:var(--panel);border:1px solid var(--line);
+  padding:clamp(22px,2.4vw,30px) clamp(20px,2.2vw,26px) clamp(26px,2.8vw,34px);
   display:grid;gap:8px;align-content:start;
-  padding:clamp(22px,2.6vw,30px) 0;border-bottom:1px solid var(--line);
+  transition:border-color .3s,transform .3s;
 }
+.pline:hover{border-color:var(--ink-3);transform:translateY(-3px)}
 .pline h3{font:500 var(--t-lg)/1.39 var(--body);color:var(--ink)}
-.pline p{font:500 var(--t-body)/1.56 var(--body);color:var(--ink-2);max-width:44ch}
-@media (max-width:820px){ .plines{grid-template-columns:1fr} }
+.pline p{font:500 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
+@media (max-width:900px){ .plines{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .plines{grid-template-columns:minmax(0,1fr)} }
+@media (prefers-reduced-motion:reduce){
+  .pline{transition:none}
+  .pline:hover{transform:none}
+}
 
 /* ==========================================================================
    A company page — the lead statement, the upright photograph beside the
@@ -414,17 +419,19 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
    What we trade today — a rail of products that scrolls when it has to
    ========================================================================== */
 
-.prodrail{
-  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,336px);
-  justify-content:start;gap:clamp(14px,1.8vw,22px);
+/* A grid, not a rail. Sideways scrolling kept most of the list behind the
+   right edge, cut the last card in half, and hid its own Prev/Next buttons
+   below 700px — on the screen where swiping was the only way left. Every
+   product is on the page now, in rows, and the row count follows the width. */
+.prodgrid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(22px,2.6vw,34px) clamp(14px,1.8vw,22px);
   margin-top:clamp(28px,3.4vw,44px);
-  overflow-x:auto;overscroll-behavior-inline:contain;
-  scroll-snap-type:x proximity;scroll-behavior:smooth;
-  padding-bottom:14px;
 }
-.prodrail::-webkit-scrollbar{height:4px}
-.prodrail::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
-.prod{scroll-snap-align:start;display:grid;gap:12px;align-content:start}
+@media (max-width:1100px){ .prodgrid{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:820px){ .prodgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:520px){ .prodgrid{grid-template-columns:minmax(0,1fr)} }
+.prod{display:grid;gap:12px;align-content:start}
 /* The picture is clipped by its own frame so the zoom has an edge to move
    against, the same move the company cards make. */
 .prod-pic{
@@ -444,16 +451,7 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
   .prod:hover img,.prod:focus-within img{transform:none}
 }
 
-.railnav{display:flex;gap:10px;margin-top:18px}
-.railbtn{
-  width:44px;height:44px;display:grid;place-items:center;cursor:pointer;
-  background:var(--white);border:1px solid var(--line);color:var(--ink);
-  font-size:var(--t-lede);transition:background .2s,border-color .2s,color .2s;
-}
-.railbtn:hover{background:var(--ink);border-color:var(--ink);color:var(--warm)}
-.railbtn[disabled]{opacity:.35;cursor:default}
-.railbtn[disabled]:hover{background:var(--white);border-color:var(--line);color:var(--ink)}
-@media (max-width:700px){ .railnav{display:none} }
+
 
 /* activity tags */
 .tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
@@ -1144,20 +1142,19 @@ textarea{min-height:140px;resize:vertical}
    half off the edge.
    ========================================================================== */
 
-.corail{
-  /* A max as well as a min: with one card in the rail, 1fr stretches it
-     across the whole track and a 4:3 image then stands 578px tall. */
-  display:grid;grid-auto-flow:column;grid-auto-columns:minmax(258px,336px);justify-content:start;
-  gap:clamp(12px,1.4vw,18px);margin-top:clamp(24px,2.6vw,34px);
-  overflow-x:auto;overscroll-behavior-inline:contain;
-  scroll-snap-type:x proximity;scroll-padding-inline:var(--gutter);
-  padding-bottom:14px;
+/* A grid that wraps, not a rail that scrolls sideways. A max as well as a
+   min: with one company in it, a 1fr track would stretch the card across the
+   whole measure and its 4:3 photograph would stand 578px tall. */
+.cogrid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,336px));
+  justify-content:start;
+  gap:clamp(18px,2.2vw,28px) clamp(12px,1.4vw,18px);
+  margin-top:clamp(24px,2.6vw,34px);
 }
-.corail::-webkit-scrollbar{height:4px}
-.corail::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+@media (max-width:560px){ .cogrid{grid-template-columns:minmax(0,1fr)} }
 
 .cocard{
-  display:grid;grid-template-rows:auto 1fr;scroll-snap-align:start;
+  display:grid;grid-template-rows:auto 1fr;
   text-decoration:none;color:inherit;background:var(--paper);
   border:1px solid var(--line);
   transition:border-color .25s,transform .25s;
@@ -1186,7 +1183,7 @@ textarea{min-height:140px;resize:vertical}
 /* ---- every card in a rail is the same height ---------------------------- */
 /* The name gets its own row and the role the one under it, so a role that
    wraps to two lines does not make its card taller than its neighbours. */
-.corail{align-items:stretch}
+.cogrid{align-items:stretch}
 .cocard-body{grid-template-rows:auto auto 1fr}
 .cocard-role{align-self:start}
 
@@ -1300,15 +1297,30 @@ textarea{min-height:140px;resize:vertical}
 
 /* ---- one sector --------------------------------------------------------- */
 
-.secblk{grid-column:main;padding-block:clamp(44px,5.4vw,84px)}
-/* a jump from the index must not land the heading under the bar */
-.secblk{scroll-margin-top:calc(var(--head-h) + 24px)}
-.secblk + .secblk{border-top:1px solid var(--line)}
-/* The alternating ground runs the full width of the page, not just this
-   column, so it is painted behind the grid rather than on the section. */
-.secblk.stone{
-  box-shadow:0 0 0 100vmax var(--paper);
-  clip-path:inset(0 -100vmax);background:var(--paper);
+/* One sector, one screen. The photograph that used to sit under the reading
+   made each block about two screens tall, so you scrolled past a picture to
+   reach the next sector. Without it the reading fits, and centring it means
+   a sector arrives composed rather than tucked under the bar. */
+.secblk{
+  grid-column:main;
+  min-height:calc(100vh - var(--head-h));
+  display:grid;align-content:center;
+  padding-block:clamp(44px,5.4vw,84px);
+  scroll-margin-top:calc(var(--head-h) + 24px);
+}
+/* Each carries its own ground, so the page changes under you as you read
+   down it. The ground runs the full width of the window rather than this
+   column, which is what the box-shadow and the clip do. None is darker than
+   --panel: that is the palest ground the body grey was measured against, and
+   anything deeper drops it under 4.5:1. */
+.secblk[data-tone="0"]{--ground:var(--white)}
+.secblk[data-tone="1"]{--ground:#f8f7f5}
+.secblk[data-tone="2"]{--ground:#f3f1ef}
+.secblk[data-tone="3"]{--ground:var(--panel)}
+.secblk{
+  background:var(--ground);
+  box-shadow:0 0 0 100vmax var(--ground);
+  clip-path:inset(0 -100vmax);
 }
 .secblk-col{display:grid;gap:20px;justify-items:start}
 .secblk h2{
@@ -1333,28 +1345,26 @@ textarea{min-height:140px;resize:vertical}
 .secblk-more a span{display:inline-block;transition:transform .25s}
 .secblk-more a:hover span{transform:translateX(4px)}
 
-.secblk-shot{margin:28px 0 0;width:100%;overflow:hidden}
-.secblk-shot img{
-  width:100%;height:auto;aspect-ratio:746/451;object-fit:cover;
-  background:var(--panel);
-}
+/* ---- the businesses inside the sector ------------------------------------
+   Names side by side. Each tile had been a photograph, a name and a sentence
+   stacked down the column, which repeated what the sector paragraph above it
+   had just said and cost most of the height. A logo goes in each of these
+   when there are logos to put in them. */
 
-/* ---- a business inside the sector --------------------------------------- */
-
-.minico{
-  display:grid;grid-template-columns:93px minmax(0,1fr);align-items:center;
-  gap:19px;width:100%;min-height:100px;padding:6px;
-  border:1px solid var(--line);background:none;text-decoration:none;
-  transition:border-color .25s,background .25s;
+.cotiles{display:flex;flex-wrap:wrap;gap:12px;margin-top:2px}
+.cotile{
+  display:inline-flex;align-items:center;min-height:56px;padding:14px 22px;
+  background:var(--white);border:1px solid var(--line);
+  font:500 var(--t-lede)/1.3 var(--body);color:var(--ink);text-decoration:none;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
 }
-.minico + .minico{margin-top:20px}
-.minico img{width:93px;height:88px;object-fit:cover;background:var(--panel)}
-.minico:hover,.minico:focus-visible{border-color:var(--ink);background:rgba(24,23,23,.03)}
-.minico-id{display:block;min-width:0;padding-right:12px}
-.minico b{display:block;font:600 var(--t-lede)/1.4 var(--body);color:var(--ink)}
-.minico em{
-  display:block;font:500 var(--t-sm)/1.53 var(--body);font-style:normal;
-  color:var(--ink-2);margin-top:2px;
+.cotile:hover,.cotile:focus-visible{
+  border-color:var(--ink);transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(24,23,23,.07);
+}
+@media (prefers-reduced-motion:reduce){
+  .cotile{transition:none}
+  .cotile:hover,.cotile:focus-visible{transform:none}
 }
 
 @media (max-width:1180px){
