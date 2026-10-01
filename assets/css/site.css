@@ -910,7 +910,12 @@ textarea{min-height:140px;resize:vertical}
 .seccard-cap{gap:6px}
 
 @media (max-width:900px){ .seccards{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:520px){ .seccards{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:520px){
+  .seccards{grid-template-columns:minmax(0,1fr)}
+  /* Portrait, one to a row, each card stood nearly 500px tall — four of them
+     is two thousand pixels of photograph to scroll past. Landscape here. */
+  .seccard{aspect-ratio:16/10}
+}
 
 /* ==========================================================================
    What makes it a group — a bento of four claims
@@ -1633,4 +1638,53 @@ textarea{min-height:140px;resize:vertical}
   /* a sector heading is a link, and 22px is under the floor WCAG sets */
   .secblk h2 a{display:inline-flex;align-items:center;min-height:44px}
   .foot-legal{font-size:var(--t-micro)}
+
+  /* A whole screen of photograph before the statement is a lot of scrolling
+     to reach the point. The hero gives back about a fifth of the screen, so
+     the statement lands sooner and the band under it shows it continues. */
+  .hero{min-height:78svh;padding-block:calc(var(--head-h) + 24px) 36px}
+  .pagehead{min-height:58svh;padding-block:clamp(40px,12vw,56px) clamp(32px,9vw,44px)}
+
+  /* The four figures wrapped one, two, one and centred themselves, which read
+     as a mistake rather than a row. Two by two, aligned with everything else. */
+  .stats{padding:20px 18px}
+  .stats dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 16px}
+  .stats dl > div{justify-items:start;text-align:start}
+}
+
+/* ---- where a company buys from ------------------------------------------
+   The countries were only ever a line under each product card, so a company
+   buying from eleven of them never said so in one place. Grouped by the
+   Group sourcing regions, which is the same register the home page prints. */
+
+.srcregs{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(12px,1.6vw,20px);margin-top:clamp(28px,3.4vw,44px);
+}
+.srcreg{
+  background:var(--panel);border:1px solid var(--line);
+  padding:clamp(20px,2.2vw,26px) clamp(18px,2vw,24px) clamp(22px,2.4vw,28px);
+  display:grid;gap:12px;align-content:start;
+  transition:border-color .3s,transform .3s;
+}
+.srcreg:hover{border-color:var(--ink-3);transform:translateY(-3px)}
+.srcreg h3{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label);text-transform:uppercase;letter-spacing:.07em}
+.srcreg ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 10px}
+.srcreg li{font:500 var(--t-body)/1.5 var(--body);color:var(--ink)}
+/* no separator between them: a pseudo-element divider wraps onto the start
+   of the next line, so a region read "· Turkmenistan". The gap is enough. */
+.srcreg ul{gap:4px 16px}
+.srcmore{margin-top:clamp(18px,2.2vw,26px)}
+.srcmore a{
+  display:inline-flex;align-items:center;gap:7px;min-height:44px;
+  font:500 var(--t-micro)/1.4 var(--ui);color:var(--ink);
+  text-underline-offset:4px;text-decoration-thickness:1px;
+}
+.srcmore a span{display:inline-block;transition:transform .25s}
+.srcmore a:hover span{transform:translateX(4px)}
+@media (max-width:900px){ .srcregs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .srcregs{grid-template-columns:minmax(0,1fr)} }
+@media (prefers-reduced-motion:reduce){
+  .srcreg{transition:none}
+  .srcreg:hover{transform:none}
 }

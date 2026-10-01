@@ -912,6 +912,8 @@ ${c.services.map((s, i) => `      <div class="svc rise d${Math.min(i, 3)}">
 `
     : '';
 
+  const sourcing = sourcingSection(c);
+
   const activities = c.activities && c.activities.length
     ? `<section class="section tight" aria-labelledby="actTitle">
   <div class="wrap">
@@ -961,7 +963,7 @@ ${c.facts.map(f => `      <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).
   </div>
 </section>
 
-${products}${services}${activities}<section class="section tight" aria-labelledby="othTitle">
+${products}${sourcing}${services}${activities}<section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
     ${head2('othTitle', 'The other <span class="soft">companies</span>', '')}
     ${companyRail(others)}
@@ -971,6 +973,50 @@ ${products}${services}${activities}<section class="section tight" aria-labelledb
 `
     + ctaBand()
     + footer();
+}
+
+/* Where a company sources from, gathered off its own products and grouped by
+   the Group sourcing regions. The countries were only ever a line under each
+   product card, so a company that buys from eleven of them never said so in
+   one place. Companies with no product origins get no section at all. */
+function sourcingSection(c) {
+  const used = [...new Set((c.products || []).flatMap(p => p.origins || []))];
+  if (!used.length) return '';
+
+  const groups = REACH.map(reg => ({
+    t: reg.t,
+    countries: used.filter(u => reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(u))
+  })).filter(g => g.countries.length);
+
+  /* Every origin has to land in a region. Without this an origin the Group
+     does not declare would be dropped from this section in silence while the
+     product card above went on claiming it. */
+  const placed = groups.reduce((n, g) => n + g.countries.length, 0);
+  if (placed !== used.length) {
+    const lost = used.filter(u => !groups.some(g => g.countries.includes(u)));
+    console.error(String.fromCharCode(10) + `  ${c.slug}: ` + lost.join(
+) +
+      ` is not on the Group's sourcing list. Add it to REACH, or correct the product.` + String.fromCharCode(10));
+    process.exit(1);
+  }
+
+  return `<section class="section tight" aria-labelledby="srcTitle">
+  <div class="wrap">
+    ${head2('srcTitle', 'Where we <span class="soft">buy from</span>',
+      `${esc(c.name)} sources ${plural(used.length, 'country', 'countries')} across ${plural(groups.length, 'region', 'regions')}.`)}
+    <div class="srcregs rise">
+${groups.map(g => `      <div class="srcreg">
+        <h3>${esc(g.t)}</h3>
+        <ul>
+${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(10))}
+        </ul>
+      </div>`).join(String.fromCharCode(10))}
+    </div>
+    <p class="srcmore"><a href="/sectors/trading/#markets">The Group's full sourcing register <span aria-hidden="true">&#8594;</span></a></p>
+  </div>
+</section>
+
+`;
 }
 
 /* ---------- the sectors ---------------------------------------------------- */
