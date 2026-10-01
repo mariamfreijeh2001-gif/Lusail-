@@ -37,6 +37,81 @@ const {
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist');
 
+/* ==========================================================================
+   Photographs
+   Every picture goes out in several sizes, and the browser picks one before
+   the stylesheet has arrived — so `sizes` has to describe the box the
+   stylesheet will put it in. The sizes themselves are made by
+   build/variants.js from the roles in build/imageroles.js; nothing here
+   invents a file, and a page asking for one that was never made fails the
+   build.
+   ========================================================================== */
+
+const IMG_DIR = path.join(ROOT, 'site-assets/img');
+const DERIVED = path.join(IMG_DIR, 'derived');
+
+/* The real pixel size of a JPEG, read from its SOF marker, so width/height
+   describe the file rather than whatever was typed into the template. They
+   had drifted badly: every page hero declared 1600x1066 while carrying
+   anything from 673x1200 to 1600x1066. */
+function jpegSize(buf) {
+  let i = 2;
+  while (i < buf.length) {
+    if (buf[i] !== 0xFF) { i++; continue; }
+    const m = buf[i + 1];
+    if (m === 0xD8 || m === 0x01 || (m >= 0xD0 && m <= 0xD7)) { i += 2; continue; }
+    if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC)
+      return { h: buf.readUInt16BE(i + 5), w: buf.readUInt16BE(i + 7) };
+    i += 2 + buf.readUInt16BE(i + 2);
+  }
+  throw new Error('not a JPEG');
+}
+
+const measure = f => { const d = jpegSize(fs.readFileSync(f)); return { w: d.w, h: d.h }; };
+
+/* name -> { nat, sizes: [{ w, h, src }], cropped } */
+const PICS = (() => {
+  const out = {};
+  for (const f of fs.readdirSync(IMG_DIR)) {
+    if (!f.endsWith('.jpg')) continue;
+    const name = f.slice(0, -4);
+    out[name] = { nat: measure(path.join(IMG_DIR, f)), sizes: [], cropped: false };
+  }
+  if (fs.existsSync(DERIVED)) {
+    for (const f of fs.readdirSync(DERIVED)) {
+      const m = f.match(/^(.+)-(\d+)\.jpg$/);
+      if (!m || !out[m[1]]) continue;
+      const d = measure(path.join(DERIVED, f));
+      out[m[1]].sizes.push({ w: d.w, h: d.h, src: '/assets/img/derived/' + f });
+    }
+  }
+  for (const p of Object.values(out)) {
+    p.sizes.sort((a, b) => a.w - b.w);
+    /* A variant cut to a fixed shape cannot sit in the same srcset as the
+       original, which is a different shape: the browser would pick whichever
+       it liked and the box would change shape under it. Noticing the
+       difference here beats keeping a second list in step by hand. */
+    const r = p.nat.w / p.nat.h;
+    p.cropped = p.sizes.some(s => Math.abs(s.w / s.h - r) > 0.02);
+  }
+  return out;
+})();
+
+/* An <img> that offers every size we made of it.
+   `sizes` is the CSS of the box it lands in; `attrs` is anything else. */
+function pic(name, sizes, attrs) {
+  const p = PICS[name];
+  if (!p) { console.error('\n  no such photograph: ' + name + '.jpg\n'); process.exit(1); }
+  const cands = p.cropped
+    ? p.sizes
+    : p.sizes.concat([{ w: p.nat.w, h: p.nat.h, src: '/assets/img/' + name + '.jpg' }]);
+  const big = cands[cands.length - 1] || { w: p.nat.w, h: p.nat.h, src: '/assets/img/' + name + '.jpg' };
+  const set = cands.length > 1
+    ? ` srcset="${cands.map(c => c.src + ' ' + c.w + 'w').join(', ')}" sizes="${sizes}"`
+    : '';
+  return `<img src="${big.src}"${set} width="${big.w}" height="${big.h}" ${attrs}>`;
+}
+
 /* ---------- helpers ---------------------------------------------------- */
 
 const esc = s => String(s)
@@ -216,9 +291,7 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 <link rel="icon" href="/assets/logo/${B.faviconIco}" sizes="any">
 <link rel="apple-touch-icon" href="/assets/logo/${B.appleTouch}">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Inter:wght@500;600&family=Space+Grotesk:wght@500&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/font/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css">
 ${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
 </head>
@@ -349,7 +422,7 @@ function pageHead({ eyebrow, eyebrowHref, h1, lede, photo, action }) {
     ? `<a class="pagehead-eyebrow" href="${eyebrowHref}">${esc(eyebrow)}</a>`
     : `<span class="pagehead-eyebrow">${esc(eyebrow)}</span>`;
   return `<section class="pagehead">
-  <img class="pagehead-bg" src="/assets/img/${photo}.jpg" alt="" width="1600" height="1066" fetchpriority="high">
+  ${pic(photo, '100vw', 'class="pagehead-bg" alt="" fetchpriority="high"')}
   <div class="wrap">
     ${brow}
     <h1>${esc(h1)}</h1>
@@ -376,7 +449,7 @@ function coCard(c) {
      list and the filter matches any of them */
   const inSectors = (c.sectors || [c.sectorSlug]).join(' ');
   return `      <a class="cocard" href="/companies/${c.slug}/" data-sector="${inSectors}">
-        <span class="cocard-shot"><img src="/assets/img/${c.hero}.jpg" alt="${esc(c.name)}" width="640" height="480" loading="lazy"></span>
+        <span class="cocard-shot">${pic(c.hero, '(max-width:700px) 72vw, 334px', `alt="${esc(c.name)}" loading="lazy"`)}</span>
         <span class="cocard-body">
           <span class="cocard-sector">${esc(c.sectorName)}</span>
           <span class="cocard-name">${esc(c.name)}</span>
@@ -521,7 +594,7 @@ ${REACH.map(x => `      <div data-region="${esc(x.t)}">
    asked, so the row reads as four headings rather than four paragraphs. */
 function bento() {
   const card = (x, i) => `        <button class="bcard${i === 0 ? ' bcard-photo' : ''}" type="button" aria-expanded="${i === 0}">
-${i === 0 ? '          <img src="/assets/img/why-group.jpg" alt="Two people shaking hands over a table" width="1000" height="561" loading="lazy">\n' : ''}          <span class="n">${num(i)}</span>
+${i === 0 ? '          ' + pic('why-group', '(max-width:900px) 100vw, 48vw', 'alt="Two people shaking hands over a table" loading="lazy"') + '\n' : ''}          <span class="n">${num(i)}</span>
           <h3>${esc(x.t)}</h3>
           ${i === 0
     ? `<p>${esc(x.d)}</p>`
@@ -543,7 +616,7 @@ ${WHY.slice(1).map((x, i) => card(x, i + 1)).join('\n')}
 function companyLadder() {
   return `<div class="ladder">
 ${ALL_COMPANIES.map((c, i) => `      <a class="lad" href="/companies/${c.slug}/">
-        <img class="lad-bg" src="/assets/img/${c.hero}.jpg" alt="${esc(c.name)}" width="640" height="480" loading="lazy">
+        ${pic(c.hero, '(max-width:860px) 100vw, 25vw', `class="lad-bg" alt="${esc(c.name)}" loading="lazy"`)}
         <span class="n">${num(i)}</span>
         <span class="lad-b">
           <span class="lad-sec">${esc(c.sectorName)}</span>
@@ -603,7 +676,7 @@ function pageHome() {
   })
     + header('/', true)
     + `<section class="hero">
-  <img class="hero-bg" src="/assets/img/hero-doha.jpg" alt="" width="1585" height="992" fetchpriority="high">
+  ${pic('hero-doha', '100vw', 'class="hero-bg" alt="" fetchpriority="high"')}
   <div class="wrap">
     <div class="hero-say">
       <h1>Building Businesses. Creating <em>Value</em>.</h1>
@@ -644,7 +717,7 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
     </div>
     <div class="seccards">
 ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="/sectors/${s.slug}/">
-        <img src="/assets/img/${SECTOR_SHOT[s.slug] || 'card-trading'}.jpg" alt="${esc(s.name)}" width="640" height="914" loading="lazy">
+        ${pic(SECTOR_SHOT[s.slug] || 'card-trading', '(max-width:700px) 86vw, 22vw', `alt="${esc(s.name)}" loading="lazy"`)}
         <span class="seccard-cap">
           <b>${esc(s.name)}</b>
           <span class="seccard-more"><span>
@@ -737,7 +810,7 @@ function pageAbout() {
       </div>
     </div>
     <figure class="bandshot rise">
-      <img src="/assets/img/about-platform.jpg" alt="" width="900" height="600" loading="lazy">
+      ${pic('about-platform', '100vw', 'alt="" loading="lazy"')}
     </figure>
   </div>
 </section>
@@ -797,7 +870,7 @@ function pageCompany(c) {
     ${head2('prodTitle', 'What we trade <span class="soft">today</span>', '')}
     <div class="prodrail" id="prodrail">
 ${c.products.map(p => `      <article class="prod">
-        <img src="/assets/img/${p.img}.jpg" alt="${esc(p.t)}" width="640" height="480" loading="lazy">
+        ${pic(p.img, '260px', `alt="${esc(p.t)}" loading="lazy"`)}
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
 ${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
@@ -869,7 +942,7 @@ ${c.activities.map(a => `      <li>${esc(a)}</li>`).join('\n')}
     <p class="lead-para rise">${esc(c.intro)}</p>
     <div class="cosplit">
       <figure class="costill rise">
-        <img src="/assets/img/${c.still}.jpg" alt="${esc(c.name)}" width="900" height="1125" loading="lazy">
+        ${pic(c.still, '(max-width:860px) 100vw, 590px', `alt="${esc(c.name)}"`)}
       </figure>
       <div class="prose rise d1">
 ${c.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
@@ -942,7 +1015,7 @@ ${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join('\n')}
 
       <h3 class="secblk-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</h3>
 ${s.companies.map(c => `      <a class="minico" href="/companies/${c.slug}/">
-        <img src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy">
+        ${pic(c.hero, '93px', 'alt="" loading="lazy"')}
         <span class="minico-id">
           <b>${esc(c.name)}</b>
           <em>${esc(c.short)}</em>
@@ -952,7 +1025,7 @@ ${s.companies.map(c => `      <a class="minico" href="/companies/${c.slug}/">
       <p class="secblk-more"><a href="/sectors/${s.slug}/">More on ${esc(s.name)} <span aria-hidden="true">&#8594;</span></a></p>
 
       <figure class="secblk-shot">
-        <img src="/assets/img/${s.shot || s.hero}.jpg" alt="${esc(s.name)}" width="1120" height="677" loading="lazy">
+        ${pic(s.shot || s.hero, '(max-width:900px) 100vw, 746px', `alt="${esc(s.name)}" loading="lazy"`)}
       </figure>
     </div>
   </section>`).join('\n\n')}
@@ -1248,6 +1321,35 @@ function copyDir(from, to) {
    drifts: add an image to a page, forget to register it, and the build
    happily ships a page pointing at a file it never copied. Reading the
    markup cannot drift, because it is the same markup the browser gets. */
+/* The names a generated page asks for under a given path. The check is
+   against what the browser will really request, so there is no list to keep
+   in step and nothing unreachable gets deployed. */
+function usedFrom(re) {
+  const want = new Set();
+  const walk = dir => fs.readdirSync(dir, { withFileTypes: true }).forEach(e => {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) return walk(p);
+    if (!e.name.endsWith('.html')) return;
+    for (const m of fs.readFileSync(p, 'utf8').matchAll(re)) want.add(m[1]);
+  });
+  walk(OUT);
+  return want;
+}
+
+function copyNamed(from, to, names) {
+  fs.mkdirSync(to, { recursive: true });
+  const missing = [];
+  for (const n of names) {
+    const src = path.join(from, n);
+    if (!fs.existsSync(src)) { missing.push(n); continue; }
+    fs.copyFileSync(src, path.join(to, n));
+  }
+  if (missing.length) {
+    console.error('\n  missing in ' + path.relative(ROOT, from) + ':\n    ' + missing.join('\n    ') + '\n');
+    process.exit(1);
+  }
+}
+
 function usedImages() {
   const want = new Set();
   const walk = dir => fs.readdirSync(dir, { withFileTypes: true }).forEach(e => {
@@ -1255,15 +1357,26 @@ function usedImages() {
     if (e.isDirectory()) return walk(p);
     if (!e.name.endsWith('.html')) return;
     const html = fs.readFileSync(p, 'utf8');
-    for (const m of html.matchAll(/\/assets\/img\/([A-Za-z0-9._-]+)\.jpg/g)) want.add(m[1]);
+    for (const m of html.matchAll(/\/assets\/img\/((?:derived\/)?[A-Za-z0-9._-]+)\.jpg/g)) want.add(m[1]);
   });
   walk(OUT);
 
-  const have = new Set(fs.readdirSync(path.join(ROOT, 'site-assets/img'))
-    .map(f => f.replace(/\.jpg$/, '')));
+  /* Checked against the files on disk rather than a list kept by hand, so a
+     page cannot ask for a size nobody made. A missing derivative means
+     build/variants.js has not been run since a photograph changed. */
+  const have = new Set();
+  for (const f of fs.readdirSync(path.join(ROOT, 'site-assets/img'))) {
+    if (f.endsWith('.jpg')) have.add(f.slice(0, -4));
+  }
+  if (fs.existsSync(DERIVED)) {
+    for (const f of fs.readdirSync(DERIVED)) {
+      if (f.endsWith('.jpg')) have.add('derived/' + f.slice(0, -4));
+    }
+  }
   const missing = [...want].filter(v => v && !have.has(v));
   if (missing.length) {
-    console.error('\n  missing images in site-assets/img:\n    ' + missing.join('\n    ') + '\n');
+    console.error('\n  missing images in site-assets/img:\n    ' + missing.join('\n    ') +
+      (missing.some(m => m.startsWith('derived/')) ? '\n\n  Run `npm run images`.' : '') + '\n');
     process.exit(1);
   }
 
@@ -1271,6 +1384,7 @@ function usedImages() {
      hard to spot by eye once the names differ. Compare the bytes. */
   const seen = new Map();
   for (const name of [...want].sort()) {
+    if (name.startsWith('derived/')) continue;   // same picture by design
     const sum = require('crypto').createHash('sha1')
       .update(fs.readFileSync(path.join(ROOT, 'site-assets/img', name + '.jpg'))).digest('hex');
     if (seen.has(sum)) {
@@ -1306,7 +1420,14 @@ function build() {
   console.log('assets');
   copyDir(path.join(ROOT, 'assets/css'), path.join(OUT, 'assets/css'));
   copyDir(path.join(ROOT, 'assets/js'), path.join(OUT, 'assets/js'));
-  copyDir(path.join(ROOT, 'site-assets/logo'), path.join(OUT, 'assets/logo'));
+  /* Only the lockups a page actually asks for. The kit holds twenty-one
+     files — five wordmarks, six marks, five horizontals and the icons — and
+     deploying all of them put 197 KB of unreachable SVG on the server and
+     made the directory look like a description of the site, which it is not.
+     Read out of the written HTML, like the photographs. */
+  copyNamed(path.join(ROOT, 'site-assets/logo'), path.join(OUT, 'assets/logo'),
+    usedFrom(/\/assets\/logo\/([A-Za-z0-9._-]+)/g));
+  copyDir(path.join(ROOT, 'site-assets/font'), path.join(OUT, 'assets/font'));
 
   /* the dotted map, written once as a cacheable file rather than inlined
      into the page that uses it */
@@ -1314,15 +1435,16 @@ function build() {
   const mapSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MAP_BOX.width} ${MAP_BOX.height}" width="${MAP_BOX.width}" height="${MAP_BOX.height}" role="img" aria-label="World map"><path d="${map.d}" fill="none" stroke="#3a3838" stroke-width="2.3" stroke-linecap="round"/></svg>`;
 
   const imgOut = path.join(OUT, 'assets/img');
-  fs.mkdirSync(imgOut, { recursive: true });
-  let bytes = 0;
+  fs.mkdirSync(path.join(imgOut, 'derived'), { recursive: true });
+  let bytes = 0, full = 0, cut = 0;
   for (const name of images) {
-    const from = path.join(ROOT, 'site-assets/img', name + '.jpg');
+    const from = path.join(IMG_DIR, name + '.jpg');
     fs.copyFileSync(from, path.join(imgOut, name + '.jpg'));
     bytes += fs.statSync(from).size;
+    if (name.startsWith('derived/')) cut++; else full++;
   }
   fs.writeFileSync(path.join(imgOut, 'worldmap.svg'), mapSvg);
-  console.log(`  ${images.size} photographs (${Math.round(bytes / 1024)} KB) + worldmap.svg (${Math.round(mapSvg.length / 1024)} KB)`);
+  console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + worldmap.svg (${Math.round(mapSvg.length / 1024)} KB)`);
 
   const urls = ['/', '/about/', ...ALL_COMPANIES.map(c => `/companies/${c.slug}/`),
     '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/', '/contact/'];

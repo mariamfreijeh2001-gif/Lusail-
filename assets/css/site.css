@@ -7,10 +7,38 @@
    carbon and greys out one word — "What makes it a group" — which is the only
    ornament the system has. Photography is full-bleed and captioned in place.
 
-   TYPE: Archivo throughout for display and body, Inter for navigation and
-   buttons, Space Grotesk for the small stat labels, and Playfair Display
-   italic for the one accent word in the hero.
+   TYPE: Archivo throughout — display, body, navigation and buttons — with
+   Space Grotesk for the small stat labels and Playfair Display italic for the
+   one accent word in the hero. Navigation was Inter, which was the largest
+   font file on the site (47 KB on every page) for eleven declarations that
+   Archivo already covered.
+
+   The three are served from this origin, not from Google. Fetching them cost
+   a third-party DNS lookup, TLS handshake and a render-blocking stylesheet
+   before the first font byte could even be asked for — measured at 392ms of
+   first paint on a fast connection, and the last font byte landed at 2.5s on
+   a slow one. All three are SIL Open Font License; see site-assets/font/.
    ========================================================================== */
+
+/* The latin cut of each, which is all an English-only site needs. */
+@font-face{
+  font-family:"Archivo";
+  src:url("/assets/font/archivo-latin.woff2") format("woff2");
+  font-weight:400 700;font-stretch:100%;font-style:normal;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:"Space Grotesk";
+  src:url("/assets/font/spacegrotesk-latin.woff2") format("woff2");
+  font-weight:500;font-style:normal;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:"Playfair Display";
+  src:url("/assets/font/playfair-italic-latin.woff2") format("woff2");
+  font-weight:600;font-style:italic;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
 
 :root{
   /* Carbon, and the two greys under it. --ink sets headings and every dark
@@ -45,7 +73,7 @@
 
   --display:"Archivo","Segoe UI",system-ui,-apple-system,sans-serif;
   --body:"Archivo","Segoe UI",system-ui,-apple-system,sans-serif;
-  --ui:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --ui:"Archivo","Segoe UI",system-ui,-apple-system,sans-serif;
   --serif:"Playfair Display",Georgia,serif;
   --mono:"Space Grotesk",ui-monospace,"SFMono-Regular",Menlo,monospace;
 
