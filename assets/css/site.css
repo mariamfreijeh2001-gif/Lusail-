@@ -325,9 +325,16 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
    by hand. A card says "this is one idea", answers a pointer, and does not
    care how many of them there are. */
 .vcreate{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
   gap:clamp(12px,1.6vw,20px);margin-top:clamp(28px,3.4vw,44px);
 }
+.vc{grid-column:span 2}
+/* Five into three columns leaves two over. Centre them rather than leaving a
+   hole on the right — the six-column track exists only so the orphan row can
+   sit on the half-column. Scoped with :has so the three-card version of this
+   block, on Work With Us, is untouched. */
+.vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(4){grid-column:2 / span 2}
+.vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(5){grid-column:4 / span 2}
 .vc{
   background:var(--panel);border:1px solid var(--line);
   padding:clamp(24px,2.6vw,32px) clamp(20px,2.2vw,28px) clamp(28px,3vw,36px);
@@ -339,7 +346,11 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
 .vc:hover .ico{color:var(--ink)}
 .vc h3{font:500 var(--t-lg)/1.39 var(--body);color:var(--ink)}
 .vc p{font:500 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
-@media (max-width:900px){ .vcreate{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:900px){
+  .vcreate{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .vc,.vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(4),
+  .vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(5){grid-column:span 1}
+}
 @media (max-width:560px){ .vcreate{grid-template-columns:minmax(0,1fr)} }
 @media (prefers-reduced-motion:reduce){
   .vc{transition:none}
@@ -802,6 +813,23 @@ textarea{min-height:140px;resize:vertical}
   .foot{grid-template-columns:1fr;gap:40px}
 }
 
+/* On a phone the footer was 695px — most of a screen of furniture under
+   every page, on top of the closing band above it. The two link columns sit
+   side by side instead of stacking, the sentence under the mark goes (the
+   page above it has just said as much), and everything draws in. */
+@media (max-width:700px){
+  .site-foot{padding-block:30px 22px}
+  .foot{gap:24px}
+  .foot-id{gap:14px}
+  .foot-id img{height:32px}
+  .foot-id p{display:none}
+  .foot-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+  .foot-col{gap:12px;min-width:0}
+  .foot-col h2,.foot-h{font-size:var(--t-sm)}
+  .foot-col ul{gap:4px}
+  .foot-legal{margin-top:20px}
+}
+
 /* ==========================================================================
    A section head used across the home page: the statement on the left with
    one word greyed out, and the qualifying line held to the right of it.
@@ -974,58 +1002,18 @@ textarea{min-height:140px;resize:vertical}
 .mapwrap{position:relative;margin-top:clamp(28px,4.4vw,62px)}
 .mapdots{display:block;width:100%;height:auto}
 
-/* The pin is a wrapper; the button inside it is the control and the card
-   beside it is the content. They used to be one button with the card inside,
-   which made the pin's accessible name the region twice plus every country,
-   and put a div inside a button. */
+/* A pin is a label on the map, not a control. The map shows where the Group
+   sources from; the register under it lists the countries, which is what the
+   pins used to open on hover — the same words, a screen higher up. */
 .pin{
   position:absolute;transform:translate(-50%,-100%);
   display:grid;justify-items:center;gap:0;text-align:center;z-index:2;
 }
-.pin:hover,.pin:focus-within,.pin.on{z-index:6}
-/* The pill carries the region name and nothing else, so it stays the width of
-   the name. The countries live in a card that is positioned out of the flow —
-   in the flow they would set the pill's width even while collapsed, which is
-   how every label ended up as wide as its longest country list. */
 .pin-lab{
-  position:relative;display:block;
-  background:#0b0a0a;border:1px solid rgba(255,255,255,.12);border-radius:5px;
-  padding:6px 10px;cursor:pointer;color:inherit;font:inherit;
+  display:block;background:#0b0a0a;border:1px solid rgba(255,255,255,.12);
+  border-radius:5px;padding:6px 10px;
 }
-.pin-nm{
-  display:block;font:500 var(--t-xxs)/1.35 var(--body);color:#fff;white-space:nowrap;
-  transition:opacity .18s;
-}
-.pin-pop{
-  position:absolute;bottom:-1px;z-index:1;
-  background:#0b0a0a;border:1px solid rgba(255,255,255,.14);border-radius:6px;
-  padding:11px 14px;display:grid;gap:4px;justify-items:start;text-align:start;
-  opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity .2s,transform .2s,visibility .2s;
-}
-/* centred on the pin, except near the edges of the map where it would run off */
-.pin[data-anchor="mid"] .pin-pop{left:50%;transform:translate(-50%,5px)}
-.pin[data-anchor="start"] .pin-pop{left:-1px;transform:translate(0,5px)}
-.pin[data-anchor="end"] .pin-pop{right:-1px;transform:translate(0,5px)}
-.pin-pop b{font:600 var(--t-body)/1.35 var(--body);color:#fff}
-.pin-pop > span{font:500 var(--t-xs)/1.5 var(--body);color:#d7d4d1}
-
-.pin:hover .pin-nm,.pin:focus-within .pin-nm,.pin.on .pin-nm{opacity:0}
-.pin:hover .pin-pop,.pin:focus-within .pin-pop,.pin.on .pin-pop{
-  opacity:1;visibility:visible;
-  /* reachable once it is open: WCAG 1.4.13 wants the pointer to be able to
-     travel into what hovering revealed, so the text can be read and copied */
-  pointer-events:auto;
-}
-.pin[data-anchor="mid"]:hover .pin-pop,
-.pin[data-anchor="mid"]:focus-within .pin-pop,
-.pin[data-anchor="mid"].on .pin-pop{transform:translate(-50%,0)}
-.pin[data-anchor="start"]:hover .pin-pop,
-.pin[data-anchor="start"]:focus-within .pin-pop,
-.pin[data-anchor="start"].on .pin-pop,
-.pin[data-anchor="end"]:hover .pin-pop,
-.pin[data-anchor="end"]:focus-within .pin-pop,
-.pin[data-anchor="end"].on .pin-pop{transform:translate(0,0)}
+.pin-nm{display:block;font:500 var(--t-xxs)/1.35 var(--body);color:#fff;white-space:nowrap}
 
 /* Below this the map is about 100px tall. Six labels overlap each other on
    it, every one of them a tap target smaller than a fingertip, and an opened
@@ -1243,21 +1231,21 @@ textarea{min-height:140px;resize:vertical}
 .secrail a{
   position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);
   align-items:center;gap:10px;min-height:44px;padding:8px 10px 8px 26px;
-  font:500 var(--t-lede)/1.4 var(--body);color:var(--ink-3);text-decoration:none;
+  font:500 var(--t-lede)/1.4 var(--body);color:var(--on-2);text-decoration:none;
   transition:color .25s;
 }
 .secrail-n{font-variant-numeric:tabular-nums;transition:color .25s}
 /* the marker sits in the margin, so nothing moves when it appears */
 .secrail-go{
   position:absolute;left:2px;top:50%;translate:-5px -50%;
-  opacity:0;color:var(--ink);transition:opacity .25s,translate .25s;
+  opacity:0;color:var(--on);transition:opacity .25s,translate .25s;
 }
-.secrail a[aria-current="location"]{color:var(--ink);font-weight:600}
+.secrail a[aria-current="location"]{color:var(--on);font-weight:600}
 .secrail a[aria-current="location"] .secrail-go{opacity:1;translate:0 -50%}
 /* After the mark, not before it: an attribute selector and :hover weigh the
    same, so source order decided which won, and pointing at the sector you
    were already reading did nothing at all. */
-.secrail a:hover,.secrail a:focus-visible{color:var(--ink)}
+.secrail a:hover,.secrail a:focus-visible{color:var(--on)}
 .secrail a:hover .secrail-go,.secrail a:focus-visible .secrail-go{opacity:.45;translate:0 -50%}
 @media (prefers-reduced-motion:reduce){
   .secrail a,.secrail-n,.secrail-go{transition:none}
@@ -1308,38 +1296,42 @@ textarea{min-height:140px;resize:vertical}
   padding-block:clamp(44px,5.4vw,84px);
   scroll-margin-top:calc(var(--head-h) + 24px);
 }
-/* Each carries its own ground, so the page changes under you as you read
-   down it. The ground runs the full width of the window rather than this
-   column, which is what the box-shadow and the clip do. None is darker than
-   --panel: that is the palest ground the body grey was measured against, and
-   anything deeper drops it under 4.5:1. */
-.secblk[data-tone="0"]{--ground:var(--white)}
-.secblk[data-tone="1"]{--ground:#f8f7f5}
-.secblk[data-tone="2"]{--ground:#f3f1ef}
-.secblk[data-tone="3"]{--ground:var(--panel)}
-.secblk{
-  background:var(--ground);
-  box-shadow:0 0 0 100vmax var(--ground);
-  clip-path:inset(0 -100vmax);
+/* The ground belongs to the whole index, not to each block, so moving from
+   one sector to the next washes the colour across rather than cutting to it.
+   The scroll-spy sets data-tone; without script the page keeps the first.
+
+   The four come off the logo — gold #D3A750 and navy #030C2B — as two tints
+   and the navy itself. Text moves with the ground: on the tints the body grey
+   steps darker, and on the navy the whole set inverts. Measured, all of them:
+   body copy 4.96 to 12.96 against its ground where 4.5 is wanted. */
+.secidx{
+  --ground:#ffffff; --on:#181717; --on-2:#6c6b6b; --rule:var(--line);
+  --tile:#ffffff;
+  background:var(--ground);color:var(--on);
+  transition:background .6s ease,color .6s ease;
 }
+.secidx[data-tone="1"]{--ground:#f7f0e2;--on:#181717;--on-2:#5a5856;--rule:#e4d9c2;--tile:#fffaf0}
+.secidx[data-tone="2"]{--ground:#e8ecf4;--on:#181717;--on-2:#5a5856;--rule:#d2d8e6;--tile:#f6f8fc}
+.secidx[data-tone="3"]{--ground:#030C2B;--on:#ffffff;--on-2:#cfd4e0;--rule:#1e2749;--tile:rgba(255,255,255,.06)}
+@media (prefers-reduced-motion:reduce){ .secidx{transition:none} }
 .secblk-col{display:grid;gap:20px;justify-items:start}
 .secblk h2{
   font:600 var(--t-h4)/1.4 var(--display);text-transform:uppercase;
-  letter-spacing:.005em;color:var(--ink);
+  letter-spacing:.005em;color:var(--on);
 }
 .secblk h2 a{text-decoration:none;color:inherit;transition:color .2s}
-.secblk h2 a:hover{color:var(--ink-2)}
+.secblk h2 a:hover{color:var(--on-2)}
 .secblk-lede{
-  font:500 italic var(--t-lede)/1.6 var(--body);color:var(--ink);max-width:42rem;
+  font:500 italic var(--t-lede)/1.6 var(--body);color:var(--on);max-width:42rem;
 }
-.secblk-say{font:500 var(--t-body)/1.62 var(--body);color:var(--ink-2)}
+.secblk-say{font:500 var(--t-body)/1.62 var(--body);color:var(--on-2)}
 .secblk-count{
-  font:500 var(--t-body)/1.4 var(--body);color:var(--ink);margin-top:20px;
+  font:500 var(--t-body)/1.4 var(--body);color:var(--on);margin-top:20px;
 }
 .secblk-more{margin-top:4px}
 .secblk-more a{
   display:inline-flex;align-items:center;gap:7px;min-height:28px;
-  font:500 var(--t-micro)/1.4 var(--ui);color:var(--ink);
+  font:500 var(--t-micro)/1.4 var(--ui);color:var(--on);
   text-underline-offset:4px;text-decoration-thickness:1px;
 }
 .secblk-more a span{display:inline-block;transition:transform .25s}
@@ -1354,12 +1346,12 @@ textarea{min-height:140px;resize:vertical}
 .cotiles{display:flex;flex-wrap:wrap;gap:12px;margin-top:2px}
 .cotile{
   display:inline-flex;align-items:center;min-height:56px;padding:14px 22px;
-  background:var(--white);border:1px solid var(--line);
-  font:500 var(--t-lede)/1.3 var(--body);color:var(--ink);text-decoration:none;
+  background:var(--tile);border:1px solid var(--rule);
+  font:500 var(--t-lede)/1.3 var(--body);color:var(--on);text-decoration:none;
   transition:border-color .25s,transform .25s,box-shadow .25s;
 }
 .cotile:hover,.cotile:focus-visible{
-  border-color:var(--ink);transform:translateY(-2px);
+  border-color:var(--on);transform:translateY(-2px);
   box-shadow:0 6px 18px rgba(24,23,23,.07);
 }
 @media (prefers-reduced-motion:reduce){
@@ -1381,16 +1373,22 @@ textarea{min-height:140px;resize:vertical}
     position:sticky;top:var(--head-h);margin:0 calc(var(--gutter) * -1);
     /* the strip carries its own ground, since the index itself no longer has
        a box and the reading scrolls underneath it */
-    background:var(--white);border-bottom:1px solid var(--line);
+    background:var(--ground);border-bottom:1px solid var(--rule);
   }
   .secrail ol{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
   .secrail ol::-webkit-scrollbar{display:none}
   /* each entry keeps its own width and the strip scrolls; without this
      flex squeezes all four to fit and clips the names instead */
   .secrail li{flex:none}
-  .secrail li + li{border-left:1px solid var(--line)}
+  .secrail li + li{border-left:1px solid var(--rule)}
   .secrail a{min-height:52px;padding:8px 16px;white-space:nowrap;font-size:var(--t-sm)}
-  .secrail a[aria-current="location"]{background:var(--paper)}
+  .secrail a[aria-current="location"]{background:var(--tile)}
+  /* the strip runs past the right edge; fade it so that is visible rather
+     than looking like the list simply stops at four-and-a-bit */
+  .secrail{
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 34px),transparent 100%);
+    mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 34px),transparent 100%);
+  }
   .secrail-go{display:none}
   /* the strip is pinned under the bar too, so a jump has to clear both */
   .secblk{padding-block:clamp(34px,7vw,56px);scroll-margin-top:calc(var(--head-h) + 76px)}
@@ -1419,19 +1417,6 @@ textarea{min-height:140px;resize:vertical}
 /* The map is an OpenStreetMap frame — no key, no tracking script. Greyed so
    it sits in the palette rather than shouting over it, and it comes back to
    full colour when someone actually reaches for it. */
-.placemap{margin:clamp(28px,3.4vw,44px) 0 0;border:1px solid var(--line)}
-.placemap iframe{
-  display:block;width:100%;height:clamp(300px,38vw,460px);border:0;
-  filter:grayscale(1) contrast(.92);transition:filter .3s;
-}
-.placemap:hover iframe,.placemap:focus-within iframe{filter:none}
-.placemap figcaption{
-  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
-  padding:16px 18px;border-top:1px solid var(--line);background:var(--white);
-  font:500 var(--t-body)/1.4 var(--body);color:var(--ink);
-}
-.placemap figcaption a{color:var(--ink-2);text-decoration:none;transition:color .2s}
-.placemap figcaption a:hover{color:var(--ink)}
 
 /* At rest the card is a photograph and a name. What the sector is and who
    is in it open on top of it when you ask — the same move the bento makes,
@@ -1623,3 +1608,29 @@ textarea{min-height:140px;resize:vertical}
 
 /* the footer column labels are labels, not page sections */
 .foot-h{font:600 var(--t-lg)/1.56 var(--ui);color:#fff;margin:0}
+
+/* ==========================================================================
+   The phone pass
+   Measured at 390 x 844 in a real viewport. 24px is the floor WCAG sets for a
+   target and the site already met it everywhere; 44px is the size a thumb
+   actually wants, and these were the ones that fell between the two. The
+   small type is lifted for the same reason: 12px is a desk size.
+   ========================================================================== */
+
+@media (max-width:700px){
+  .site-head .brand,.foot-id a{display:inline-flex;align-items:center;min-height:44px}
+  .burger{width:44px}
+  a.pagehead-eyebrow{display:inline-flex;align-items:center;min-height:44px}
+  .foot-col a{min-height:44px}
+  .prod-from a{min-height:44px;font-size:var(--t-micro)}
+  .secblk-more a{min-height:44px}
+  .secrail a{min-height:48px}
+  .cotile{min-height:52px}
+  .foot-legal{font-size:var(--t-xs)}
+  .seccard-who{font-size:var(--t-micro)}
+  /* the address and the number are the point of this page */
+  .channels a{display:inline-flex;align-items:center;min-height:44px}
+  /* a sector heading is a link, and 22px is under the floor WCAG sets */
+  .secblk h2 a{display:inline-flex;align-items:center;min-height:44px}
+  .foot-legal{font-size:var(--t-micro)}
+}

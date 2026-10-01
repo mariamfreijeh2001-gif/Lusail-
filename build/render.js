@@ -550,28 +550,20 @@ function reachMap() {
     }
   }
 
-  /* The countries sit outside the button, not inside it. Inside, every pin's
-     accessible name was the region twice over followed by its whole country
-     list — "Middle East Middle East Qatar · UAE · Türkiye · Lebanon" — and a
-     pointer could not travel into the card to read or copy it. */
-  const pins = placed.map((p, i) => {
+  /* Labels, not controls. Each pin opened a card of countries on hover —
+     word for word the same list the register under the map already prints, so
+     the whole interaction revealed what was visible a screen below it. It cost
+     overlapping targets, a card that ran off the side of a phone, and one a
+     pointer could not travel into. The map says where; the register says what. */
+  const pins = placed.map(p => {
     const pc = p.x / MAP_BOX.width * 100;
-    /* The open card is wider than its pin. Near the edges of the map, hang it
-       from that edge instead of centring it, or it runs off the section. */
-    const anchor = pc > 72 ? 'end' : pc < 18 ? 'start' : 'mid';
-    return `      <div class="pin" data-region="${esc(p.r.t)}" data-anchor="${anchor}"
+    return `      <div class="pin" data-region="${esc(p.r.t)}"
         style="left:${pc.toFixed(2)}%;top:${(p.y / MAP_BOX.height * 100).toFixed(2)}%;--stem:${STEM_0 + p.lane * LANE}px">
-        <button class="pin-lab" type="button" aria-expanded="false" aria-controls="pin-pop-${i}">
-          <span class="pin-nm">${esc(p.r.t)}</span>
-        </button>
-        <span class="pin-pop" id="pin-pop-${i}">
-          <b>${esc(p.r.t)}</b>
-          <span>${esc(p.r.d)}</span>
-        </span>
+        <span class="pin-lab"><span class="pin-nm">${esc(p.r.t)}</span></span>
         <span class="pin-stem" aria-hidden="true"></span>
         <span class="pin-dot" aria-hidden="true"></span>
       </div>`;
-  }).join('\n');
+  }).join(String.fromCharCode(10));
 
   /* The dot grid is 65KB of path data. Inline it once and it is 70% of the
      home page's HTML, re-downloaded on every visit and parsed before the
@@ -1200,7 +1192,6 @@ ${GROWTH.map(g => `      <li>${BULLET}<span>${esc(g.t)}</span></li>`).join(Strin
 /* Where the pin goes on the contact page. Supplied by the client; replace
    these two numbers when the registered address is confirmed. The map is an
    OpenStreetMap frame, so it needs no key and no tracking script. */
-const MAP_AT = { lat: 25.312929645378233, lon: 51.51906267232219 };
 
 function pageContact() {
   /* The dropdown is built from the same list api/contact.js validates
@@ -1240,7 +1231,7 @@ function pageContact() {
         <div><dt>Routing</dt><dd>Pick an area of interest and the message goes to the desk that can answer it.</dd></div>
       </dl>
     </div>
-    <form id="form" class="rise d1" novalidate data-mailto="${SITE.contact.email}">
+    <form id="form" class="rise d1" novalidate data-mail="${SITE.contact.email}">
       <div class="hp" aria-hidden="true">
         <label for="fSite">Website</label>
         <input id="fSite" name="website" type="text" tabindex="-1" autocomplete="off">
@@ -1259,23 +1250,6 @@ ${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('
         <span class="status" id="status" role="status"></span>
       </div>
     </form>
-  </div>
-</section>
-
-<section class="section tight stone" aria-labelledby="mapTitle">
-  <div class="wrap">
-    ${head2('mapTitle', 'Where to <span class="soft">find us</span>', '')}
-    <figure class="placemap rise">
-      <iframe
-        title="A map showing where Lusail Corp is, in Doha, Qatar"
-        src="https://www.openstreetmap.org/export/embed.html?bbox=${MAP_AT.lon - 0.012}%2C${MAP_AT.lat - 0.008}%2C${MAP_AT.lon + 0.012}%2C${MAP_AT.lat + 0.008}&amp;layer=mapnik&amp;marker=${MAP_AT.lat}%2C${MAP_AT.lon}"
-        loading="lazy" referrerpolicy="no-referrer"></iframe>
-      <figcaption>
-        <span>${esc(SITE.contact.location)}</span>
-        <a href="https://www.openstreetmap.org/?mlat=${MAP_AT.lat}&amp;mlon=${MAP_AT.lon}#map=16/${MAP_AT.lat}/${MAP_AT.lon}"
-           target="_blank" rel="noopener">Open the map &#8594;</a>
-      </figcaption>
-    </figure>
   </div>
 </section>
 

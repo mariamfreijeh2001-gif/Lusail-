@@ -141,58 +141,6 @@
 
 
 
-  /* ---------- where we source from -----------------------------------------
-     A pin and its row in the register below are the same market, so lighting
-     one lights the other. */
-
-  var mapwrap = $('#mapwrap');
-  if (mapwrap) {
-    var rows = $$('.reg > div');
-    var pins = $$('.pin', mapwrap);
-    var mark = function (region, on) {
-      rows.forEach(function (r) {
-        if (r.dataset.region === region) r.classList.toggle('on', on);
-      });
-    };
-    /* A pin held open by a click stays open. Pointing elsewhere or tabbing
-       away used to clear its row in the register while the pin itself stayed
-       lit, so the map and the table below it disagreed about what was open. */
-    var open = null;
-    var setOpen = function (pin) {
-      pins.forEach(function (p) {
-        var is = p === pin;
-        p.classList.toggle('on', is);
-        p.querySelector('.pin-lab').setAttribute('aria-expanded', is ? 'true' : 'false');
-        if (!is) mark(p.dataset.region, false);
-      });
-      open = pin;
-      if (pin) mark(pin.dataset.region, true);
-    };
-
-    pins.forEach(function (pin) {
-      var region = pin.dataset.region;
-      var btn = pin.querySelector('.pin-lab');
-      pin.addEventListener('mouseenter', function () { mark(region, true); });
-      pin.addEventListener('mouseleave', function () { if (open !== pin) mark(region, false); });
-      btn.addEventListener('focus', function () { mark(region, true); });
-      btn.addEventListener('blur', function () { if (open !== pin) mark(region, false); });
-      btn.addEventListener('click', function () { setOpen(open === pin ? null : pin); });
-    });
-
-    /* Escape dismisses what hovering or focus revealed, without moving the
-       pointer — WCAG 1.4.13 again. */
-    mapwrap.addEventListener('keydown', function (e) {
-      if (e.key !== 'Escape' && e.key !== 'Esc') return;
-      var here = document.activeElement;
-      if (open) { var btn = open.querySelector('.pin-lab'); setOpen(null); btn.focus(); e.stopPropagation(); }
-      else if (here && here.classList.contains('pin-lab')) { here.blur(); e.stopPropagation(); }
-    });
-    /* clicking away closes it, the way the sectors panel does */
-    document.addEventListener('click', function (e) {
-      if (open && !mapwrap.contains(e.target)) setOpen(null);
-    });
-  }
-
   /* ---------- the four figures ---------------------------------------------
      They are written into the HTML, so they are right before this runs and
      right if it never does. This only counts them up the first time they
@@ -250,6 +198,9 @@
      Resend. If it is unreachable, or CONTACT_ENDPOINT is emptied, the form
      falls back to the visitor's mail client, so an enquiry is never lost. */
 
+  /* The form posts JSON to the serverless function in api/contact.js, which
+     relays through Resend. Until the key is set there the request fails and
+     the form says so — it never claims to have sent anything it has not. */
   var CONTACT_ENDPOINT = '/api/contact';
 
   var form = $('#form');
@@ -260,6 +211,7 @@
       status.textContent = msg;
     };
     var areaSel = form.querySelector('select[name="area"]');
+    var MAIL = form.getAttribute('data-mail') || 'us';
 
     /* A company page links here as /contact/?company=<slug>; start the
        dropdown on that company so the enquiry is routed to it. */
@@ -269,29 +221,6 @@
         areaSel.value = pre;
       }
     } catch (e) {}
-
-    /* Build a mailto the visitor can simply send. */
-    var handOff = function () {
-      var to = form.getAttribute('data-mailto');
-      if (!to) { say('Please email us directly.', true); return; }
-      var f = {};
-      new FormData(form).forEach(function (v, k) { f[k] = v; });
-      // the option's visible label, not its routing code
-      if (areaSel && areaSel.selectedIndex > -1) f.area = areaSel.options[areaSel.selectedIndex].textContent;
-      var subject = 'Website enquiry' + (f.area ? ' — ' + f.area : '');
-      var lines = [
-        'Name: ' + (f.name || ''),
-        'Company: ' + (f.company || ''),
-        'Email: ' + (f.email || ''),
-        'Phone: ' + (f.phone || ''),
-        'Area of interest: ' + (f.area || ''),
-        '', (f.message || '')
-      ].join('\n');
-      location.href = 'mailto:' + to +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body=' + encodeURIComponent(lines);
-      say('Opening your email app to send this to us.');
-    };
 
     /* What is wrong is said beside the field it is wrong about, and names
        only that field. The status line repeats it for a screen reader, but
@@ -334,8 +263,6 @@
         return;
       }
 
-      if (!CONTACT_ENDPOINT) { handOff(); return; }
-
       var btn = form.querySelector('button[type="submit"]');
       btn.disabled = true;
       say('Sending…');
@@ -352,10 +279,10 @@
         say('Message sent. We reply within two working days.');
         form.reset();
       }).catch(function () {
-        /* Do not make them retype it — open their mail client with the
-           message already filled in. */
-        say('We could not send that. Opening your email app instead.', true);
-        setTimeout(handOff, 900);
+        /* The form is not cleared, so nothing they typed is lost and Send
+           can simply be pressed again. The address is on this page already,
+           under Channels, for anyone who would rather not wait. */
+        say('That did not send. Try again, or email us at ' + MAIL + '.', true);
       }).then(function () {
         btn.disabled = false;
       });
@@ -376,6 +303,7 @@
      where the index lies on its side as a strip. Measuring it rather than
      assuming it keeps the mark honest at both shapes. */
   var rail = document.querySelector('.secrail');
+  var idx = document.querySelector('.secidx');
   if (rail) {
     var entries = [];
     [].forEach.call(rail.querySelectorAll('a[href^="#"]'), function (a) {
@@ -415,6 +343,10 @@
         if (e === best) e.a.setAttribute('aria-current', 'location');
         else e.a.removeAttribute('aria-current');
       });
+      /* The ground belongs to the whole index rather than to each block, so
+         moving between sectors washes the colour across instead of cutting to
+         it. Without this the page keeps the first tone, which is a real page. */
+      if (idx && best.sec.dataset.tone) idx.setAttribute('data-tone', best.sec.dataset.tone);
       reveal(best.a);
     };
 

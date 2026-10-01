@@ -251,10 +251,14 @@ holds the filenames, so swapping the logo is one edit.
   panels where the row was hovered but no panel was, so all four shut. Below
   860px they stack, open, at the height of what they hold.
 - **Where we source from** — a dotted world map generated at build time from
-  Natural Earth data (no map library ships to the browser). Each region has a
-  pin whose label opens to its countries, and lighting a pin lights its row in
-  the register below. Pin labels are laid out at build time so they clear one
-  another.
+  Natural Earth data (no map library ships to the browser), with a label for
+  each region, laid out at build time so they clear one another. Nothing on it
+  opens: the labels say where, and the register underneath says what. Each pin
+  used to open a card of countries on hover — word for word the list the
+  register already prints, a screen below — which cost overlapping targets, a
+  card that ran off the side of a phone and one a pointer could not travel
+  into. Below 760px the map is about 100px tall, so the labels are not drawn
+  there at all and the register stands alone.
 - **The sectors index** — each sector holds one screen and carries its own
   ground, so the page changes under you as you read down it. None of the four
   grounds is darker than `--panel`, which is the palest ground the body grey
@@ -378,6 +382,23 @@ field**, with `aria-invalid` and `aria-describedby`. It used to say "Fill in
 your name, email and message" in a status line 479px below the field it had
 just sent focus to.
 
+## On a phone
+
+Measured at 390 x 844 in a real viewport over CDP, not in the tall iframe the
+layout probes use — anything built on 100vh or on a sticky offset reports
+nonsense in there. Every page is checked for sideways overflow, anything wider
+than the screen, targets under 44px and type under 13px.
+
+24px is the floor WCAG sets for a target and the site already met it
+everywhere; 44px is the size a thumb actually wants, and the bar, the brand
+marks, the footer links, the product origins and the sector headings all fell
+between the two. The sector headings were 22px, which is under even the floor.
+
+The footer was 695px on a phone — most of a screen of furniture under every
+page, on top of the closing band above it. The two link columns sit side by
+side now, the sentence under the mark goes (the page above has just said as
+much), and it comes to about half that.
+
 ## Contact form
 
 The contact page carries the form. It validates in
@@ -394,9 +415,13 @@ The function needs `RESEND_API_KEY` set in the Vercel project. `CONTACT_TO`
 and `CONTACT_FROM` are optional overrides.
 
 If the key is missing, or the request fails for any reason, the form does
-**not** claim success. It opens the visitor's mail client with the message
-already filled in, addressed to `info@lusailcorp.com`, so an enquiry is never
-silently lost.
+**not** claim success — it says the send failed and leaves everything typed
+where it is, so Send can simply be pressed again. The address is printed on
+the same page under Channels for anyone who would rather not wait.
+
+It used to hand off to the visitor's mail client instead, which assumed one
+was configured. On a machine with none, nothing happened while the page said
+something was opening.
 
 ## Deploying
 
