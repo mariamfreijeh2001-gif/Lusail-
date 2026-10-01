@@ -257,18 +257,19 @@ holds the filenames, so swapping the logo is one edit.
   another.
 - **The sectors index** — each sector holds one screen and carries its own
   ground, so the page changes under you as you read down it. None of the four
-  grounds is darker than : that is the palest ground the body grey
-  was measured against, and anything deeper drops it under 4.5:1. A numbered
-  list of the four stands beside the reading and stays there as the page
-  moves, marking whichever sector is on screen. The entries are quiet until the reading reaches them; the one
-  you are in goes to full carbon and puts a marker in the margin, which sits
-  outside the text so nothing shifts when it appears. It is a list rather
-  than a boxed table of contents — cells, dividers and a filled row drew
-  attention to the index instead of to what it points at. Each entry jumps to
-  its sector; each sector hands on to its own page and to the businesses
-  inside it. Below 900px it lies on its side as a strip under the bar, which
-  carries its own ground, and scrolls the marked sector into view. Without
-  script it is a plain list of jump links, which still works.
+  grounds is darker than `--panel`, which is the palest ground the body grey
+  was ever measured against; anything deeper drops it under 4.5 to 1. A
+  numbered list of the four stands beside the reading and stays there as the
+  page moves, marking whichever sector is on screen. The entries are quiet
+  until the reading reaches them; the one you are in goes to full carbon and
+  puts a marker in the margin, which sits outside the text so nothing shifts
+  when it appears. It is a list rather than a boxed table of contents — cells,
+  dividers and a filled row drew attention to the index instead of to what it
+  points at. Each entry jumps to its sector; each sector hands on to its own
+  page and to the businesses inside it, which are names side by side rather
+  than photographs. Below 900px the index lies on its side as a strip under
+  the bar, which carries its own ground, and scrolls the marked sector into
+  view. Without script it is a plain list of jump links, which still works.
 - **Arrival** — each band lifts in once. Hiding is scoped to a `.js` class the
   script adds, so nothing is ever invisible if the script does not run, and a
   band already scrolled past is simply there.
