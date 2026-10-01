@@ -269,11 +269,14 @@ function header(current, overHero) {
     const here = href === current ? ' aria-current="page"' : '';
     /* a sector page is "under" Sectors, so the button carries the mark */
     const onSector = current && current.startsWith('/sectors/') ? ' aria-current="true"' : '';
+    /* Sectors is a link to the sectors page and a panel listing them, which
+       are two things, so they are two controls: clicking the word goes to
+       the page, and the caret beside it opens the panel. One element cannot
+       do both — a click would have to either navigate or not. */
     return label === 'Sectors'
       ? `      <div class="navwrap" id="navwrap">
-        <button class="nav-btn" type="button" id="secBtn" aria-expanded="false" aria-controls="secmenu"${onSector}>
-          Sectors${CARET}
-        </button>
+        <a class="nav-link nav-sec" href="${href}"${here || onSector}>Sectors</a>
+        <button class="nav-caret" type="button" id="secBtn" aria-expanded="false" aria-controls="secmenu" aria-label="Show the sectors">${CARET}</button>
 ${sectorsPanel()}
       </div>`
       : `      <a class="nav-link" href="${href}"${here}>${esc(label)}</a>`;
@@ -290,9 +293,10 @@ ${NAV.map(link).join('\n')}
   </button>
 </header>
 <div class="menu" id="menu">
-  <a href="/">Home</a>
-${SECTORS.map(s => `  <a class="sub" href="/sectors/${s.slug}/">${esc(s.name)}</a>`).join('\n')}
-  <a href="/about/">About Us</a>
+${NAV.map(([label, href]) => `  <a href="${href}"${href === current ? ' aria-current="page"' : ''}>${esc(label)}</a>` +
+  (label === 'Sectors'
+    ? '\n' + SECTORS.map(s => `  <a class="sub" href="/sectors/${s.slug}/"${'/sectors/' + s.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(s.name)}</a>`).join('\n')
+    : '')).join('\n')}
   <a class="btn btn-light" href="/contact/">Contact us</a>
 </div>
 <main id="main">

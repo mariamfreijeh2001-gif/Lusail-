@@ -560,18 +560,24 @@ textarea{min-height:140px;resize:vertical}
    than small uppercase packed together: a navigation is a list of words
    people read, not a row of labels. */
 .nav{display:flex;align-items:center;gap:clamp(4px,1.6vw,26px);margin-inline:auto}
-.nav-link,.nav-btn{
+.nav-link,.nav-btn,.nav-caret{
   display:flex;align-items:center;gap:2px;height:44px;padding-inline:10px;
   font:500 1.0625rem/1.4 var(--body);letter-spacing:0;
   color:var(--warm);text-decoration:none;
   background:none;border:0;cursor:pointer;
   transition:color .2s;
 }
-.nav-link:hover,.nav-btn:hover,.nav-btn[aria-expanded="true"]{color:var(--gold)}
+.nav-link:hover,.nav-btn:hover,.nav-caret:hover,
+.nav-caret[aria-expanded="true"],.navwrap.open .nav-sec{color:var(--gold)}
 /* the page you are on is named in gold */
-.nav-link[aria-current="page"],.nav-btn[aria-current="true"]{color:var(--gold)}
-.nav-btn svg{width:22px;height:22px;flex:none;fill:currentColor;transition:transform .25s}
-.nav-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+.nav-link[aria-current="page"],.nav-link[aria-current="true"],
+.nav-btn[aria-current="true"]{color:var(--gold)}
+.nav-btn svg,.nav-caret svg{width:22px;height:22px;flex:none;fill:currentColor;transition:transform .25s}
+.nav-btn[aria-expanded="true"] svg,.nav-caret[aria-expanded="true"] svg{transform:rotate(180deg)}
+/* the caret is its own control, so it carries its own hit area and sits
+   tight against the word it belongs to */
+.nav-sec{padding-right:2px}
+.nav-caret{padding-inline:4px;min-width:26px;justify-content:center}
 
 /* the one action on the bar, in the brand's own gold */
 .head-cta{
@@ -586,7 +592,7 @@ textarea{min-height:140px;resize:vertical}
    A white sheet the width of the measure, not a dropdown hanging off the
    button. The whole portfolio is four sectors and five listings, so it all
    fits, and a visitor reaches the business they came for in one move. */
-.navwrap{position:static;display:flex}
+.navwrap{position:static;display:flex;align-items:center}
 .secmenu{
   /* the measure, not the frame: it lines up with the content below it */
   position:absolute;top:100%;left:50%;transform:translate(-50%,-8px);
