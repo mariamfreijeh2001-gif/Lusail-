@@ -1210,34 +1210,39 @@ textarea{min-height:140px;resize:vertical}
 
 /* ---- the index ---------------------------------------------------------- */
 
+/* A list, not a table of contents in a box. The entries are quiet until the
+   reading reaches them; the one you are in goes to full carbon and puts a
+   marker in the margin. The cells, the dividers and the filled row were all
+   drawing attention to the index rather than to what it points at. */
 .secrail{
   grid-column:rail;grid-row:1 / span 99;
   position:sticky;top:calc(var(--head-h) + 40px);
   margin-top:clamp(44px,5.4vw,84px);
-  border:1px solid var(--line);background:var(--white);
   z-index:2;
 }
-.secrail ol{list-style:none;margin:0;padding:0}
-.secrail li + li{border-top:1px solid var(--line)}
+.secrail ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .secrail a{
   position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);
-  align-items:center;gap:8px;min-height:70px;padding:10px 34px 10px 12px;
-  font:400 var(--t-lede)/1.35 var(--body);color:var(--ink-2);text-decoration:none;
-  transition:background .25s,color .25s;
+  align-items:center;gap:10px;min-height:44px;padding:8px 10px 8px 26px;
+  font:500 var(--t-lede)/1.4 var(--body);color:var(--ink-3);text-decoration:none;
+  transition:color .25s;
 }
-.secrail-n{font-variant-numeric:tabular-nums}
+.secrail-n{font-variant-numeric:tabular-nums;transition:color .25s}
+/* the marker sits in the margin, so nothing moves when it appears */
 .secrail-go{
-  position:absolute;right:12px;top:50%;translate:-6px -50%;
-  opacity:0;transition:opacity .25s,translate .25s;
+  position:absolute;left:2px;top:50%;translate:-5px -50%;
+  opacity:0;color:var(--ink);transition:opacity .25s,translate .25s;
 }
-.secrail a[aria-current="location"]{background:var(--paper);color:var(--ink);font-weight:600}
+.secrail a[aria-current="location"]{color:var(--ink);font-weight:600}
 .secrail a[aria-current="location"] .secrail-go{opacity:1;translate:0 -50%}
 /* After the mark, not before it: an attribute selector and :hover weigh the
    same, so source order decided which won, and pointing at the sector you
-   were already reading did nothing at all. The arrow comes out on hover too,
-   so every entry says it is a link before you click it. */
-.secrail a:hover,.secrail a:focus-visible{color:var(--ink);background:rgba(24,23,23,.07)}
-.secrail a:hover .secrail-go,.secrail a:focus-visible .secrail-go{opacity:1;translate:0 -50%}
+   were already reading did nothing at all. */
+.secrail a:hover,.secrail a:focus-visible{color:var(--ink)}
+.secrail a:hover .secrail-go,.secrail a:focus-visible .secrail-go{opacity:.45;translate:0 -50%}
+@media (prefers-reduced-motion:reduce){
+  .secrail a,.secrail-n,.secrail-go{transition:none}
+}
 
 
 /* ---- the other sectors, at the foot of a sector page --------------------
@@ -1342,15 +1347,18 @@ textarea{min-height:140px;resize:vertical}
   .secidx{display:block}
   .secrail{
     position:sticky;top:var(--head-h);margin:0 calc(var(--gutter) * -1);
-    border-inline:0;border-top:0;
+    /* the strip carries its own ground, since the index itself no longer has
+       a box and the reading scrolls underneath it */
+    background:var(--white);border-bottom:1px solid var(--line);
   }
-  .secrail ol{display:flex;overflow-x:auto;scrollbar-width:none}
+  .secrail ol{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
   .secrail ol::-webkit-scrollbar{display:none}
   /* each entry keeps its own width and the strip scrolls; without this
      flex squeezes all four to fit and clips the names instead */
   .secrail li{flex:none}
-  .secrail li + li{border-top:0;border-left:1px solid var(--line)}
+  .secrail li + li{border-left:1px solid var(--line)}
   .secrail a{min-height:52px;padding:8px 16px;white-space:nowrap;font-size:var(--t-sm)}
+  .secrail a[aria-current="location"]{background:var(--paper)}
   .secrail-go{display:none}
   /* the strip is pinned under the bar too, so a jump has to clear both */
   .secblk{padding-block:clamp(34px,7vw,56px);scroll-margin-top:calc(var(--head-h) + 76px)}

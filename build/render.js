@@ -1005,7 +1005,7 @@ function pageSectorsIndex() {
 ${SECTORS.map((s, i) => `      <li><a href="#sec-${s.slug}"${i === 0 ? ' aria-current="location"' : ''}>
         <span class="secrail-n">${i + 1}.</span>
         <span class="secrail-t">${esc(s.name)}</span>
-        <span class="secrail-go" aria-hidden="true">&#8594;</span>
+        <span class="secrail-go" aria-hidden="true">&#8627;</span>
       </a></li>`).join('\n')}
     </ol>
   </nav>

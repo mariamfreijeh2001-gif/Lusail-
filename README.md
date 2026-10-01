@@ -255,12 +255,17 @@ holds the filenames, so swapping the logo is one edit.
   pin whose label opens to its countries, and lighting a pin lights its row in
   the register below. Pin labels are laid out at build time so they clear one
   another.
-- **The sectors index** — a numbered index of the four sectors stands beside
+- **The sectors index** — a numbered list of the four sectors stands beside
   the reading and stays there as the page moves, marking whichever sector is
-  on screen. Each entry jumps to its sector; each sector hands on to its own
-  page and to the businesses inside it. Below 900px the index lies on its
-  side as a strip under the bar and scrolls the marked sector into view.
-  Without script it is a plain list of jump links, which still works.
+  on screen. The entries are quiet until the reading reaches them; the one
+  you are in goes to full carbon and puts a marker in the margin, which sits
+  outside the text so nothing shifts when it appears. It is a list rather
+  than a boxed table of contents — cells, dividers and a filled row drew
+  attention to the index instead of to what it points at. Each entry jumps to
+  its sector; each sector hands on to its own page and to the businesses
+  inside it. Below 900px it lies on its side as a strip under the bar, which
+  carries its own ground, and scrolls the marked sector into view. Without
+  script it is a plain list of jump links, which still works.
 - **Arrival** — each band lifts in once. Hiding is scoped to a `.js` class the
   script adds, so nothing is ever invisible if the script does not run, and a
   band already scrolled past is simply there.
