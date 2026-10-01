@@ -112,23 +112,6 @@
      One open at a time. The first is open in the markup, so the column has a
      shape before this runs and keeps one if it never does. */
 
-  var valacc = $('#valacc');
-  if (valacc) {
-    var vals = $$('.val', valacc);
-    vals.forEach(function (item) {
-      var btn = $('.val-btn', item);
-      btn.addEventListener('click', function () {
-        var open = !item.classList.contains('open');
-        vals.forEach(function (o) {
-          o.classList.remove('open');
-          $('.val-btn', o).setAttribute('aria-expanded', 'false');
-        });
-        item.classList.toggle('open', open);
-        btn.setAttribute('aria-expanded', String(open));
-      });
-    });
-  }
-
   /* ---------- the product rail ---------------------------------------------
      The rail scrolls on its own; these two buttons move it a card at a time
      and grey themselves out at each end. */

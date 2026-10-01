@@ -141,13 +141,20 @@ those.
 |---|---|
 | `--ink` | `#181717` carbon — headings and every dark ground |
 | `--ink-2` | `#6c6b6b` body copy |
-| `--ink-3` | `#8f8e8c` the greyed word inside a heading |
+| `--ink-3` | `#868583` the greyed word inside a heading |
 | `--paper` / `--panel` | `#f6f5f3` / `#efedeb` alternating grounds |
 | `--line` | `#e3e0dd` card outlines |
 | `--pin` | `#fb8449` the sourcing pins, and the one accent |
 
 The frame is 1440 with 115px gutters, leaving the 1210px measure every section
 is set to. `--wrap` is the frame, padding included.
+
+**The type is set smaller than the design file draws it.** The Figma puts the
+hero at 65px and section headings at 45px; those are 50 and 34 here, and the
+bar is 15px. Reading sizes were left at 16–17px: the complaint was that the
+display sizes shouted, and shrinking the body copy would have traded that for
+a worse problem. The sizes live in the `--t-*` tokens at the top of the
+stylesheet, so the whole scale moves from one place.
 
 Type is **Archivo** for display and body, **Inter** for navigation and buttons,
 **Space Grotesk** for the small stat labels, and **Playfair Display** italic for
@@ -160,18 +167,23 @@ holds the filenames, so swapping the logo is one edit.
 
 ### Interactive parts
 
-- **The bar** — the mark, four links and one action. *Sectors* opens a panel
-  listing all four rather than a page; it opens on hover with a pointer, on
-  click without one, and closes on Escape or a click outside. Below 1080px it
-  collapses to a full-screen menu. Over the home photograph the bar starts
-  transparent and fills as the page moves.
+- **The bar** — the mark, four links and one action. *Sectors* is two
+  controls, because it is two things: the word is a link to the sectors page,
+  and the caret beside it opens the panel listing them. The panel also opens
+  on hover with a pointer, and closes on Escape or a click outside. Below
+  1080px the bar collapses to a full-screen menu, which is generated from the
+  same list, so neither can reach a page the other cannot. Over the home
+  photograph the bar starts transparent and fills as the page moves.
 - **The figures** — written into the HTML, so they are right before the script
   runs and right if it never does; they count up once when scrolled into view.
 - **What makes it a group** — four claims as a bento. The photograph states
   the first outright; the other three name themselves and open their reasoning
   on hover, on focus or on a tap.
-- **Building more than a portfolio** — a row of four panels with one open,
-  widening to carry its paragraph. Click, hover or use the arrow keys.
+- **The sector cards and the company panels** — at rest each is a photograph
+  and a name. What the sector is, who is in it, and what a company does open
+  over the picture when you point at one, focus it, or tap it; where there is
+  no hover at all they are simply open. A row of four reads as four pictures
+  rather than four paragraphs, and the company panel widens for its own.
 - **Where we source from** — a dotted world map generated at build time from
   Natural Earth data (no map library ships to the browser). Each region has a
   pin whose label opens to its countries, and lighting a pin lights its row in
@@ -230,12 +242,18 @@ ground it actually sits on — the palest each grey can be and still pass:
 | | drawn | shipped | ratio |
 |---|---|---|---|
 | `--ink-2` body copy | `#868585` | `#6c6b6b` | 4.55 on panel, 5.31 on white |
-| `--ink-3` the greyed word in a heading | `#c0bfbd` | `#8f8e8c` | 3.27 |
-| `--num` the oversized numerals | `#c2bebe` | `#8c8888` | 3.00 |
+| `--ink-3` the greyed word in a heading | `#c0bfbd` | `#868583` | 3.16 on panel, 3.69 on white |
+| `--num` the oversized numerals | `#c2bebe` | `#888484` | 3.17 on panel, 3.70 on white |
 | `--label` stat labels | `#939393` | `#6b6b6b` | 5.33 |
 
 The design drew all four paler; as drawn, body copy failed AA everywhere it
 appeared (3.15 to 1 on a panel) and the greyed word sat at 1.69 to 1.
+
+`--ink-3` and `--num` are a shade darker than the bare minimum. At the
+minimum they measured exactly 3.00 against the panel ground — the threshold
+itself, with nothing left for the next change to spend. They are re-measured
+whenever a type size moves, because the AA threshold follows the size: text
+under 24px needs 4.5 where text at or above it needs 3.
 
 Anything that reveals content on focus answers plain `:focus`, not only
 `:focus-visible` — the company panels, the map pins and the bento claims.

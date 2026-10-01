@@ -22,10 +22,14 @@
      against the grounds they actually sit on they came out at 3.15, 1.69 and
      1.58 to 1 — body copy that fails WCAG AA everywhere it appears, and a
      greyed heading word barely separable from the paper. These are the
-     palest each can be and still clear AA (4.5 for copy, 3 for large text). */
+     palest each can be and still clear AA (4.5 for copy, 3 for large text).
+     --ink-3 and --num are a shade darker again than that floor: at the bare
+     minimum they measured 3.00 on the panel ground, which is the threshold
+     exactly and leaves nothing for a later change to spend. They clear 3.16
+     on the darkest ground they sit on now. */
   --ink-2:#6c6b6b;
-  --ink-3:#8f8e8c;
-  --num:#8c8888;            /* the oversized numerals on the cards */
+  --ink-3:#868583;
+  --num:#888484;            /* the oversized numerals on the cards */
   --label:#6b6b6b;          /* stat labels */
 
   /* Grounds. Sections alternate white and paper; panels sit a shade darker
@@ -47,12 +51,12 @@
 
   /* The design is drawn at 1440 with a 1210 measure. Every size below is the
      drawn value, floored so it still reads on a phone. */
-  --t-display:clamp(2.4rem, 4.6vw, 4.06rem);   /* 65px */
-  --t-h1:clamp(2.1rem, 3.6vw, 2.81rem);        /* 45px */
-  --t-h2:clamp(1.75rem, 3.1vw, 2.81rem);
-  --t-h3:clamp(1.15rem, 1.5vw, 1.25rem);       /* 18px */
-  --t-lede:clamp(1rem, 1.25vw, 1.125rem);      /* 18px */
-  --t-micro:.9375rem;                          /* 15px */
+  --t-display:clamp(2rem, 3.5vw, 3.125rem);    /* 50px, drawn at 65 */
+  --t-h1:clamp(1.625rem, 2.5vw, 2.125rem);     /* 34px, drawn at 45 */
+  --t-h2:clamp(1.5rem, 2.3vw, 2.125rem);       /* 34px */
+  --t-h3:clamp(1.0625rem, 1.2vw, 1.125rem);    /* 18px */
+  --t-lede:clamp(.9375rem, 1.05vw, 1.0625rem); /* 17px */
+  --t-micro:.875rem;                           /* 14px */
 
   --head-h:104px;
   /* the drawn frame is 1440 with 115 gutters, which leaves the 1210 measure
@@ -216,7 +220,7 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
 }
 .vm:hover{border-color:var(--ink-3);transform:translateY(-4px)}
 .vm-label{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
-.vm h3{font-size:clamp(1.3rem,2vw,1.75rem);line-height:1.25;max-width:20ch}
+.vm h3{font-size:clamp(1.15rem,1.6vw,1.375rem);line-height:1.3;max-width:20ch}
 .vm p{font:500 1rem/1.56 var(--body);color:var(--ink-2);max-width:44ch}
 @media (max-width:820px){ .vm-grid{grid-template-columns:1fr} }
 
@@ -225,42 +229,33 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
    beside them
    ========================================================================== */
 
-.valwrap{
-  display:grid;grid-template-columns:minmax(0,634fr) minmax(0,549fr);
-  gap:clamp(20px,2.4vw,27px);align-items:start;
-  margin-top:clamp(30px,4vw,55px);
-}
-.valacc{display:grid;gap:15px;align-content:start}
-.val{background:var(--panel);border:1px solid var(--line);transition:border-color .3s}
-.val.open{border-color:#d8d4d0}
-.val-btn{
-  display:flex;align-items:center;gap:clamp(20px,3vw,48px);width:100%;
-  background:none;border:0;cursor:pointer;text-align:start;
-  padding:24px clamp(16px,1.6vw,20px);font:inherit;color:inherit;
-}
-.val-n{font:500 1.125rem/1.39 var(--body);color:var(--ink-2);flex:none}
-.val-t{font:500 1.125rem/1.39 var(--body);color:var(--ink);flex:1 1 auto}
-.val-btn svg{width:18px;height:18px;flex:none;color:var(--ink-2);transition:transform .3s}
-.val.open .val-btn svg{transform:rotate(180deg)}
-.val-panel{
-  display:grid;grid-template-rows:0fr;
-  transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
-}
-.val.open .val-panel{grid-template-rows:1fr}
-.val-panel > div{overflow:hidden}
-.val-panel p{
-  font:500 .875rem/1.79 var(--body);color:var(--ink-2);
-  padding:0 clamp(16px,1.6vw,20px) 24px calc(clamp(20px,3vw,48px) + 2.2rem);
-  max-width:56ch;
-}
-.valshot{margin:0;height:100%}
-.valshot img{width:100%;height:100%;min-height:340px;object-fit:cover;border:1px solid var(--line)}
+/* ==========================================================================
+   The values — six cards, all of them open
 
-@media (max-width:860px){
-  .valwrap{grid-template-columns:1fr}
-  .valshot{order:-1}
-  .valshot img{min-height:0;aspect-ratio:16/10}
+   This was a six-row accordion beside a photograph a third of the page tall:
+   five values hidden at any moment, a lot of height spent, and a picture
+   carrying none of it. Six one-line values are not worth a click each. They
+   are a grid now, all readable at a glance, and the section is about half as
+   tall as it was.
+   ========================================================================== */
+
+.vals{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(12px,1.4vw,18px);margin-top:clamp(26px,3.4vw,44px);
 }
+.valcard{
+  background:var(--panel);border:1px solid var(--line);
+  padding:clamp(20px,2.2vw,28px) clamp(18px,2vw,24px) clamp(22px,2.4vw,30px);
+  display:grid;gap:7px;align-content:start;
+  transition:border-color .3s,transform .3s;
+}
+.valcard:hover{border-color:var(--ink-3);transform:translateY(-3px)}
+.valcard-n{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
+.valcard h3{font:500 1.0625rem/1.4 var(--body);color:var(--ink)}
+.valcard p{font:500 .9375rem/1.6 var(--body);color:var(--ink-2)}
+
+@media (max-width:900px){ .vals{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .vals{grid-template-columns:minmax(0,1fr)} }
 
 /* ==========================================================================
    How we create value — five numbered statements across the measure
@@ -320,7 +315,7 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.011em}
    ========================================================================== */
 
 .lead-para{
-  font-size:clamp(1.25rem,2.1vw,1.625rem);line-height:1.42;font-weight:500;
+  font-size:clamp(1.125rem,1.6vw,1.3125rem);line-height:1.5;font-weight:500;
   color:var(--ink);max-width:40ch;
 }
 .cosplit{
@@ -525,7 +520,7 @@ textarea{min-height:140px;resize:vertical}
 .vm:hover::before{width:100%}
 .vm:hover{transform:translateY(-5px);box-shadow:0 16px 38px rgba(3,12,43,.07)}
 .vm h2{
-  font-size:clamp(1.4rem,2.2vw,1.85rem);line-height:1.22;
+  font-size:clamp(1.25rem,1.8vw,1.5rem);line-height:1.28;
   margin-bottom:18px;max-width:22ch;transition:color .3s;
 }
 .vm:hover h2{color:var(--gold-deep)}
@@ -562,7 +557,7 @@ textarea{min-height:140px;resize:vertical}
 .nav{display:flex;align-items:center;gap:clamp(4px,1.6vw,26px);margin-inline:auto}
 .nav-link,.nav-btn,.nav-caret{
   display:flex;align-items:center;gap:2px;height:44px;padding-inline:10px;
-  font:500 1.0625rem/1.4 var(--body);letter-spacing:0;
+  font:500 .9375rem/1.4 var(--body);letter-spacing:.012em;
   color:var(--warm);text-decoration:none;
   background:none;border:0;cursor:pointer;
   transition:color .2s;
@@ -768,7 +763,7 @@ textarea{min-height:140px;resize:vertical}
 }
 .stats dl > div{display:grid}
 .stats dt{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
-.stats dd{margin:0;font:600 2.5rem/1.275 var(--display);color:var(--ink);letter-spacing:-.02em}
+.stats dd{margin:0;font:600 2rem/1.275 var(--display);color:var(--ink);letter-spacing:-.02em}
 
 @media (max-width:860px){
   .intro-top{grid-template-columns:1fr;align-items:start}
@@ -978,42 +973,48 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   What's next — the closing card, laid over a photograph
+   The closing band — one carbon strip under every page
+
+   It used to be a 573px photograph carrying a panel with a heading, a
+   paragraph, two buttons and a seven-item list: a whole section, repeated
+   under every page on the site. A closing band is a door, not a room. This
+   one states the ask on the left and puts the two ways through it on the
+   right, and is about a third of the height.
    ========================================================================== */
 
-.next{padding-block:var(--band)}
-.next .wrap{position:relative;display:grid}
-.next-frame{position:relative;overflow:hidden;min-height:clamp(420px,44vw,573px);display:grid;align-items:center}
-.next-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.next{padding-block:clamp(44px,5vw,72px)}
 .next-card{
-  position:relative;justify-self:end;width:min(798px,100%);
-  background:var(--ink);color:#fff;overflow:hidden;
-  padding:36px clamp(22px,3vw,39px) 40px;
-  min-height:clamp(380px,40vw,525px);
-  display:grid;align-content:space-between;gap:32px;
+  position:relative;overflow:hidden;
+  background:var(--ink);color:#fff;
+  padding:clamp(30px,3.4vw,44px) clamp(24px,3.2vw,48px);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;gap:clamp(24px,3vw,48px);
 }
-/* the mark, oversized and barely there, so the card is not a plain slab */
+/* the mark, oversized and barely there, so the strip is not a plain slab */
 .next-card .watermark{
-  position:absolute;top:-58px;right:-34px;width:270px;height:auto;
-  opacity:.07;pointer-events:none;
+  position:absolute;top:50%;right:-46px;translate:0 -50%;
+  width:230px;height:auto;opacity:.07;pointer-events:none;
 }
-.next-say{display:grid;gap:17px;max-width:455px}
-.next-card h2{font:600 1.5625rem/1.6 var(--display);color:#fff;max-width:20ch}
-.next-say p{font:500 1.125rem/1.39 var(--body);color:var(--ink-2)}
-.nexts{
-  list-style:none;margin:0;padding:0;
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:18px clamp(24px,5vw,60px);align-content:end;
-}
-.nexts li{display:flex;gap:8px;align-items:flex-start;font:500 1rem/1.5 var(--body);color:var(--ink-2)}
-.nexts svg{width:16px;height:16px;flex:none;margin-top:4px}
-.next-act{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.next-say{display:grid;gap:10px;max-width:60ch}
+.next-card h2{font:600 1.375rem/1.35 var(--display);color:#fff;max-width:24ch}
+.next-say p{font:500 1rem/1.6 var(--body);color:var(--ink-3)}
+.next-act{display:flex;gap:12px;flex-wrap:wrap;position:relative}
 
-@media (max-width:900px){
-  .next-frame{min-height:0}
-  .next-card{width:100%;min-height:0;gap:26px}
-  .next-bg{position:relative;height:200px}
-  .nexts{grid-template-columns:1fr}
+@media (max-width:860px){
+  .next-card{grid-template-columns:1fr;align-items:start;gap:22px}
+  .next-card .watermark{top:-40px;right:-60px;translate:none;width:190px}
+}
+
+/* the list of what the Group wants to do next, now on Work With Us */
+.nexts{
+  list-style:none;margin:clamp(26px,3vw,38px) 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px clamp(24px,5vw,60px);
+}
+.nexts li{display:flex;gap:10px;align-items:flex-start;font:500 1rem/1.55 var(--body);color:var(--ink-2)}
+.nexts svg{width:16px;height:16px;flex:none;margin-top:5px;color:var(--ink-3)}
+@media (max-width:760px){ .nexts{grid-template-columns:1fr} }
+
 }
 
 /* ==========================================================================
@@ -1140,7 +1141,7 @@ textarea{min-height:140px;resize:vertical}
 .secrail a{
   position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);
   align-items:center;gap:8px;min-height:70px;padding:10px 34px 10px 12px;
-  font:400 1.25rem/1.35 var(--body);color:var(--ink-2);text-decoration:none;
+  font:400 1.0625rem/1.35 var(--body);color:var(--ink-2);text-decoration:none;
   transition:background .25s,color .25s;
 }
 .secrail-n{font-variant-numeric:tabular-nums}
@@ -1166,17 +1167,17 @@ textarea{min-height:140px;resize:vertical}
 }
 .secblk-col{display:grid;gap:20px;justify-items:start}
 .secblk h2{
-  font:600 1.5625rem/1.4 var(--display);text-transform:uppercase;
+  font:600 1.3125rem/1.4 var(--display);text-transform:uppercase;
   letter-spacing:.005em;color:var(--ink);
 }
 .secblk h2 a{text-decoration:none;color:inherit;transition:color .2s}
 .secblk h2 a:hover{color:var(--ink-2)}
 .secblk-lede{
-  font:500 italic 1.125rem/1.67 var(--body);color:var(--ink);max-width:42rem;
+  font:500 italic 1.0625rem/1.6 var(--body);color:var(--ink);max-width:42rem;
 }
-.secblk-say{font:500 1.125rem/1.56 var(--body);color:var(--ink-2)}
+.secblk-say{font:500 1rem/1.62 var(--body);color:var(--ink-2)}
 .secblk-count{
-  font:500 1.125rem/1.4 var(--body);color:var(--ink);margin-top:20px;
+  font:500 1rem/1.4 var(--body);color:var(--ink);margin-top:20px;
 }
 .secblk-more{margin-top:4px}
 .secblk-more a{
@@ -1205,7 +1206,7 @@ textarea{min-height:140px;resize:vertical}
 .minico img{width:93px;height:88px;object-fit:cover;background:var(--panel)}
 .minico:hover,.minico:focus-visible{border-color:var(--ink);background:rgba(24,23,23,.03)}
 .minico-id{display:block;min-width:0;padding-right:12px}
-.minico b{display:block;font:600 1.125rem/1.39 var(--body);color:var(--ink)}
+.minico b{display:block;font:600 1.0625rem/1.4 var(--body);color:var(--ink)}
 .minico em{
   display:block;font:500 .9375rem/1.53 var(--body);font-style:normal;
   color:var(--ink-2);margin-top:2px;
@@ -1274,8 +1275,17 @@ textarea{min-height:140px;resize:vertical}
 .placemap figcaption a{color:var(--ink-2);text-decoration:none;transition:color .2s}
 .placemap figcaption a:hover{color:var(--ink)}
 
-/* the sector card carries what the sector is and who is in it, not just a
-   name and the word View */
+/* At rest the card is a photograph and a name. What the sector is and who
+   is in it open on top of it when you ask — the same move the bento makes,
+   so the row of four reads as four pictures rather than four paragraphs.
+   Where there is no hover, below, it is all simply open. */
+.seccard-more{
+  display:grid;grid-template-rows:0fr;opacity:0;
+  transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1),opacity .3s;
+}
+.seccard-more > span{overflow:hidden;display:grid;gap:6px;justify-items:start}
+.seccard:hover .seccard-more,.seccard:focus .seccard-more,
+.seccard:focus-visible .seccard-more{grid-template-rows:1fr;opacity:1}
 .seccard-say{
   font:500 .875rem/1.45 var(--body);color:rgba(255,255,255,.82);
   text-decoration:none;
@@ -1286,7 +1296,13 @@ textarea{min-height:140px;resize:vertical}
 }
 .seccard-who span{transition:transform .25s;display:inline-block}
 .seccard:hover .seccard-who span{transform:translateX(4px)}
-.seccard::after{height:78%}
+/* the ground under the caption grows with what sits on it */
+.seccard::after{height:118px;transition:height .45s cubic-bezier(.4,0,.2,1)}
+.seccard:hover::after,.seccard:focus::after,.seccard:focus-visible::after{height:78%}
+@media (hover:none){
+  .seccard-more{grid-template-rows:1fr;opacity:1}
+  .seccard::after{height:78%}
+}
 
 /* ==========================================================================
    The four businesses — panels that open as you point at them
@@ -1331,14 +1347,14 @@ textarea{min-height:140px;resize:vertical}
 /* a sector name can run to two lines; reserving both keeps the company names
    level across the row */
 .lad-sec{font:500 var(--t-micro)/1.4 var(--mono);color:var(--gold);min-height:2.8em}
-.lad h3{font-size:clamp(1.15rem,1.7vw,1.5rem);line-height:1.2;color:#fff}
+.lad h3{font-size:clamp(1.0625rem,1.4vw,1.25rem);line-height:1.25;color:#fff}
 .lad-role{font:500 .9375rem/1.4 var(--body);color:rgba(255,255,255,.72)}
 /* The description sits in a zone of fixed height that is always there, so
    the company name never moves when a panel opens — only what is inside the
    zone changes. A panel that shifts its own title as you point at it is the
    thing that made this feel unsteady. */
 .lad-say{
-  display:block;height:7.6em;overflow:hidden;margin-top:2px;
+  display:block;height:9.4em;overflow:hidden;margin-top:2px;
   opacity:0;transition:opacity .35s;
 }
 .lad-say-in{display:grid;gap:12px;align-content:start}
@@ -1377,7 +1393,7 @@ textarea{min-height:140px;resize:vertical}
   transition:border-color .3s,transform .3s;
 }
 .wwd-card:hover{border-color:var(--ink-3);transform:translateY(-3px)}
-.wwd-n{font:500 clamp(2.4rem,3.6vw,3.25rem)/1 var(--display);color:var(--num);letter-spacing:-.02em}
+.wwd-n{font:500 clamp(1.9rem,2.8vw,2.5rem)/1 var(--display);color:var(--num);letter-spacing:-.02em}
 .wwd-card h3{font:500 1.125rem/1.39 var(--body);color:var(--ink);margin-top:6px}
 .wwd-card p{font:500 .9375rem/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){ .wwd{grid-template-columns:repeat(2,minmax(0,1fr))} }

@@ -391,26 +391,25 @@ ${list.map(coCard).join('\n')}
     </div>`;
 }
 
-/* The closing card: the picture runs the width, the carbon panel sits over
-   its right two thirds, and the list of what comes next fills the floor. */
+/* The closing band, on the foot of every page. It was a 573px photograph
+   carrying a 798px panel with a heading, a paragraph, two buttons and a
+   seven-item list — a whole section repeated under every page on the site,
+   and the list of what the Group wants to do next was buried in it where
+   nobody reading about a café would look. It is now one carbon strip: the
+   ask, one line, and the two things you can do about it. The list moved to
+   Work With Us, which is the page that is about exactly that. */
 function ctaBand() {
   return `<section class="next">
   <div class="wrap">
-    <div class="next-frame rise">
-      <img class="next-bg" src="/assets/img/cta-towers.jpg" alt="" width="800" height="1200" loading="lazy">
-      <div class="next-card">
-        <img class="watermark" src="/assets/logo/${B.markOnLight}" alt="" width="270" height="350" aria-hidden="true" loading="lazy">
-        <div class="next-say">
-          <h2>Tell us which one you are</h2>
-          <p>Producers and exporters looking for a route into Qatar, buyers who need supply they can rely on, and operators with a business that fits the Group. Tell us which one you are.</p>
-          <div class="next-act">
-            <a class="btn btn-light" href="/contact/">Send an enquiry</a>
-            <a class="btn btn-ghost" href="/sectors/">Explore our sectors</a>
-          </div>
-        </div>
-        <ul class="nexts">
-${GROWTH.map(g => `          <li>${BULLET}<span>${esc(g.t)}</span></li>`).join('\n')}
-        </ul>
+    <div class="next-card rise">
+      <img class="watermark" src="/assets/logo/${B.markOnLight}" alt="" width="270" height="350" aria-hidden="true" loading="lazy">
+      <div class="next-say">
+        <h2>Tell us which one you are</h2>
+        <p>Producers and exporters looking for a route into Qatar, buyers who need supply they can rely on, and operators with a business that fits the Group.</p>
+      </div>
+      <div class="next-act">
+        <a class="btn btn-light" href="/contact/">Send an enquiry</a>
+        <a class="btn btn-ghost" href="/sectors/">Explore our sectors</a>
       </div>
     </div>
   </div>
@@ -549,9 +548,9 @@ ${ALL_COMPANIES.map((c, i) => `      <a class="lad" href="/companies/${c.slug}/"
         <span class="lad-b">
           <span class="lad-sec">${esc(c.sectorName)}</span>
           <h3>${esc(c.name)}</h3>
-          <span class="lad-role">${esc(c.role)}</span>
           <span class="lad-say">
             <span class="lad-say-in">
+              <span class="lad-role">${esc(c.role)}</span>
               <span class="lad-p">${esc(c.short)}</span>
               <span class="lad-go">Visit ${esc(c.name)} <span aria-hidden="true">&#8594;</span></span>
             </span>
@@ -648,8 +647,10 @@ ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="
         <img src="/assets/img/${SECTOR_SHOT[s.slug] || 'card-trading'}.jpg" alt="${esc(s.name)}" width="640" height="914" loading="lazy">
         <span class="seccard-cap">
           <b>${esc(s.name)}</b>
-          <span class="seccard-say">${esc(s.short)}</span>
-          <span class="seccard-who">${s.companies.map(c => esc(c.name)).join(' &middot; ')} <span aria-hidden="true">&#8594;</span></span>
+          <span class="seccard-more"><span>
+            <span class="seccard-say">${esc(s.short)}</span>
+            <span class="seccard-who">${s.companies.map(c => esc(c.name)).join(' &middot; ')} <span aria-hidden="true">&#8594;</span></span>
+          </span></span>
         </span>
       </a>`).join('\n')}
     </div>
@@ -694,16 +695,16 @@ ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="
 
 /* Six values, one open at a time, with a photograph holding the column
    beside them. */
+/* The six values. One line each, so each is simply on the page rather than
+   behind a click: six rows of which five are shut is a lot of height spent
+   hiding two sentences. */
 function valueList() {
-  return `<div class="valacc" id="valacc">
-${VALUES.map((v, i) => `      <div class="val${i === 0 ? ' open' : ''}">
-        <button class="val-btn" type="button" aria-expanded="${i === 0}" aria-controls="val${i}">
-          <span class="val-n">${num(i)}</span>
-          <span class="val-t">${esc(v.t)}</span>
-          ${CHEV}
-        </button>
-        <div class="val-panel" id="val${i}"><div><p>${esc(v.d)}</p></div></div>
-      </div>`).join('\n')}
+  return `<div class="vals">
+${VALUES.map((v, i) => `      <div class="valcard rise d${Math.min(i, 3)}">
+        <span class="valcard-n">${num(i)}</span>
+        <h3>${esc(v.t)}</h3>
+        <p>${esc(v.d)}</p>
+      </div>`).join(String.fromCharCode(10))}
     </div>`;
 }
 
@@ -762,12 +763,7 @@ function pageAbout() {
 <section class="section" aria-labelledby="valTitle">
   <div class="wrap">
     ${head2('valTitle', 'The values that <span class="soft">guide us</span>', 'Six of them, and we would rather be caught keeping these than talking about them.')}
-    <div class="valwrap">
-      ${valueList()}
-      <figure class="valshot rise">
-        <img src="/assets/img/card-trading.jpg" alt="Colleagues around a table in a meeting" width="640" height="914" loading="lazy">
-      </figure>
-    </div>
+    ${valueList()}
   </div>
 </section>
 
@@ -1103,6 +1099,15 @@ ${PARTNER_TYPES.map(p => `      <div class="pline rise">
       </div>
     </div>
     <p class="after rise"><a class="btn btn-dark" href="/contact/">Start a conversation</a></p>
+  </div>
+</section>
+
+<section class="section tight" aria-labelledby="growTitle">
+  <div class="wrap">
+    ${head2('growTitle', 'What we are looking to <span class="soft">do next</span>', 'This is the page where that list belongs, so it is the page it is on.')}
+    <ul class="nexts rise">
+${GROWTH.map(g => `      <li>${BULLET}<span>${esc(g.t)}</span></li>`).join(String.fromCharCode(10))}
+    </ul>
   </div>
 </section>
 
