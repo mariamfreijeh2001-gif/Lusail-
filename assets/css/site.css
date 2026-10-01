@@ -904,15 +904,25 @@ textarea{min-height:140px;resize:vertical}
   background:var(--panel);border:1px solid var(--line);
   padding:20px 21px 24px;min-height:271px;
   display:grid;align-content:end;gap:8px;
-  font:inherit;color:inherit;cursor:pointer;
   transition:background .3s,border-color .3s;
 }
-.bcard:hover,.bcard:focus-visible{background:#eae7e4;border-color:#d8d4d0}
+/* The heading is the control. It carries no button chrome, and its ::after
+   stretches over the card so the whole panel is the target — which is what
+   the card looked like it was before, when the card itself was the button. */
+.bcard-btn{
+  background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;
+  text-align:start;cursor:pointer;
+}
+.bcard-btn::after{content:"";position:absolute;inset:0}
+.bcard:hover,.bcard:focus-within{background:#eae7e4;border-color:#d8d4d0}
+/* the ring belongs on the card, not on the few words inside it */
+.bcard-btn:focus-visible{outline:0}
+.bcard:has(.bcard-btn:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
 .bcard .n{
   font:500 var(--t-micro)/1.79 var(--body);color:var(--ink-2);
   text-decoration:underline;text-underline-offset:3px;
 }
-.bcard h3{font:500 var(--t-lg)/1.39 var(--body);color:var(--ink)}
+.bcard h3{font:500 var(--t-lg)/1.39 var(--body);color:var(--ink);margin:0}
 .bcard p{font:500 var(--t-micro)/1.5 var(--body);color:var(--ink-2);max-width:52ch}
 
 /* the reasoning opens in place, so the card keeps its footprint until asked */
@@ -920,8 +930,8 @@ textarea{min-height:140px;resize:vertical}
   display:grid;grid-template-rows:0fr;opacity:0;
   transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1),opacity .3s;
 }
-.bcard .say > div{overflow:hidden}
-.bcard:hover .say,.bcard:focus-visible .say,.bcard:focus .say,.bcard.on .say{grid-template-rows:1fr;opacity:1}
+.bcard .say > *{overflow:hidden}
+.bcard:hover .say,.bcard:focus-within .say,.bcard.on .say{grid-template-rows:1fr;opacity:1}
 
 .bcard-photo{
   grid-row:span 2;min-height:557px;background:var(--ink);border-color:transparent;
@@ -941,7 +951,7 @@ textarea{min-height:140px;resize:vertical}
 }
 /* everything except the photograph itself rides above the wash */
 .bcard-photo > :not(img){position:relative;z-index:2}
-.bcard-photo:hover,.bcard-photo:focus-visible{background:var(--ink)}
+.bcard-photo:hover{background:var(--ink)}
 .bcard-photo .n{color:#fdfdfd}
 .bcard-photo h3{color:#fff}
 .bcard-photo p{color:rgba(255,255,255,.88)}
@@ -966,21 +976,23 @@ textarea{min-height:140px;resize:vertical}
 .mapwrap{position:relative;margin-top:clamp(28px,4.4vw,62px)}
 .mapdots{display:block;width:100%;height:auto}
 
+/* The pin is a wrapper; the button inside it is the control and the card
+   beside it is the content. They used to be one button with the card inside,
+   which made the pin's accessible name the region twice plus every country,
+   and put a div inside a button. */
 .pin{
   position:absolute;transform:translate(-50%,-100%);
-  display:grid;justify-items:center;gap:0;
-  background:none;border:0;padding:0;cursor:pointer;color:inherit;
-  font:inherit;text-align:center;z-index:2;
+  display:grid;justify-items:center;gap:0;text-align:center;z-index:2;
 }
-.pin:hover,.pin:focus-visible,.pin.on{z-index:6}
+.pin:hover,.pin:focus-within,.pin.on{z-index:6}
 /* The pill carries the region name and nothing else, so it stays the width of
    the name. The countries live in a card that is positioned out of the flow —
    in the flow they would set the pill's width even while collapsed, which is
    how every label ended up as wide as its longest country list. */
 .pin-lab{
-  position:relative;
+  position:relative;display:block;
   background:#0b0a0a;border:1px solid rgba(255,255,255,.12);border-radius:5px;
-  padding:6px 10px;
+  padding:6px 10px;cursor:pointer;color:inherit;font:inherit;
 }
 .pin-nm{
   display:block;font:500 var(--t-xxs)/1.35 var(--body);color:#fff;white-space:nowrap;
@@ -997,25 +1009,35 @@ textarea{min-height:140px;resize:vertical}
 .pin[data-anchor="mid"] .pin-pop{left:50%;transform:translate(-50%,5px)}
 .pin[data-anchor="start"] .pin-pop{left:-1px;transform:translate(0,5px)}
 .pin[data-anchor="end"] .pin-pop{right:-1px;transform:translate(0,5px)}
-.pin-pop b{font:600 var(--t-body)/1.35 var(--body);color:#fff;white-space:nowrap}
-.pin-pop > span{font:500 var(--t-xs)/1.5 var(--body);color:var(--ink-2);white-space:nowrap}
+.pin-pop b{font:600 var(--t-body)/1.35 var(--body);color:#fff}
+.pin-pop > span{font:500 var(--t-xs)/1.5 var(--body);color:#d7d4d1}
 
-.pin:hover .pin-nm,.pin:focus-visible .pin-nm,.pin:focus .pin-nm,.pin.on .pin-nm{opacity:0}
-.pin:hover .pin-pop,.pin:focus-visible .pin-pop,.pin:focus .pin-pop,.pin.on .pin-pop{
+.pin:hover .pin-nm,.pin:focus-within .pin-nm,.pin.on .pin-nm{opacity:0}
+.pin:hover .pin-pop,.pin:focus-within .pin-pop,.pin.on .pin-pop{
   opacity:1;visibility:visible;
+  /* reachable once it is open: WCAG 1.4.13 wants the pointer to be able to
+     travel into what hovering revealed, so the text can be read and copied */
+  pointer-events:auto;
 }
 .pin[data-anchor="mid"]:hover .pin-pop,
-.pin[data-anchor="mid"]:focus-visible .pin-pop,
-.pin[data-anchor="mid"]:focus .pin-pop,
+.pin[data-anchor="mid"]:focus-within .pin-pop,
 .pin[data-anchor="mid"].on .pin-pop{transform:translate(-50%,0)}
 .pin[data-anchor="start"]:hover .pin-pop,
-.pin[data-anchor="start"]:focus-visible .pin-pop,
-.pin[data-anchor="start"]:focus .pin-pop,
+.pin[data-anchor="start"]:focus-within .pin-pop,
 .pin[data-anchor="start"].on .pin-pop,
 .pin[data-anchor="end"]:hover .pin-pop,
-.pin[data-anchor="end"]:focus-visible .pin-pop,
-.pin[data-anchor="end"]:focus .pin-pop,
+.pin[data-anchor="end"]:focus-within .pin-pop,
 .pin[data-anchor="end"].on .pin-pop{transform:translate(0,0)}
+
+/* Below this the map is about 100px tall. Six labels overlap each other on
+   it, every one of them a tap target smaller than a fingertip, and an opened
+   card measured 467px wide inside a 390px screen. The dotted map stays as the
+   picture it is at that size, and the register underneath — which carries the
+   same regions and the same countries, word for word — does the work. */
+@media (max-width:760px){
+  .pin{display:none}
+}
+
 
 .pin-stem{
   width:1px;height:var(--stem,26px);

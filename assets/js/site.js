@@ -78,11 +78,32 @@
 
   var burger = $('#burger'), menu = $('#menu');
   if (burger && menu) {
+    var behind = [$('#main'), $('.site-foot')];
     var setMenu = function (open) {
       menu.classList.toggle('open', open);
       burger.setAttribute('aria-expanded', String(open));
       document.documentElement.style.overflow = open ? 'hidden' : '';
+      /* The page behind a full-screen menu is off the screen and invisible,
+         and tabbing past the last link used to walk straight into it. */
+      behind.forEach(function (el) { if (el) el.inert = open; });
+      /* Focus stays on the button that opened it. That button is the one that
+         closes it again, it is inside the cycle below, and Escape returns
+         here anyway — so the first Tab goes into the menu and nothing has to
+         be moved about while the panel is still fading in. */
     };
+    /* `inert` does the work where it is supported; this keeps the cycle
+       closed where it is not, and keeps the burger in it either way, since
+       it is the control that closes the thing. */
+    var trap = function (e) {
+      if (e.key !== 'Tab' || !menu.classList.contains('open')) return;
+      var stops = [burger].concat($$('a[href],button:not([disabled])', menu))
+        .filter(function (el) { return el.offsetWidth || el.offsetHeight; });
+      if (stops.length < 2) return;
+      var first = stops[0], last = stops[stops.length - 1];
+      if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+      else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+    };
+    document.addEventListener('keydown', trap);
     burger.addEventListener('click', function () {
       setMenu(burger.getAttribute('aria-expanded') !== 'true');
     });
@@ -99,12 +120,18 @@
      The reasoning opens on hover in CSS. This adds the same on a tap, and
      keeps aria-expanded honest for anyone listening. */
 
-  $$('.bcard').forEach(function (card) {
-    if (card.classList.contains('bcard-photo')) return;    // its text is always out
-    card.addEventListener('click', function () {
-      var on = !card.classList.contains('on');
+  $$('.bcard-btn').forEach(function (btn) {
+    var card = btn.closest('.bcard');
+    var set = function (on) {
       card.classList.toggle('on', on);
-      card.setAttribute('aria-expanded', String(on));
+      btn.setAttribute('aria-expanded', String(on));
+    };
+    btn.addEventListener('click', function () { set(!card.classList.contains('on')); });
+    /* Escape puts it away again without reaching for the pointer. */
+    card.addEventListener('keydown', function (e) {
+      if ((e.key === 'Escape' || e.key === 'Esc') && card.classList.contains('on')) {
+        set(false); btn.focus(); e.stopPropagation();
+      }
     });
   });
 
@@ -147,26 +174,48 @@
   var mapwrap = $('#mapwrap');
   if (mapwrap) {
     var rows = $$('.reg > div');
+    var pins = $$('.pin', mapwrap);
     var mark = function (region, on) {
       rows.forEach(function (r) {
         if (r.dataset.region === region) r.classList.toggle('on', on);
       });
     };
-    $$('.pin', mapwrap).forEach(function (pin) {
-      var region = pin.dataset.region;
-      pin.addEventListener('mouseenter', function () { mark(region, true); });
-      pin.addEventListener('mouseleave', function () { mark(region, false); });
-      pin.addEventListener('focus', function () { mark(region, true); });
-      pin.addEventListener('blur', function () { mark(region, false); });
-      pin.addEventListener('click', function () {
-        var on = !pin.classList.contains('on');
-        $$('.pin', mapwrap).forEach(function (p) {
-          p.classList.remove('on');
-          mark(p.dataset.region, false);
-        });
-        pin.classList.toggle('on', on);
-        mark(region, on);
+    /* A pin held open by a click stays open. Pointing elsewhere or tabbing
+       away used to clear its row in the register while the pin itself stayed
+       lit, so the map and the table below it disagreed about what was open. */
+    var open = null;
+    var setOpen = function (pin) {
+      pins.forEach(function (p) {
+        var is = p === pin;
+        p.classList.toggle('on', is);
+        p.querySelector('.pin-lab').setAttribute('aria-expanded', is ? 'true' : 'false');
+        if (!is) mark(p.dataset.region, false);
       });
+      open = pin;
+      if (pin) mark(pin.dataset.region, true);
+    };
+
+    pins.forEach(function (pin) {
+      var region = pin.dataset.region;
+      var btn = pin.querySelector('.pin-lab');
+      pin.addEventListener('mouseenter', function () { mark(region, true); });
+      pin.addEventListener('mouseleave', function () { if (open !== pin) mark(region, false); });
+      btn.addEventListener('focus', function () { mark(region, true); });
+      btn.addEventListener('blur', function () { if (open !== pin) mark(region, false); });
+      btn.addEventListener('click', function () { setOpen(open === pin ? null : pin); });
+    });
+
+    /* Escape dismisses what hovering or focus revealed, without moving the
+       pointer — WCAG 1.4.13 again. */
+    mapwrap.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      var here = document.activeElement;
+      if (open) { var btn = open.querySelector('.pin-lab'); setOpen(null); btn.focus(); e.stopPropagation(); }
+      else if (here && here.classList.contains('pin-lab')) { here.blur(); e.stopPropagation(); }
+    });
+    /* clicking away closes it, the way the sectors panel does */
+    document.addEventListener('click', function (e) {
+      if (open && !mapwrap.contains(e.target)) setOpen(null);
     });
   }
 

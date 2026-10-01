@@ -368,7 +368,7 @@ ${NAV.map(link).join('\n')}
     ${BURGER}
   </button>
 </header>
-<div class="menu" id="menu">
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
 ${NAV.map(([label, href]) => `  <a href="${href}"${href === current ? ' aria-current="page"' : ''}>${esc(label)}</a>` +
   (label === 'Sectors'
     ? '\n' + SECTORS.map(s => `  <a class="sub" href="/sectors/${s.slug}/"${'/sectors/' + s.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(s.name)}</a>`).join('\n')
@@ -550,23 +550,27 @@ function reachMap() {
     }
   }
 
-  const pins = placed.map(p => {
+  /* The countries sit outside the button, not inside it. Inside, every pin's
+     accessible name was the region twice over followed by its whole country
+     list — "Middle East Middle East Qatar · UAE · Türkiye · Lebanon" — and a
+     pointer could not travel into the card to read or copy it. */
+  const pins = placed.map((p, i) => {
     const pc = p.x / MAP_BOX.width * 100;
     /* The open card is wider than its pin. Near the edges of the map, hang it
        from that edge instead of centring it, or it runs off the section. */
     const anchor = pc > 72 ? 'end' : pc < 18 ? 'start' : 'mid';
-    return `      <button class="pin" type="button" data-region="${esc(p.r.t)}" data-anchor="${anchor}"
+    return `      <div class="pin" data-region="${esc(p.r.t)}" data-anchor="${anchor}"
         style="left:${pc.toFixed(2)}%;top:${(p.y / MAP_BOX.height * 100).toFixed(2)}%;--stem:${STEM_0 + p.lane * LANE}px">
-        <span class="pin-lab">
+        <button class="pin-lab" type="button" aria-expanded="false" aria-controls="pin-pop-${i}">
           <span class="pin-nm">${esc(p.r.t)}</span>
-          <span class="pin-pop">
-            <b>${esc(p.r.t)}</b>
-            <span>${esc(p.r.d)}</span>
-          </span>
+        </button>
+        <span class="pin-pop" id="pin-pop-${i}">
+          <b>${esc(p.r.t)}</b>
+          <span>${esc(p.r.d)}</span>
         </span>
         <span class="pin-stem" aria-hidden="true"></span>
         <span class="pin-dot" aria-hidden="true"></span>
-      </button>`;
+      </div>`;
   }).join('\n');
 
   /* The dot grid is 65KB of path data. Inline it once and it is 70% of the
@@ -575,7 +579,7 @@ function reachMap() {
      are ordinary buttons either way. */
   return `<div class="mapwrap" id="mapwrap">
       <img class="mapdots" src="/assets/img/worldmap.svg" width="${MAP_BOX.width}" height="${MAP_BOX.height}"
-           alt="A world map with the regions Lusail Corp sources from marked on it" loading="lazy">
+           alt="" loading="lazy">
 ${pins}
     </div>`;
 }
@@ -596,13 +600,24 @@ ${REACH.map(x => `      <div data-region="${esc(x.t)}">
    photograph; the other three name themselves and give their reasoning when
    asked, so the row reads as four headings rather than four paragraphs. */
 function bento() {
-  const card = (x, i) => `        <button class="bcard${i === 0 ? ' bcard-photo' : ''}" type="button" aria-expanded="${i === 0}">
-${i === 0 ? '          ' + pic('why-group', '(max-width:900px) 100vw, 48vw', 'alt="Two people shaking hands over a table" loading="lazy"') + '\n' : ''}          <span class="n">${num(i)}</span>
+  /* The first states itself over the photograph, so it is not a control at
+     all — it had been a button with nothing to do and `aria-expanded="true"`
+     for ever, which is a promise to a screen reader that nothing kept.
+     On the other three the heading is the button and the reasoning sits
+     outside it: inside, each button's accessible name was its whole text,
+     reveal included, so the reveal meant nothing to anyone listening. */
+  const card = (x, i) => i === 0
+    ? `        <div class="bcard bcard-photo">
+          ${pic('why-group', '(max-width:900px) 100vw, 48vw', 'alt="Two people shaking hands over a table" loading="lazy"')}
+          <span class="n">${num(i)}</span>
           <h3>${esc(x.t)}</h3>
-          ${i === 0
-    ? `<p>${esc(x.d)}</p>`
-    : `<span class="say"><div><p>${esc(x.d)}</p></div></span>`}
-        </button>`;
+          <p>${esc(x.d)}</p>
+        </div>`
+    : `        <div class="bcard">
+          <span class="n">${num(i)}</span>
+          <h3><button class="bcard-btn" type="button" aria-expanded="false" aria-controls="why-${i}">${esc(x.t)}</button></h3>
+          <span class="say" id="why-${i}"><span><p>${esc(x.d)}</p></span></span>
+        </div>`;
 
   return `<div class="bento">
 ${card(WHY[0], 0)}
