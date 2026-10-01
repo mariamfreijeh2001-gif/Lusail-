@@ -184,7 +184,23 @@ those.
 | `--pin` | `#fb8449` the sourcing pins, and the one accent |
 
 The frame is 1440 with 115px gutters, leaving the 1210px measure every section
-is set to. `--wrap` is the frame, padding included.
+is set to. `--wrap` is the frame, padding included. The gutter is one token,
+`--gutter`, and it reaches 115px at 1440 — it had been set to `4.4vw`, which
+tops out at 63px there, so the sectors index sat on the drawn 1211px measure
+while every other page sat on 1313.
+
+`.wrap` also sets `width:100%`, which looks redundant and is not: several of
+these sit in a grid, and an auto inline margin on a grid item turns off
+stretch, shrinks the item to its widest child and centres it. In normal flow
+it does nothing. That one difference was centring every page hero, so the
+title started at a different place on every page — 410px on About, 525px on
+Nero Café — instead of at the gutter.
+
+**Every size on the site is one of the `--t-*` tokens.** There were
+twenty-six different values before, seven of them between 13.6px and 15px,
+which is not a distinction anyone can see — only one to maintain. Headings
+grow with the viewport; everything below them is fixed, because running text
+that moves with the window is harder to read, not easier.
 
 **The type is set smaller than the design file draws it.** The Figma puts the
 hero at 65px and section headings at 45px; those are 50 and 34 here, and the
@@ -249,6 +265,17 @@ holds the filenames, so swapping the logo is one edit.
   script adds, so nothing is ever invisible if the script does not run, and a
   band already scrolled past is simply there.
 
+**Everything that can be pointed at says so.** Twenty-two components are
+driven with a real pointer in the test suite and each has to change something
+visible; it caught two that did not. The product cards had no hover at all,
+and the sectors index had one that never fired, because `:hover` and
+`[aria-current]` weigh the same and the mark was written second.
+
+The hover vocabulary is small on purpose: a card lifts 3px and darkens its
+outline, a photograph inside a frame grows 5%, a link's arrow slides out.
+Nothing bounces. Under `prefers-reduced-motion` none of it moves, and every
+reveal answers `:focus` as well, so none of it is pointer-only.
+
 Under `prefers-reduced-motion` nothing animates.
 
 ## Language
@@ -304,6 +331,15 @@ minimum they measured exactly 3.00 against the panel ground — the threshold
 itself, with nothing left for the next change to spend. They are re-measured
 whenever a type size moves, because the AA threshold follows the size: text
 under 24px needs 4.5 where text at or above it needs 3.
+
+**The hero text is checked against the photographs, not against a token.**
+White on a picture is only as readable as the brightest thing behind it, and
+the scrims were failing: the page-hero eyebrow measured **2.36:1** on the
+ROMA photograph and the home page's statement **2.34:1**, where 4.5 is
+wanted. The check hides the text, photographs each hero, finds the brightest
+pixel under where the title sits and composites the text colour over it. Both
+scrims are set from that: the worst of the thirteen now measures 4.7, and
+most sit above 6.
 
 Anything that reveals content on focus answers plain `:focus`, not only
 `:focus-visible` — the company panels, the map pins and the bento claims.

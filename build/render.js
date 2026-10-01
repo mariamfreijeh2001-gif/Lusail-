@@ -164,8 +164,11 @@ const ICON_PATHS = {
   // a spark: founders and new concepts
   spark: '<path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5M5.2 5.2l3.5 3.5M15.3 15.3l3.5 3.5M18.8 5.2l-3.5 3.5M8.7 15.3l-3.5 3.5"/><circle cx="12" cy="12" r="2.6"/>'
 };
+/* These are line drawings: the paths carry no fill or stroke of their own, so
+   every place that used one had to remember to turn the fill off. The class
+   carries that, and each context only says how big and what colour. */
 const icon = name => ICON_PATHS[name]
-  ? `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICON_PATHS[name]}</svg>`
+  ? `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICON_PATHS[name]}</svg>`
   : '';
 
 const BULLET = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="currentColor" fill-opacity=".5"><path d="M4 8L8 4L12 8L8 12L4 8Z"/><path d="M8 2a6 6 0 1 1 0 12A6 6 0 0 1 8 2Zm0-1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Z"/></svg>`;
@@ -870,7 +873,7 @@ function pageCompany(c) {
     ${head2('prodTitle', 'What we trade <span class="soft">today</span>', '')}
     <div class="prodrail" id="prodrail">
 ${c.products.map(p => `      <article class="prod">
-        ${pic(p.img, '260px', `alt="${esc(p.t)}" loading="lazy"`)}
+        <span class="prod-pic">${pic(p.img, '260px', `alt="${esc(p.t)}" loading="lazy"`)}</span>
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
 ${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
@@ -1096,14 +1099,14 @@ ${s.slug === 'trading' ? `<section class="section stone src" aria-labelledby="mk
 <section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
     ${head2('othTitle', 'The other <span class="soft">sectors</span>', '')}
-    <div class="secidx rise">
-${others.map(x => `      <a href="/sectors/${x.slug}/">
+    <div class="othsecs rise">
+${others.map(x => `      <a class="othsec" href="/sectors/${x.slug}/">
         ${icon(SECTOR_ICON[x.slug] || 'markets')}
-        <span>
+        <span class="othsec-id">
           <b>${esc(x.name)}</b>
           <em>${esc(x.short)}</em>
         </span>
-        <span class="secidx-go" aria-hidden="true">&#8594;</span>
+        <span class="othsec-go" aria-hidden="true">&#8594;</span>
       </a>`).join('\n')}
     </div>
   </div>
@@ -1224,7 +1227,7 @@ function pageContact() {
       photo: 'hero-contact'
     })
     + `<section class="section tight">
-  <div class="wrap cosplit contactwrap">
+  <div class="wrap cosplit">
     <div class="rise">
       <h2 class="h3">Get in touch</h2>
       <dl class="channels">
