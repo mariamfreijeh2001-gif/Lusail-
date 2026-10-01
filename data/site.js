@@ -70,6 +70,10 @@ const SECTORS = [
     headline: 'Global Supply, Commercially Answered',
     intro: 'The Group buys commodities internationally and carries them, which is one business rather than two.',
     hero: 'hero-sector-trading',
+    /* the picture beside this sector on /sectors/. Optional: a sector without
+       one uses its hero. Trading has its own because the hero is a meeting,
+       which says nothing beside a paragraph about oils, wheat and sulphur. */
+    shot: 'shipping-wide',
     body: [
       'This is the part of the Group that works outside Qatar. It sources edible oils, sugar, wheat, coffee and granular sulphur from producers and suppliers across the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia.',
       'It also moves them. Ocean, road and air freight, vessel chartering and heavy transport sit in the same business as the buying, so an enquiry about a commodity can be answered with the origin, the specification and the route at the same time.',

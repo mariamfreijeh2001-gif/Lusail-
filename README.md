@@ -65,6 +65,8 @@ A sector:
   slug: 'trading',
   name: 'Trading & Commodities',
   short, headline, intro,              // the sector's line, used in listings
+  hero,                                // behind its own page title
+  shot,                                // optional; beside it on /sectors/
   companies: [ … ]                     // one or more
 }
 ```
@@ -100,8 +102,11 @@ them live in `site-assets/img/` as `.jpg`:
 | `hero-doha`, `why-group`, `cta-towers`, `about-platform` | the home and about pages | — |
 
 **The build fails if a page asks for an image that is not there**, rather than
-shipping a broken page — see `checkImages()` in
-[build/render.js](build/render.js). Add the file, then add the name.
+shipping a broken page. `usedImages()` in [build/render.js](build/render.js)
+reads the names out of the HTML it has just written, so the check is against
+what the browser will actually request — there is no list to keep in step,
+and only the images a page really uses are copied. It also refuses two names
+holding byte-identical pictures.
 
 There is no image tooling on a typical machine here, so the JPEGs were
 converted from the design file's PNGs through headless Chrome's canvas
@@ -135,8 +140,8 @@ those.
 | | |
 |---|---|
 | `--ink` | `#181717` carbon — headings and every dark ground |
-| `--ink-2` | `#868585` body copy |
-| `--ink-3` | `#c0bfbd` the greyed word inside a heading |
+| `--ink-2` | `#6c6b6b` body copy |
+| `--ink-3` | `#8f8e8c` the greyed word inside a heading |
 | `--paper` / `--panel` | `#f6f5f3` / `#efedeb` alternating grounds |
 | `--line` | `#e3e0dd` card outlines |
 | `--pin` | `#fb8449` the sourcing pins, and the one accent |
@@ -172,8 +177,12 @@ holds the filenames, so swapping the logo is one edit.
   pin whose label opens to its countries, and lighting a pin lights its row in
   the register below. Pin labels are laid out at build time so they clear one
   another.
-- **Company filter** — `/companies/` slices the portfolio by sector without a
-  reload, keeps a live count, and writes `?sector=` so a view can be linked to.
+- **The sectors index** — a numbered index of the four sectors stands beside
+  the reading and stays there as the page moves, marking whichever sector is
+  on screen. Each entry jumps to its sector; each sector hands on to its own
+  page and to the businesses inside it. Below 900px the index lies on its
+  side as a strip under the bar and scrolls the marked sector into view.
+  Without script it is a plain list of jump links, which still works.
 - **Arrival** — each band lifts in once. Hiding is scoped to a `.js` class the
   script adds, so nothing is ever invisible if the script does not run, and a
   band already scrolled past is simply there.

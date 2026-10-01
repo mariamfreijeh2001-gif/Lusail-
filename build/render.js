@@ -896,14 +896,17 @@ ${products}${services}${activities}<section class="section tight" aria-labelledb
 
 /* ---------- the sectors ---------------------------------------------------- */
 
-/* The four sectors, each as a full-width row: the sector on the left with its
-   mark and its line, the businesses inside it on the right. Four rows is a
-   page you read straight down rather than a grid you scan. */
+/* Built to the Figma (node 200:360). A numbered index of the four sectors
+   stands at the left and stays there while the page moves, marking whichever
+   sector you are reading; the sector itself runs down the right as a heading,
+   its line, its argument, the businesses inside it and a photograph. Four is
+   few enough to show the whole list at once, so the index answers "where am I
+   and what else is there" without anybody having to scroll to find out. */
 function pageSectorsIndex() {
   return head({
     title: `Our Sectors · ${SITE.name}`,
     desc: 'Lusail Corp operates across commodity trading, food supply and distribution, consumer services and hospitality.',
-    url: '/sectors/', image: 'hero-sector-trading',
+    url: '/sectors/', image: 'skyline-tall',
     schema: graph(crumbs([{ name: 'Our Sectors' }]), {
       '@type': 'ItemList', name: 'Lusail Corp sectors',
       itemListElement: SECTORS.map((s, i) => ({
@@ -916,39 +919,46 @@ function pageSectorsIndex() {
       eyebrow: 'Our Sectors',
       h1: 'Four markets, one way of working.',
       lede: 'The Group operates across commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
-      photo: 'hero-sector-trading'
+      /* the Group, not one of its sectors — the trading photograph is the
+         first band on this same page, and a page should not open on it */
+      photo: 'skyline-tall'
     })
-    + SECTORS.map((s, i) => `<section class="secrow${i % 2 ? ' stone flip' : ''}" aria-labelledby="sec-${s.slug}">
-  <div class="wrap">
-    <div class="secrow-body rise">
-      <span class="secrow-n">${num(i)}</span>
-      <h2 id="sec-${s.slug}">
-        ${icon(SECTOR_ICON[s.slug] || 'markets')}
-        <a href="/sectors/${s.slug}/">${esc(s.name)}</a>
-      </h2>
-      <p class="secrow-lede">${esc(s.intro)}</p>
-${s.body.map(p => `      <p class="secrow-sub">${esc(p)}</p>`).join('\n')}
-      <div class="secrow-cos">
-        <span class="secrow-cos-label">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</span>
-${s.companies.map(c => `        <a class="minico" href="/companies/${c.slug}/">
-          <img src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy">
-          <span class="minico-id">
-            <b>${esc(c.name)}</b>
-            <em>${esc(c.short)}</em>
-          </span>
-          <span class="minico-go" aria-hidden="true">&#8594;</span>
-        </a>`).join('\n')}
-      </div>
-    </div>
-    <figure class="secrow-shot rise d1">
-      <a href="/sectors/${s.slug}/" tabindex="-1" aria-hidden="true">
-        <img src="/assets/img/${s.hero}.jpg" alt="${esc(s.name)}" width="840" height="1200" loading="lazy">
-      </a>
-    </figure>
-  </div>
-</section>
+    + `<div class="secidx">
+  <nav class="secrail" aria-label="The sectors on this page">
+    <ol>
+${SECTORS.map((s, i) => `      <li><a href="#sec-${s.slug}"${i === 0 ? ' aria-current="location"' : ''}>
+        <span class="secrail-n">${i + 1}.</span>
+        <span class="secrail-t">${esc(s.name)}</span>
+        <span class="secrail-go" aria-hidden="true">&#8594;</span>
+      </a></li>`).join('\n')}
+    </ol>
+  </nav>
 
-`).join('')
+${SECTORS.map((s, i) => `  <section class="secblk${i % 2 ? ' stone' : ''}" id="sec-${s.slug}" aria-labelledby="h-${s.slug}">
+    <div class="secblk-col rise">
+      <h2 id="h-${s.slug}"><a href="/sectors/${s.slug}/">${esc(s.name)}</a></h2>
+      <p class="secblk-lede">${esc(s.intro)}</p>
+${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join('\n')}
+
+      <h3 class="secblk-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</h3>
+${s.companies.map(c => `      <a class="minico" href="/companies/${c.slug}/">
+        <img src="/assets/img/${c.hero}.jpg" alt="" width="640" height="480" loading="lazy">
+        <span class="minico-id">
+          <b>${esc(c.name)}</b>
+          <em>${esc(c.short)}</em>
+        </span>
+      </a>`).join('\n')}
+
+      <p class="secblk-more"><a href="/sectors/${s.slug}/">More on ${esc(s.name)} <span aria-hidden="true">&#8594;</span></a></p>
+
+      <figure class="secblk-shot">
+        <img src="/assets/img/${s.shot || s.hero}.jpg" alt="${esc(s.name)}" width="1120" height="677" loading="lazy">
+      </figure>
+    </div>
+  </section>`).join('\n\n')}
+</div>
+
+`
     + ctaBand()
     + footer();
 }
@@ -1224,21 +1234,21 @@ function copyDir(from, to) {
   }
 }
 
-/* Every photograph a page asks for, by name. The build checks they all exist
-   before writing anything — a missing image is a broken page, and it is
-   cheaper to fail here than to find out from the live site. The same list
-   decides what gets copied, so photography that no page uses stays in the
-   repository without being shipped to every visitor. */
+/* Which photographs the site actually asks for — read out of the pages that
+   have just been written, not from a list kept by hand beside them. A list
+   drifts: add an image to a page, forget to register it, and the build
+   happily ships a page pointing at a file it never copied. Reading the
+   markup cannot drift, because it is the same markup the browser gets. */
 function usedImages() {
-  const want = new Set([
-    'hero-doha', 'hero-about', 'hero-contact', 'why-group', 'cta-towers',
-    'about-platform', ]);
-  ALL_COMPANIES.forEach(c => {
-    want.add(c.hero); want.add(c.still);
-    (c.products || []).forEach(p => want.add(p.img));
+  const want = new Set();
+  const walk = dir => fs.readdirSync(dir, { withFileTypes: true }).forEach(e => {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) return walk(p);
+    if (!e.name.endsWith('.html')) return;
+    const html = fs.readFileSync(p, 'utf8');
+    for (const m of html.matchAll(/\/assets\/img\/([A-Za-z0-9._-]+)\.jpg/g)) want.add(m[1]);
   });
-  Object.values(SECTOR_SHOT).forEach(v => want.add(v));
-  SECTORS.forEach(s => want.add(s.hero));
+  walk(OUT);
 
   const have = new Set(fs.readdirSync(path.join(ROOT, 'site-assets/img'))
     .map(f => f.replace(/\.jpg$/, '')));
@@ -1251,7 +1261,7 @@ function usedImages() {
   /* Two pages showing the identical photograph reads as a mistake, and it is
      hard to spot by eye once the names differ. Compare the bytes. */
   const seen = new Map();
-  for (const name of want) {
+  for (const name of [...want].sort()) {
     const sum = require('crypto').createHash('sha1')
       .update(fs.readFileSync(path.join(ROOT, 'site-assets/img', name + '.jpg'))).digest('hex');
     if (seen.has(sum)) {
@@ -1265,7 +1275,6 @@ function usedImages() {
 }
 
 function build() {
-  const images = usedImages();
   fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(OUT, { recursive: true });
 
@@ -1280,6 +1289,10 @@ function build() {
   write('partnerships/index.html', pagePartnerships());
   write('contact/index.html', pageContact());
   write('404.html', page404());
+
+  /* the pages exist now, so the photographs they ask for can be read off
+     them rather than guessed at */
+  const images = usedImages();
 
   console.log('assets');
   copyDir(path.join(ROOT, 'assets/css'), path.join(OUT, 'assets/css'));

@@ -1095,74 +1095,145 @@ textarea{min-height:140px;resize:vertical}
 @media (prefers-reduced-motion:reduce){ .site-head.over{transition:none} }
 
 /* ==========================================================================
-   The sectors index — a band per sector
-   The reading leads and the photograph follows it, because a sector is an
-   argument about a market rather than a picture of one. The businesses
-   inside it sit under the text as outlined plates, not thumbnails.
+   The sectors index — built to the Figma (node 200:360)
+
+   One grid holds the whole page: a 330px index at the left that sticks while
+   you scroll, and a 746px column at the right carrying the four sectors in
+   turn. Each sector is a heading, its line, its argument, the businesses
+   inside it and a photograph — the reading leads and the picture follows,
+   because a sector is an argument about a market rather than a picture of
+   one. The index marks whichever sector is on screen, so the page always
+   says where you are and what else there is.
    ========================================================================== */
 
-.secrow{padding-block:clamp(44px,5.4vw,80px);border-top:1px solid var(--line)}
-.secrow.stone{background:var(--paper)}
-.secrow .wrap{
-  display:grid;gap:clamp(26px,4.4vw,64px);align-items:start;
-  grid-template-columns:minmax(0,820fr) minmax(0,300fr);
+.secidx{
+  display:grid;align-items:start;
+  /* 360 + 105 + 746 = the 1211 measure the whole site is set to. The
+     Figma draws the index at 330, which fits its longest sector name with
+     four pixels to spare and none at all once the marker arrow has a
+     column of its own; 360 gives every name a line to itself. */
+  grid-template-columns:[rail] 360px [main] minmax(0,746px) [end];
+  justify-content:center;
+  column-gap:105px;
+  /* the same gutter every other section keeps, so the page does not run to
+     the edges once the two columns stop fitting the measure */
+  padding-inline:var(--gutter);
 }
-.secrow.flip .secrow-shot{order:-1}
 
-.secrow-shot{margin:0;overflow:hidden;position:sticky;top:calc(var(--head-h) + 24px)}
-.secrow-shot a{display:block}
-.secrow-shot img{
-  width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;background:var(--panel);
-  transition:transform .7s cubic-bezier(.2,.7,.2,1);
-}
-.secrow-shot a:hover img{transform:scale(1.04)}
+/* ---- the index ---------------------------------------------------------- */
 
-.secrow-body{display:grid;gap:14px;align-content:start;justify-items:start;min-width:0}
-.secrow-n{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
-.secrow-body h2{
-  display:flex;align-items:center;gap:12px;
-  font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.2;
+.secrail{
+  grid-column:rail;grid-row:1 / span 99;
+  position:sticky;top:calc(var(--head-h) + 40px);
+  margin-top:clamp(44px,5.4vw,84px);
+  border:1px solid var(--line);background:var(--white);
+  z-index:2;
 }
-.secrow-body h2 svg{
-  width:24px;height:24px;flex:none;fill:none;stroke:var(--ink);stroke-width:1.3;
-  stroke-linecap:square;stroke-linejoin:miter;
+.secrail ol{list-style:none;margin:0;padding:0}
+.secrail li + li{border-top:1px solid var(--line)}
+.secrail a{
+  position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);
+  align-items:center;gap:8px;min-height:70px;padding:10px 34px 10px 12px;
+  font:400 1.25rem/1.35 var(--body);color:var(--ink-2);text-decoration:none;
+  transition:background .25s,color .25s;
 }
-.secrow-body h2 a{text-decoration:none;transition:color .2s}
-.secrow-body h2 a:hover{color:var(--ink-2)}
-.secrow-lede{font:500 1.1875rem/1.45 var(--body);color:var(--ink);max-width:52ch}
-.secrow-sub{font:500 1rem/1.62 var(--body);color:var(--ink-2);max-width:60ch}
-.secrow-body .btn{margin-top:10px}
+.secrail-n{font-variant-numeric:tabular-nums}
+.secrail-go{
+  position:absolute;right:12px;top:50%;translate:-6px -50%;
+  opacity:0;transition:opacity .25s,translate .25s;
+}
+.secrail a:hover{color:var(--ink);background:rgba(24,23,23,.03)}
+.secrail a[aria-current="location"]{background:var(--paper);color:var(--ink);font-weight:600}
+.secrail a[aria-current="location"] .secrail-go{opacity:1;translate:0 -50%}
 
-/* the businesses inside the sector: outlined, transparent, named */
-.secrow-cos{
-  display:grid;gap:8px;width:100%;margin-top:14px;
-  grid-template-columns:minmax(0,1fr);max-width:620px;
+/* ---- one sector --------------------------------------------------------- */
+
+.secblk{grid-column:main;padding-block:clamp(44px,5.4vw,84px)}
+/* a jump from the index must not land the heading under the bar */
+.secblk{scroll-margin-top:calc(var(--head-h) + 24px)}
+.secblk + .secblk{border-top:1px solid var(--line)}
+/* The alternating ground runs the full width of the page, not just this
+   column, so it is painted behind the grid rather than on the section. */
+.secblk.stone{
+  box-shadow:0 0 0 100vmax var(--paper);
+  clip-path:inset(0 -100vmax);background:var(--paper);
 }
-.secrow-cos-label{
-  grid-column:1/-1;font:500 var(--t-micro)/1.4 var(--mono);color:var(--label);
-  margin-bottom:2px;
+.secblk-col{display:grid;gap:20px;justify-items:start}
+.secblk h2{
+  font:600 1.5625rem/1.4 var(--display);text-transform:uppercase;
+  letter-spacing:.005em;color:var(--ink);
 }
+.secblk h2 a{text-decoration:none;color:inherit;transition:color .2s}
+.secblk h2 a:hover{color:var(--ink-2)}
+.secblk-lede{
+  font:500 italic 1.125rem/1.67 var(--body);color:var(--ink);max-width:42rem;
+}
+.secblk-say{font:500 1.125rem/1.56 var(--body);color:var(--ink-2)}
+.secblk-count{
+  font:500 1.125rem/1.4 var(--body);color:var(--ink);margin-top:20px;
+}
+.secblk-more{margin-top:4px}
+.secblk-more a{
+  display:inline-flex;align-items:center;gap:7px;min-height:28px;
+  font:500 var(--t-micro)/1.4 var(--ui);color:var(--ink);
+  text-underline-offset:4px;text-decoration-thickness:1px;
+}
+.secblk-more a span{display:inline-block;transition:transform .25s}
+.secblk-more a:hover span{transform:translateX(4px)}
+
+.secblk-shot{margin:28px 0 0;width:100%;overflow:hidden}
+.secblk-shot img{
+  width:100%;height:auto;aspect-ratio:746/451;object-fit:cover;
+  background:var(--panel);
+}
+
+/* ---- a business inside the sector --------------------------------------- */
+
 .minico{
-  display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:14px;
-  border:1px solid var(--line);background:none;padding:12px 16px 12px 12px;
-  text-decoration:none;transition:border-color .25s,background .25s;
+  display:grid;grid-template-columns:93px minmax(0,1fr);align-items:center;
+  gap:19px;width:100%;min-height:100px;padding:6px;
+  border:1px solid var(--line);background:none;text-decoration:none;
+  transition:border-color .25s,background .25s;
 }
-.minico img{width:64px;height:52px;object-fit:cover;background:var(--panel)}
+.minico + .minico{margin-top:20px}
+.minico img{width:93px;height:88px;object-fit:cover;background:var(--panel)}
 .minico:hover,.minico:focus-visible{border-color:var(--ink);background:rgba(24,23,23,.03)}
-.minico-id{display:block;min-width:0}
-.minico b{display:block;font:500 1.0625rem/1.3 var(--body);color:var(--ink)}
+.minico-id{display:block;min-width:0;padding-right:12px}
+.minico b{display:block;font:600 1.125rem/1.39 var(--body);color:var(--ink)}
 .minico em{
-  display:block;font:500 .8125rem/1.45 var(--body);font-style:normal;
-  color:var(--ink-2);margin-top:4px;
+  display:block;font:500 .9375rem/1.53 var(--body);font-style:normal;
+  color:var(--ink-2);margin-top:2px;
 }
-.minico-go{color:var(--ink);font-size:1.05rem;transition:transform .25s}
-.minico:hover .minico-go{transform:translateX(4px)}
 
+@media (max-width:1180px){
+  .secidx{column-gap:clamp(32px,5vw,105px);grid-template-columns:[rail] 300px [main] minmax(0,1fr) [end]}
+  .secrail a{font-size:1rem;min-height:62px}
+}
+
+/* Below the two-column width the index becomes a strip above the reading,
+   still sticky and still marking where you are, scrolled sideways rather
+   than stacked — four tall rows would push the first sector off screen. */
 @media (max-width:900px){
-  .secrow .wrap{grid-template-columns:1fr;gap:26px}
-  .secrow.flip .secrow-shot{order:0}
-  .secrow-shot{position:static}
-  .secrow-shot img{aspect-ratio:16/9}
+  .secidx{display:block}
+  .secrail{
+    position:sticky;top:var(--head-h);margin:0 calc(var(--gutter) * -1);
+    border-inline:0;border-top:0;
+  }
+  .secrail ol{display:flex;overflow-x:auto;scrollbar-width:none}
+  .secrail ol::-webkit-scrollbar{display:none}
+  /* each entry keeps its own width and the strip scrolls; without this
+     flex squeezes all four to fit and clips the names instead */
+  .secrail li{flex:none}
+  .secrail li + li{border-top:0;border-left:1px solid var(--line)}
+  .secrail a{min-height:52px;padding:8px 16px;white-space:nowrap;font-size:.9375rem}
+  .secrail-go{display:none}
+  /* the strip is pinned under the bar too, so a jump has to clear both */
+  .secblk{padding-block:clamp(34px,7vw,56px);scroll-margin-top:calc(var(--head-h) + 76px)}
+  .secblk.stone{margin-inline:calc(var(--gutter) * -1);padding-inline:var(--gutter);
+    box-shadow:none;clip-path:none}
+  .secblk-shot img{aspect-ratio:16/9}
+  .minico{grid-template-columns:72px minmax(0,1fr);gap:14px;min-height:0}
+  .minico img{width:72px;height:72px}
 }
 
 /* ---- the platform section on About, and the map on Contact -------------- */

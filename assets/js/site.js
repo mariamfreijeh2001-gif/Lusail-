@@ -329,4 +329,74 @@
       });
     });
   }
+  /* ---- the sectors index tracks the reading -----------------------------
+     The index at the left of /sectors/ marks whichever sector is on screen.
+     The mark is driven from scroll position rather than from clicks, so it
+     is right however you arrived — a link from elsewhere, the back button,
+     or simply scrolling. Without script every entry stays a plain jump link
+     and the first keeps the mark the HTML gave it, which is still true.
+
+     The sector whose top has most recently passed the line is the one you
+     are reading, and it keeps the mark until the next one arrives — however
+     long it takes to read. Before any has passed, the first sector holds it.
+     The line sits below whatever is pinned at the top of the window, which
+     is the bar on a wide screen and the bar plus the index on a narrow one,
+     where the index lies on its side as a strip. Measuring it rather than
+     assuming it keeps the mark honest at both shapes. */
+  var rail = document.querySelector('.secrail');
+  if (rail) {
+    var entries = [];
+    [].forEach.call(rail.querySelectorAll('a[href^="#"]'), function (a) {
+      var sec = document.getElementById(a.getAttribute('href').slice(1));
+      if (sec) entries.push({ a: a, sec: sec });
+    });
+    var strip = rail.querySelector('ol');
+
+    var bar = parseInt(getComputedStyle(document.documentElement)
+      .getPropertyValue('--head-h'), 10) || 104;
+    var sideways = false, line = bar + 40;
+    var remeasure = function () {
+      sideways = getComputedStyle(strip).display === 'flex';
+      line = bar + (sideways ? rail.offsetHeight : 0) + 40;
+    };
+
+    /* On a narrow screen the marked sector can be off the end of the strip.
+       Nudge the strip itself — never the page, which is already where the
+       reader put it. */
+    var reveal = function (a) {
+      if (!sideways || strip.scrollWidth <= strip.clientWidth) return;
+      var l = a.offsetLeft, r = l + a.offsetWidth;
+      if (l < strip.scrollLeft) strip.scrollLeft = l;
+      else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth;
+    };
+
+    var marked = null;
+    var pick = function () {
+      var best = entries[0], top = -Infinity;
+      entries.forEach(function (e) {
+        var y = e.sec.getBoundingClientRect().top - line;
+        if (y <= 0 && y > top) { top = y; best = e; }
+      });
+      if (best === marked) return;
+      marked = best;
+      entries.forEach(function (e) {
+        if (e === best) e.a.setAttribute('aria-current', 'location');
+        else e.a.removeAttribute('aria-current');
+      });
+      reveal(best.a);
+    };
+
+    if (entries.length) {
+      var tick = false;
+      var onScroll = function () {
+        if (tick) return;
+        tick = true;
+        requestAnimationFrame(function () { pick(); tick = false; });
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', function () { remeasure(); marked = null; onScroll(); });
+      remeasure();
+      pick();
+    }
+  }
 })();
