@@ -425,6 +425,19 @@ input,select,textarea{
   transition:border-color .2s;
 }
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
+/* The darkened border cannot carry focus on its own: it is also what an
+   invalid field wears, so "you are here" and "this is wrong" looked the same,
+   and 28 of the 59 tab stops on this page had no focus mark at all. */
+input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--ink);outline-offset:2px;
+}
+input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="true"]{
+  border-color:#A3341A;background:#fdf7f5;
+}
+/* What is wrong is said beside the field it is wrong about, not 479px below
+   it in the status line, which is where the focus had been sent from. */
+.field-err{font:500 .85rem/1.4 var(--body);color:#A3341A}
+.field-err:empty{display:none}
 textarea{min-height:140px;resize:vertical}
 .form-end{grid-column:1/-1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .status{color:var(--gold-deep);font-size:.94rem}
@@ -763,7 +776,9 @@ textarea{min-height:140px;resize:vertical}
 }
 .stats dl > div{display:grid}
 .stats dt{font:500 var(--t-micro)/1.4 var(--mono);color:var(--label)}
-.stats dd{margin:0;font:600 2rem/1.275 var(--display);color:var(--ink);letter-spacing:-.02em}
+/* Tabular figures: every digit the same width, so counting up changes the
+   glyphs without changing the measure and relaying out the row 56 times. */
+.stats dd{margin:0;font:600 2rem/1.275 var(--display);color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 
 @media (max-width:860px){
   .intro-top{grid-template-columns:1fr;align-items:start}
@@ -1317,7 +1332,6 @@ textarea{min-height:140px;resize:vertical}
   min-height:clamp(380px,42vw,477px);
   background:var(--ink);text-decoration:none;isolation:isolate;
   display:grid;align-content:end;gap:10px;padding:clamp(20px,2.4vw,30px);
-  transition:flex-grow .55s cubic-bezier(.2,.7,.2,1);
 }
 .lad-bg{
   position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;
@@ -1329,11 +1343,12 @@ textarea{min-height:140px;resize:vertical}
   background:linear-gradient(to top,rgba(14,12,12,.94) 0%,rgba(14,12,12,.7) 42%,rgba(14,12,12,.32) 100%);
 }
 
-/* the first is open, until the row is pointed at and one of them wins */
-.lad:first-child{flex-grow:2.6}
-.ladder:hover .lad:first-child,.ladder:focus-within .lad:first-child{flex-grow:1}
-.ladder .lad:hover,.ladder .lad:focus-visible,.ladder .lad:focus{flex-grow:2.6}
-.ladder .lad:hover .lad-bg,.ladder .lad:focus-visible .lad-bg,.ladder .lad:focus .lad-bg{opacity:.7;transform:scale(1.04)}
+/* Pointing at a panel lightens its photograph and opens its description. All
+   four keep the same width throughout. Widening the one under the pointer
+   shoved the other three sideways, which measured 0.14 of layout shift for a
+   mouse movement nobody asked to be a layout change — and left a dead gap
+   between panels where the row was hovered but no panel was, so all four shut. */
+.ladder .lad:hover .lad-bg,.ladder .lad:focus-visible .lad-bg,.ladder .lad:focus .lad-bg{opacity:.78;transform:scale(1.04)}
 .lad:first-child .lad-bg{opacity:.7}
 
 .lad .n{
@@ -1364,15 +1379,36 @@ textarea{min-height:140px;resize:vertical}
 }
 .lad-go{font:600 .9375rem/1.4 var(--body);color:#fff}
 .lad:first-child .lad-say{opacity:1}
-.ladder:hover .lad:first-child .lad-say,
-.ladder:focus-within .lad:first-child .lad-say{opacity:0}
+/* …until one of them is actually pointed at. `:has(.lad:hover)` rather than
+   `.ladder:hover`, because the row is hovered in the gaps between panels too,
+   and there the old rule closed the first panel without opening any other.
+   `:not(:hover)` so that pointing at the first panel does not close it. */
+.ladder:has(.lad:hover) .lad:first-child:not(:hover) .lad-say,
+.ladder:focus-within .lad:first-child:not(:focus) .lad-say{opacity:0}
 .ladder .lad:hover .lad-say,.ladder .lad:focus-visible .lad-say,.ladder .lad:focus .lad-say{opacity:1}
+
+/* A touch screen has no pointer to open anything with, and tapping a panel
+   follows its link. Wide or narrow, they are simply open. */
+@media (hover:none){
+  .lad-say,
+  .ladder:has(.lad:hover) .lad:first-child:not(:hover) .lad-say,
+  .ladder:focus-within .lad:first-child:not(:focus) .lad-say{opacity:1}
+  .lad-bg{opacity:.68}
+}
 
 @media (max-width:860px){
   .ladder{flex-direction:column}
-  .lad,.lad:first-child,.ladder .lad:hover{flex-grow:1;min-height:0;padding:24px 22px}
+  /* flex-basis has to come back to auto here. In a column the basis is the
+     height, so the 0 above collapsed every panel to its own padding — 48px of
+     black holding nothing — and only `flex-grow` was being reset. */
+  /* Stacked, a panel is only as tall as what it holds, so the content can
+     reach the number in the corner. Reserving the corner keeps them apart. */
+  .lad,.lad:first-child{flex:0 0 auto;min-height:clamp(250px,46vw,320px);padding-top:58px}
   .lad-b{width:auto}
-  .lad-say,.ladder:hover .lad:first-child .lad-say{opacity:1;height:auto}
+  .lad-say,
+  .ladder:has(.lad:hover) .lad:first-child:not(:hover) .lad-say,
+  .ladder:focus-within .lad:first-child:not(:focus) .lad-say{opacity:1}
+  .lad-say{height:auto}
   .lad-p{-webkit-line-clamp:none}
   .lad-bg{opacity:.6}
 }

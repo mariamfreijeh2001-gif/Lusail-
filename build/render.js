@@ -1166,15 +1166,15 @@ function pageContact() {
         <label for="fSite">Website</label>
         <input id="fSite" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
-      <div class="field"><label for="fName">Full name</label><input id="fName" name="name" autocomplete="name" required></div>
+      <div class="field"><label for="fName">Full name</label><input id="fName" name="name" autocomplete="name" required aria-describedby="fName-err"><span class="field-err" id="fName-err"></span></div>
       <div class="field"><label for="fCompany">Company</label><input id="fCompany" name="company" autocomplete="organization"></div>
-      <div class="field"><label for="fMail">Email address</label><input id="fMail" name="email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="fMail">Email address</label><input id="fMail" name="email" type="email" autocomplete="email" required aria-describedby="fMail-err"><span class="field-err" id="fMail-err"></span></div>
       <div class="field"><label for="fPhone">Phone number</label><input id="fPhone" name="phone" type="tel" autocomplete="tel"></div>
       <div class="field full"><label for="fArea">Area of interest</label>
         <select id="fArea" name="area">
 ${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('\n')}
         </select></div>
-      <div class="field full"><label for="fMsg">Message</label><textarea id="fMsg" name="message" required></textarea></div>
+      <div class="field full"><label for="fMsg">Message</label><textarea id="fMsg" name="message" required aria-describedby="fMsg-err"></textarea><span class="field-err" id="fMsg-err"></span></div>
       <div class="form-end">
         <button class="btn btn-dark" type="submit">Send enquiry</button>
         <span class="status" id="status" role="status"></span>

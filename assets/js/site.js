@@ -23,9 +23,9 @@
 
   var head = $('.site-head');
   if (head) {
-    var onScroll = function () { head.classList.toggle('scrolled', window.scrollY > 8); };
-    addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    var onHeadScroll = function () { head.classList.toggle('scrolled', window.scrollY > 8); };
+    addEventListener('scroll', onHeadScroll, { passive: true });
+    onHeadScroll();
   }
 
   /* ---------- the sectors panel -------------------------------------------
@@ -270,17 +270,43 @@
       say('Opening your email app to send this to us.');
     };
 
+    /* What is wrong is said beside the field it is wrong about, and names
+       only that field. The status line repeats it for a screen reader, but
+       the eye needs it where the focus is about to land. */
+    var WHY = {
+      fName: 'Tell us your name.',
+      fMsg: 'Write a line about what you need, so we can send it to the right company.'
+    };
+    var fault = function (el) {
+      if (el.type !== 'email') return WHY[el.id] || 'This one is needed.';
+      return el.value.trim()
+        ? 'That does not look like an email address. Try name@company.qa.'
+        : 'Enter your email address, so we have somewhere to reply to.';
+    };
+    var required = $$('[required]', form);
+    var clearFault = function (el) {
+      el.removeAttribute('aria-invalid');
+      var slot = document.getElementById(el.id + '-err');
+      if (slot) slot.textContent = '';
+    };
+    required.forEach(function (el) {
+      el.addEventListener('input', function () { clearFault(el); });
+    });
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      required.forEach(clearFault);
 
-      var missing = $$('[required]', form).filter(function (x) {
+      var missing = required.filter(function (x) {
         return !x.value.trim() || (x.type === 'email' && !/^\S+@\S+\.\S+$/.test(x.value));
       })[0];
 
       if (missing) {
-        say(missing.type === 'email'
-          ? 'Enter a valid email address, like name@company.qa.'
-          : 'Fill in your name, email and message to send.', true);
+        var why = fault(missing);
+        missing.setAttribute('aria-invalid', 'true');
+        var slot = document.getElementById(missing.id + '-err');
+        if (slot) slot.textContent = why;
+        say(why, true);
         missing.focus();
         return;
       }
