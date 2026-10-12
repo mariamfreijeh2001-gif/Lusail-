@@ -64,6 +64,110 @@ const SITE = {
 
 const SECTORS = [
   {
+    slug: 'investments',
+    name: 'Investments & Strategic Services',
+    short: 'Capital, commerce and services across energy, technology and industrial development.',
+    headline: 'Capital With a Long Horizon',
+    intro: 'The Group’s investment platform originates, manages and deploys positions where it can also bring commerce and services.',
+    hero: 'hero-sector-investments',
+    body: [
+      'This is the largest part of the Group and the one with the widest reach. It brings together capital, global sourcing networks and operational execution under one governance framework, so an investment is backed by the ability to supply and to deliver.',
+      'Its focus is on energy, advanced technology and industrial development, and on the government programmes, institutional buyers and major private-sector projects that need a counterpart able to commit for the long term.',
+      'Growth here is selective by design: fewer, larger positions, chosen for whether they will still make sense in a decade rather than this quarter.'
+    ],
+    companies: [
+      {
+        slug: 'tibeco-group',
+        /* how its own page looks: the opening layout, and its colour */
+        look: 'full', accent: '#1f4f8a', accentText: '#163d6b', tint: '#eaf1f9',
+        /* Defined here, in its primary sector, and cross-listed in every
+           other sector one of its platforms works in. */
+        alsoIn: ['energy-industrial', 'technology', 'trading', 'supply-distribution'],
+        name: 'TIBECO Group',
+        role: 'Commerce · Investment · Services',
+        headline: 'Commerce. Investment. Services.',
+        short: 'A multi-sector business and investment platform across commerce, energy, technology and institutional supply.',
+        intro: 'TIBECO Group is a multi-sector business and investment platform based in West Bay, Doha, working across commerce, investment and services.',
+        body: [
+          'TIBECO operates three connected platforms. Commerce supplies government entities, national programmes and major private-sector organisations. Investments originates and manages positions in energy, advanced technology and industrial development. Services delivers technology, energy, logistics and operational projects.',
+          'Holding the three together is the point. Capital, international sourcing and the ability to execute sit in one structure, so a programme can be financed, supplied and delivered by the same counterpart.',
+          'The company works under ISO 9001, ISO 14001 and ISO 45001 management systems and is a member of the International Chamber of Commerce Qatar, with a presence across the Gulf, Europe, North Africa and Asia.'
+        ],
+        facts: [
+          { k: 'Platforms', v: 'Commerce, Investments and Services' },
+          { k: 'Base', v: 'West Bay, Doha' },
+          { k: 'Presence', v: 'Gulf, Europe, North Africa and Asia' },
+          { k: 'Credentials', v: 'ISO 9001 · ISO 14001 · ISO 45001 · ICC Qatar' }
+        ],
+        productsTitle: 'Business <span class="soft">platforms</span>',
+        products: [
+          { t: 'Energy & Industrial Materials', img: 'prod-energy-materials',
+            d: 'Materials and supply for energy and industrial operators, and investment in the projects behind them.' },
+          { t: 'Technology & Advanced Systems', img: 'prod-technology-systems',
+            d: 'Enterprise IT integration, advanced systems and AI, delivered with established global technology partners.' },
+          { t: 'Industrial, Institutional & Commercial Equipment', img: 'prod-equipment',
+            d: 'Equipment sourced and supplied for industrial sites, institutions and commercial operations.' },
+          { t: 'Strategic Commodities & Food Security', img: 'prod-food-security',
+            d: 'Long-term supply of essential commodities for programmes where continuity matters more than price on the day.' },
+          { t: 'Project-Based Commercial Supply', img: 'prod-project-supply',
+            d: 'Supply organised around a project’s schedule and specification, from tender to final delivery.' }
+        ],
+        activities: ['Institutional Supply', 'Strategic Investment', 'Energy', 'Technology & AI', 'Enterprise IT Integration', 'Project Coordination', 'Food Security', 'Government Programmes'],
+        figures: [
+          { v: 'auto:pillars', k: 'Business platforms' },
+          { v: 'auto:products', k: 'Business areas' },
+          { v: 'auto:presence', k: 'Regions of presence' },
+          { v: '3', k: 'ISO certifications' }
+        ],
+        pillarsTitle: 'Three <span class="soft">platforms</span>',
+        pillars: [
+          { t: 'Commerce',
+            d: 'A structured commercial and institutional supply platform for government entities, national programmes and major private-sector organisations.' },
+          { t: 'Investments',
+            d: 'The Group’s principal capital platform, structured to originate, manage and deploy positions across energy, advanced technology and industrial development.' },
+          { t: 'Services',
+            d: 'Technology, energy, logistics and operational platforms delivering project coordination, enterprise IT integration and institutional service execution.' }
+        ],
+        credentials: ['ISO 9001:2015 · Quality Management', 'ISO 14001:2015 · Environmental Management', 'ISO 45001:2018 · Occupational Health & Safety', 'ICC Qatar · International Chamber of Commerce member'],
+        presence: ['Gulf Region', 'Europe', 'North Africa', 'Asia'],
+        cta: 'Partner with TIBECO Group',
+        hero: 'hero-tibeco-group',
+        still: 'still-tibeco-group'
+      }
+    ]
+  },
+
+  {
+    slug: 'energy-industrial',
+    name: 'Energy & Industrial',
+    short: 'Materials, equipment and investment for energy operators and industrial sites.',
+    headline: 'Supplying the Industries That Run the Economy',
+    intro: 'Energy and industry need suppliers who can commit to volume, specification and schedule for years at a time.',
+    hero: 'hero-sector-energy-industrial',
+    body: [
+      'The Group works with energy operators and industrial sites as a supplier of materials and equipment, and as an investor in the projects they depend on.',
+      'This is work where a missed delivery stops a plant, so what counts is reliability over the life of a contract: certified processes, sourcing that can switch origin when it has to, and a balance sheet the client can rely on.',
+      'It draws on the rest of the Group — commodity trading for raw materials, logistics for heavy and project cargo — rather than buying those in.'
+    ],
+    companies: []
+  },
+
+  {
+    slug: 'technology',
+    name: 'Technology & Advanced Systems',
+    short: 'Enterprise IT integration, advanced systems and AI for institutions and businesses.',
+    headline: 'Systems That Institutions Can Run On',
+    intro: 'Technology is both a business the Group runs and something every other part of the Group relies on.',
+    hero: 'hero-sector-technology',
+    body: [
+      'The Group integrates enterprise systems, infrastructure monitoring, identity and business software for institutions and companies, working with established international technology platforms rather than building everything itself.',
+      'Advanced technology and artificial intelligence are also an investment focus: the Group takes positions in them, and uses what it learns inside its own businesses.',
+      'Clients here are buying continuity as much as software — a system that is integrated properly, supported afterwards and still running in five years.'
+    ],
+    companies: []
+  },
+
+  {
     slug: 'trading',
     name: 'Trading & Commodities',
     short: 'Edible oils, sugar, wheat, coffee and sulphur — bought abroad and shipped by sea, land and air.',
@@ -78,6 +182,8 @@ const SECTORS = [
     companies: [
       {
         slug: 'lusail-commercial',
+        /* how its own page looks: the opening layout, and its colour */
+        look: 'full', accent: '#d3a750', accentText: '#7d5a1d', tint: '#f7efdf', accentOn: '#0b1a3a',
         /* Defined here, in its primary sector. It also operates in supply and
            distribution, so it is cross-listed there too. */
         alsoIn: ['supply-distribution'],
@@ -114,6 +220,19 @@ const SECTORS = [
             d: 'Granular solid sulphur in bulk for industrial and commercial use, with the shipping arranged alongside.' }
         ],
         activities: ['Ocean Freight', 'Land Freight', 'Air Freight', 'Vessel Chartering', 'Multimodal Logistics', 'Commodity Trading', 'Import & Export', 'Global Sourcing'],
+        figures: [
+          { v: 'auto:products', k: 'Trade & freight lines' },
+          { v: 'auto:countries', k: 'Source countries' },
+          { v: 'auto:regions', k: 'Sourcing regions' },
+          { v: '4', k: 'Transport modes' }
+        ],
+        pillarsTitle: 'Two sides, <span class="soft">one business</span>',
+        pillars: [
+          { t: 'Commodity trading', img: 'panel-food-commodities',
+            d: 'Edible oils, sugar, wheat, coffee and granular sulphur, sourced from producers and suppliers across six regions by specification, origin and season.' },
+          { t: 'International logistics', img: 'panel-ocean-freight',
+            d: 'Ocean, road and air freight, vessel chartering, trailers and heavy transport — the cargo itself, managed under the same roof as the buying.' }
+        ],
         cta: 'Partner with Lusail Commercial',
         hero: 'hero-lusail-commercial',
         still: 'still-lusail-commercial'
@@ -136,6 +255,8 @@ const SECTORS = [
     companies: [
       {
         slug: 'roma-commercial',
+        /* how its own page looks: the opening layout, and its colour */
+        look: 'split', accent: '#3f7d3a', accentText: '#2f6a2b', tint: '#edf4e8',
         name: 'ROMA Commercial',
         role: 'Food Import & Distribution',
         headline: 'From Global Farms to Qatar’s Market',
@@ -170,6 +291,22 @@ const SECTORS = [
             d: 'Shelf-stable staples sourced and imported to commercial demand.' }
         ],
         activities: ['International Sourcing', 'Food Import', 'Wholesale Supply', 'Qatar Distribution', 'Seasonal Sourcing', 'Supplier Development'],
+        figures: [
+          { v: 'auto:products', k: 'Product lines' },
+          { v: 'auto:countries', k: 'Source countries' },
+          { v: 'auto:regions', k: 'Sourcing regions' },
+          { v: '4', k: 'Customer channels' }
+        ],
+        stepsTitle: 'From the farm <span class="soft">to the shelf</span>',
+        steps: [
+          { t: 'Source',
+            d: 'Producers and international suppliers across several growing regions, so supply can shift as a season ends or availability tightens.' },
+          { t: 'Import',
+            d: 'Import into Qatar coordinated to take the delay out of the chain between the farm, the port and the warehouse.' },
+          { t: 'Distribute',
+            d: 'Delivered to supermarkets, hotels, restaurants, caterers and wholesalers in the condition the buyer expects.' }
+        ],
+        quote: 'Fresh produce has a short commercial life, so this is a business of timing.',
         cta: 'Talk to ROMA Commercial',
         hero: 'hero-roma-commercial',
         still: 'still-roma-commercial'
@@ -192,6 +329,8 @@ const SECTORS = [
     companies: [
       {
         slug: 'cavallo-laundry',
+        /* how its own page looks: the opening layout, and its colour */
+        look: 'split', accent: '#4a7fa8', accentText: '#2e5f86', tint: '#ecf2f7',
         name: 'Cavallo Laundry',
         role: 'Professional Garment & Textile Care',
         headline: 'Professional Laundry & Garment Care',
@@ -217,17 +356,17 @@ const SECTORS = [
           { t: 'Household Textiles',
             d: 'Bedding, towels and the larger items that are awkward to wash and slow to dry at home.' }
         ],
-        services: [
-          { t: 'Everyday Laundry',
-            d: 'Washing, drying and folding for the regular household load — the volume most homes generate every week.' },
-          { t: 'Pressing & Finishing',
-            d: 'Pressing and finishing so a garment comes back ready to wear rather than ready to iron.' },
-          { t: 'Specialist Care',
-            d: 'The pieces that need handling rather than a standard cycle: heavier fabrics, tailoring, and anything a home machine would spoil.' },
-          { t: 'Household Textiles',
-            d: 'Bedding, towels and the larger items that are awkward to wash and slow to dry at home.' }
-        ],
         activities: ['Garment Care', 'Textile Cleaning', 'Everyday Laundry', 'Specialist Treatment'],
+        pillarsTitle: 'What we are <span class="soft">judged on</span>',
+        pillars: [
+          { t: 'Turnaround',
+            d: 'Back when it was promised. A service people use every week has to earn that place every week.' },
+          { t: 'Handling',
+            d: 'Everyday items and the pieces that need more care than a standard cycle, each treated as what it is.' },
+          { t: 'Consistency',
+            d: 'The same garment comes back the same way every time — the only standard a laundry is really judged on.' }
+        ],
+        quote: 'A laundry is judged on whether the same garment comes back the same way every time.',
         cta: 'Ask about Cavallo Laundry',
         hero: 'hero-cavallo-laundry',
         still: 'lifestyle-wide'
@@ -250,6 +389,8 @@ const SECTORS = [
     companies: [
       {
         slug: 'nero-cafe',
+        /* how its own page looks: the opening layout, and its colour */
+        look: 'dark', accent: '#c08a55', accentText: '#8a5a32', tint: '#f5ede4',
         name: 'Nero Café',
         role: 'Coffee, service, and the room.',
         headline: 'A Coffee Concept Built Around Experience',
@@ -275,17 +416,8 @@ const SECTORS = [
           { t: 'Daily Operations',
             d: 'Opening, stocking, staffing and closing, every day — the discipline the rest of the Group does not get from trading.' }
         ],
-        services: [
-          { t: 'Coffee',
-            d: 'The product the café is built around, and the thing a customer decides about first.' },
-          { t: 'Service',
-            d: 'What happens across the counter. In a café it is half of what people are actually paying for.' },
-          { t: 'The Room',
-            d: 'Somewhere to sit, meet or work. A café people pass through and a café they come back to differ mostly here.' },
-          { t: 'Daily Operations',
-            d: 'Opening, stocking, staffing and closing, every day — the discipline the rest of the Group does not get from trading.' }
-        ],
         activities: ['Café Operations', 'Coffee', 'Hospitality', 'Customer Experience'],
+        quote: 'A café survives by being somewhere people come back to, rather than somewhere they pass through once.',
         cta: 'Ask about Nero Café',
         hero: 'hero-nero-cafe',
         still: 'coffee-still'
@@ -384,11 +516,11 @@ const FIGURES = [
   { k: 'Source countries', count: 'countries' }
 ];
 
-/* The order the portfolio is listed in, wherever it is listed. The two
-   trading businesses lead: they are the ones that carry the Group outside
-   Qatar, and they are what an enquiry usually arrives about. Anything not
-   named here keeps its sector order, behind them. */
-const COMPANY_ORDER = ['lusail-commercial', 'roma-commercial'];
+/* The order the portfolio is listed in, wherever it is listed. TIBECO leads:
+   it is the largest company and the one with the widest reach. The two
+   trading businesses follow, since they carry the Group outside Qatar.
+   Anything not named here keeps its sector order, behind them. */
+const COMPANY_ORDER = ['tibeco-group', 'lusail-commercial', 'roma-commercial'];
 
 /* Flat list of every company, each carrying a back-reference to the sector it
    is defined in. A company appears here exactly once, however many sectors it
@@ -415,8 +547,11 @@ const rankCompany = slug => {
   return i === -1 ? COMPANY_ORDER.length : i;
 };
 
+/* Within a sector its own companies come first and the cross-listed ones
+   after, so a sector is introduced by the businesses that belong to it. */
 SECTORS.forEach(s => {
-  s.companies.sort((x, y) => rankCompany(x.slug) - rankCompany(y.slug));
+  const visiting = c => (c.sectorSlug && c.sectorSlug !== s.slug) ? 1 : 0;
+  s.companies.sort((x, y) => visiting(x) - visiting(y) || rankCompany(x.slug) - rankCompany(y.slug));
 });
 
 SECTORS.sort((x, y) => {
@@ -458,14 +593,14 @@ const REACH = [
 /* What the Group is, as distinct from the businesses inside it. */
 const WHY = [
   { t: 'One group, not a holding list',
-    d: 'The businesses are run as parts of one group. Sourcing, logistics and commercial relationships developed in one company are available to the others.' },
-  { t: 'Trade and logistics together',
-    d: 'Buying a commodity and moving it are one question, not two. Holding both means an enquiry can be answered with the origin, the specification and the route at once.' },
-  { t: 'Built on the Qatar market',
-    d: 'Every business here serves demand we can see directly — households, kitchens, retailers and wholesalers in Qatar — before it looks further out.' },
-  { t: 'Room to add',
-    d: 'The sector names are deliberately broad. They describe where we operate now and leave room for what the Group takes on next.' }
-];
+    d: 'The businesses are run as parts of one group. Sourcing, logistics and commercial relationships built in one company are open to the others.' },
+  { t: 'Capital, supply and delivery together',
+    d: 'Investment, international sourcing and the ability to execute sit in one structure, so a programme can be financed, supplied and delivered by the same group.' },
+  { t: 'Built in Qatar, working beyond it',
+    d: 'Every business is based in Qatar and serves demand we can see directly. TIBECO and Lusail Commercial carry the Group into the Gulf, Europe, Africa and Asia.' },
+  { t: 'Governed for the long term',
+    d: 'Certified management systems, selective growth and partnerships chosen to last — fewer, larger commitments, made for the long run.' }
+]
 
 module.exports = {
   SITE, SECTORS, ALL_COMPANIES, REACH, REACH_POINTS, HUB, WHY,
