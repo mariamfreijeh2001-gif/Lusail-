@@ -79,7 +79,7 @@ const SECTORS = [
       {
         slug: 'tibeco-group',
         /* how its own page looks: the opening layout, and its colour */
-        look: 'full', accent: '#1f4f8a', accentText: '#163d6b', tint: '#eaf1f9',
+        look: 'full', accent: '#3b82c4', accentText: '#1f5c94', tint: '#eef4fa', offerStyle: 'showcase',
         /* Defined here, in its primary sector, and cross-listed in every
            other sector one of its platforms works in. */
         alsoIn: ['energy-industrial', 'technology', 'trading', 'supply-distribution'],
@@ -473,14 +473,21 @@ const VALUES = [
 
 /* Home: what the Group is actively looking to do next */
 const GROWTH = [
-  { t: 'Establish new businesses.' },
-  { t: 'Expand existing companies.' },
-  { t: 'Enter new commercial sectors.' },
-  { t: 'Develop strategic partnerships.' },
-  { t: 'Build supplier and distribution relationships.' },
-  { t: 'Explore new regional and international markets.' },
-  { t: 'Strengthen connections between our portfolio companies.' }
-];
+  { t: 'Establish new businesses', icon: 'spark',
+    d: 'Where we can see demand in the market, rather than where a category looks attractive.' },
+  { t: 'Expand existing companies', icon: 'target',
+    d: 'Wider markets, sharper offers and new locations, where the numbers support it.' },
+  { t: 'Enter new commercial sectors', icon: 'markets',
+    d: 'Next to what we already know, and with a partner who knows the new one well.' },
+  { t: 'Develop strategic partnerships', icon: 'partnership',
+    d: 'Joint ventures and long-term cooperation that are worth something to both sides.' },
+  { t: 'Build supplier and distribution relationships', icon: 'crate',
+    d: 'Producers abroad and buyers in Qatar, held for longer than a single transaction.' },
+  { t: 'Explore new regional and international markets', icon: 'supply',
+    d: 'Starting with the markets our sourcing and logistics already reach.' },
+  { t: 'Strengthen connections between our companies', icon: 'cycle',
+    d: 'Sourcing, logistics and customers shared across the portfolio.' }
+]
 
 /* About: who the Group wants to hear from. The partnerships page was a whole
    page saying this; it is a section now, and the contact form routes each of

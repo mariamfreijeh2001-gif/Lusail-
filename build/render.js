@@ -851,7 +851,33 @@ function pageCompany(c) {
     ? (c.productsTitle || 'What we trade <span class="soft">today</span>')
     : 'What we <span class="soft">do</span>';
 
-  const products = c.products && c.products.length
+  /* The showcase: the business areas listed on the left, one large
+     photograph on the right that changes with the area pointed at. */
+  const showcase = c.offerStyle === 'showcase' && c.products && c.products.length
+    ? `<section class="section co-show" id="offer" aria-labelledby="prodTitle">
+  <div class="wrap">
+    ${head2('prodTitle', offerTitle, 'Five areas the three platforms work across.')}
+    <div class="show" id="show">
+      <ol class="show-list">
+${c.products.map((p, i) => `        <li class="show-item${i === 0 ? ' on' : ''}" tabindex="0" data-i="${i}">
+          <span class="show-n">${num(i)}</span>
+          <div class="show-b">
+            <h3>${esc(p.t)}</h3>
+            <p>${esc(p.d)}</p>
+          </div>
+        </li>`).join('\n')}
+      </ol>
+      <div class="show-pics">
+${c.products.map((p, i) => `        <figure class="show-pic${i === 0 ? ' on' : ''}" data-i="${i}">${pic(p.img, '(max-width:900px) 100vw, 52vw', `alt="${esc(p.t)}" loading="lazy"`)}</figure>`).join('\n')}
+      </div>
+    </div>
+  </div>
+</section>
+
+`
+    : '';
+
+  const products = c.offerStyle !== 'showcase' && c.products && c.products.length
     ? `<section class="section co-offer" id="offer" aria-labelledby="prodTitle">
   <div class="wrap">
     ${head2('prodTitle', offerTitle, '')}
@@ -1023,7 +1049,7 @@ ${c.activities.map(a => `          <li>${esc(a)}</li>`).join('\n')}
   </div>
 </section>
 
-${figures}${pillars}${steps}${products}${services}${quote}${sourcing}<section class="co-ask">
+${figures}${pillars}${steps}${showcase}${products}${services}${quote}${sourcing}<section class="co-ask">
   <div class="wrap co-ask-in">
     <div>
       <p class="eyebrow">Work with ${esc(c.name)}</p>
@@ -1105,7 +1131,7 @@ function pageSectorsIndex() {
   return head({
     title: `Our Sectors · ${SITE.name}`,
     desc: 'Lusail Corp operates across investment, energy and technology, commodity trading, food supply and distribution, consumer services and hospitality.',
-    url: '/sectors/', image: 'skyline-tall',
+    url: '/sectors/', image: 'hero-sectors',
     schema: graph(crumbs([{ name: 'Our Sectors' }]), {
       '@type': 'ItemList', name: 'Lusail Corp sectors',
       itemListElement: SECTORS.map((s, i) => ({
@@ -1120,7 +1146,7 @@ function pageSectorsIndex() {
       lede: 'The Group operates across investment, energy and technology, commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
       /* the Group, not one of its sectors — the trading photograph is the
          first band on this same page, and a page should not open on it */
-      photo: 'skyline-tall'
+      photo: 'hero-sectors'
     })
     + `<div class="secidx">
   <nav class="secrail" aria-label="The sectors on this page">
@@ -1289,15 +1315,18 @@ ${[
 </section>
 
 <section class="section grow" aria-labelledby="growTitle">
-  <div class="wrap grow-in">
-    <div class="grow-side rise">
-      <p class="eyebrow">What comes next</p>
-      <h2 id="growTitle">What we are looking to <span class="soft">do next</span></h2>
-      <p class="grow-lede">Seven directions the Group is actively pursuing. If you can help with one of them, we want to hear from you.</p>
-      <a class="btn btn-dark" href="/contact/?area=partnership">Bring us an opportunity</a>
-    </div>
-    <ol class="grow-list">
-${GROWTH.map((g, i) => `      <li class="rise d${Math.min(i, 3)}"><span class="grow-n">${num(i)}</span><span class="grow-t">${esc(g.t.replace(/\.$/, ''))}</span><span class="grow-go" aria-hidden="true">&#8594;</span></li>`).join('\n')}
+  <div class="wrap">
+    ${head2('growTitle', 'What we are looking to <span class="soft">do next</span>', 'Seven directions the Group is actively pursuing. If you can help with one of them, we want to hear from you.')}
+    <ol class="dirs">
+${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
+        <span class="dir-top">${icon(g.icon)}<span class="dir-n">${num(i)}</span></span>
+        <h3>${esc(g.t)}</h3>
+        <p>${esc(g.d)}</p>
+      </li>`).join('\n')}
+      <li class="dir dir-ask rise d3">
+        <p class="dir-ask-q">Have one of these?</p>
+        <a class="dir-ask-go" href="/contact/?area=partnership">Bring us an opportunity <span aria-hidden="true">&#8594;</span></a>
+      </li>
     </ol>
   </div>
 </section>

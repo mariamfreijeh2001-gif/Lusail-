@@ -372,6 +372,24 @@
     });
   }
 
+  /* ---------- a company's showcase ---------------------------------------- */
+
+  /* Pointing at an area, focusing it, or tapping it brings its photograph
+     forward. The last one chosen stays, so the picture never goes blank. */
+  var show = $('#show');
+  if (show) {
+    var showItems = $$('.show-item', show), showPics = $$('.show-pic', show);
+    var showPick = function (i) {
+      showItems.forEach(function (x, k) { x.classList.toggle('on', k === i); });
+      showPics.forEach(function (x, k) { x.classList.toggle('on', k === i); });
+    };
+    showItems.forEach(function (it, i) {
+      it.addEventListener('pointerenter', function () { showPick(i); });
+      it.addEventListener('focus', function () { showPick(i); });
+      it.addEventListener('click', function () { showPick(i); });
+    });
+  }
+
   /* ---------- the globe --------------------------------------------------- */
 
   /* Where the Group sources from, as the Earth: land as points on a sphere,
