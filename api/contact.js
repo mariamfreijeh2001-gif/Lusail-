@@ -80,14 +80,16 @@ function qatarTime(d) {
 const OPTION_LABELS = {
   partnerTypes: Object.fromEntries(PARTNER_TYPES.map(p => [p.v, p.t])),
   sectors: Object.fromEntries(SECTORS.map(x => [x.slug, x.name])),
+  areas: AREAS,
   interests: Object.assign({ general: 'A general enquiry', partnership: 'Working with the Group' },
     Object.fromEntries(SECTORS.map(x => [x.slug, x.name])))
 };
 
 async function sendDefined(spec, body, res) {
   const rows = [];
-  let email = '', name = '', company = '', message = '';
+  let email = '', name = '', company = '', message = '', subjectExtra = '';
   for (const fd of spec.fields) {
+    if (!fd.name) continue;                       // a step heading, not a field
     const raw = body[fd.name];
     let v = '';
     if (fd.type === 'checks') {
@@ -109,6 +111,7 @@ async function sendDefined(spec, body, res) {
     if (fd.name === 'email') email = v;
     if (fd.name === 'name') name = v;
     if (fd.name === 'company') company = v;
+    if (fd.name === spec.subjectFrom) subjectExtra = v;
     if (fd.type === 'textarea') { message = v; continue; }
     rows.push([fd.label, v || '—']);
   }
@@ -139,7 +142,7 @@ async function sendDefined(spec, body, res) {
       headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from, to: [to], reply_to: email,
-        subject: headerSafe(`${title} — ${company || name || email}`),
+        subject: headerSafe(`${title}${subjectExtra && subjectExtra !== '—' ? ' — ' + subjectExtra : ''} — ${company || name || email}`),
         html, text
       })
     });

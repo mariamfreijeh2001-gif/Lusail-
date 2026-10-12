@@ -96,7 +96,7 @@
        it is the control that closes the thing. */
     var trap = function (e) {
       if (e.key !== 'Tab' || !menu.classList.contains('open')) return;
-      var stops = [burger].concat($('a[href],summary,button:not([disabled])', menu))
+      var stops = [burger].concat($$('a[href],summary,button:not([disabled])', menu))
         .filter(function (el) { return el.offsetWidth || el.offsetHeight; });
       if (stops.length < 2) return;
       var first = stops[0], last = stops[stops.length - 1];
@@ -277,6 +277,8 @@
         if (!res.ok) throw new Error(res.status);
         say(form.getAttribute('data-ok') || 'Message sent.');
         form.reset();
+        var done = form.querySelector('.fdone');
+        if (done) { form.classList.add('is-sent'); done.hidden = false; done.focus(); }
         $$('[data-all]', form).forEach(function (a) { a.checked = false; });
       }).catch(function () {
         /* Nothing typed is lost: the message stays in the form, and the same
@@ -305,6 +307,15 @@
     });
   };
   $$('form[data-form]').forEach(setupForm);
+  /* "Send another" brings the empty form back. */
+  $$('.fdone-again').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var form = b.closest('form'), done = form.querySelector('.fdone');
+      form.classList.remove('is-sent'); done.hidden = true;
+      var st = form.querySelector('.status'); if (st) st.textContent = '';
+      var first = form.querySelector('input:not([tabindex="-1"]):not([type="checkbox"])'); if (first) first.focus();
+    });
+  });
 
   /* ---------- the corner form ----------------------------------------------
      A button in the corner of every page opens a small panel. Escape, the

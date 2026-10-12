@@ -351,7 +351,10 @@ the sectors — one, several or all — and the person to reply to. **Every page
 but Contact** has a "Get in touch" button in the corner that opens a short
 form (name, email, phone, what it is about, a line of message).
 
-Both are defined once, in `FORMS` in [data/site.js](data/site.js). The page
+All three forms — Contact (`enquiry`), the application (`partnership`) and the
+corner form (`callback`) — are defined once, in `FORMS` in
+[data/site.js](data/site.js), and share one design: underlined fields, numbered
+steps (`{ step: '…' }`), and a thank-you panel once sent. The page
 draws its fields from there and `api/contact.js` checks what arrives against
 the same definition, so:
 

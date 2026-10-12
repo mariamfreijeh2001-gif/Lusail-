@@ -410,6 +410,10 @@ ${ALL_COMPANIES.map(c => `    <a class="sub" href="/companies/${c.slug}/">${esc(
 const FORM_OPTIONS = {
   partnerTypes: () => PARTNER_TYPES.map(p => ({ v: p.v, t: p.t })),
   sectors: () => SECTORS.map(x => ({ v: x.slug, t: x.name })),
+  areas: () => [{ v: 'general', t: 'General enquiry' }]
+    .concat(ALL_COMPANIES.map(c => ({ v: c.slug, t: c.name })))
+    .concat([{ v: 'supplier', t: 'Supplier opportunity' }, { v: 'partnership', t: 'Business partnership' },
+      { v: 'careers', t: 'Careers' }, { v: 'other', t: 'Other' }]),
   interests: () => [{ v: 'general', t: 'A general enquiry' }]
     .concat(SECTORS.map(x => ({ v: x.slug, t: x.name })))
     .concat([{ v: 'partnership', t: 'Working with the Group' }])
@@ -428,7 +432,9 @@ function formFields(kind, p) {
     f.why ? `data-why="${esc(f.why)}"` : '', f.required ? `aria-describedby="${id(f.name)}-err"` : ''
   ].filter(Boolean).join(' ');
   const req = f => f.required ? ' <span class="req" aria-hidden="true">*</span>' : '';
+  let stepN = 0;
   return F.fields.map(f => {
+    if (f.step) return `      <p class="fstep"><span>${num(stepN++)}</span>${esc(f.step)}</p>`;
     const cls = 'field' + (f.full || f.type === 'textarea' ? ' full' : '');
     if (f.type === 'checks') {
       const opts = FORM_OPTIONS[f.options]();
@@ -453,15 +459,27 @@ ${f.required ? '          <option value="">Choose one</option>\n' : ''}${opts.ma
   }).join('\n');
 }
 
+/* What replaces a form once it has been sent. */
+function formDone(msg) {
+  return `      <div class="fdone" hidden tabindex="-1">
+        <span class="fdone-ic" aria-hidden="true"></span>
+        <h3>Thank you</h3>
+        <p>${esc(msg)}</p>
+        <button class="fdone-again" type="button">Send another message</button>
+      </div>`;
+}
+
 function formBlock(kind, p, extraClass) {
   const F = FORMS[kind];
   return `<form class="lform${extraClass ? ' ' + extraClass : ''}" data-form="${kind}" data-ok="${esc(F.ok)}" novalidate data-mail="${SITE.contact.email}">
       <div class="hp" aria-hidden="true"><label for="${p}Hp">Website</label><input id="${p}Hp" name="website" type="text" tabindex="-1" autocomplete="off"></div>
 ${formFields(kind, p)}
       <div class="form-end">
-        <button class="btn btn-dark" type="submit">${esc(F.submit)}</button>
+        <button class="btn btn-dark fbtn" type="submit">${esc(F.submit)} <span aria-hidden="true">&#8594;</span></button>
         <span class="status" role="status"></span>
+        <p class="fnote">We use these details only to reply to you.</p>
       </div>
+${formDone(F.ok)}
     </form>`;
 }
 
@@ -470,15 +488,15 @@ ${formFields(kind, p)}
    outside closes it. */
 function quickForm() {
   return `<div class="qf" id="qf">
-  <button class="qf-btn" id="qfBtn" type="button" aria-expanded="false" aria-controls="qfPanel">
-    <span class="qf-dot" aria-hidden="true"></span><span class="qf-label">Get in touch</span>
+  <button class="qf-btn" id="qfBtn" type="button" aria-expanded="false" aria-controls="qfPanel" aria-label="Get in touch">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5.5" width="18" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.8 6.5l8.2 6.3 8.2-6.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    <span class="qf-tip" aria-hidden="true">Get in touch</span>
   </button>
   <div class="qf-panel" id="qfPanel" role="dialog" aria-modal="false" aria-labelledby="qfTitle" hidden>
     <div class="qf-head">
       <div>
-        <p class="eyebrow">Lusail Corp</p>
-        <h2 id="qfTitle">Leave your details</h2>
-        <p class="qf-lede">We will reach back to you within two working days.</p>
+        <h2 id="qfTitle">Get in touch</h2>
+        <p class="qf-lede">We reply within two working days.</p>
       </div>
       <button class="qf-close" type="button" aria-label="Close">&times;</button>
     </div>
@@ -1433,7 +1451,7 @@ ${[
       </ul>
       <p class="apply-alt">Prefer email? <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></p>
     </div>
-    ${formBlock('partnership', 'p', 'apply-form rise d1')}
+    ${formBlock('partnership', 'p', 'fcard rise d1')}
   </div>
 </section>
 
@@ -1468,15 +1486,6 @@ ${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
 function pageContact() {
   /* The dropdown is built from the same list api/contact.js validates
      against, so a new company appears in both at once. */
-  const areas = [
-    { v: 'general', t: 'General enquiry' },
-    ...ALL_COMPANIES.map(c => ({ v: c.slug, t: c.name })),
-    { v: 'supplier', t: 'Supplier opportunity' },
-    { v: 'partnership', t: 'Business partnership' },
-    { v: 'careers', t: 'Careers' },
-    { v: 'other', t: 'Other' }
-  ];
-
   return head({
     title: `Contact · ${SITE.name}`,
     desc: 'Contact Lusail Corp about our companies, supply, commercial opportunities or careers.',
@@ -1504,25 +1513,7 @@ function pageContact() {
         <div><dt>Routing</dt><dd>Pick an area of interest and the message goes to the desk that can answer it.</dd></div>
       </dl>
     </div>
-    <form id="form" class="rise d1 lform" data-form="enquiry" data-ok="Message sent. We reply within two working days." novalidate data-mail="${SITE.contact.email}">
-      <div class="hp" aria-hidden="true">
-        <label for="fSite">Website</label>
-        <input id="fSite" name="website" type="text" tabindex="-1" autocomplete="off">
-      </div>
-      <div class="field"><label for="fName">Full name</label><input id="fName" name="name" autocomplete="name" maxlength="120" required aria-describedby="fName-err"><span class="field-err" id="fName-err"></span></div>
-      <div class="field"><label for="fCompany">Company</label><input id="fCompany" name="company" autocomplete="organization" maxlength="160"></div>
-      <div class="field"><label for="fMail">Email address</label><input id="fMail" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="fMail-err"><span class="field-err" id="fMail-err"></span></div>
-      <div class="field"><label for="fPhone">Phone number</label><input id="fPhone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
-      <div class="field full"><label for="fArea">Area of interest</label>
-        <select id="fArea" name="area">
-${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('\n')}
-        </select></div>
-      <div class="field full"><label for="fMsg">Message</label><textarea id="fMsg" name="message" maxlength="5000" required aria-describedby="fMsg-err"></textarea><span class="field-err" id="fMsg-err"></span></div>
-      <div class="form-end">
-        <button class="btn btn-dark" type="submit">Send enquiry</button>
-        <span class="status" id="status" role="status"></span>
-      </div>
-    </form>
+    ${formBlock('enquiry', 'f', 'fcard rise d1')}
   </div>
 </section>
 

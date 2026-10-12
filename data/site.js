@@ -620,9 +620,31 @@ const WHY = [
      sectors       every sector, as checkboxes, with an "All sectors" box
      interests     every sector, plus a general option
    `why` is what the visitor is told beside the field when it is missing.
+   `{ step: '…' }` starts a numbered stage of the form; it holds no data.
    -------------------------------------------------------------------------- */
 
 const FORMS = {
+  /* The Contact page: any question, routed by "area" to the desk that can
+     answer it. Same build, same look as the application. */
+  enquiry: {
+    subject: 'Website enquiry',
+    subjectFrom: 'area',
+    submit: 'Send enquiry',
+    ok: 'Message sent. We reply within two working days.',
+    fields: [
+      { step: 'About you' },
+      { name: 'name', label: 'Full name', type: 'text', required: true, max: 120, auto: 'name',
+        why: 'Tell us your name.' },
+      { name: 'company', label: 'Company', type: 'text', max: 160, auto: 'organization' },
+      { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
+      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' },
+      { step: 'Your message' },
+      { name: 'area', label: 'Area of interest', type: 'select', options: 'areas', full: true },
+      { name: 'message', label: 'Message', type: 'textarea', required: true, max: 5000, full: true,
+        why: 'Write a line about what you need, so we can send it to the right company.' }
+    ]
+  },
+
   /* Work With Us: a company applying to work with the Group, in one sector,
      several, or all of them. Few fields, each one used to route or reply. */
   partnership: {
@@ -630,19 +652,23 @@ const FORMS = {
     submit: 'Send application',
     ok: 'Application received. The right desk will reply within two working days.',
     fields: [
+      { step: 'Your company' },
       { name: 'company', label: 'Company name', type: 'text', required: true, max: 160, auto: 'organization',
         why: 'Tell us which company is applying.' },
       { name: 'site', label: 'Company website', type: 'url', max: 200, auto: 'url', placeholder: 'https://' },
       { name: 'country', label: 'Country', type: 'text', max: 80, auto: 'country-name' },
       { name: 'partnerType', label: 'We are', type: 'select', options: 'partnerTypes', required: true,
         why: 'Pick the one that describes you best.' },
+      { step: 'Where you would like to work with us' },
       { name: 'sectors', label: 'Sectors you would like to work with us in', type: 'checks', options: 'sectors', required: true, full: true,
         why: 'Choose at least one sector, or all of them.' },
+      { step: 'How to reach you' },
       { name: 'name', label: 'Your name', type: 'text', required: true, max: 120, auto: 'name',
         why: 'Tell us who to reply to.' },
       { name: 'role', label: 'Your role', type: 'text', max: 120, auto: 'organization-title' },
       { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
       { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' },
+      { step: 'The opportunity' },
       { name: 'message', label: 'Tell us about the opportunity', type: 'textarea', required: true, max: 5000, full: true,
         why: 'A few lines on what you offer or what you are looking for.' }
     ]
@@ -657,9 +683,8 @@ const FORMS = {
       { name: 'name', label: 'Name', type: 'text', required: true, max: 120, auto: 'name',
         why: 'Tell us your name.' },
       { name: 'email', label: 'Email', type: 'email', required: true, max: 254, auto: 'email' },
-      { name: 'phone', label: 'Phone', type: 'tel', max: 40, auto: 'tel' },
-      { name: 'interest', label: 'About', type: 'select', options: 'interests' },
-      { name: 'message', label: 'Message', type: 'textarea', max: 600, rows: 3 }
+      { name: 'message', label: 'Message', type: 'textarea', required: true, max: 600, rows: 3,
+        why: 'A line on what you need.' }
     ]
   }
 };

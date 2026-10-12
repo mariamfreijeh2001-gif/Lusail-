@@ -2243,8 +2243,6 @@ input[type="checkbox"]{width:auto;padding:0}
 .apply-points li::before{content:"";width:14px;height:2px;background:var(--gold);flex:none;transform:translateY(-4px)}
 .apply-alt{font-size:var(--t-sm);color:var(--ink-2)}
 .apply-alt a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
-.apply-form{background:#fff;border:1px solid var(--line);padding:clamp(22px,3vw,40px);gap:20px 22px}
-.apply-form input,.apply-form select,.apply-form textarea{background:#fff}
 
 /* ---- the corner form ---- */
 .qf{position:fixed;right:clamp(14px,2vw,28px);bottom:clamp(14px,2vw,28px);z-index:70}
@@ -2281,10 +2279,106 @@ input[type="checkbox"]{width:auto;padding:0}
   .apply-side{position:static}
 }
 @media (max-width:560px){
-  .apply-form{padding:20px 16px}
   .chk span{min-height:44px}
   /* on a phone the button is a compact pill and the panel a sheet from the bottom */
   .qf{right:12px;bottom:12px}
   .qf-btn{height:48px;padding:0 16px 0 14px}
   .qf-panel{position:fixed;left:0;right:0;bottom:0;width:auto;max-height:88svh;padding:20px 18px 18px}
 }
+
+/* ==========================================================================
+   Form design, shared by every form (.lform): underlined fields that turn
+   gold on focus, small tracked labels, numbered steps, a thank-you panel.
+   ========================================================================== */
+.lform{gap:26px 28px}
+.lform .field{gap:6px;position:relative}
+.lform label,.lform .checks legend{
+  font:600 .6875rem/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);
+}
+.lform input:not([type="checkbox"]),.lform select,.lform textarea{
+  background:transparent;border:0;border-bottom:1px solid var(--line-2);border-radius:0;
+  padding:.55em 0 .7em;font:400 var(--t-body)/1.4 var(--body);color:var(--ink);
+  transition:border-color .25s,box-shadow .25s;
+}
+.lform input::placeholder,.lform textarea::placeholder{color:#a3a7b4}
+.lform input:hover:not([type="checkbox"]),.lform select:hover,.lform textarea:hover{border-bottom-color:var(--ink-3)}
+.lform input:focus:not([type="checkbox"]),.lform select:focus,.lform textarea:focus{
+  outline:none;border-bottom-color:var(--gold);box-shadow:0 1px 0 0 var(--gold);
+}
+.lform input:focus-visible:not([type="checkbox"]),.lform select:focus-visible,.lform textarea:focus-visible{outline:none}
+.lform [aria-invalid="true"]{border-bottom-color:#A3341A!important;box-shadow:0 1px 0 0 #A3341A!important;background:transparent!important}
+.lform textarea{min-height:110px;border:1px solid var(--line-2);padding:.8em .9em;resize:vertical}
+.lform textarea:focus{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+/* a select draws its own arrow */
+.lform select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:28px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--gold-text) 50%),linear-gradient(135deg,var(--gold-text) 50%,transparent 50%);
+  background-position:calc(100% - 12px) 55%,calc(100% - 7px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.lform select:invalid{color:#a3a7b4}
+
+/* numbered steps through a long form */
+.fstep{
+  grid-column:1/-1;display:flex;align-items:baseline;gap:14px;margin:10px 0 -6px;
+  padding-top:22px;border-top:1px solid var(--line);
+  font:400 1.25rem/1.2 var(--display);color:var(--ink);
+}
+.fstep:first-of-type{padding-top:0;border-top:0;margin-top:0}
+.fstep span{font:300 1.0625rem/1 var(--display);color:var(--gold-text);letter-spacing:.06em}
+
+/* the end of a form: the button with its arrow, and a quiet note */
+.form-end{gap:14px 22px;margin-top:4px}
+.fbtn{min-height:52px;padding-inline:28px}
+.fbtn span{transition:transform .25s}
+.fbtn:hover span{transform:translateX(4px)}
+.fnote{flex-basis:100%;font-size:var(--t-xs);color:var(--ink-3)}
+
+/* once sent: the fields step aside for the thank-you panel */
+.lform.is-sent > :not(.fdone){display:none}
+.fdone{grid-column:1/-1;display:grid;justify-items:start;gap:12px;padding:12px 0;outline:none}
+.fdone-ic{width:52px;height:52px;border-radius:50%;background:var(--ink);position:relative}
+.fdone-ic::after{content:"";position:absolute;left:19px;top:14px;width:12px;height:21px;
+  border-right:2.5px solid var(--gold);border-bottom:2.5px solid var(--gold);transform:rotate(45deg)}
+.fdone h3{font:400 1.75rem/1.15 var(--display);color:var(--ink);margin:6px 0 0}
+.fdone p{color:var(--ink-2);max-width:42ch}
+.fdone-again{margin-top:8px;background:none;border:0;padding:6px 0;font:600 var(--t-sm)/1.3 var(--ui);color:var(--ink);
+  text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:5px;cursor:pointer}
+
+/* the application card and the corner form, tuned */
+.qf-form{gap:16px}
+.qf-form .fnote{text-align:center}
+.qf-form .fbtn{width:100%;justify-content:center}
+
+@media (max-width:560px){
+  .lform{gap:22px}
+  .fbtn{width:100%;justify-content:center}
+}
+
+/* the corner form: a small round mail button, a compact panel */
+.qf-btn{width:56px;height:56px;padding:0;justify-content:center;border-radius:50%;position:relative}
+.qf-btn svg{width:24px;height:24px;color:var(--gold)}
+.qf-tip{
+  position:absolute;right:calc(100% + 12px);top:50%;transform:translate(6px,-50%);white-space:nowrap;
+  background:var(--ink);color:#fff;font:600 var(--t-xs)/1 var(--ui);padding:9px 12px;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+}
+.qf-btn:hover .qf-tip,.qf-btn:focus-visible .qf-tip{opacity:1;transform:translate(0,-50%)}
+.qf-panel{width:min(320px,calc(100vw - 28px));padding:18px 18px 16px}
+.qf-head{margin-bottom:8px}
+.qf-head h2{font:400 1.375rem/1.2 var(--display);margin:0 0 4px}
+.qf-form{gap:14px}
+.qf-form textarea{min-height:72px}
+.qf-form .fnote{display:none}
+.qf-form .fbtn{min-height:46px}
+.qf-form .fdone{padding:4px 0}
+.qf-form .fdone h3{font-size:1.375rem}
+@media (max-width:560px){
+  .qf-btn{width:52px;height:52px;padding:0}
+  .qf-tip{display:none}
+  .qf-panel{left:12px;right:12px;bottom:12px;width:auto}
+}
+
+/* Contact and Work With Us share one form card. */
+.fcard{background:#fff;padding:clamp(26px,3.4vw,48px);border:0;border-top:3px solid var(--gold);box-shadow:0 24px 60px rgba(6,15,36,.08)}
+.fcard input:not([type="checkbox"]),.fcard select,.fcard textarea{background:transparent}
+@media (max-width:560px){ .fcard{padding:22px 16px} }
+/* the sector chips are choices, not field labels: normal case */
+.lform label.chk{font:inherit;letter-spacing:0;text-transform:none;color:inherit}
