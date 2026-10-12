@@ -24,16 +24,16 @@ const { execFile } = require('child_process');
 const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const SRC = path.join(__dirname, '..', 'site-assets', 'img');
 const OUT = path.join(SRC, 'derived');
-const QUALITY = 0.8;
+const QUALITY = 0.82;
 
 /* The width a role is drawn at, widest first. A variant wider than the
    original is skipped — nothing is ever upscaled. */
 const WIDTHS = {
-  hero: [1400, 980, 760],   // full-bleed, behind a page title
-  still: [1180, 760],       // the upright shot beside a company's opening
+  hero: [2560, 1920, 1400, 980, 760],   // full-bleed, behind a page title: 2x a 1440 laptop
+  still: [1220, 1010, 760], // the shot beside a company's opening (605px, 504px)
   card: [880, 700, 560, 440],   // the home page's sector cards
   panel: [1060, 800, 620, 440], // a company panel in the row of four
-  rail: [520, 320],         // a product card in the rail
+  rail: [232, 168],         // a 116px product thumbnail, 84px on a phone
   plate: [680, 420],        // a company on the sectors index
   thumb: [186],             // the 93px picture beside a company's name
 };
@@ -46,7 +46,6 @@ const ASPECT = {
   rail: 4 / 3,        // .prod img
   plate: 4 / 3,       // .cocard-shot img
   thumb: 93 / 88,     // .minico img
-  still: 6 / 5,       // .costill img
 };
 
 /* Which role each photograph plays. An image used in two places takes the

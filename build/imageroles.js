@@ -14,35 +14,39 @@
 module.exports = {
   // full-bleed, behind a page title
   'hero-about': ['hero'],
+  'hero-partnerships': ['hero'],
   'hero-contact': ['hero'],
   'hero-doha': ['hero'],
   'skyline-tall': ['hero'],
   'why-group': ['hero'],
   'about-platform': ['hero'],
 
-  // a sector: the photograph behind its own page title
+  // a sector: the photograph behind its own page title, and its strip in the
+  // home page's accordion
+  'hero-sector-investments': ['hero'],
+  'hero-sector-energy-industrial': ['hero'],
+  'hero-sector-technology': ['hero'],
   'hero-sector-trading': ['hero'],
   'hero-sector-supply-distribution': ['hero'],
   'hero-sector-consumer-services': ['hero'],
   'hero-sector-food-beverage': ['hero'],
 
   // a company: its page title, its card, its panel in the row, its plate
-  'hero-lusail-commercial': ['hero', 'plate', 'panel', 'thumb'],
-  'hero-roma-commercial': ['hero', 'plate', 'panel', 'thumb'],
-  'hero-cavallo-laundry': ['hero', 'plate', 'panel', 'thumb'],
-  'hero-nero-cafe': ['hero', 'plate', 'panel', 'thumb'],
+  'hero-tibeco-group': ['hero', 'plate', 'panel'],
+  'hero-lusail-commercial': ['hero', 'plate', 'panel'],
+  'hero-roma-commercial': ['hero', 'plate', 'panel'],
+  'hero-cavallo-laundry': ['hero', 'plate', 'panel'],
+  'hero-nero-cafe': ['hero', 'plate', 'panel'],
 
   // the upright shot beside a company's opening paragraphs
+  'still-tibeco-group': ['still'],
+  // the two sides of Lusail Commercial, side by side
+  'panel-food-commodities': ['panel'],
+  'panel-ocean-freight': ['panel'],
   'still-lusail-commercial': ['still'],
   'still-roma-commercial': ['still'],
   'coffee-still': ['still'],
   'lifestyle-wide': ['still'],
-
-  // the home page's sector cards
-  'card-trading': ['card'],
-  'card-supply': ['card'],
-  'card-consumer': ['card'],
-  'card-food': ['card'],
 
   // the product rail on a company page
   'prod-air-freight': ['rail'],
@@ -56,4 +60,9 @@ module.exports = {
   'prod-ocean-freight': ['rail'],
   'prod-rice': ['rail'],
   'prod-vessel-chartering': ['rail'],
+  'prod-energy-materials': ['rail'],
+  'prod-technology-systems': ['rail'],
+  'prod-equipment': ['rail'],
+  'prod-food-security': ['rail'],
+  'prod-project-supply': ['rail'],
 };
