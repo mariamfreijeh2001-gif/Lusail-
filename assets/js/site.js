@@ -116,25 +116,6 @@
     });
   }
 
-  /* ---------- what makes it a group ----------------------------------------
-     The reasoning opens on hover in CSS. This adds the same on a tap, and
-     keeps aria-expanded honest for anyone listening. */
-
-  $$('.bcard-btn').forEach(function (btn) {
-    var card = btn.closest('.bcard');
-    var set = function (on) {
-      card.classList.toggle('on', on);
-      btn.setAttribute('aria-expanded', String(on));
-    };
-    btn.addEventListener('click', function () { set(!card.classList.contains('on')); });
-    /* Escape puts it away again without reaching for the pointer. */
-    card.addEventListener('keydown', function (e) {
-      if ((e.key === 'Escape' || e.key === 'Esc') && card.classList.contains('on')) {
-        set(false); btn.focus(); e.stopPropagation();
-      }
-    });
-  });
-
   /* ---------- the values ---------------------------------------------------
      One open at a time. The first is open in the markup, so the column has a
      shape before this runs and keeps one if it never does. */
@@ -194,13 +175,10 @@
   }
 
   /* ---------- contact form -----------------------------------------------
-     Posts to the serverless function in api/contact.js, which relays through
-     Resend. If it is unreachable, or CONTACT_ENDPOINT is emptied, the form
-     falls back to the visitor's mail client, so an enquiry is never lost. */
-
-  /* The form posts JSON to the serverless function in api/contact.js, which
+     The form posts JSON to the serverless function in api/contact.js, which
      relays through Resend. Until the key is set there the request fails and
-     the form says so — it never claims to have sent anything it has not. */
+     the form says so — it never claims to have sent anything it has not —
+     and offers the same words to the visitor's own mail program instead. */
   var CONTACT_ENDPOINT = '/api/contact';
 
   var form = $('#form');
@@ -216,7 +194,7 @@
     /* A company page links here as /contact/?company=<slug>; start the
        dropdown on that company so the enquiry is routed to it. */
     try {
-      var pre = new URLSearchParams(location.search).get('company');
+      var q = new URLSearchParams(location.search), pre = q.get('company') || q.get('area');
       if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) {
         areaSel.value = pre;
       }
@@ -279,10 +257,19 @@
         say('Message sent. We reply within two working days.');
         form.reset();
       }).catch(function () {
-        /* The form is not cleared, so nothing they typed is lost and Send
-           can simply be pressed again. The address is on this page already,
-           under Channels, for anyone who would rather not wait. */
-        say('That did not send. Try again, or email us at ' + MAIL + '.', true);
+        /* Nothing typed is lost: the message stays in the form, and the same
+           words are offered to the visitor's own mail program, prefilled. */
+        var areaLabel = areaSel && areaSel.selectedIndex >= 0 ? areaSel.options[areaSel.selectedIndex].text : '';
+        var subject = 'Website enquiry' + (areaLabel ? ' — ' + areaLabel : '');
+        var lines = ['Name: ' + body.name, 'Company: ' + (body.company || '-'),
+          'Email: ' + body.email, 'Phone: ' + (body.phone || '-'), '', body.message];
+        var href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(lines.join('\n'));
+        say('That did not send. Try again, or ', true);
+        var a = document.createElement('a');
+        a.href = href; a.textContent = 'email it to ' + MAIL;
+        status.appendChild(a);
+        status.appendChild(document.createTextNode('.'));
       }).then(function () {
         btn.disabled = false;
       });
@@ -361,6 +348,226 @@
       addEventListener('resize', function () { remeasure(); marked = null; onScroll(); });
       remeasure();
       pick();
+    }
+  }
+
+  /* ---------- the sector accordion ---------------------------------------- */
+
+  /* Pointing at a strip, or tabbing to it, opens it; the last one opened stays
+     open, so moving the pointer away never leaves seven equal slivers. A tap
+     on a closed strip opens it rather than leaving the page, and a tap on the
+     open one follows its link. */
+  var acc = $('#acc');
+  if (acc) {
+    var items = $$('.acc-item', acc);
+    var open = function (it) {
+      items.forEach(function (x) { x.classList.toggle('is-open', x === it); });
+    };
+    items.forEach(function (it) {
+      it.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') open(it); });
+      it.addEventListener('focus', function () { open(it); });
+      it.addEventListener('click', function (e) {
+        if (!it.classList.contains('is-open')) { e.preventDefault(); open(it); }
+      });
+    });
+  }
+
+  /* ---------- the globe --------------------------------------------------- */
+
+  /* Where the Group sources from, as the Earth: land as points on a sphere,
+     turned slowly, with a gold arc lifting off every source country and
+     landing in Doha. Drag turns it; pointing at a region in the register
+     beside it lights that region's arcs. The page carries only the places;
+     the land arrives as one cached file of points, fetched when the globe
+     scrolls into view. */
+  var globe = $('#globe');
+  if (globe && window.fetch && window.requestAnimationFrame) {
+    var cv = globe.querySelector('canvas'), g = cv.getContext('2d');
+    var HUB = JSON.parse(globe.getAttribute('data-hub'));
+    var PLACES = JSON.parse(globe.getAttribute('data-places'));
+    var rad = Math.PI / 180, PI = Math.PI, N = 56;
+    var anim = !still.matches;
+
+    var vec = function (lon, lat) {
+      var cl = Math.cos(lat * rad);
+      return [cl * Math.cos(lon * rad), Math.sin(lat * rad), cl * Math.sin(lon * rad)];
+    };
+    var hubV = vec(HUB[0], HUB[1]);
+
+    /* Each arc: a run of unit vectors from the country to Doha along the
+       great circle, lifted off the surface most in the middle, and more the
+       further it has to travel. */
+    var arcs = PLACES.map(function (pl, i) {
+      var a = vec(pl[2], pl[3]), b = hubV;
+      var dot = Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]));
+      var om = Math.acos(dot), so = Math.sin(om) || 1e-6;
+      var L = 0.06 + 0.22 * (om / PI);
+      var pts = [];
+      for (var k = 0; k <= N; k++) {
+        var t = k / N, wa = Math.sin((1 - t) * om) / so, wb = Math.sin(t * om) / so;
+        var lift = 1 + L * Math.sin(t * PI);
+        pts.push((a[0] * wa + b[0] * wb) * lift, (a[1] * wa + b[1] * wb) * lift, (a[2] * wa + b[2] * wb) * lift);
+      }
+      return { region: pl[1], v: a, pts: pts, phase: (i * 0.37) % 1 };
+    });
+
+    var land = null;
+    var loadLand = function () {
+      if (land !== null) return;
+      land = false;
+      fetch('/assets/img/globe.json').then(function (r) { return r.json(); }).then(function (ll) {
+        var out = new Float32Array(ll.length / 2 * 3);
+        for (var i = 0, j = 0; i < ll.length; i += 2, j += 3) {
+          var v = vec(ll[i], ll[i + 1]); out[j] = v[0]; out[j + 1] = v[1]; out[j + 2] = v[2];
+        }
+        land = out;
+      }).catch(function () { land = false; });
+    };
+
+    var W = 0, R = 0;
+    var size = function () {
+      var w = cv.clientWidth; if (!w) return;
+      var dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = w; R = w * 0.46;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr);
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    /* The view: Doha faces out and the globe sways seventy degrees either
+       side of it, so the Americas and Australia each come round in turn.
+       Dragging adds to that; with reduced motion the globe holds still. */
+    var swing = anim ? 70 * rad : 0, offset = 0, tilt = 18 * rad;
+    var dragging = false, lastX = 0, lastY = 0;
+    cv.addEventListener('pointerdown', function (e) {
+      dragging = true; lastX = e.clientX; lastY = e.clientY;
+      if (cv.setPointerCapture) cv.setPointerCapture(e.pointerId);
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      offset -= (e.clientX - lastX) / R;
+      tilt = Math.max(-60 * rad, Math.min(60 * rad, tilt + (e.clientY - lastY) / R));
+      lastX = e.clientX; lastY = e.clientY;
+    });
+    var up = function () { dragging = false; };
+    cv.addEventListener('pointerup', up);
+    cv.addEventListener('pointercancel', up);
+
+    var lit = null, running = false, t0 = null;
+    var frame = function (now) {
+      if (!running) return;
+      if (cv.clientWidth !== W) size();
+      if (t0 === null) t0 = now;
+      var t = (now - t0) / 1000;
+      var lam = HUB[0] * rad + swing * Math.sin(t * 0.25) + offset;
+      var sa = Math.sin(lam), ca = Math.cos(lam), sb = Math.sin(tilt), cb = Math.cos(tilt);
+      var cx = W / 2, cy = W / 2;
+      /* a point on (or above) the sphere -> [x, y, depth], radius 1 */
+      var P = function (x, y, z) {
+        var x1 = x * ca + z * sa, z1 = z * ca - x * sa;
+        return [z1, y * cb - x1 * sb, y * sb + x1 * cb];
+      };
+      var vis = function (q) { return q[2] > 0 || q[0] * q[0] + q[1] * q[1] > 1; };
+
+      g.clearRect(0, 0, W, W);
+
+      /* the halo, then the sphere */
+      var halo = g.createRadialGradient(cx, cy, R, cx, cy, R * 1.14);
+      halo.addColorStop(0, 'rgba(211,167,80,.2)'); halo.addColorStop(1, 'rgba(211,167,80,0)');
+      g.beginPath(); g.arc(cx, cy, R * 1.14, 0, 2 * PI); g.fillStyle = halo; g.fill();
+      var grad = g.createRadialGradient(cx - R * 0.35, cy - R * 0.35, R * 0.1, cx, cy, R);
+      grad.addColorStop(0, '#1a2e60'); grad.addColorStop(1, '#0a1838');
+      g.beginPath(); g.arc(cx, cy, R, 0, 2 * PI); g.fillStyle = grad; g.fill();
+
+      /* the land: brighter where it faces us, dim toward the edge */
+      if (land) {
+        var sz = Math.max(1.4, W / 330), hs = sz / 2, dim = [];
+        g.fillStyle = 'rgba(208,206,204,.62)'; g.beginPath();
+        for (var i = 0; i < land.length; i += 3) {
+          var q = P(land[i], land[i + 1], land[i + 2]);
+          if (q[2] <= 0) continue;
+          var X = cx + q[0] * R, Y = cy - q[1] * R;
+          if (q[2] < 0.25) dim.push(X, Y); else g.rect(X - hs, Y - hs, sz, sz);
+        }
+        g.fill();
+        g.fillStyle = 'rgba(208,206,204,.2)'; g.beginPath();
+        for (i = 0; i < dim.length; i += 2) g.rect(dim[i] - hs, dim[i + 1] - hs, sz, sz);
+        g.fill();
+      }
+
+      /* the arcs, a pulse travelling along each toward Doha, and the country */
+      g.lineCap = 'round'; g.lineJoin = 'round';
+      arcs.forEach(function (a) {
+        var on = !lit || lit === a.region;
+        g.strokeStyle = on ? 'rgba(211,167,80,' + (lit ? .95 : .6) + ')' : 'rgba(211,167,80,.08)';
+        g.lineWidth = lit && on ? 1.8 : 1.1;
+        g.beginPath();
+        var pen = false;
+        for (var k = 0; k < a.pts.length; k += 3) {
+          var q = P(a.pts[k], a.pts[k + 1], a.pts[k + 2]);
+          if (!vis(q)) { pen = false; continue; }
+          var X = cx + q[0] * R, Y = cy - q[1] * R;
+          if (pen) g.lineTo(X, Y); else g.moveTo(X, Y);
+          pen = true;
+        }
+        g.stroke();
+        if (on && anim) {
+          var u = (t * 0.22 + a.phase) % 1, idx = Math.round(u * N) * 3;
+          var qp = P(a.pts[idx], a.pts[idx + 1], a.pts[idx + 2]);
+          if (vis(qp)) {
+            g.beginPath(); g.arc(cx + qp[0] * R, cy - qp[1] * R, 2.2, 0, 2 * PI);
+            g.fillStyle = '#f3dba3'; g.fill();
+          }
+        }
+        var c = P(a.v[0], a.v[1], a.v[2]);
+        if (c[2] > 0) {
+          var X2 = cx + c[0] * R, Y2 = cy - c[1] * R;
+          g.beginPath(); g.arc(X2, Y2, 7, 0, 2 * PI);
+          g.fillStyle = on ? 'rgba(211,167,80,.25)' : 'rgba(211,167,80,.06)'; g.fill();
+          g.beginPath(); g.arc(X2, Y2, 3.2, 0, 2 * PI);
+          g.fillStyle = on ? '#D3A750' : 'rgba(211,167,80,.3)'; g.fill();
+        }
+      });
+
+      /* Doha: a navy disc ringed in gold, named */
+      var hq = P(hubV[0], hubV[1], hubV[2]);
+      if (hq[2] > 0) {
+        var HX = cx + hq[0] * R, HY = cy - hq[1] * R;
+        if (anim) {
+          var pulse = (t % 2.6) / 2.6;
+          g.beginPath(); g.arc(HX, HY, 6 + pulse * 18, 0, 2 * PI);
+          g.strokeStyle = 'rgba(211,167,80,' + (1 - pulse) * .8 + ')'; g.lineWidth = 1.5; g.stroke();
+        }
+        g.beginPath(); g.arc(HX, HY, 6, 0, 2 * PI);
+        g.fillStyle = '#0B1A3A'; g.fill(); g.strokeStyle = '#D3A750'; g.lineWidth = 2.5; g.stroke();
+        g.font = '600 11px Archivo, sans-serif';
+        var label = 'D O H A', tw = g.measureText(label).width + 18, LX = HX - tw / 2, LY = HY - 38;
+        g.fillStyle = '#0B1A3A'; g.fillRect(LX, LY, tw, 24);
+        g.strokeStyle = '#D3A750'; g.lineWidth = 1; g.strokeRect(LX + .5, LY + .5, tw - 1, 23);
+        g.fillStyle = '#fff'; g.textBaseline = 'middle'; g.textAlign = 'center'; g.fillText(label, HX, LY + 12);
+      }
+      requestAnimationFrame(frame);
+    };
+
+    /* draw only while the globe is on screen */
+    var start = function () { loadLand(); if (!running) { running = true; size(); requestAnimationFrame(frame); } };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) start(); else running = false; });
+      }, { rootMargin: '200px' }).observe(globe);
+    } else start();
+
+    /* pointing at a region in the register lights its arcs */
+    var reg = $('#markets');
+    if (reg) {
+      var rows = $$('[data-region]', reg);
+      rows.forEach(function (el) {
+        var name = el.getAttribute('data-region');
+        el.addEventListener('pointerenter', function () {
+          lit = name;
+          rows.forEach(function (x) { x.classList.toggle('on', x === el); });
+        });
+        el.addEventListener('pointerleave', function () { lit = null; el.classList.remove('on'); });
+      });
     }
   }
 })();

@@ -57,11 +57,11 @@ function polygons(topology, objectName) {
 /* Equirectangular. A Mercator would inflate Canada and Russia until they
    dominate a map whose subject is trade routes near the equator, so the flat
    one is the honest choice here. */
-function makeProjection({ width, height, latTop = 78, latBottom = -56 }) {
-  const lonSpan = 360;
+function makeProjection({ width, height, latTop = 78, latBottom = -56, lonLeft = -180, lonRight = 180 }) {
+  const lonSpan = lonRight - lonLeft;
   const latSpan = latTop - latBottom;
   return ([lon, lat]) => [
-    ((lon + 180) / lonSpan) * width,
+    ((lon - lonLeft) / lonSpan) * width,
     ((latTop - lat) / latSpan) * height
   ];
 }
@@ -114,9 +114,13 @@ function landPath(opts) {
       /* Points outside the frame break the path rather than being clamped to
          the edge. Clamping walks every stray point along the boundary, which
          draws a solid bar across the top of the map. */
+      /* A filled map (opts.fill) keeps every ring whole instead: the SVG's own
+         frame clips what runs past the edge, which is what a cropped map needs.
+         Breaking a ring there would drop Afro-Eurasia, whose coast runs north
+         of any crop, and leave the Americas as an open, skewed shape. */
       let d = '', prev = null, drawn = 0, broken = false;
       for (const [px, py] of pts) {
-        if (py < -4 || py > opts.height + 4) { prev = null; broken = true; continue; }
+        if (!opts.fill && (py < -4 || py > opts.height + 4)) { prev = null; broken = true; continue; }
         const x = round(px), y = round(py);
         if (prev && x === prev[0] && y === prev[1]) continue;   // duplicate after rounding
         d += (prev === null ? 'M' : 'L') + x + ' ' + y;
@@ -188,4 +192,50 @@ function dotGrid(opts) {
   return { d: parts.join(''), r, count: parts.length };
 }
 
-module.exports = { landPath, makeProjection, dotGrid };
+/* ---- dots for a globe ------------------------------------------------- */
+
+/* The land as points on the sphere, for the globe on the home page. Points
+   are laid on rings of latitude, spaced so each covers about the same area
+   — closer in degrees of longitude toward the poles — and kept where they
+   fall on land. Even-odd over every ring, so lakes stay open. The browser
+   only has to rotate and project them; it never sees a coastline. */
+function globeDots(opts = {}) {
+  const file = opts.file || path.join(__dirname, '..', 'site-assets/geo/land-110m.json');
+  const topo = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const step = opts.step || 1.5;
+  const rings = [];
+  for (const poly of polygons(topo, Object.keys(topo.objects)[0])) {
+    for (const r of poly) {
+      if (r.length < 4) continue;
+      let minX = 180, maxX = -180, minY = 90, maxY = -90;
+      for (const [x, y] of r) {
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+      if (maxY < -58) continue;                 // Antarctica: under the globe's foot
+      rings.push({ r, minX, maxX, minY, maxY });
+    }
+  }
+  const inside = (lon, lat) => {
+    let hit = false;
+    for (const g of rings) {
+      if (lat < g.minY || lat > g.maxY || lon < g.minX || lon > g.maxX) continue;
+      const r = g.r;
+      for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+        const [xi, yi] = r[i], [xj, yj] = r[j];
+        if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) hit = !hit;
+      }
+    }
+    return hit;
+  };
+  const out = [];
+  for (let lat = -56; lat <= 80; lat += step) {
+    const dLon = step / Math.max(0.2, Math.cos(lat * Math.PI / 180));
+    for (let lon = -180 + dLon / 2; lon < 180; lon += dLon) {
+      if (inside(lon, lat)) out.push(Math.round(lon * 10) / 10, Math.round(lat * 10) / 10);
+    }
+  }
+  return out;                                    // flat: lon, lat, lon, lat, …
+}
+
+module.exports = { landPath, makeProjection, dotGrid, globeDots };

@@ -6,7 +6,7 @@
 
    PAGES
      /                     home
-     /sectors/             the four sectors, each with the businesses in it
+     /sectors/             every sector, each with the businesses in it
      /sectors/<slug>/      one sector
      /companies/<slug>/    one company
      /about/               the Group: what it is and what it believes
@@ -27,7 +27,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { makeProjection, dotGrid } = require('./worldmap.js');
+const { globeDots } = require('./worldmap.js');
 const {
   SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
@@ -118,6 +118,11 @@ const esc = s => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const num = i => String(i + 1).padStart(2, '0');
+/* Counts in words, so copy that says how many follows the content: add a
+   company and "five companies" becomes "six" without anyone editing it. */
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+const count = n => WORDS[n] || String(n);
+const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
 const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
 
 /* A social link is only rendered once it points somewhere. While the handles
@@ -277,7 +282,7 @@ function head({ title, desc, url, image, schema, noindex }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
-<meta name="theme-color" content="#181717">
+<meta name="theme-color" content="#0B1A3A">
 ${noindex ? '<meta name="robots" content="noindex">\n' : `<link rel="canonical" href="${SITE.domain}${url}">`}
 
 <meta property="og:type" content="website">
@@ -287,7 +292,7 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : `<link rel="canonical" 
 <meta property="og:url" content="${SITE.domain}${url}">
 ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}.jpg">
 <meta property="og:image:alt" content="${esc(title)}">` : ''}
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="/assets/logo/${B.faviconSvg}" type="image/svg+xml">
@@ -295,6 +300,7 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 <link rel="apple-touch-icon" href="/assets/logo/${B.appleTouch}">
 
 <link rel="preload" href="/assets/font/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/font/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css">
 ${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
 </head>
@@ -316,6 +322,9 @@ const NAV = [
 
 /* A mark per sector, drawn from the set already in ICON_PATHS. */
 const SECTOR_ICON = {
+  'investments': 'target',
+  'energy-industrial': 'spark',
+  'technology': 'solve',
   'trading': 'markets',
   'supply-distribution': 'crate',
   'consumer-services': 'ring',
@@ -373,6 +382,8 @@ ${NAV.map(([label, href]) => `  <a href="${href}"${href === current ? ' aria-cur
   (label === 'Sectors'
     ? '\n' + SECTORS.map(s => `  <a class="sub" href="/sectors/${s.slug}/"${'/sectors/' + s.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(s.name)}</a>`).join('\n')
     : '')).join('\n')}
+  <span class="menu-h">Companies</span>
+${ALL_COMPANIES.map(c => `  <a class="sub" href="/companies/${c.slug}/"${'/companies/' + c.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(c.name)}</a>`).join('\n')}
   <a class="btn btn-light" href="/contact/">Contact us</a>
 </div>
 <main id="main">
@@ -394,6 +405,12 @@ function footer() {
           <p class="foot-h">Sectors</p>
           <ul>
 ${SECTORS.map(s => `            <li><a href="/sectors/${s.slug}/">${esc(s.name)}</a></li>`).join('\n')}
+          </ul>
+        </div>
+        <div class="foot-col">
+          <p class="foot-h">Companies</p>
+          <ul>
+${ALL_COMPANIES.map(c => `            <li><a href="/companies/${c.slug}/">${esc(c.name)}</a></li>`).join('\n')}
           </ul>
         </div>
         <div class="foot-col">
@@ -439,9 +456,22 @@ ${action ? `    <a class="btn btn-light pagehead-cta" href="${action.href}">${es
 
 /* A section head: the statement on the left with one word greyed out, and
    the qualifying line held to the right of it. */
+/* The label above each section heading, by the heading's id. A heading
+   with no entry here simply has none. */
+const EYEBROW = {
+  coTitle: 'Portfolio', whyTitle: 'Why Lusail Corp', wwdTitle: 'How we work',
+  valTitle: 'Our values', vcTitle: 'Value creation', prodTitle: 'What we offer',
+  svcTitle: 'Services', actTitle: 'Capabilities', othTitle: 'Explore further',
+  srcTitle: 'Sourcing', mktTitle: 'Global reach', pwTitle: 'Partnerships',
+  pillarTitle: 'How it is built', stepTitle: 'How it works',
+  howTitle: 'The process', growTitle: 'What comes next'
+};
+
 function head2(id, html, aside) {
   return `<div class="head2 rise">
-      <h2 id="${id}">${html}</h2>
+      <div class="head2-t">
+${EYEBROW[id] ? `        <p class="eyebrow">${esc(EYEBROW[id])}</p>\n` : ''}        <h2 id="${id}">${html}</h2>
+      </div>
 ${aside ? `      <p>${esc(aside)}</p>` : ''}
     </div>`;
 }
@@ -494,96 +524,39 @@ function ctaBand() {
 `;
 }
 
-/* ---------- the map ----------------------------------------------------- */
+/* ---------- the globe --------------------------------------------------- */
 
-/* The markets the Group reaches: a dotted map drawn once at build time from
-   the same list the register underneath reads from, so a market cannot
-   appear in one and not the other. */
-const MAP_BOX = { width: 1052, height: 343, latTop: 78, latBottom: -56, pitch: 5 };
+/* Where the Group sources from, as the Earth itself: a globe of land dots,
+   turned slowly in the browser, with a gold arc lifting off every source
+   country and landing in Doha. The page carries only the places — a few
+   hundred bytes — and the land arrives as one cached file of points.
 
-/* A region's pin goes at the mean of the places inside it, which puts it on
-   or beside the landmass being named without anyone placing it by hand. */
-function regionPoint(region) {
-  const pts = REACH_POINTS[region] || [];
-  if (!pts.length) return null;
-  const lon = pts.reduce((a, p) => a + p[1], 0) / pts.length;
-  const lat = pts.reduce((a, p) => a + p[2], 0) / pts.length;
-  return [lon, lat];
-}
-
-function reachMap() {
-  const project = makeProjection(MAP_BOX);
-
-  /* Europe, the Middle East and Central Asia sit close together, so their
-     labels would print on top of one another. Each pin gets a stem long
-     enough to lift its label clear of the ones already placed: the pins stay
-     on their markets and the names stay readable.
-
-     The test is done in the measure the map is drawn into, because the pins
-     scale with the map while the labels are a fixed size on top of it. */
-  const SCALE = 1210 / MAP_BOX.width;
-  const LAB_H = 30, STEM_0 = 26, LANE = 34;
-
-  const placed = REACH.map(r => {
-    const at = regionPoint(r.t);
-    if (!at) return null;
-    const [x, y] = project(at);
-    /* the collapsed pill carries the region name and nothing else, so its
-       width is the name at 12px plus the padding */
-    return { r, x, y, px: x * SCALE, py: y * SCALE, w: r.t.length * 6.8 + 24, lane: 0 };
-  }).filter(Boolean);
-
-  const done = [];
-  for (const p of placed.slice().sort((a, b) => a.px - b.px)) {
-    for (let lane = 0; lane < 6; lane++) {
-      const bot = p.py - (STEM_0 + lane * LANE), top = bot - LAB_H;
-      const near = q => Math.abs(q.px - p.px) < (q.w + p.w) / 2 + 12;
-      const overlaps = q => !(bot < q.top - 6 || top > q.bot + 6);
-      /* a label must clear the other labels, and must not be parked on top
-         of someone else's dot */
-      const onDot = q => Math.abs(q.px - p.px) < p.w / 2 + 7 &&
-        q.py > top - 7 && q.py < bot + 7;
-      const clash = done.some(q => (near(q) && overlaps(q)) || onDot(q));
-      if (clash && lane < 5) continue;
-      p.lane = lane; p.top = top; p.bot = bot; done.push(p);
-      break;
-    }
+   Without script the globe does not draw; the register beside it carries
+   the same regions and countries, so nothing is lost but the picture. */
+function reachGlobe() {
+  const places = [];
+  for (const reg of REACH) {
+    for (const [name, lon, lat] of REACH_POINTS[reg.t] || []) places.push([name, reg.t, lon, lat]);
   }
-
-  /* Labels, not controls. Each pin opened a card of countries on hover —
-     word for word the same list the register under the map already prints, so
-     the whole interaction revealed what was visible a screen below it. It cost
-     overlapping targets, a card that ran off the side of a phone, and one a
-     pointer could not travel into. The map says where; the register says what. */
-  const pins = placed.map(p => {
-    const pc = p.x / MAP_BOX.width * 100;
-    return `      <div class="pin" data-region="${esc(p.r.t)}"
-        style="left:${pc.toFixed(2)}%;top:${(p.y / MAP_BOX.height * 100).toFixed(2)}%;--stem:${STEM_0 + p.lane * LANE}px">
-        <span class="pin-lab"><span class="pin-nm">${esc(p.r.t)}</span></span>
-        <span class="pin-stem" aria-hidden="true"></span>
-        <span class="pin-dot" aria-hidden="true"></span>
-      </div>`;
-  }).join(String.fromCharCode(10));
-
-  /* The dot grid is 65KB of path data. Inline it once and it is 70% of the
-     home page's HTML, re-downloaded on every visit and parsed before the
-     footer is even seen. As a file it is cached, and the pins on top of it
-     are ordinary buttons either way. */
-  return `<div class="mapwrap" id="mapwrap">
-      <img class="mapdots" src="/assets/img/worldmap.svg" width="${MAP_BOX.width}" height="${MAP_BOX.height}"
-           alt="" loading="lazy">
-${pins}
+  return `<div class="globe" id="globe" data-hub='${JSON.stringify(HUB)}' data-places='${esc(JSON.stringify(places))}'>
+      <canvas aria-hidden="true"></canvas>
+      <p class="maplegend" aria-hidden="true"><span class="lg-dot"></span>Source country <span class="lg-hub"></span>Doha, where it arrives <span class="lg-drag">Drag to turn the globe</span></p>
     </div>`;
 }
 
-/* The same markets again, as a register that can be read straight down. */
+/* The same markets as a register. Each row names a region and how many
+   countries it holds, with the countries beneath; on the home page, pointing
+   at a row lights that region's routes on the map beside it. */
 function reachList() {
-  return `<div class="reg" id="markets">
-${REACH.map(x => `      <div data-region="${esc(x.t)}">
-        <h3>${esc(x.t)}</h3>
+  return `<ul class="reg" id="markets">
+${REACH.map(x => {
+    const n = (REACH_POINTS[x.t] || []).length;
+    return `      <li data-region="${esc(x.t)}">
+        <h3>${esc(x.t)} <span class="reg-n">${n} ${n === 1 ? 'country' : 'countries'}</span></h3>
         <p>${esc(x.d)}</p>
-      </div>`).join('\n')}
-    </div>`;
+      </li>`;
+  }).join('\n')}
+    </ul>`;
 }
 
 /* ---------- home -------------------------------------------------------- */
@@ -592,30 +565,22 @@ ${REACH.map(x => `      <div data-region="${esc(x.t)}">
    photograph; the other three name themselves and give their reasoning when
    asked, so the row reads as four headings rather than four paragraphs. */
 function bento() {
-  /* The first states itself over the photograph, so it is not a control at
-     all — it had been a button with nothing to do and `aria-expanded="true"`
-     for ever, which is a promise to a screen reader that nothing kept.
-     On the other three the heading is the button and the reasoning sits
-     outside it: inside, each button's accessible name was its whole text,
-     reveal included, so the reveal meant nothing to anyone listening. */
-  const card = (x, i) => i === 0
-    ? `        <div class="bcard bcard-photo">
-          ${pic('why-group', '(max-width:900px) 100vw, 48vw', 'alt="Two people shaking hands over a table" loading="lazy"')}
-          <span class="n">${num(i)}</span>
-          <h3>${esc(x.t)}</h3>
-          <p>${esc(x.d)}</p>
-        </div>`
-    : `        <div class="bcard">
-          <span class="n">${num(i)}</span>
-          <h3><button class="bcard-btn" type="button" aria-expanded="false" aria-controls="why-${i}">${esc(x.t)}</button></h3>
-          <span class="say" id="why-${i}"><span><p>${esc(x.d)}</p></span></span>
-        </div>`;
-
-  return `<div class="bento">
-${card(WHY[0], 0)}
-      <div class="bento-col">
-${WHY.slice(1).map((x, i) => card(x, i + 1)).join('\n')}
-      </div>
+  /* What makes it a group: a photograph, and four claims beside it as a
+     numbered list. Every claim is written out — nothing waits for a hover —
+     and a hairline between them does the work the grey boxes used to. */
+  return `<div class="why">
+      <figure class="why-pic rise">
+        ${pic('why-group', '(max-width:900px) 100vw, 32vw', 'alt="Katara Towers, Lusail, at dusk" loading="lazy"')}
+      </figure>
+      <ol class="why-list">
+${WHY.map((x, i) => `        <li class="why-item rise d${Math.min(i, 3)}">
+          <span class="why-n" aria-hidden="true">${num(i)}</span>
+          <div>
+            <h3>${esc(x.t)}</h3>
+            <p>${esc(x.d)}</p>
+          </div>
+        </li>`).join('\n')}
+      </ol>
     </div>`;
 }
 
@@ -625,20 +590,13 @@ ${WHY.slice(1).map((x, i) => card(x, i + 1)).join('\n')}
    any script runs and on a keyboard. */
 function companyLadder() {
   return `<div class="ladder">
-${ALL_COMPANIES.map((c, i) => `      <a class="lad" href="/companies/${c.slug}/">
-        ${pic(c.hero, '(max-width:860px) 100vw, 25vw', `class="lad-bg" alt="${esc(c.name)}" loading="lazy"`)}
+${ALL_COMPANIES.map((c, i) => `      <a class="lad${i === 0 ? ' lad-lead' : ''}" href="/companies/${c.slug}/">
+        ${pic(c.hero, i === 0 ? '(max-width:860px) 100vw, 41vw' : '(max-width:860px) 100vw, 25vw', 'class="lad-bg" alt="" loading="lazy"')}
         <span class="n">${num(i)}</span>
-        <span class="lad-b">
+        <div class="lad-b">
           <span class="lad-sec">${esc(c.sectorName)}</span>
-          <h3>${esc(c.name)}</h3>
-          <span class="lad-say">
-            <span class="lad-say-in">
-              <span class="lad-role">${esc(c.role)}</span>
-              <span class="lad-p">${esc(c.short)}</span>
-              <span class="lad-go">Visit ${esc(c.name)} <span aria-hidden="true">&#8594;</span></span>
-            </span>
-          </span>
-        </span>
+          <h3>${esc(c.name)} <span class="lad-arrow" aria-hidden="true">&#8594;</span></h3>
+${i === 0 ? `          <span class="lad-role">${esc(c.role)}</span>\n` : ''}        </div>
       </a>`).join('\n')}
     </div>`;
 }
@@ -654,15 +612,6 @@ ${WHAT_WE_DO.map((w, i) => `      <div class="wwd-card rise d${Math.min(i, 3)}">
     </div>`;
 }
 
-/* The four sectors, each behind the photograph of the business that leads
-   it, going to the portfolio filtered to that sector. */
-const SECTOR_SHOT = {
-  'trading': 'card-trading',
-  'supply-distribution': 'card-supply',
-  'consumer-services': 'card-consumer',
-  'food-beverage': 'card-food'
-};
-
 function pageHome() {
   /* Counted, not typed: every figure on the band is derived from the content
      further down the same file, so it cannot contradict it. */
@@ -676,7 +625,7 @@ function pageHome() {
 
   return head({
     title: `${SITE.name} · ${SITE.tagline}`,
-    desc: 'A Qatar-based group of four companies: commodity trading and international freight, food import and distribution, garment care and a café.',
+    desc: `A Qatar-based group of ${count(ALL_COMPANIES.length)} companies across investment, energy, technology, commodity trading and freight, food distribution and consumer services.`,
     url: '/', image: 'hero-doha',
     schema: graph(orgSchema(), {
       '@type': 'WebSite', '@id': SITE.domain + '/#website',
@@ -690,7 +639,7 @@ function pageHome() {
   <div class="wrap">
     <div class="hero-say">
       <h1>Building Businesses. Creating <em>Value</em>.</h1>
-      <p class="hero-lede">A group of four companies in Qatar: commodity trading and international freight, food import and distribution, garment care, and a caf&eacute;.</p>
+      <p class="hero-lede">A Qatar-based group across investment, energy and technology, commodity trading and freight, food distribution and consumer services.</p>
     </div>
     <div class="hero-cta">
       <a class="btn btn-light" href="/sectors/">Explore our sectors</a>
@@ -702,12 +651,14 @@ function pageHome() {
 <section class="section intro" aria-labelledby="introTitle">
   <div class="wrap">
     <div class="intro-top rise">
-      <h2 id="introTitle">We buy commodities <br>and we <span class="soft">move them.</span></h2>
+      <div class="intro-head">
+        <p class="eyebrow">Lusail Corp &middot; Doha, Qatar</p>
+        <h2 id="introTitle">Capital, commerce and <span class="soft">the means to deliver.</span></h2>
+      </div>
       <div class="intro-note">
-        <img src="/assets/logo/${B.markOnLight}" alt="" width="44" height="57" loading="lazy">
         <div>
-          <p>Because the freight sits in the same business as the buying, an enquiry can be answered with the origin, the specification and the route at once, rather than passed to a forwarder.</p>
-          <p>Alongside it the Group imports and distributes food across Qatar, and runs a laundry and a caf&eacute;. Sourcing, shipping and supplier relationships built in one company are open to the others.</p>
+          <p>Lusail Corp brings together businesses that invest, trade, supply and serve &mdash; energy, technology and institutional supply through TIBECO Group, and commodity trading with international freight through Lusail Commercial.</p>
+          <p>Alongside them the Group imports and distributes food across Qatar, and runs a laundry and a caf&eacute;. Sourcing, logistics and commercial relationships built in one company are open to the others.</p>
         </div>
       </div>
     </div>
@@ -722,19 +673,21 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
 <section class="section sectors" aria-labelledby="secTitle">
   <div class="wrap">
     <div class="sec-intro rise">
+      <p class="eyebrow">Our sectors</p>
       <h2 id="secTitle">Diversified by Design</h2>
-      <p>Four sectors, four companies. Each one sells into a market we can see from Qatar.</p>
+      <p>${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies. Each one serves a market we can see from Qatar.</p>
     </div>
-    <div class="seccards">
-${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="/sectors/${s.slug}/">
-        ${pic(SECTOR_SHOT[s.slug] || 'card-trading', '(max-width:700px) 86vw, 22vw', `alt="${esc(s.name)}" loading="lazy"`)}
-        <span class="seccard-cap">
-          <b>${esc(s.name)}</b>
-          <span class="seccard-more"><span>
-            <span class="seccard-say">${esc(s.short)}</span>
-            <span class="seccard-who">${s.companies.map(c => esc(c.name)).join(' &middot; ')} <span aria-hidden="true">&#8594;</span></span>
-          </span></span>
-        </span>
+    <div class="acc" id="acc">
+${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="/sectors/${sec.slug}/">
+        ${pic(sec.hero, '(max-width:860px) 100vw, 46vw', 'class="acc-bg" alt="" loading="lazy"')}
+        <span class="acc-num" aria-hidden="true">${num(i)}</span>
+        <span class="acc-tab" aria-hidden="true">${esc(sec.name)}</span>
+        <div class="acc-body">
+          <span class="acc-n">${num(i)}</span>
+          <h3>${esc(sec.name)}</h3>
+          <span class="acc-say">${esc(sec.short)}</span>
+          <span class="acc-go">Learn more <span class="acc-arrow" aria-hidden="true">&#8594;</span></span>
+        </div>
       </a>`).join('\n')}
     </div>
   </div>
@@ -742,7 +695,7 @@ ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="
 
 <section class="section stone" aria-labelledby="coTitle">
   <div class="wrap">
-    ${head2('coTitle', 'The four <span class="soft">businesses</span>', 'Each runs in its own market with its own customers. Point at one to see it; click to go there.')}
+    ${head2('coTitle', 'Our <span class="soft">businesses</span>', 'Each runs in its own market with its own customers.')}
     ${companyLadder()}
   </div>
 </section>
@@ -755,10 +708,16 @@ ${SECTORS.map((s, i) => `      <a class="seccard rise d${Math.min(i, 3)}" href="
 </section>
 
 <section class="section src" aria-labelledby="srcTitle">
-  <div class="wrap">
-    ${head2('srcTitle', 'Where we <span class="soft">source</span> from', 'Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.')}
-    ${reachMap()}
-    ${reachList()}
+  <div class="wrap src-grid">
+    <div class="src-side">
+      <p class="eyebrow">Global reach</p>
+      <h2 id="srcTitle">Where we <span class="soft">source</span> from</h2>
+      <p class="src-lede">The origin is chosen per product &mdash; by season, quality, availability and the terms of the transaction.</p>
+      ${reachList()}
+    </div>
+    <div class="src-map">
+      ${reachGlobe()}
+    </div>
   </div>
 </section>
 
@@ -794,21 +753,22 @@ ${VALUES.map((v, i) => `      <div class="valcard rise d${Math.min(i, 3)}">
 function pageAbout() {
   return head({
     title: `About Us · ${SITE.name}`,
-    desc: 'How Lusail Corp is put together: what the Group does for its four companies, what it believes, and who it wants to hear from.',
+    desc: 'How Lusail Corp is put together: what the Group does for its companies, what it believes, and who it wants to hear from.',
     url: '/about/', image: 'hero-about',
     schema: graph({ '@type': 'AboutPage', url: abs('/about/'), name: 'About ' + SITE.name,
       mainEntity: { '@id': ORG_ID } }, crumbs([{ name: 'About Us' }]))
   })
-    + header('/about/')
+    + header('/about/', true)
     + pageHead({
       eyebrow: 'About Us',
       h1: 'Building a Group for the Future.',
-      lede: 'Lusail Corp is a diversified corporate group based in the State of Qatar, bringing together commodity trading, food supply and distribution, consumer services and hospitality.',
+      lede: 'Lusail Corp is a diversified corporate group based in the State of Qatar, bringing together investment, energy and technology, commodity trading, food supply and distribution, consumer services and hospitality.',
       photo: 'hero-about'
     })
     + `<section class="section tight stone" aria-labelledby="whoTitle">
   <div class="wrap">
-    <h2 id="whoTitle" class="platform-h rise">A Platform for Business Growth</h2>
+    <p class="eyebrow">The Group</p>
+      <h2 id="whoTitle" class="platform-h rise">A Platform for Business Growth</h2>
     <div class="twocol rise">
       <div>
         <p>Lusail Corp was established with a straightforward ambition: to create, develop and support businesses with the potential to grow.</p>
@@ -825,7 +785,7 @@ function pageAbout() {
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="vmTitle">
+<section class="section dark" aria-labelledby="vmTitle">
   <div class="wrap">
     <h2 id="vmTitle" class="sr-only">Vision and mission</h2>
     <div class="vm-grid">
@@ -872,15 +832,33 @@ ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
 /* ---------- one company -------------------------------------------------- */
 
 function pageCompany(c) {
+  /* Each company page is a landing page of its own. The structure is shared —
+     an opening, a statement, the story, what it offers, a closing ask — but
+     each company brings its own colour (c.accent) and its own opening
+     (c.look): 'full' is a full-screen photograph, 'split' a colour panel
+     beside the photograph, 'dark' a dark ground for hospitality. The Lusail
+     bar and footer stay the same on every one, so it is still one group. */
   const others = ALL_COMPANIES.filter(x => x.slug !== c.slug);
+  const look = c.look || 'full';
+  const vars = [
+    c.accent && '--co:' + c.accent,
+    c.accentText && '--co-text:' + c.accentText,
+    c.tint && '--co-tint:' + c.tint,
+    c.accentOn && '--co-on:' + c.accentOn
+  ].filter(Boolean).join(';');
+
+  const offerTitle = c.products && c.products.length
+    ? (c.productsTitle || 'What we trade <span class="soft">today</span>')
+    : 'What we <span class="soft">do</span>';
 
   const products = c.products && c.products.length
-    ? `<section class="section stone" aria-labelledby="prodTitle">
+    ? `<section class="section co-offer" id="offer" aria-labelledby="prodTitle">
   <div class="wrap">
-    ${head2('prodTitle', 'What we trade <span class="soft">today</span>', '')}
+    ${head2('prodTitle', offerTitle, '')}
     <div class="prodgrid">
-${c.products.map(p => `      <article class="prod">
-        <span class="prod-pic">${pic(p.img, '(max-width:520px) 90vw, (max-width:820px) 44vw, (max-width:1100px) 29vw, 290px', `alt="${esc(p.t)}" loading="lazy"`)}</span>
+${c.products.map((p, i) => `      <article class="prod rise d${Math.min(i, 3)}">
+        <span class="prod-pic">${pic(p.img, '(max-width:520px) 84px, 116px', `alt="${esc(p.t)}" loading="lazy"`)}</span>
+        <span class="prod-n">${num(i)}</span>
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
 ${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
@@ -896,9 +874,9 @@ ${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins
   /* A company with no product list still has to say what it does. These are
      the named services, spelled out. */
   const services = c.services && c.services.length
-    ? `<section class="section stone" aria-labelledby="svcTitle">
+    ? `<section class="section co-offer" id="offer" aria-labelledby="svcTitle">
   <div class="wrap">
-    ${head2('svcTitle', 'What we <span class="soft">do</span>', `The work ${esc(c.name)} is actually asked for.`)}
+    ${head2('svcTitle', offerTitle, `The work ${esc(c.name)} is actually asked for.`)}
     <div class="svcs">
 ${c.services.map((s, i) => `      <div class="svc rise d${Math.min(i, 3)}">
         <span class="svc-n">${num(i)}</span>
@@ -914,13 +892,76 @@ ${c.services.map((s, i) => `      <div class="svc rise d${Math.min(i, 3)}">
 
   const sourcing = sourcingSection(c);
 
-  const activities = c.activities && c.activities.length
-    ? `<section class="section tight" aria-labelledby="actTitle">
+  /* What makes this company this company: its platforms, its two sides, the
+     standards it is judged on — two or three columns, with a photograph each
+     where there is one. TIBECO adds its credentials and presence beneath. */
+  const pillars = c.pillars && c.pillars.length
+    ? `<section class="section co-pillars" aria-labelledby="pillarTitle">
   <div class="wrap">
-    ${head2('actTitle', 'What this company <span class="soft">handles</span>', '')}
-    <ul class="tags rise">
-${c.activities.map(a => `      <li>${esc(a)}</li>`).join('\n')}
+    ${head2('pillarTitle', c.pillarsTitle || 'How it is <span class="soft">built</span>', '')}
+    <div class="pillars pillars-${c.pillars.length}">
+${c.pillars.map((p, i) => `      <article class="pillar rise d${Math.min(i, 3)}">
+${p.img ? `        <span class="pillar-pic">${pic(p.img, '(max-width:860px) 100vw, 40vw', 'alt="" loading="lazy"')}</span>\n` : ''}        <span class="pillar-n">${num(i)}</span>
+        <h3>${esc(p.t)}</h3>
+        <p>${esc(p.d)}</p>
+      </article>`).join('\n')}
+    </div>
+${c.credentials ? `    <ul class="creds">
+${c.credentials.map(x => `      <li>${esc(x)}</li>`).join('\n')}
     </ul>
+` : ''}${c.presence ? `    <p class="presence"><span>Presence</span>${c.presence.map(x => `<b>${esc(x)}</b>`).join('')}</p>
+` : ''}  </div>
+</section>
+
+`
+    : '';
+
+  /* A flow, left to right: how the work actually moves. */
+  const steps = c.steps && c.steps.length
+    ? `<section class="section co-steps" aria-labelledby="stepTitle">
+  <div class="wrap">
+    ${head2('stepTitle', c.stepsTitle || 'How it <span class="soft">works</span>', '')}
+    <ol class="steps">
+${c.steps.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
+        <span class="step-n">${num(i)}</span>
+        <h3>${esc(p.t)}</h3>
+        <p>${esc(p.d)}</p>
+      </li>`).join('\n')}
+    </ol>
+  </div>
+</section>
+
+`
+    : '';
+
+  /* A company's figures: counted from its own content where they can be. */
+  const origins = [...new Set((c.products || []).flatMap(p => p.origins || []))];
+  const regionsOf = REACH.filter(reg => origins.some(o =>
+    reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(o))).length;
+  const AUTO = {
+    pillars: (c.pillars || []).length, products: (c.products || []).length,
+    presence: (c.presence || []).length, countries: origins.length, regions: regionsOf
+  };
+  const figs = (c.figures || []).map(f => ({
+    k: f.k, v: String(f.v).startsWith('auto:') ? AUTO[f.v.slice(5)] : f.v
+  })).filter(f => f.v);
+  const figures = figs.length
+    ? `<section class="co-figs" aria-label="${esc(c.name)} in figures">
+  <div class="wrap">
+    <dl>
+${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}</dt><dd>${esc(String(f.v))}</dd></div>`).join('\n')}
+    </dl>
+  </div>
+</section>
+
+`
+    : '';
+
+  /* The company in one of its own sentences. */
+  const quote = c.quote
+    ? `<section class="co-quote">
+  <div class="wrap">
+    <blockquote><p>${esc(c.quote)}</p></blockquote>
   </div>
 </section>
 
@@ -936,42 +977,75 @@ ${c.activities.map(a => `      <li>${esc(a)}</li>`).join('\n')}
       { name: c.name }
     ]))
   })
-    + header(`/sectors/${c.sectorSlug}/`)
-    + pageHead({
-      /* the sector above this company is a place you can go */
-      eyebrow: c.sectorName, eyebrowHref: `/sectors/${c.sectorSlug}/`,
-      h1: c.name,
-      lede: c.headline,
-      photo: c.hero,
-      action: { href: `/contact/?company=${c.slug}`, label: 'Contact us' }
-    })
-    + `<section class="section tight">
-  <div class="wrap">
-    <p class="lead-para rise">${esc(c.intro)}</p>
-    <div class="cosplit">
-      <figure class="costill rise">
-        ${pic(c.still, '(max-width:860px) 100vw, 590px', `alt="${esc(c.name)}"`)}
-      </figure>
-      <div class="prose rise d1">
-${c.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
+    + header(`/sectors/${c.sectorSlug}/`, (c.look || 'full') === 'full')
+    + `<div class="co co-${look} co-${c.slug}" style="${vars}">
+
+<section class="co-hero">
+  ${pic(c.hero, look === 'full' ? '100vw' : '(max-width:860px) 100vw, 50vw', `class="co-hero-img" alt="" fetchpriority="high"`)}
+  <div class="co-hero-in">
+    <div class="wrap co-hero-wrap">
+      <div class="co-hero-say">
+        <a class="eyebrow co-eyebrow" href="/sectors/${c.sectorSlug}/">${esc(c.sectorName)}</a>
+        <h1>${esc(c.name)}</h1>
+        <p class="co-hero-line">${esc(c.headline)}</p>
+        <div class="co-hero-cta">
+          <a class="btn co-btn" href="/contact/?company=${c.slug}">${esc(c.cta)}</a>
+          <a class="btn co-btn-line" href="#offer">See what we do</a>
+        </div>
       </div>
     </div>
-    <dl class="factstrip rise">
-${c.facts.map(f => `      <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
-    </dl>
-    <p class="after rise"><a class="btn btn-dark" href="/contact/?company=${c.slug}">${esc(c.cta)}</a></p>
+  </div>
+  <a class="co-scroll" href="#aboutTitle" aria-label="Scroll to read about ${esc(c.name)}"><span>Scroll</span></a>
+  <div class="co-facts">
+    <div class="wrap">
+      <dl>
+${c.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
+      </dl>
+    </div>
   </div>
 </section>
 
-${products}${sourcing}${services}${activities}<section class="section tight" aria-labelledby="othTitle">
+<section class="section co-about" aria-labelledby="aboutTitle">
+  <div class="wrap">
+    <p class="eyebrow">About ${esc(c.name)}</p>
+    <h2 id="aboutTitle" class="co-statement rise">${esc(c.intro)}</h2>
+    <div class="co-story">
+      <figure class="co-story-pic rise">
+        ${pic(c.still, '(max-width:860px) 100vw, 605px', `alt="${esc(c.name)}" loading="lazy"`)}
+      </figure>
+      <div class="co-story-text rise d1">
+${c.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
+${c.activities && c.activities.length ? `        <ul class="tags">
+${c.activities.map(a => `          <li>${esc(a)}</li>`).join('\n')}
+        </ul>` : ''}
+      </div>
+    </div>
+  </div>
+</section>
+
+${figures}${pillars}${steps}${products}${services}${quote}${sourcing}<section class="co-ask">
+  <div class="wrap co-ask-in">
+    <div>
+      <p class="eyebrow">Work with ${esc(c.name)}</p>
+      <h2>${esc(c.cta)}.</h2>
+      <p>Tell us what you need and the message goes straight to the ${esc(c.name)} desk.</p>
+    </div>
+    <div class="co-ask-cta">
+      <a class="btn co-btn" href="/contact/?company=${c.slug}">Send an enquiry</a>
+      <a class="co-ask-mail" href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
+    </div>
+  </div>
+</section>
+
+<section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
     ${head2('othTitle', 'The other <span class="soft">companies</span>', '')}
     ${companyRail(others)}
   </div>
 </section>
 
+</div>
 `
-    + ctaBand()
     + footer();
 }
 
@@ -1030,7 +1104,7 @@ ${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(
 function pageSectorsIndex() {
   return head({
     title: `Our Sectors · ${SITE.name}`,
-    desc: 'Lusail Corp operates across commodity trading, food supply and distribution, consumer services and hospitality.',
+    desc: 'Lusail Corp operates across investment, energy and technology, commodity trading, food supply and distribution, consumer services and hospitality.',
     url: '/sectors/', image: 'skyline-tall',
     schema: graph(crumbs([{ name: 'Our Sectors' }]), {
       '@type': 'ItemList', name: 'Lusail Corp sectors',
@@ -1039,11 +1113,11 @@ function pageSectorsIndex() {
       }))
     })
   })
-    + header('/sectors/')
+    + header('/sectors/', true)
     + pageHead({
       eyebrow: 'Our Sectors',
-      h1: 'Four markets, one way of working.',
-      lede: 'The Group operates across commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
+      h1: `${cap(count(SECTORS.length))} sectors. One way of working.`,
+      lede: 'The Group operates across investment, energy and technology, commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
       /* the Group, not one of its sectors — the trading photograph is the
          first band on this same page, and a page should not open on it */
       photo: 'skyline-tall'
@@ -1100,18 +1174,18 @@ function pageSector(s) {
       }))
     })
   })
-    + header(`/sectors/${s.slug}/`)
+    + header(`/sectors/${s.slug}/`, true)
     + pageHead({
       eyebrow: 'Our Sectors',
       eyebrowHref: '/sectors/',
       h1: s.name,
-      lede: s.headline + ' — ' + s.intro,
+      lede: s.intro,
       photo: s.hero
     })
     + `<section class="section tight">
   <div class="wrap">
     <div class="head2 rise">
-      <h2 id="secTitle">What the Group does <span class="soft">here</span></h2>
+      <h2 id="secTitle">${esc(s.headline)}</h2>
       <p>${esc(s.short)}</p>
     </div>
     <div class="prose2 rise">
@@ -1120,7 +1194,7 @@ ${s.body.map(p => `      <p>${esc(p)}</p>`).join('\n')}
   </div>
 </section>
 
-${s.slug === 'trading' ? `<section class="section stone src" aria-labelledby="mktTitle">
+${s.slug === 'trading' ? `<section class="section src" aria-labelledby="mktTitle">
   <div class="wrap">
     ${head2('mktTitle', 'The markets we <span class="soft">source from</span>', 'Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.')}
     ${reachList()}
@@ -1172,15 +1246,15 @@ function pagePartnerships() {
   return head({
     title: `Work With Us · ${SITE.name}`,
     desc: 'Lusail Corp works with suppliers, producers, distributors and buyers in Qatar and international markets.',
-    url: '/partnerships/', image: 'why-group',
+    url: '/partnerships/', image: 'hero-partnerships',
     schema: graph(crumbs([{ name: 'Work With Us' }]))
   })
-    + header('/partnerships/')
+    + header('/partnerships/', true)
     + pageHead({
       eyebrow: 'Work With Us',
       h1: 'Most of what we do starts with someone else.',
       lede: 'We buy from producers, sell to distributors, and move goods for both. If you are one of them, this is the page that says so.',
-      photo: 'why-group',
+      photo: 'hero-partnerships',
       action: { href: '/contact/', label: 'Send an enquiry' }
     })
     + `<section class="section tight" aria-labelledby="pwTitle">
@@ -1195,36 +1269,36 @@ ${PARTNER_TYPES.map(p => `      <div class="pline rise">
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="howTitle">
+<section class="section how" aria-labelledby="howTitle">
   <div class="wrap">
-    ${head2('howTitle', 'How it <span class="soft">works</span>', '')}
-    <div class="vcreate">
-      <div class="vc rise">
-        ${icon('target')}
-        <h3>Tell us which you are</h3>
-        <p>The enquiry form asks for an area of interest. That is what routes your message — it is not a formality.</p>
-      </div>
-      <div class="vc rise d1">
-        ${icon('partnership')}
-        <h3>It reaches the right desk</h3>
-        <p>A supplier enquiry goes to the company that would buy from you, not to a general inbox that forwards it on.</p>
-      </div>
-      <div class="vc rise d2">
-        ${icon('cycle')}
-        <h3>We answer with specifics</h3>
-        <p>Where it is a commodity, that means the origin, the specification and the route together, because we hold the trading and the freight in one business.</p>
-      </div>
-    </div>
-    <p class="after rise"><a class="btn btn-dark" href="/contact/">Start a conversation</a></p>
+    ${head2('howTitle', 'How it <span class="soft">works</span>', 'From your first message to a specific answer, in four steps.')}
+    <ol class="tline">
+${[
+  ['Tell us which you are', 'The enquiry form asks for an area of interest. That is what routes your message — it is not a formality.'],
+  ['It reaches the right desk', 'A supplier enquiry goes to the company that would buy from you, not to a general inbox that forwards it on.'],
+  ['We answer with specifics', 'Where it is a commodity, that means the origin, the specification and the route together, because we hold the trading and the freight in one business.'],
+  ['We build from there', 'A first order, a trial shipment or a meeting in Doha — the relationship starts with something real, not a brochure.']
+].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
+        <span class="tl-node" aria-hidden="true">${num(i)}</span>
+        <h3>${t}</h3>
+        <p>${d}</p>
+      </li>`).join('\n')}
+    </ol>
+    <p class="after rise"><a class="btn co-btn tl-cta" href="/contact/">Start a conversation</a></p>
   </div>
 </section>
 
-<section class="section tight" aria-labelledby="growTitle">
-  <div class="wrap">
-    ${head2('growTitle', 'What we are looking to <span class="soft">do next</span>', 'This is the page where that list belongs, so it is the page it is on.')}
-    <ul class="nexts rise">
-${GROWTH.map(g => `      <li>${BULLET}<span>${esc(g.t)}</span></li>`).join(String.fromCharCode(10))}
-    </ul>
+<section class="section grow" aria-labelledby="growTitle">
+  <div class="wrap grow-in">
+    <div class="grow-side rise">
+      <p class="eyebrow">What comes next</p>
+      <h2 id="growTitle">What we are looking to <span class="soft">do next</span></h2>
+      <p class="grow-lede">Seven directions the Group is actively pursuing. If you can help with one of them, we want to hear from you.</p>
+      <a class="btn btn-dark" href="/contact/?area=partnership">Bring us an opportunity</a>
+    </div>
+    <ol class="grow-list">
+${GROWTH.map((g, i) => `      <li class="rise d${Math.min(i, 3)}"><span class="grow-n">${num(i)}</span><span class="grow-t">${esc(g.t.replace(/\.$/, ''))}</span><span class="grow-go" aria-hidden="true">&#8594;</span></li>`).join('\n')}
+    </ol>
   </div>
 </section>
 
@@ -1259,17 +1333,18 @@ function pageContact() {
       name: 'Contact ' + SITE.name, mainEntity: { '@id': ORG_ID } },
       crumbs([{ name: 'Contact' }]))
   })
-    + header('/contact/')
+    + header('/contact/', true)
     + pageHead({
       eyebrow: 'Contact',
       h1: 'Let’s connect.',
       lede: 'Whether you want to work with one of our companies, supply them, propose something commercial, or just understand the Group better — this reaches us.',
       photo: 'hero-contact'
     })
-    + `<section class="section tight">
+    + `<section class="section tight stone">
   <div class="wrap cosplit">
     <div class="rise">
-      <h2 class="h3">Get in touch</h2>
+      <p class="eyebrow">Contact</p>
+      <h2 class="contact-h">Get in <span class="soft">touch</span></h2>
       <dl class="channels">
         <div><dt>Email</dt><dd><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></dd></div>
         <div><dt>Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></dd></div>
@@ -1282,15 +1357,15 @@ function pageContact() {
         <label for="fSite">Website</label>
         <input id="fSite" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
-      <div class="field"><label for="fName">Full name</label><input id="fName" name="name" autocomplete="name" required aria-describedby="fName-err"><span class="field-err" id="fName-err"></span></div>
-      <div class="field"><label for="fCompany">Company</label><input id="fCompany" name="company" autocomplete="organization"></div>
-      <div class="field"><label for="fMail">Email address</label><input id="fMail" name="email" type="email" autocomplete="email" required aria-describedby="fMail-err"><span class="field-err" id="fMail-err"></span></div>
-      <div class="field"><label for="fPhone">Phone number</label><input id="fPhone" name="phone" type="tel" autocomplete="tel"></div>
+      <div class="field"><label for="fName">Full name</label><input id="fName" name="name" autocomplete="name" maxlength="120" required aria-describedby="fName-err"><span class="field-err" id="fName-err"></span></div>
+      <div class="field"><label for="fCompany">Company</label><input id="fCompany" name="company" autocomplete="organization" maxlength="160"></div>
+      <div class="field"><label for="fMail">Email address</label><input id="fMail" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="fMail-err"><span class="field-err" id="fMail-err"></span></div>
+      <div class="field"><label for="fPhone">Phone number</label><input id="fPhone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
       <div class="field full"><label for="fArea">Area of interest</label>
         <select id="fArea" name="area">
 ${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('\n')}
         </select></div>
-      <div class="field full"><label for="fMsg">Message</label><textarea id="fMsg" name="message" required aria-describedby="fMsg-err"></textarea><span class="field-err" id="fMsg-err"></span></div>
+      <div class="field full"><label for="fMsg">Message</label><textarea id="fMsg" name="message" maxlength="5000" required aria-describedby="fMsg-err"></textarea><span class="field-err" id="fMsg-err"></span></div>
       <div class="form-end">
         <button class="btn btn-dark" type="submit">Send enquiry</button>
         <span class="status" id="status" role="status"></span>
@@ -1457,8 +1532,9 @@ function build() {
 
   /* the dotted map, written once as a cacheable file rather than inlined
      into the page that uses it */
-  const map = dotGrid(MAP_BOX);
-  const mapSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MAP_BOX.width} ${MAP_BOX.height}" width="${MAP_BOX.width}" height="${MAP_BOX.height}" role="img" aria-label="World map"><path d="${map.d}" fill="none" stroke="#3a3838" stroke-width="2.3" stroke-linecap="round"/></svg>`;
+  /* the land, as points on the sphere, for the globe */
+  const dots = globeDots({ step: 1.5 });
+  const globeJson = JSON.stringify(dots);
 
   const imgOut = path.join(OUT, 'assets/img');
   fs.mkdirSync(path.join(imgOut, 'derived'), { recursive: true });
@@ -1469,8 +1545,8 @@ function build() {
     bytes += fs.statSync(from).size;
     if (name.startsWith('derived/')) cut++; else full++;
   }
-  fs.writeFileSync(path.join(imgOut, 'worldmap.svg'), mapSvg);
-  console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + worldmap.svg (${Math.round(mapSvg.length / 1024)} KB)`);
+  fs.writeFileSync(path.join(imgOut, 'globe.json'), globeJson);
+  console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
   const urls = ['/', '/about/', ...ALL_COMPANIES.map(c => `/companies/${c.slug}/`),
     '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/', '/contact/'];
