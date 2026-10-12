@@ -28,6 +28,16 @@
 const fs = require('fs');
 const path = require('path');
 const { globeDots } = require('./worldmap.js');
+
+/* A fingerprint of the stylesheet and the script, added to their URLs. The
+   files are cached in the browser for an hour (and served stale for a day
+   after), so without this a visitor could get a new page with the old
+   styles after a deploy and see a broken layout. Any change to either file
+   changes its fingerprint, and the browser fetches it fresh. */
+const ASSET_V = {
+  css: require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, '..', 'assets/css/site.css'))).digest('hex').slice(0, 10),
+  js: require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, '..', 'assets/js/site.js'))).digest('hex').slice(0, 10)
+};
 const {
   SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
@@ -301,7 +311,7 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 
 <link rel="preload" href="/assets/font/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/font/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/site.css?v=${ASSET_V.css}">
 ${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
 </head>
 <body>
@@ -433,7 +443,7 @@ ${social.map(([label, href]) => `            <li><a href="${href}">${esc(label)}
     <p class="foot-legal">© ${esc(SITE.name)}. All Rights Reserved.</p>
   </div>
 </footer>
-<script src="/assets/js/site.js" defer></script>
+<script src="/assets/js/site.js?v=${ASSET_V.js}" defer></script>
 </body>
 </html>
 `;
