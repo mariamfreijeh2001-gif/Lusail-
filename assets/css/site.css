@@ -2201,3 +2201,4 @@ textarea{min-height:140px;resize:vertical}
   .show-pics{order:-1;min-height:0;aspect-ratio:16/10}
 }
 @media (prefers-reduced-motion:reduce){ .show-pic,.show-item p,.show-item::before{transition:none} }
+

@@ -1332,7 +1332,7 @@ ${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
 </section>
 
 `
-    + ctaBand()
+    /* no closing band: the directions grid ends in its own ask */
     + footer();
 }
 
