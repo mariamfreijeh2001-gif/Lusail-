@@ -39,7 +39,7 @@ const ASSET_V = {
   js: require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, '..', 'assets/js/site.js'))).digest('hex').slice(0, 10)
 };
 const {
-  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES,
+  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES, FORMS,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
   PARTNER_TYPES
 } = require('../data/site.js');
@@ -404,7 +404,90 @@ ${ALL_COMPANIES.map(c => `    <a class="sub" href="/companies/${c.slug}/">${esc(
 `;
 }
 
-function footer() {
+/* ---------- forms drawn from FORMS ------------------------------------ */
+
+/* The lists a field can draw its options from. */
+const FORM_OPTIONS = {
+  partnerTypes: () => PARTNER_TYPES.map(p => ({ v: p.v, t: p.t })),
+  sectors: () => SECTORS.map(x => ({ v: x.slug, t: x.name })),
+  interests: () => [{ v: 'general', t: 'A general enquiry' }]
+    .concat(SECTORS.map(x => ({ v: x.slug, t: x.name })))
+    .concat([{ v: 'partnership', t: 'Working with the Group' }])
+};
+
+/* One form, from its definition. `p` prefixes every id so two forms can sit
+   on one page. Fields with `why` carry it as data-why, which is what the
+   visitor is told beside the field when it is left empty. */
+function formFields(kind, p) {
+  const F = FORMS[kind];
+  const id = n => p + n.charAt(0).toUpperCase() + n.slice(1);
+  const err = f => `<span class="field-err" id="${id(f.name)}-err"></span>`;
+  const attrs = f => [
+    f.required ? 'required' : '', f.max ? `maxlength="${f.max}"` : '',
+    f.auto ? `autocomplete="${f.auto}"` : '', f.placeholder ? `placeholder="${esc(f.placeholder)}"` : '',
+    f.why ? `data-why="${esc(f.why)}"` : '', f.required ? `aria-describedby="${id(f.name)}-err"` : ''
+  ].filter(Boolean).join(' ');
+  const req = f => f.required ? ' <span class="req" aria-hidden="true">*</span>' : '';
+  return F.fields.map(f => {
+    const cls = 'field' + (f.full || f.type === 'textarea' ? ' full' : '');
+    if (f.type === 'checks') {
+      const opts = FORM_OPTIONS[f.options]();
+      return `      <fieldset class="${cls} checks" id="${id(f.name)}" data-group="${f.name}"${f.required ? ' data-required="1"' : ''}${f.why ? ` data-why="${esc(f.why)}"` : ''} aria-describedby="${id(f.name)}-err">
+        <legend>${esc(f.label)}${req(f)}</legend>
+        <label class="chk chk-all"><input type="checkbox" data-all="${f.name}"><span>All sectors</span></label>
+${opts.map(o => `        <label class="chk"><input type="checkbox" name="${f.name}" value="${o.v}"><span>${esc(o.t)}</span></label>`).join('\n')}
+        ${err(f)}
+      </fieldset>`;
+    }
+    if (f.type === 'select') {
+      const opts = FORM_OPTIONS[f.options]();
+      return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label>
+        <select id="${id(f.name)}" name="${f.name}" ${attrs(f)}>
+${f.required ? '          <option value="">Choose one</option>\n' : ''}${opts.map(o => `          <option value="${o.v}">${esc(o.t)}</option>`).join('\n')}
+        </select>${f.required ? err(f) : ''}</div>`;
+    }
+    if (f.type === 'textarea') {
+      return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><textarea id="${id(f.name)}" name="${f.name}"${f.rows ? ` rows="${f.rows}"` : ''} ${attrs(f)}></textarea>${f.required ? err(f) : ''}</div>`;
+    }
+    return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><input id="${id(f.name)}" name="${f.name}" type="${f.type}" ${attrs(f)}>${f.required ? err(f) : ''}</div>`;
+  }).join('\n');
+}
+
+function formBlock(kind, p, extraClass) {
+  const F = FORMS[kind];
+  return `<form class="lform${extraClass ? ' ' + extraClass : ''}" data-form="${kind}" data-ok="${esc(F.ok)}" novalidate data-mail="${SITE.contact.email}">
+      <div class="hp" aria-hidden="true"><label for="${p}Hp">Website</label><input id="${p}Hp" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+${formFields(kind, p)}
+      <div class="form-end">
+        <button class="btn btn-dark" type="submit">${esc(F.submit)}</button>
+        <span class="status" role="status"></span>
+      </div>
+    </form>`;
+}
+
+/* The small form in the corner of every page but Contact, which carries the
+   full one. A button opens a panel; Escape, the close button or a click
+   outside closes it. */
+function quickForm() {
+  return `<div class="qf" id="qf">
+  <button class="qf-btn" id="qfBtn" type="button" aria-expanded="false" aria-controls="qfPanel">
+    <span class="qf-dot" aria-hidden="true"></span><span class="qf-label">Get in touch</span>
+  </button>
+  <div class="qf-panel" id="qfPanel" role="dialog" aria-modal="false" aria-labelledby="qfTitle" hidden>
+    <div class="qf-head">
+      <div>
+        <p class="eyebrow">Lusail Corp</p>
+        <h2 id="qfTitle">Leave your details</h2>
+        <p class="qf-lede">We will reach back to you within two working days.</p>
+      </div>
+      <button class="qf-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    ${formBlock('callback', 'q', 'qf-form')}
+  </div>
+</div>`;
+}
+
+function footer(opts = {}) {
   const social = SOCIAL();
   return `</main>
 <footer class="site-foot">
@@ -441,6 +524,7 @@ ${social.map(([label, href]) => `            <li><a href="${href}">${esc(label)}
     <p class="foot-legal">© ${esc(SITE.name)}. All Rights Reserved.</p>
   </div>
 </footer>
+${opts.noQuick ? '' : quickForm()}
 <script src="/assets/js/site.js?v=${ASSET_V.js}" defer></script>
 </body>
 </html>
@@ -1255,6 +1339,7 @@ ${s.slug === 'trading' ? `<section class="section src" aria-labelledby="mktTitle
     n === 1 ? 'One business, with its own market and its own customers.'
       : `${n} businesses, each with its own market and its own customers.`)}
     ${companyRail(s.companies.map(c => Object.assign({}, c, { sectorName: s.name })))}
+    <p class="after rise"><a class="btn btn-dark" href="/partnerships/?sector=${s.slug}#apply">Work with us in ${esc(s.name)}</a></p>
   </div>
 </section>
 
@@ -1331,7 +1416,24 @@ ${[
         <p>${d}</p>
       </li>`).join('\n')}
     </ol>
-    <p class="after rise"><a class="btn co-btn tl-cta" href="/contact/">Start a conversation</a></p>
+    <p class="after rise"><a class="btn co-btn tl-cta" href="#apply">Apply to work with us</a></p>
+  </div>
+</section>
+
+<section class="section apply" id="apply" aria-labelledby="applyTitle">
+  <div class="wrap apply-in">
+    <div class="apply-side rise">
+      <p class="eyebrow">Apply</p>
+      <h2 id="applyTitle">Work with <span class="soft">Lusail Corp</span></h2>
+      <p class="apply-lede">Tell us who you are and where you would like to work with us. Choose one sector, several, or all of them — the application goes to every desk it concerns.</p>
+      <ul class="apply-points">
+        <li>A reply within two working days</li>
+        <li>Read by the companies in the sectors you choose</li>
+        <li>No commitment on either side</li>
+      </ul>
+      <p class="apply-alt">Prefer email? <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></p>
+    </div>
+    ${formBlock('partnership', 'p', 'apply-form rise d1')}
   </div>
 </section>
 
@@ -1346,7 +1448,7 @@ ${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
       </li>`).join('\n')}
       <li class="dir dir-ask rise d3">
         <p class="dir-ask-q">Have one of these?</p>
-        <a class="dir-ask-go" href="/contact/?area=partnership">Bring us an opportunity <span aria-hidden="true">&#8594;</span></a>
+        <a class="dir-ask-go" href="#apply">Bring us an opportunity <span aria-hidden="true">&#8594;</span></a>
       </li>
     </ol>
   </div>
@@ -1402,7 +1504,7 @@ function pageContact() {
         <div><dt>Routing</dt><dd>Pick an area of interest and the message goes to the desk that can answer it.</dd></div>
       </dl>
     </div>
-    <form id="form" class="rise d1" novalidate data-mail="${SITE.contact.email}">
+    <form id="form" class="rise d1 lform" data-form="enquiry" data-ok="Message sent. We reply within two working days." novalidate data-mail="${SITE.contact.email}">
       <div class="hp" aria-hidden="true">
         <label for="fSite">Website</label>
         <input id="fSite" name="website" type="text" tabindex="-1" autocomplete="off">
@@ -1425,7 +1527,7 @@ ${areas.map(a => `          <option value="${a.v}">${esc(a.t)}</option>`).join('
 </section>
 
 `
-    + footer();
+    + footer({ noQuick: true });
 }
 
 function page404() {

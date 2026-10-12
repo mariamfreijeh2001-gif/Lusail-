@@ -343,6 +343,29 @@ If the key is missing, or the request fails for any reason, the form does
 where it is so Send can be pressed again, and offers a link that opens the
 same message, prefilled, in the visitor's own mail program.
 
+### The partnership application and the corner form
+
+Two more forms post to the same function. **Work With Us** carries the
+partnership application (`#apply`): company, website, country, partner type,
+the sectors — one, several or all — and the person to reply to. **Every page
+but Contact** has a "Get in touch" button in the corner that opens a short
+form (name, email, phone, what it is about, a line of message).
+
+Both are defined once, in `FORMS` in [data/site.js](data/site.js). The page
+draws its fields from there and `api/contact.js` checks what arrives against
+the same definition, so:
+
+- **a new field** is one line in `FORMS` — it appears on the page, is
+  validated and is printed in the email;
+- **a new sector** or **partner type** appears in the forms on its own;
+- **a new form** is a new entry in `FORMS` plus `formBlock('<name>', '<prefix>')`
+  wherever it should appear.
+
+A link can preselect: `/partnerships/?sector=trading#apply` ticks that sector
+(every sector page links there), and `/contact/?company=<slug>` picks the desk.
+The email subject says which form it came from — "Partnership application —
+<company>", "Callback request — <name>".
+
 ## Deploying
 
 `vercel.json` is committed, so Vercel needs no manual configuration — it runs

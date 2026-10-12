@@ -174,70 +174,86 @@
     }
   }
 
-  /* ---------- contact form -----------------------------------------------
-     The form posts JSON to the serverless function in api/contact.js, which
-     relays through Resend. Until the key is set there the request fails and
-     the form says so — it never claims to have sent anything it has not —
-     and offers the same words to the visitor's own mail program instead. */
+  /* ---------- forms -------------------------------------------------------
+     Every form with data-form — the contact form, the partnership
+     application and the small corner form — posts JSON to the serverless
+     function in api/contact.js, which relays through Resend. Until the key is
+     set there the request fails and the form says so — it never claims to
+     have sent anything it has not — and offers the same words to the
+     visitor's own mail program instead. */
   var CONTACT_ENDPOINT = '/api/contact';
 
-  var form = $('#form');
-  if (form) {
-    var status = $('#status');
+  var setupForm = function (form) {
+    var status = form.querySelector('.status');
     var say = function (msg, isError) {
       status.className = isError ? 'status err' : 'status';
       status.textContent = msg;
     };
-    var areaSel = form.querySelector('select[name="area"]');
     var MAIL = form.getAttribute('data-mail') || 'us';
+    var kind = form.getAttribute('data-form');
+    var areaSel = form.querySelector('select[name="area"]');
 
-    /* A company page links here as /contact/?company=<slug>; start the
-       dropdown on that company so the enquiry is routed to it. */
+    /* A link can preselect: /contact/?company=<slug> (or ?area=) picks the
+       desk, /partnerships/?sector=<slug> ticks that sector. */
     try {
-      var q = new URLSearchParams(location.search), pre = q.get('company') || q.get('area');
-      if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) {
-        areaSel.value = pre;
-      }
+      var q = new URLSearchParams(location.search);
+      var pre = q.get('company') || q.get('area');
+      if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) areaSel.value = pre;
+      q.getAll('sector').forEach(function (v) {
+        var box = form.querySelector('input[type="checkbox"][value="' + v.replace(/[^a-z0-9-]/g, '') + '"]');
+        if (box) box.checked = true;
+      });
     } catch (e) {}
 
-    /* What is wrong is said beside the field it is wrong about, and names
-       only that field. The status line repeats it for a screen reader, but
-       the eye needs it where the focus is about to land. */
+    /* "All sectors" ticks every sector; unticking any one clears it. */
+    $$('[data-all]', form).forEach(function (all) {
+      var boxes = $$('input[name="' + all.getAttribute('data-all') + '"]', form);
+      var sync = function () { all.checked = boxes.every(function (b) { return b.checked; }); };
+      all.addEventListener('change', function () { boxes.forEach(function (b) { b.checked = all.checked; }); clearFault(all.closest('fieldset')); });
+      boxes.forEach(function (b) { b.addEventListener('change', function () { sync(); clearFault(b.closest('fieldset')); }); });
+      sync();
+    });
+
+    /* What is wrong is said beside the field it is wrong about. */
     var WHY = {
       fName: 'Tell us your name.',
       fMsg: 'Write a line about what you need, so we can send it to the right company.'
     };
     var fault = function (el) {
-      if (el.type !== 'email') return WHY[el.id] || 'This one is needed.';
-      return el.value.trim()
-        ? 'That does not look like an email address. Try name@company.qa.'
-        : 'Enter your email address, so we have somewhere to reply to.';
+      if (el.type === 'email') {
+        return el.value.trim()
+          ? 'That does not look like an email address. Try name@company.qa.'
+          : 'Enter your email address, so we have somewhere to reply to.';
+      }
+      return el.getAttribute('data-why') || WHY[el.id] || 'This one is needed.';
     };
-    var required = $$('[required]', form);
+    var required = $$('[required]', form).concat($$('fieldset[data-required]', form));
+    var isEmpty = function (el) {
+      if (el.tagName === 'FIELDSET') return !el.querySelector('input[type="checkbox"][name]:checked');
+      if (!el.value.trim()) return true;
+      return el.type === 'email' && !/^\S+@\S+\.\S+$/.test(el.value);
+    };
     var clearFault = function (el) {
+      if (!el) return;
       el.removeAttribute('aria-invalid');
       var slot = document.getElementById(el.id + '-err');
       if (slot) slot.textContent = '';
     };
     required.forEach(function (el) {
-      el.addEventListener('input', function () { clearFault(el); });
+      if (el.tagName !== 'FIELDSET') el.addEventListener('input', function () { clearFault(el); });
     });
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       required.forEach(clearFault);
-
-      var missing = required.filter(function (x) {
-        return !x.value.trim() || (x.type === 'email' && !/^\S+@\S+\.\S+$/.test(x.value));
-      })[0];
-
+      var missing = required.filter(isEmpty)[0];
       if (missing) {
         var why = fault(missing);
         missing.setAttribute('aria-invalid', 'true');
         var slot = document.getElementById(missing.id + '-err');
         if (slot) slot.textContent = why;
         say(why, true);
-        missing.focus();
+        (missing.tagName === 'FIELDSET' ? missing.querySelector('input') : missing).focus();
         return;
       }
 
@@ -245,8 +261,13 @@
       btn.disabled = true;
       say('Sending…');
 
-      var body = {};
-      new FormData(form).forEach(function (v, k) { body[k] = v; });
+      /* Checkbox groups travel as arrays; everything else as one value. */
+      var body = { form: kind };
+      var fd = new FormData(form);
+      fd.forEach(function (v, k) {
+        if (form.querySelector('input[type="checkbox"][name="' + k + '"]')) body[k] = fd.getAll(k);
+        else body[k] = v;
+      });
 
       fetch(CONTACT_ENDPOINT, {
         method: 'POST',
@@ -254,17 +275,25 @@
         body: JSON.stringify(body)
       }).then(function (res) {
         if (!res.ok) throw new Error(res.status);
-        say('Message sent. We reply within two working days.');
+        say(form.getAttribute('data-ok') || 'Message sent.');
         form.reset();
+        $$('[data-all]', form).forEach(function (a) { a.checked = false; });
       }).catch(function () {
         /* Nothing typed is lost: the message stays in the form, and the same
            words are offered to the visitor's own mail program, prefilled. */
-        var areaLabel = areaSel && areaSel.selectedIndex >= 0 ? areaSel.options[areaSel.selectedIndex].text : '';
-        var subject = 'Website enquiry' + (areaLabel ? ' — ' + areaLabel : '');
-        var lines = ['Name: ' + body.name, 'Company: ' + (body.company || '-'),
-          'Email: ' + body.email, 'Phone: ' + (body.phone || '-'), '', body.message];
-        var href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent(subject) +
-          '&body=' + encodeURIComponent(lines.join('\n'));
+        var lines = [];
+        $$('input[name],select[name],textarea[name]', form).forEach(function (el) {
+          if (el.name === 'website' || el.type === 'checkbox') return;
+          var label = form.querySelector('label[for="' + el.id + '"]');
+          var v = el.tagName === 'SELECT' ? (el.selectedIndex > 0 || !el.required ? el.options[el.selectedIndex].text : '') : el.value;
+          if (v) lines.push((label ? label.textContent.replace('*', '').trim() : el.name) + ': ' + v);
+        });
+        $$('fieldset[data-group]', form).forEach(function (g) {
+          var picked = $$('input[name]:checked', g).map(function (b) { return b.nextElementSibling.textContent; });
+          if (picked.length) lines.push(g.querySelector('legend').textContent.replace('*', '').trim() + ': ' + picked.join(', '));
+        });
+        var subject = { partnership: 'Partnership application', callback: 'Callback request' }[kind] || 'Website enquiry';
+        var href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(lines.join('\n'));
         say('That did not send. Try again, or ', true);
         var a = document.createElement('a');
         a.href = href; a.textContent = 'email it to ' + MAIL;
@@ -274,7 +303,45 @@
         btn.disabled = false;
       });
     });
+  };
+  $$('form[data-form]').forEach(setupForm);
+
+  /* ---------- the corner form ----------------------------------------------
+     A button in the corner of every page opens a small panel. Escape, the
+     close button or a click outside it closes it, and focus goes back to the
+     button. On a phone it rises from the bottom as a sheet. */
+  var qf = $('#qf');
+  if (qf) {
+    var qBtn = $('#qfBtn'), qPanel = $('#qfPanel');
+    var setQ = function (open) {
+      qPanel.hidden = !open;
+      qBtn.setAttribute('aria-expanded', String(open));
+      qf.classList.toggle('open', open);
+      if (open) { var first = qPanel.querySelector('input:not([tabindex="-1"])'); if (first) first.focus(); }
+    };
+    qBtn.addEventListener('click', function () { setQ(qPanel.hidden); });
+    qPanel.querySelector('.qf-close').addEventListener('click', function () { setQ(false); qBtn.focus(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !qPanel.hidden) { setQ(false); qBtn.focus(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (!qPanel.hidden && !qf.contains(e.target)) setQ(false);
+    });
+    /* The button steps aside while a page's own form is on screen, so two
+       forms never compete for the same visitor. */
+    if ('IntersectionObserver' in window) {
+      var own = $$('form[data-form]:not(.qf-form)');
+      if (own.length) {
+        var seen = new Set();
+        var io = new IntersectionObserver(function (es) {
+          es.forEach(function (x) { if (x.isIntersecting) seen.add(x.target); else seen.delete(x.target); });
+          qf.classList.toggle('qf-away', seen.size > 0 && qPanel.hidden);
+        });
+        own.forEach(function (f) { io.observe(f); });
+      }
+    }
   }
+
   /* ---- the sectors index tracks the reading -----------------------------
      The index at the left of /sectors/ marks whichever sector is on screen.
      The mark is driven from scroll position rather than from clicks, so it

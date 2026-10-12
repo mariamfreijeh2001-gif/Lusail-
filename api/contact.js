@@ -27,7 +27,7 @@ const LIMITS = {
    the two cannot drift apart. The list includes every company, which is how an
    enquiry reaches the right desk rather than a general inbox. Anything not on
    the list is treated as unspecified rather than trusted into a header. */
-const { SITE, ALL_COMPANIES } = require('../data/site.js');
+const { SITE, ALL_COMPANIES, SECTORS, PARTNER_TYPES, FORMS } = require('../data/site.js');
 
 const AREAS = Object.assign(
   { general: 'General Enquiry' },
@@ -76,6 +76,85 @@ function qatarTime(d) {
          `${pad(t.getUTCHours())}:${pad(t.getUTCMinutes())} AST`;
 }
 
+/* The lists a FORMS field can take its values from, as value -> label. */
+const OPTION_LABELS = {
+  partnerTypes: Object.fromEntries(PARTNER_TYPES.map(p => [p.v, p.t])),
+  sectors: Object.fromEntries(SECTORS.map(x => [x.slug, x.name])),
+  interests: Object.assign({ general: 'A general enquiry', partnership: 'Working with the Group' },
+    Object.fromEntries(SECTORS.map(x => [x.slug, x.name])))
+};
+
+async function sendDefined(spec, body, res) {
+  const rows = [];
+  let email = '', name = '', company = '', message = '';
+  for (const fd of spec.fields) {
+    const raw = body[fd.name];
+    let v = '';
+    if (fd.type === 'checks') {
+      const allowed = OPTION_LABELS[fd.options] || {};
+      const picked = (Array.isArray(raw) ? raw : raw ? [raw] : []).filter(x => allowed[x]);
+      if (fd.required && !picked.length) return res.status(400).json({ error: 'Missing: ' + fd.name });
+      v = picked.length === Object.keys(allowed).length ? 'All sectors' : picked.map(x => allowed[x]).join(', ');
+    } else if (fd.type === 'select') {
+      const allowed = OPTION_LABELS[fd.options] || {};
+      const x = clean(raw, 80);
+      v = allowed[x] || '';
+    } else if (fd.type === 'textarea') {
+      v = typeof raw === 'string' ? raw.trim().slice(0, fd.max || 5000) : '';
+    } else {
+      v = clean(raw, fd.max || 200);
+    }
+    if (fd.required && !v) return res.status(400).json({ error: 'Missing: ' + fd.name });
+    if (fd.type === 'email' && v && !isEmail(v)) return res.status(400).json({ error: 'That email address is not valid' });
+    if (fd.name === 'email') email = v;
+    if (fd.name === 'name') name = v;
+    if (fd.name === 'company') company = v;
+    if (fd.type === 'textarea') { message = v; continue; }
+    rows.push([fd.label, v || '—']);
+  }
+  if (!email) return res.status(400).json({ error: 'Missing: email' });
+  rows.push(['Received', qatarTime(new Date())]);
+
+  const to = process.env.CONTACT_TO || SITE.contact.email;
+  const from = process.env.CONTACT_FROM || 'Lusail Corp Website <onboarding@resend.dev>';
+  const title = spec.subject;
+  const html = `<!doctype html>
+<div style="font:15px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#030C2B;max-width:640px">
+  <p style="margin:0 0 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8A6A24">Lusail Corp &middot; website</p>
+  <h2 style="margin:0 0 20px;font-size:20px;font-weight:600">${esc(title)}</h2>
+  <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;margin-bottom:24px">
+    ${rows.map(([k, v]) => `<tr>
+      <td style="padding:7px 16px 7px 0;color:#6E7488;white-space:nowrap;vertical-align:top;border-bottom:1px solid #EFEEEC">${esc(k)}</td>
+      <td style="padding:7px 0;border-bottom:1px solid #EFEEEC">${esc(v)}</td>
+    </tr>`).join('')}
+  </table>
+  ${message ? `<div style="border-inline-start:3px solid #D3A750;padding:2px 0 2px 16px;white-space:pre-wrap">${esc(message)}</div>` : ''}
+  <p style="margin:28px 0 0;font-size:13px;color:#6E7488">Reply directly to this email to answer ${esc(name || email)}.</p>
+</div>`;
+  const text = rows.map(([k, v]) => `${k}: ${v}`).join('\n') + (message ? '\n\n' + message + '\n' : '\n');
+
+  try {
+    const r = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from, to: [to], reply_to: email,
+        subject: headerSafe(`${title} — ${company || name || email}`),
+        html, text
+      })
+    });
+    if (!r.ok) {
+      console.error('contact: resend ' + r.status + ' ' + await r.text());
+      return res.status(502).json({ error: 'Could not send the message' });
+    }
+    const data = await r.json().catch(() => ({}));
+    return res.status(200).json({ ok: true, id: data.id || null });
+  } catch (err) {
+    console.error('contact: ' + (err && err.message));
+    return res.status(502).json({ error: 'Could not send the message' });
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -105,6 +184,12 @@ module.exports = async function handler(req, res) {
   if (tooMany(ip)) {
     return res.status(429).json({ error: 'Too many messages. Try again shortly.' });
   }
+
+  /* A form defined in data/site.js FORMS: checked field by field against
+     that definition, so a field added there is validated and emailed here
+     with nothing else to change. */
+  const spec = FORMS[body.form];
+  if (spec) return sendDefined(spec, body, res);
 
   const f = {
     name: clean(body.name, LIMITS.name),

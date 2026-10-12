@@ -493,17 +493,17 @@ const GROWTH = [
    page saying this; it is a section now, and the contact form routes each of
    these to the right desk. */
 const PARTNER_TYPES = [
-  { t: 'International Suppliers',
+  { t: 'International Suppliers', v: 'international-supplier',
     d: 'Producers and exporters looking for a route into the Qatar market.' },
-  { t: 'Local Suppliers & Businesses',
+  { t: 'Local Suppliers & Businesses', v: 'local-business',
     d: 'Companies that want to supply our businesses, or work alongside them.' },
-  { t: 'Producers & Exporters',
+  { t: 'Producers & Exporters', v: 'producer-exporter',
     d: 'Growers and processors of food, agricultural products, coffee, wheat and the commodities we trade.' },
-  { t: 'Distributors & Buyers',
+  { t: 'Distributors & Buyers', v: 'distributor-buyer',
     d: 'Businesses looking for reliable supply inside Qatar or in international markets.' },
-  { t: 'Business Partners',
+  { t: 'Business Partners', v: 'business-partner',
     d: 'Joint ventures, new concepts and long-term commercial cooperation.' },
-  { t: 'Entrepreneurs',
+  { t: 'Entrepreneurs', v: 'entrepreneur',
     d: 'Operators and founders with a business or an idea that fits where the Group is going.' }
 ];
 
@@ -609,8 +609,63 @@ const WHY = [
     d: 'Certified management systems, selective growth and partnerships chosen to last — fewer, larger commitments, made for the long run.' }
 ]
 
+
+/* --------------------------------------------------------------------------
+   FORMS — every form on the site beyond the contact page, defined once.
+   The page templates draw the fields from here and api/contact.js checks
+   what arrives against the same list, so a field added here appears on the
+   page, is validated, and is printed in the email — with nothing else to
+   edit. `options` names a list the build fills in:
+     partnerTypes  the PARTNER_TYPES below, by `v`
+     sectors       every sector, as checkboxes, with an "All sectors" box
+     interests     every sector, plus a general option
+   `why` is what the visitor is told beside the field when it is missing.
+   -------------------------------------------------------------------------- */
+
+const FORMS = {
+  /* Work With Us: a company applying to work with the Group, in one sector,
+     several, or all of them. Few fields, each one used to route or reply. */
+  partnership: {
+    subject: 'Partnership application',
+    submit: 'Send application',
+    ok: 'Application received. The right desk will reply within two working days.',
+    fields: [
+      { name: 'company', label: 'Company name', type: 'text', required: true, max: 160, auto: 'organization',
+        why: 'Tell us which company is applying.' },
+      { name: 'site', label: 'Company website', type: 'url', max: 200, auto: 'url', placeholder: 'https://' },
+      { name: 'country', label: 'Country', type: 'text', max: 80, auto: 'country-name' },
+      { name: 'partnerType', label: 'We are', type: 'select', options: 'partnerTypes', required: true,
+        why: 'Pick the one that describes you best.' },
+      { name: 'sectors', label: 'Sectors you would like to work with us in', type: 'checks', options: 'sectors', required: true, full: true,
+        why: 'Choose at least one sector, or all of them.' },
+      { name: 'name', label: 'Your name', type: 'text', required: true, max: 120, auto: 'name',
+        why: 'Tell us who to reply to.' },
+      { name: 'role', label: 'Your role', type: 'text', max: 120, auto: 'organization-title' },
+      { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
+      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' },
+      { name: 'message', label: 'Tell us about the opportunity', type: 'textarea', required: true, max: 5000, full: true,
+        why: 'A few lines on what you offer or what you are looking for.' }
+    ]
+  },
+
+  /* The small form in the corner of every page: enough to reach back. */
+  callback: {
+    subject: 'Callback request',
+    submit: 'Send',
+    ok: 'Thank you. We will be in touch within two working days.',
+    fields: [
+      { name: 'name', label: 'Name', type: 'text', required: true, max: 120, auto: 'name',
+        why: 'Tell us your name.' },
+      { name: 'email', label: 'Email', type: 'email', required: true, max: 254, auto: 'email' },
+      { name: 'phone', label: 'Phone', type: 'tel', max: 40, auto: 'tel' },
+      { name: 'interest', label: 'About', type: 'select', options: 'interests' },
+      { name: 'message', label: 'Message', type: 'textarea', max: 600, rows: 3 }
+    ]
+  }
+};
+
 module.exports = {
   SITE, SECTORS, ALL_COMPANIES, REACH, REACH_POINTS, HUB, WHY,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
-  PARTNER_TYPES
+  PARTNER_TYPES, FORMS
 };
