@@ -2295,3 +2295,9 @@ textarea{min-height:140px;resize:vertical}
   /* with the menu open the bar is solid, even over a photograph */
   html:has(.menu.open) .site-head.over{background:var(--ink)}
 }
+@media (max-width:860px){
+  /* on a phone the footer is the mark and how to reach us: sectors and
+     companies are one tap away in the menu */
+  .foot-col:has(a[href^="/sectors/"]),.foot-col:has(a[href^="/companies/"]){display:none}
+  .foot-cols{grid-template-columns:1fr}
+}
