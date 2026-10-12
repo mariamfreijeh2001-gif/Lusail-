@@ -96,7 +96,7 @@
        it is the control that closes the thing. */
     var trap = function (e) {
       if (e.key !== 'Tab' || !menu.classList.contains('open')) return;
-      var stops = [burger].concat($$('a[href],button:not([disabled])', menu))
+      var stops = [burger].concat($('a[href],summary,button:not([disabled])', menu))
         .filter(function (el) { return el.offsetWidth || el.offsetHeight; });
       if (stops.length < 2) return;
       var first = stops[0], last = stops[stops.length - 1];

@@ -378,12 +378,18 @@ ${NAV.map(link).join('\n')}
   </button>
 </header>
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
-${NAV.map(([label, href]) => `  <a href="${href}"${href === current ? ' aria-current="page"' : ''}>${esc(label)}</a>` +
-  (label === 'Sectors'
-    ? '\n' + SECTORS.map(s => `  <a class="sub" href="/sectors/${s.slug}/"${'/sectors/' + s.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(s.name)}</a>`).join('\n')
-    : '')).join('\n')}
-  <span class="menu-h">Companies</span>
-${ALL_COMPANIES.map(c => `  <a class="sub" href="/companies/${c.slug}/"${'/companies/' + c.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(c.name)}</a>`).join('\n')}
+  <a href="/"${current === '/' ? ' aria-current="page"' : ''}>Home</a>
+  <details class="menu-grp"${current && current.startsWith('/sectors/') && current !== '/sectors/' ? ' open' : ''}>
+    <summary>Sectors</summary>
+    <a class="sub" href="/sectors/"${current === '/sectors/' ? ' aria-current="page"' : ''}>All sectors</a>
+${SECTORS.map(x => `    <a class="sub" href="/sectors/${x.slug}/"${'/sectors/' + x.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(x.name)}</a>`).join('\n')}
+  </details>
+  <details class="menu-grp">
+    <summary>Companies</summary>
+${ALL_COMPANIES.map(c => `    <a class="sub" href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('\n')}
+  </details>
+  <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
+  <a href="/partnerships/"${current === '/partnerships/' ? ' aria-current="page"' : ''}>Work with us</a>
   <a class="btn btn-light" href="/contact/">Contact us</a>
 </div>
 <main id="main">
@@ -690,6 +696,13 @@ ${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}"
         </div>
       </a>`).join('\n')}
     </div>
+    <ul class="secgrid">
+${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="/sectors/${sec.slug}/">
+        ${pic(sec.hero, '(max-width:560px) 50vw, 33vw', 'alt="" loading="lazy"')}
+        <span class="secgrid-n">${num(i)}</span>
+        <span class="secgrid-t">${esc(sec.name)}</span>
+      </a></li>`).join('\n')}
+    </ul>
   </div>
 </section>
 
