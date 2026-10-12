@@ -17,7 +17,7 @@ module.exports = {
   'hero-partnerships': ['hero'],
   'hero-contact': ['hero'],
   'hero-doha': ['hero'],
-  'skyline-tall': ['hero'],
+  'hero-sectors': ['hero'],
   'why-group': ['hero'],
   'about-platform': ['hero'],
 
@@ -60,9 +60,9 @@ module.exports = {
   'prod-ocean-freight': ['rail'],
   'prod-rice': ['rail'],
   'prod-vessel-chartering': ['rail'],
-  'prod-energy-materials': ['rail'],
-  'prod-technology-systems': ['rail'],
-  'prod-equipment': ['rail'],
-  'prod-food-security': ['rail'],
-  'prod-project-supply': ['rail'],
+  'prod-energy-materials': ['rail', 'panel'],
+  'prod-technology-systems': ['rail', 'panel'],
+  'prod-equipment': ['rail', 'panel'],
+  'prod-food-security': ['rail', 'panel'],
+  'prod-project-supply': ['rail', 'panel'],
 };
