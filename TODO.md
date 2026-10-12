@@ -158,8 +158,7 @@ else on the site now has its own.
 
 ### 9. Pages were removed — check the redirects once it is live
 
-The portfolio index, the careers page and the partnerships page are gone.
-`vercel.json` sends `/companies/` and `/portfolio/` to `/sectors/`, `/careers/`
-and `/jobs/` to `/contact/`, and `/partnerships/` to the "Who we want to hear
-from" section on `/about/`. Worth spot checking after the first deploy, since
+The portfolio index and the careers page are gone. `vercel.json` sends
+`/companies/` and `/portfolio/` to `/sectors/`, and `/careers/` and `/jobs/` to
+`/contact/`. `/partnerships/` (Work With Us) is a live page. Worth spot checking after the first deploy, since
 search engines still hold the old URLs.

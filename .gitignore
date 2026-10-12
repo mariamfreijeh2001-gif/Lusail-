@@ -11,3 +11,8 @@ Assests-new/
 # reference material dropped in by hand — kept on disk, not in the repo
 *.mp4
 *.mov
+
+# Source material: raw photography, the full logo kit, retired photos.
+# Kept on disk for reference, never shipped and never committed.
+_source/
+Lusail image stock/
