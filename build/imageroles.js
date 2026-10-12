@@ -2,10 +2,9 @@
  * makes and the `sizes` build/render.js writes. The roles are measured, not
  * guessed: every box here was read off a browser at 1440 and at 390.
  *
- * A photograph with two roles takes the union of their widths. The four
- * company heroes have four, because the same file is a 1400px page hero, a
- * 334px card, a 292px panel in the row of four, and a 93px plate beside a
- * company's name on /sectors/.
+ * A photograph with two roles takes the union of their widths. A company
+ * hero has three: the full-width page opening, its card on the home grid,
+ * and its plate in the other-companies row.
  *
  * Adding a photograph means adding a line here and running `npm run images`.
  * A page that asks for a file nobody made fails the build rather than

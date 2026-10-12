@@ -67,41 +67,10 @@ visitor's mail client with the message prefilled, so no enquiry is lost.
 `+974 0000 0000` is a deliberate placeholder, as you asked. Replace `phone` in
 [data/site.js](data/site.js) when the line is live.
 
-### 4. Domain and DNS — blocking launch
+### 4. Domain and DNS — done
 
-The live domain is **lusailcorp.com**. It is registered, DNS is managed at
-**HostGator**, and right now it shows a parking error page:
-
-**The site itself is live and correct on Vercel.** Forcing a connection to
-Vercel's IP returns HTTP 200, `Server: Vercel`, a valid certificate and the
-right page. Nothing is wrong with the deployment.
-
-The fault is one bad DNS record. The `www` name at HostGator has **two
-conflicting records at once**:
-
-| Record | Value | Verdict |
-|---|---|---|
-| `www` **CNAME** | `ef2b1ec2f8d15bf2.vercel-dns-016.com` | correct — this is Vercel |
-| `www` **A** | `208.91.197.13` | **delete this** — the old parking IP |
-| `@` **A** | `216.150.1.1` | correct — Vercel, and it 308s to www |
-
-A name that has a CNAME may not have any other record (RFC 1034 / RFC 2181).
-With both present, resolvers disagree: Google returns the CNAME and reaches
-the real site, while other resolvers return the parking A record and show the
-error page. **This is why Vercel keeps flipping between Configured and Not
-Configured** — its checks land on different answers each time.
-
-### The fix — one action
-
-**HostGator** → cPanel → Zone Editor → lusailcorp.com → **delete the `A`
-record on `www` that points to `208.91.197.13`.** Keep the CNAME. Change
-nothing else; the apex is already right.
-
-Propagation then takes up to an hour (the zone TTL is 3600s). This will **not**
-resolve on its own while the conflicting record is still there.
-
-Do **not** switch the nameservers to Vercel unless email moves too — the
-mailboxes would go with them.
+Fixed. On 2026-10-12 `lusailcorp.com` redirects (308) to `www.lusailcorp.com`,
+which resolves to Vercel and serves the current site. Nothing left to do here.
 
 ### 5. Email does not exist yet
 

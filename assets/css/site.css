@@ -180,15 +180,6 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 
 /* ---------- micro label: one face, one size, everywhere ----------------- */
 
-.factstrip dt{
-  font-family:var(--mono);
-  font-size:var(--t-micro);
-  font-weight:500;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  line-height:1.5;
-}
-
 /* ---------- buttons and links ------------------------------------------ */
 
 /* Square, not rounded, and set in the UI face rather than the body one. */
@@ -209,10 +200,6 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 .btn-dark:hover{background:var(--gold);color:var(--ink)}
 .btn-line{border-color:var(--line);color:var(--ink)}
 .btn-line:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
-
-.prose{color:var(--ink-2);max-width:62ch;display:grid;gap:1.15em;font-size:var(--t-body)}
-.prose strong{color:var(--ink);font-weight:600}
-.prose a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
 
 .section{padding-block:var(--band)}
 .section.stone{background:var(--paper)}
@@ -272,12 +259,10 @@ h3{font-family:var(--body);letter-spacing:-.005em}
   display:grid;gap:1.15em;max-width:74ch;
   font-size:var(--t-lg);line-height:1.56;color:var(--ink-2);
 }
-.prose2 strong{color:var(--ink);font-weight:600}
 
 /* a single action closing a section */
 .after{margin-top:clamp(28px,3.4vw,44px)}
 
-.h3{font-size:var(--t-h3);font-weight:600}
 .sr-only{
   position:absolute;width:1px;height:1px;overflow:hidden;
   clip-path:inset(50%);white-space:nowrap;
@@ -408,44 +393,15 @@ h3{font-family:var(--body);letter-spacing:-.005em}
    reading, and the facts underneath
    ========================================================================== */
 
-.lead-para{
-  font-size:clamp(1.125rem,1.6vw,1.3125rem);line-height:1.5;font-weight:500;
-  color:var(--ink);max-width:40ch;
-}
 .cosplit{
   display:grid;grid-template-columns:minmax(0,547fr) minmax(0,600fr);
   gap:clamp(28px,4.4vw,72px);align-items:start;
   margin-top:clamp(32px,4vw,56px);
 }
-.costill{margin:0;overflow:hidden}
-.costill img{width:100%;height:auto;aspect-ratio:6/5;object-fit:cover;background:var(--panel)}
-.cosplit .prose{max-width:none;gap:1.3em;font-size:var(--t-body);line-height:1.56}
+
 @media (max-width:860px){
   .cosplit{grid-template-columns:1fr;gap:28px}
-  .costill img{aspect-ratio:16/10}
-}
-
-/* the facts, as a strip rather than a stack in an aside */
-.factstrip{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-  border-top:1px solid var(--line);margin:clamp(34px,4.4vw,58px) 0 0;
-}
-.factstrip > div{
-  display:grid;gap:8px;align-content:start;
-  padding:clamp(18px,2.2vw,26px) clamp(18px,2.2vw,28px) clamp(20px,2.4vw,30px) 0;
-  border-bottom:1px solid var(--line);
-}
-.factstrip > div + div{
-  padding-inline-start:clamp(18px,2.2vw,28px);
-  border-inline-start:1px solid var(--line);
-}
-.factstrip dt{font:600 .75rem/1.4 var(--mono);color:var(--label);letter-spacing:.14em;text-transform:uppercase}
-.factstrip dd{margin:0;font:500 var(--t-lede)/1.35 var(--body);color:var(--ink)}
-@media (max-width:860px){ .factstrip{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .factstrip > div:nth-child(odd){border-inline-start:0;padding-inline-start:0}
-}
-@media (max-width:520px){ .factstrip{grid-template-columns:1fr}
-  .factstrip > div,.factstrip > div + div{border-inline-start:0;padding-inline-start:0}
+  
 }
 
 /* ==========================================================================
@@ -476,8 +432,6 @@ h3{font-family:var(--body);letter-spacing:-.005em}
   .prod img,.prod-pic{transition:none}
   .prod:hover img,.prod:focus-within img{transform:none}
 }
-
-
 
 /* activity tags */
 .tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
@@ -600,8 +554,6 @@ textarea{min-height:140px;resize:vertical}
 /* ==========================================================================
    Components introduced with the real content
    ========================================================================== */
-
-.lead-para{font-size:var(--t-lede);color:var(--ink);max-width:58ch;line-height:1.55}
 
 /* activity / value tags */
 .tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
@@ -733,7 +685,7 @@ textarea{min-height:140px;resize:vertical}
   transition:opacity .25s,transform .25s,visibility .25s;
 }
 .menu.open{opacity:1;visibility:visible;transform:none}
-.menu-h{display:block;margin-top:18px;font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+
 .menu a{
   padding:16px 2px;text-decoration:none;color:var(--warm);
   font:500 var(--t-body)/1.4 var(--ui);text-transform:uppercase;
@@ -1127,18 +1079,6 @@ textarea{min-height:140px;resize:vertical}
   .next-card .watermark{top:-40px;right:-60px;translate:none;width:190px}
 }
 
-/* the list of what the Group wants to do next, now on Work With Us */
-.nexts{
-  list-style:none;margin:clamp(26px,3vw,38px) 0 0;padding:0;
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px clamp(24px,5vw,60px);
-}
-.nexts li{display:flex;gap:10px;align-items:flex-start;font:400 var(--t-body)/1.55 var(--body);color:var(--ink-2)}
-.nexts svg{width:16px;height:16px;flex:none;margin-top:5px;color:var(--ink-3)}
-@media (max-width:760px){ .nexts{grid-template-columns:1fr} }
-
-}
-
 /* ==========================================================================
    Arrival — each band lifts into place once, and only once
    ========================================================================== */
@@ -1284,7 +1224,6 @@ textarea{min-height:140px;resize:vertical}
   .secrail a,.secrail-n,.secrail-go{transition:none}
 }
 
-
 /* ---- the other sectors, at the foot of a sector page --------------------
    Three cards in a row. This had been carrying the class the sectors index
    uses for its rail-and-reading layout, so the three were being dealt into a
@@ -1424,11 +1363,10 @@ textarea{min-height:140px;resize:vertical}
   .secrail-go{display:none}
   /* the strip is pinned under the bar too, so a jump has to clear both */
   .secblk{padding-block:clamp(34px,7vw,56px);scroll-margin-top:calc(var(--head-h) + 76px)}
-  .secblk.stone{margin-inline:calc(var(--gutter) * -1);padding-inline:var(--gutter);
-    box-shadow:none;clip-path:none}
-  .secblk-shot img{aspect-ratio:16/9}
-  .minico{grid-template-columns:72px minmax(0,1fr);gap:14px;min-height:0}
-  .minico img{width:72px;height:72px}
+  
+  
+  
+  
 }
 
 /* ---- the platform section on About, and the map on Contact -------------- */
@@ -1445,7 +1383,6 @@ textarea{min-height:140px;resize:vertical}
 .bandshot{margin:clamp(34px,4.4vw,56px) 0 0;overflow:hidden}
 .bandshot img{width:100%;height:auto;aspect-ratio:1212/353;object-fit:cover;background:var(--panel)}
 @media (max-width:820px){ .bandshot img{aspect-ratio:16/9} }
-
 
 /* ==========================================================================
    The businesses — a photograph, its sector and its name
@@ -2030,39 +1967,6 @@ textarea{min-height:140px;resize:vertical}
 @media (prefers-reduced-motion:reduce){ .tline::after{transition:none} }
 
 /* ==========================================================================
-   Work With Us — what the Group is looking to do next
-   The ask on the left, held in place while the seven directions run down
-   the right as large numbered lines; pointing at one draws a gold rule
-   under it and brings its arrow in.
-   ========================================================================== */
-.grow-in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,112px);align-items:start}
-.grow-side{display:grid;gap:18px;justify-items:start;position:sticky;top:calc(var(--head-h) + 32px)}
-.grow-side h2{font-size:var(--t-h1);line-height:1.1;max-width:14ch}
-.grow-lede{font:400 var(--t-lg)/1.55 var(--body);color:var(--ink-2);max-width:36ch}
-.grow-side .btn{margin-top:8px}
-.grow-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
-.grow-list li{
-  position:relative;display:grid;grid-template-columns:56px minmax(0,1fr) 24px;align-items:baseline;gap:16px;
-  padding:clamp(14px,1.6vw,20px) 0;border-bottom:1px solid var(--line-2);
-}
-.grow-list li::after{
-  content:"";position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--gold);
-  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
-}
-.grow-list li:hover::after{transform:scaleX(1)}
-.grow-n{font:300 1.25rem/1 var(--display);color:var(--gold-text)}
-.grow-t{font:300 clamp(1.25rem,1.9vw,1.75rem)/1.25 var(--display);color:var(--ink)}
-.grow-go{color:var(--gold-text);opacity:0;transform:translateX(-8px);transition:opacity .3s,transform .3s}
-.grow-list li:hover .grow-go{opacity:1;transform:none}
-@media (max-width:900px){
-  .grow-in{grid-template-columns:1fr}
-  .grow-side{position:static}
-  .grow-list li{grid-template-columns:40px minmax(0,1fr)}
-  .grow-go{display:none}
-}
-@media (prefers-reduced-motion:reduce){ .grow-list li::after,.grow-go{transition:none} }
-
-/* ==========================================================================
    Company pages, polished: a figures band, a scroll cue, larger thumbnails
    ========================================================================== */
 
@@ -2201,7 +2105,6 @@ textarea{min-height:140px;resize:vertical}
   .show-pics{order:-1;min-height:0;aspect-ratio:16/10}
 }
 @media (prefers-reduced-motion:reduce){ .show-pic,.show-item p,.show-item::before{transition:none} }
-
 
 /* ==========================================================================
    PHONES — the last word. Everything below is scoped to small screens and

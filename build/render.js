@@ -186,10 +186,8 @@ const icon = name => ICON_PATHS[name]
   ? `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICON_PATHS[name]}</svg>`
   : '';
 
-const BULLET = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="currentColor" fill-opacity=".5"><path d="M4 8L8 4L12 8L8 12L4 8Z"/><path d="M8 2a6 6 0 1 1 0 12A6 6 0 0 1 8 2Zm0-1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Z"/></svg>`;
 const CARET = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.53 8.97a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L12 12.44l3.47-3.47a.75.75 0 0 1 1.06 0Z"/></svg>`;
 const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg>`;
-const CHEV = `<svg viewBox="0 0 18 18" aria-hidden="true" focusable="false"><path d="M4 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
 
 
 /* ---------- structured data ---------------------------------------------

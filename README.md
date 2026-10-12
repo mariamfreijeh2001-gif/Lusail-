@@ -20,7 +20,7 @@ Commercial appears under both Trading and Supply & Distribution.
 | URL | |
 |---|---|
 | `/` | Home |
-| `/sectors/` | The four sectors, each with the businesses inside it |
+| `/sectors/` | Every sector, each with the businesses inside it |
 | `/sectors/<slug>/` | One sector |
 | `/companies/<slug>/` | One company |
 | `/about/` | The Group: what it is and what it believes |
@@ -36,7 +36,7 @@ old `/companies/`, `/portfolio/` and `/careers/` URLs redirect.
 
 Adding a company to a sector means adding one object to that sector's
 `companies` array. The sectors menu, the sectors index, the sector page, the
-home page's sector cards, the footer, the contact dropdown (and the email
+home page's sector accordion and tiles, the footer, the contact dropdown (and the email
 routing behind it) and the sitemap all follow.
 
 ## Where things live
@@ -45,8 +45,9 @@ routing behind it) and the sitemap all follow.
 data/site.js             ALL content — sectors, companies, values, reach, contact
 build/render.js          templates + generator
 build/variants.js        resizes the photographs; run by hand, results committed
+build/import.js          brings any photo in at web size (npm run import)
 build/imageroles.js      what each photograph is used for, which sets its sizes
-build/worldmap.js        decodes the land data and projects the home-page map
+build/worldmap.js        decodes the land data into points for the home-page globe
 api/contact.js           Vercel function: validates the form, emails it via Resend
 assets/css/site.css      one stylesheet; design tokens at the top
 assets/js/site.js        nav, sector menu, map pins, panels, form, reveals
@@ -104,10 +105,13 @@ them live in `site-assets/img/` as `.jpg`:
 | Name | Used by | Shape |
 |---|---|---|
 | `hero-<page>`, `hero-sector-<slug>` | the photograph behind a page title | wide |
-| `still-<company>` | the upright shot beside a company's opening | ~900px |
-| `prod-<product>` | one product card in the rail | 640px, 4:3 |
-| `card-<sector>` | the home page's sector cards | 640px, tall |
-| `hero-doha`, `why-group`, `about-platform` | the home and about pages | — |
+| `still-<company>` | the shot beside a company's story | 1600px |
+| `prod-<product>` | a product or business-area thumbnail | 1600px |
+| `panel-<name>` | a large photograph inside a company page | 2400px |
+| `hero-doha`, `hero-sectors`, `why-group`, `about-platform` | the home, sectors and about pages | — |
+
+Banners are imported at up to 2560px from the largest original
+(`npm run import -- --max=2560 "photo" name`), and served in five widths.
 
 **The build fails if a page asks for an image that is not there**, rather than
 shipping a broken page. `usedImages()` in [build/render.js](build/render.js)
@@ -120,16 +124,13 @@ is why five of its twenty-one files reach the server rather than all of them.
 #### Sizes
 
 Each photograph ships in several widths and every `<img>` carries a `srcset`,
-because one file cannot serve a 1400px page hero and a 93px plate beside a
-company's name. It was serving both: four company photographs were being
-downloaded whole — 585 KB — to fill four 93×88 thumbnails on `/sectors/`.
+because one file cannot serve a full-screen banner and a 116px thumbnail.
 
 [build/imageroles.js](build/imageroles.js) says what each photograph is used
 for. A role carries the widths that use needs, measured off a browser at 1440
 and at 390 and doubled for a 2× screen, and the `sizes` attribute that tells
 the browser which box it is headed for before the stylesheet has arrived. A
-photograph in two roles takes the union: the four company heroes have four
-roles each.
+photograph in two roles takes the union: a company hero has three.
 
 Where the stylesheet pins a box to one shape and fills it with
 `object-fit:cover`, the derivative is cropped to that shape, so the browser
@@ -168,141 +169,78 @@ See [TODO.md](TODO.md) for the full list.
 
 ## Design
 
-Built to the Figma. Near-monochrome and typographic: sections alternate white
-and a warm off-white, and carbon `#181717` carries the hero, the sourcing map,
-the closing card and the footer. A heading states itself and greys out one
-word — "What makes it a *group*" — which is the system's only ornament.
-Tokens are at the top of `assets/css/site.css`; changing the brand is changing
-those.
+Built to the **Lusail Corp design system** (Claude Design): editorial and
+architectural — navy type on a near-white ground, fine rules instead of boxes
+and shadows, a light serif for the voice and a grotesque for the work, and the
+logo's gold spent in small amounts. Navy carries the hero overlays, the dark
+bands (sourcing, the closing card, company asks and quotes) and the footer.
+The tokens are at the top of `assets/css/site.css`; changing the brand is
+changing those.
 
 | | |
 |---|---|
-| `--ink` | `#181717` carbon — headings and every dark ground |
-| `--ink-2` | `#6c6b6b` body copy |
-| `--ink-3` | `#868583` the greyed word inside a heading |
-| `--paper` / `--panel` | `#f6f5f3` / `#efedeb` alternating grounds |
-| `--line` | `#e3e0dd` card outlines |
-| `--pin` | `#fb8449` the sourcing pins, and the one accent |
+| `--ink` | `#0B1A3A` navy — headings and every dark ground (a lighter tint of the logo's `#030C2B`, which reads as black on screen) |
+| `--ink-2` | `#474d63` secondary copy |
+| `--ink-3` | `#7a7f90` the greyed word inside a heading (24px and up only) |
+| `--paper` / `--panel` | `#f8f7f6` / `#eceae8` alternating grounds |
+| `--line` / `--line-2` | `#dedcd9` / `#c9c6c2` hairlines |
+| `--gold` | `#D3A750` the logo gold: rules, dashes, markers, buttons on navy |
+| `--gold-text` | `#7d5a1d` gold when it has to be read on a light ground |
 
-The frame is 1440 with 115px gutters, leaving the 1210px measure every section
-is set to. `--wrap` is the frame, padding included. The gutter is one token,
-`--gutter`, and it reaches 115px at 1440 — it had been set to `4.4vw`, which
-tops out at 63px there, so the sectors index sat on the drawn 1211px measure
-while every other page sat on 1313.
+Type is **Newsreader** (a light serif) for page titles, section headings, card
+titles and the large numerals, and **Archivo** for everything else, labels and
+buttons included. Both are served from this origin, from `site-assets/font/`,
+under the SIL Open Font License (see its `NOTICE.md`). Every size is one of the
+`--t-*` tokens; headings grow with the viewport and running text does not.
 
-`.wrap` also sets `width:100%`, which looks redundant and is not: several of
-these sit in a grid, and an auto inline margin on a grid item turns off
-stretch, shrinks the item to its widest child and centres it. In normal flow
-it does nothing. That one difference was centring every page hero, so the
-title started at a different place on every page — 410px on About, 525px on
-Nero Café — instead of at the gutter.
+Components use **rules, not boxes**: a hairline above each item and a gold rule
+that draws across it on hover. Eyebrows above headings are uppercase, tracked
+and led by a gold dash. **Every section fits one screen** at 1440×900.
 
-**Every size on the site is one of the `--t-*` tokens.** There were
-twenty-six different values before, seven of them between 13.6px and 15px,
-which is not a distinction anyone can see — only one to maintain. Headings
-grow with the viewport; everything below them is fixed, because running text
-that moves with the window is harder to read, not easier.
+### The pages
 
-**The type is set smaller than the design file draws it.** The Figma puts the
-hero at 65px and section headings at 45px; those are 50 and 34 here, and the
-bar is 15px. Reading sizes were left at 16–17px: the complaint was that the
-display sizes shouted, and shrinking the body copy would have traded that for
-a worse problem. The sizes live in the `--t-*` tokens at the top of the
-stylesheet, so the whole scale moves from one place.
-
-Type is **Archivo** throughout — display, body, navigation and buttons — with
-**Space Grotesk** for the small stat labels and **Playfair Display** italic for
-the one accent word in the hero. Navigation was Inter, which was the largest
-font file on the site, 47 KB on every page, for eleven declarations Archivo
-already covered.
-
-All three are **served from this origin**, from `site-assets/font/`. Loading
-them from Google cost a third-party DNS lookup, a TLS handshake and a
-render-blocking stylesheet before the first font byte could be asked for:
-**392 ms of first paint** on a fast connection, and the last font byte landed
-at 2.5 s on a slow one. They are SIL Open Font License, which permits this;
-the notice travels with them.
-
-The logo appears in the header and footer (the reversed lockup, on carbon),
-the favicon, beside the home introduction, and as a faint watermark on the
-closing card. Nothing in the layout is derived from its shape. `SITE.brand`
-holds the filenames, so swapping the logo is one edit.
+- **Every page opens full-screen** with its photograph, the bar transparent
+  over it until the page scrolls. ROMA, Cavallo and Nero open on a colour
+  panel beside the photograph instead, with a solid bar.
+- **Home** — the statement and the Group's four figures (counted from the
+  content), the sectors as a large accordion (one open panel, the rest upright
+  strips), the businesses with TIBECO as the lead card, "What makes it a
+  group", the sourcing **globe**, and how the Group works.
+- **The globe** — land points sampled from Natural Earth at build time
+  (`build/worldmap.js` → `/assets/img/globe.json`), drawn and turned in a
+  canvas, with a gold arc from every source country to Doha. Pointing at a
+  region in the list beside it lights its arcs; drag turns it. It only draws
+  while on screen and holds still under reduced motion.
+- **Company pages** are landing pages of their own. Each company in
+  `data/site.js` carries `look` (`full`, `split` or `dark`), an `accent`
+  colour, `figures`, and optionally `pillars`, `steps`, `quote`, `presence`,
+  `credentials` and `offerStyle: 'showcase'` (TIBECO's list-and-photograph
+  showcase). The structure is shared; the colour and opening are the
+  company's own.
+- **Work With Us** — who the Group wants to hear from, how it works (a
+  timeline), and what it is looking to do next (a grid ending in the ask).
 
 ### Interactive parts
 
-- **The bar** — the mark, four links and one action. *Sectors* is two
-  controls, because it is two things: the word is a link to the sectors page,
-  and the caret beside it opens the panel listing them. The panel also opens
-  on hover with a pointer, and closes on Escape or a click outside. Below
-  1080px the bar collapses to a full-screen menu, which is generated from the
-  same list, so neither can reach a page the other cannot. Over the home
-  photograph the bar starts transparent and fills as the page moves.
-- **The figures** — written into the HTML, so they are right before the script
-  runs and right if it never does; they count up once when scrolled into view.
-- **What makes it a group** — four claims as a bento. The photograph states
-  the first outright; the other three name themselves and open their reasoning
-  on hover, on focus or on a tap.
-- **The sector cards and the company panels** — at rest each is a photograph
-  and a name. What the sector is, who is in it, and what a company does open
-  over the picture when you point at one, focus it, or tap it; where there is
-  no hover at all they are simply open, at any width. A row of four reads as
-  four pictures rather than four paragraphs. The four panels keep one width
-  throughout: widening the one under the pointer shoved the other three
-  sideways and measured 0.14 of layout shift, and it left a dead gap between
-  panels where the row was hovered but no panel was, so all four shut. Below
-  860px they stack, open, at the height of what they hold.
-- **Where we source from** — a dotted world map generated at build time from
-  Natural Earth data (no map library ships to the browser), with a label for
-  each region, laid out at build time so they clear one another. Nothing on it
-  opens: the labels say where, and the register underneath says what. Each pin
-  used to open a card of countries on hover — word for word the list the
-  register already prints, a screen below — which cost overlapping targets, a
-  card that ran off the side of a phone and one a pointer could not travel
-  into. Below 760px the map is about 100px tall, so the labels are not drawn
-  there at all and the register stands alone.
-- **The sectors index** — each sector holds one screen and carries its own
-  ground, so the page changes under you as you read down it. None of the four
-  grounds is darker than `--panel`, which is the palest ground the body grey
-  was ever measured against; anything deeper drops it under 4.5 to 1. A
-  numbered list of the four stands beside the reading and stays there as the
-  page moves, marking whichever sector is on screen. The entries are quiet
-  until the reading reaches them; the one you are in goes to full carbon and
-  puts a marker in the margin, which sits outside the text so nothing shifts
-  when it appears. It is a list rather than a boxed table of contents — cells,
-  dividers and a filled row drew attention to the index instead of to what it
-  points at. Each entry jumps to its sector; each sector hands on to its own
-  page and to the businesses inside it, which are names side by side rather
-  than photographs. Below 900px the index lies on its side as a strip under
-  the bar, which carries its own ground, and scrolls the marked sector into
-  view. Without script it is a plain list of jump links, which still works.
-- **Arrival** — each band lifts in once. Hiding is scoped to a `.js` class the
-  script adds, so nothing is ever invisible if the script does not run, and a
-  band already scrolled past is simply there.
-
-**Nothing scrolls sideways any more.** The products, the companies in a
-sector and the other companies were all horizontal rails. A rail keeps most
-of its list behind the right edge, cuts the last card in half, and the
-product rail hid its own Prev/Next buttons below 700px — on the screen where
-swiping was the only way left. All three are grids that wrap, so every card
-is on the page and the row count follows the width.
-
-The companies inside a sector are names side by side rather than a
-photograph, a name and a sentence stacked down the column, which repeated
-what the sector paragraph above had just said. A logo goes in each tile when
-there are logos to put in them.
-
-**Everything that can be pointed at says so.** Twenty-two components are
-driven with a real pointer in the test suite and each has to change something
-visible; it caught two that did not. The product cards had no hover at all,
-and the sectors index had one that never fired, because `:hover` and
-`[aria-current]` weigh the same and the mark was written second.
-
-The hover vocabulary is small on purpose: a card lifts 3px and darkens its
-outline, a photograph inside a frame grows 5%, a link's arrow slides out.
-Nothing bounces. Under `prefers-reduced-motion` none of it moves, and every
-reveal answers `:focus` as well, so none of it is pointer-only.
+- **The bar** — *Sectors* is a link and a caret: the caret opens a compact
+  panel of sectors and their companies (also on hover; Escape or a click
+  outside closes it). Below 1080px the bar becomes a full-screen menu with
+  Sectors and Companies folded into groups that open on a tap.
+- **The sector accordion** opens the strip pointed at, tabbed to or tapped,
+  and keeps the last one open. On a phone it is replaced by photograph tiles.
+- **The TIBECO showcase** brings forward the photograph of the area pointed
+  at, focused or tapped.
+- **The figures** are written into the HTML and count up once in view.
+- **Arrival** — each band lifts in once as it scrolls into view. Hiding is
+  scoped to a `.js` class the script adds, so nothing is ever invisible if the
+  script does not run.
 
 Under `prefers-reduced-motion` nothing animates.
+
+**The stylesheet has one rule about order:** the phone block at the end of
+`site.css` must stay last. Rules added later for wide screens once overrode the
+phone layout and the footer columns ran into each other. Anything appended
+after it needs its own media query.
 
 ## Language
 
@@ -330,10 +268,9 @@ phone number in structured data is worse than none. Cavallo and Nero are plain
 street address and opening hours, and claiming to be a local business without
 them earns nothing.
 
-The dotted world map is written once to `/assets/img/worldmap.svg` rather than
-inlined. It is 65 KB of path data — inline it and it was 70% of the home page's
-HTML, re-downloaded every visit. As a file it is cached, and the pins over it
-are ordinary buttons either way. The home page is 27 KB.
+The globe's land is written once to `/assets/img/globe.json` (about 43 KB)
+rather than inlined, so it is cached and fetched only when the globe scrolls
+into view; the page carries just the list of places.
 
 `404.html` carries `noindex` and no canonical, so a soft 404 cannot be indexed.
 
@@ -342,21 +279,15 @@ are ordinary buttons either way. The home page is 27 KB.
 Measured rather than assumed. Every text colour clears WCAG AA against every
 ground it actually sits on — the palest each grey can be and still pass:
 
-| | drawn | shipped | ratio |
-|---|---|---|---|
-| `--ink-2` body copy | `#868585` | `#6c6b6b` | 4.55 on panel, 5.31 on white |
-| `--ink-3` the greyed word in a heading | `#c0bfbd` | `#868583` | 3.16 on panel, 3.69 on white |
-| `--num` the oversized numerals | `#c2bebe` | `#888484` | 3.17 on panel, 3.70 on white |
-| `--label` stat labels | `#939393` | `#6b6b6b` | 5.33 |
+| | colour | where it is used |
+|---|---|---|
+| `--ink` | `#0B1A3A` | headings and body on paper |
+| `--ink-2` | `#474d63` | secondary copy on paper and white |
+| `--ink-3` | `#7a7f90` | the greyed heading word, 24px and up only |
+| `--gold-text` | `#7d5a1d` | gold that has to be read on a light ground (5.8:1) |
 
-The design drew all four paler; as drawn, body copy failed AA everywhere it
-appeared (3.15 to 1 on a panel) and the greyed word sat at 1.69 to 1.
-
-`--ink-3` and `--num` are a shade darker than the bare minimum. At the
-minimum they measured exactly 3.00 against the panel ground — the threshold
-itself, with nothing left for the next change to spend. They are re-measured
-whenever a type size moves, because the AA threshold follows the size: text
-under 24px needs 4.5 where text at or above it needs 3.
+The brand gold `#D3A750` reads at about 2:1 on white, so it is never small
+text on paper: it marks (rules, dashes, markers) and it is text only on navy.
 
 **The hero text is checked against the photographs, not against a token.**
 White on a picture is only as readable as the brightest thing behind it, and
@@ -368,7 +299,7 @@ scrims are set from that: the worst of the thirteen now measures 4.7, and
 most sit above 6.
 
 Anything that reveals content on focus answers plain `:focus`, not only
-`:focus-visible` — the company panels, the map pins and the bento claims.
+`:focus-visible` — the sector accordion and the TIBECO showcase.
 `:focus-visible` is right for drawing a focus ring, because it keeps the ring
 off mouse clicks, but content that only appears for "keyboard-like" focus is
 content some people never see. Every interactive target is at least 24px.
@@ -385,20 +316,12 @@ just sent focus to.
 
 ## On a phone
 
-Measured at 390 x 844 in a real viewport over CDP, not in the tall iframe the
-layout probes use — anything built on 100vh or on a sticky offset reports
-nonsense in there. Every page is checked for sideways overflow, anything wider
-than the screen, targets under 44px and type under 13px.
-
-24px is the floor WCAG sets for a target and the site already met it
-everywhere; 44px is the size a thumb actually wants, and the bar, the brand
-marks, the footer links, the product origins and the sector headings all fell
-between the two. The sector headings were 22px, which is under even the floor.
-
-The footer was 695px on a phone — most of a screen of furniture under every
-page, on top of the closing band above it. The two link columns sit side by
-side now, the sentence under the mark goes (the page above has just said as
-much), and it comes to about half that.
+Checked at 390 x 844 in a real mobile viewport over CDP: no page scrolls
+sideways, and targets are at least 44px where a thumb uses them. On a phone
+the menu folds Sectors and Companies into groups, the sector accordion becomes
+photograph tiles, the figures and company facts are two-by-two, buttons run
+the full width, and the footer is just the mark, the line about the Group and
+how to reach it (sectors and companies are in the menu).
 
 ## Contact form
 
@@ -416,13 +339,9 @@ The function needs `RESEND_API_KEY` set in the Vercel project. `CONTACT_TO`
 and `CONTACT_FROM` are optional overrides.
 
 If the key is missing, or the request fails for any reason, the form does
-**not** claim success — it says the send failed and leaves everything typed
-where it is, so Send can simply be pressed again. The address is printed on
-the same page under Channels for anyone who would rather not wait.
-
-It used to hand off to the visitor's mail client instead, which assumed one
-was configured. On a machine with none, nothing happened while the page said
-something was opening.
+**not** claim success — it says the send failed, leaves everything typed
+where it is so Send can be pressed again, and offers a link that opens the
+same message, prefilled, in the visitor's own mail program.
 
 ## Deploying
 
@@ -436,5 +355,7 @@ revalidating the stylesheet, the script and every photograph — eighteen
 conditional requests on `/sectors/` alone. Fonts are immutable for a year, as
 their names pin the family and the cut. Photographs and logos get a month with
 a week of `stale-while-revalidate`; the stylesheet and script an hour with a
-day. The asset names carry no content hash, so the two shorter windows are the
-price of being able to replace a file under its own name.
+day. The stylesheet and script are requested as `site.css?v=<hash>` and
+`site.js?v=<hash>`, a fingerprint of their contents, so a deploy never pairs
+new pages with an old stylesheet. A replaced photograph keeps its name, so it
+can take up to a month to reach a returning visitor.

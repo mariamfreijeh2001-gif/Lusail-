@@ -1,13 +1,11 @@
-/* A world map, drawn at build time.
+/* The globe on the home page, prepared at build time.
  *
  * site-assets/geo/land-110m.json is Natural Earth's 110m land layer in
- * TopoJSON form — public domain. TopoJSON is small because it stores shared
- * boundaries once, as delta-encoded integer arcs, so it has to be decoded
- * before anything can be drawn. That is all this file does: decode the arcs,
- * project them, and hand back SVG path data.
+ * TopoJSON form — public domain. TopoJSON stores shared boundaries once, as
+ * delta-encoded integer arcs, so it is decoded here, then sampled into land
+ * points on the sphere that the browser only has to rotate and draw.
  *
- * No dependency on d3 or the topojson client: the decoding is a dozen lines
- * and the projection is arithmetic.
+ * No dependency on d3 or the topojson client: the decoding is a dozen lines.
  */
 const fs = require('fs');
 const path = require('path');
@@ -50,146 +48,6 @@ function polygons(topology, objectName) {
   };
   add(obj);
   return out;
-}
-
-/* ---- projection --------------------------------------------------------- */
-
-/* Equirectangular. A Mercator would inflate Canada and Russia until they
-   dominate a map whose subject is trade routes near the equator, so the flat
-   one is the honest choice here. */
-function makeProjection({ width, height, latTop = 78, latBottom = -56, lonLeft = -180, lonRight = 180 }) {
-  const lonSpan = lonRight - lonLeft;
-  const latSpan = latTop - latBottom;
-  return ([lon, lat]) => [
-    ((lon - lonLeft) / lonSpan) * width,
-    ((latTop - lat) / latSpan) * height
-  ];
-}
-
-/* ---- output ------------------------------------------------------------- */
-
-function landPath(opts) {
-  const file = opts.file || path.join(__dirname, '..', 'site-assets/geo/land-110m.json');
-  const topo = JSON.parse(fs.readFileSync(file, 'utf8'));
-  const name = Object.keys(topo.objects)[0];
-  const project = makeProjection(opts);
-  // whole pixels: the map renders at a third of this width, so a decimal
-  // place is invisible and costs a fifth of the file
-  const round = n => Math.round(n);
-
-  const minArea = opts.minArea == null ? 6 : opts.minArea;
-  const parts = [];
-
-  for (const poly of polygons(topo, name)) {
-    for (const r of poly) {
-      if (r.length < 4) continue;                       // a sliver, not a landmass
-
-      // Antarctica and the far south sit outside the frame entirely; drop the
-      // ring rather than clipping it point by point, which leaves a smear
-      // along the bottom edge.
-      let top = -90, bottom = 90;
-      for (const p of r) { if (p[1] > top) top = p[1]; if (p[1] < bottom) bottom = p[1]; }
-      if (top < opts.latBottom) continue;
-
-      // Greenland, Svalbard and the Canadian and Russian Arctic islands sit in
-      // a row across the top and merge into what looks like a printing fault.
-      // A map about trade routes does not need them; the mainlands stay,
-      // because their rings reach far below this line.
-      if (opts.dropAbove != null && bottom > opts.dropAbove) continue;
-
-      const pts = r.map(project);
-      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      for (const [x, y] of pts) {
-        if (x < minX) minX = x; if (x > maxX) maxX = x;
-        if (y < minY) minY = y; if (y > maxY) maxY = y;
-      }
-      // islands below a few pixels across read as dirt at this size
-      if ((maxX - minX) * (maxY - minY) < minArea) continue;
-
-      // A ring running the full width of the frame but only a few pixels tall
-      // is a sliver left where a polygon wraps the dateline. It draws as a
-      // hairline straight across the map; no landmass has that shape.
-      if ((maxX - minX) > opts.width * 0.9 && (maxY - minY) < 8) continue;
-
-      /* Points outside the frame break the path rather than being clamped to
-         the edge. Clamping walks every stray point along the boundary, which
-         draws a solid bar across the top of the map. */
-      /* A filled map (opts.fill) keeps every ring whole instead: the SVG's own
-         frame clips what runs past the edge, which is what a cropped map needs.
-         Breaking a ring there would drop Afro-Eurasia, whose coast runs north
-         of any crop, and leave the Americas as an open, skewed shape. */
-      let d = '', prev = null, drawn = 0, broken = false;
-      for (const [px, py] of pts) {
-        if (!opts.fill && (py < -4 || py > opts.height + 4)) { prev = null; broken = true; continue; }
-        const x = round(px), y = round(py);
-        if (prev && x === prev[0] && y === prev[1]) continue;   // duplicate after rounding
-        d += (prev === null ? 'M' : 'L') + x + ' ' + y;
-        prev = [x, y];
-        drawn++;
-      }
-      /* A ring that was cut and still spans most of the frame is one that wraps
-         the dateline; what survives is a hairline right across the map. */
-      if (broken && (maxX - minX) > opts.width * 0.55) continue;
-      if (drawn > 3) parts.push(d + (broken ? '' : 'Z'));
-    }
-  }
-  return parts.join('');
-}
-
-/* ---- dotted map --------------------------------------------------------- */
-
-/* The design draws the world as a grid of dots rather than filled coastline.
-   Exporting that from the design file gives a 900KB SVG; generating it from
-   the land we already decode gives the same picture in a few KB.
-
-   The test is a scanline: project every ring once, then for each row of the
-   grid find where the edges cross it. Sorted crossings pair up into spans of
-   land (even-odd, so lakes punch out), and a dot lands on every grid column
-   inside a span. */
-function dotGrid(opts) {
-  const file = opts.file || path.join(__dirname, '..', 'site-assets/geo/land-110m.json');
-  const topo = JSON.parse(fs.readFileSync(file, 'utf8'));
-  const project = makeProjection(opts);
-  const pitch = opts.pitch || 5;
-  const r = opts.dot == null ? 1.15 : opts.dot;
-
-  const rings = [];
-  for (const poly of polygons(topo, Object.keys(topo.objects)[0])) {
-    for (const ring of poly) {
-      if (ring.length < 4) continue;
-      // drop the far south: the frame stops short of Antarctica
-      let top = -90;
-      for (const p of ring) if (p[1] > top) top = p[1];
-      if (top < opts.latBottom) continue;
-      rings.push(ring.map(project));
-    }
-  }
-
-  const parts = [];
-  for (let cy = pitch / 2; cy < opts.height; cy += pitch) {
-    const xs = [];
-    for (const ring of rings) {
-      for (let i = 0, n = ring.length; i < n; i++) {
-        const a = ring[i], b = ring[(i + 1) % n];
-        if ((a[1] <= cy) === (b[1] <= cy)) continue;      // edge does not cross
-        xs.push(a[0] + (cy - a[1]) / (b[1] - a[1]) * (b[0] - a[0]));
-      }
-    }
-    if (!xs.length) continue;
-    xs.sort((p, q) => p - q);
-
-    const y = Math.round(cy * 10) / 10;
-    for (let i = 0; i + 1 < xs.length; i += 2) {
-      const from = Math.ceil((xs[i] - pitch / 2) / pitch) * pitch + pitch / 2;
-      for (let x = from; x <= xs[i + 1]; x += pitch) {
-        if (x < 0 || x > opts.width) continue;
-        parts.push('M' + (Math.round(x * 10) / 10) + ' ' + y + 'h.01');
-      }
-    }
-  }
-  /* Every dot is a zero-length segment on one path with a round line cap, so
-     the whole map is a single element and each dot costs about ten bytes. */
-  return { d: parts.join(''), r, count: parts.length };
 }
 
 /* ---- dots for a globe ------------------------------------------------- */
@@ -238,4 +96,4 @@ function globeDots(opts = {}) {
   return out;                                    // flat: lon, lat, lon, lat, …
 }
 
-module.exports = { landPath, makeProjection, dotGrid, globeDots };
+module.exports = { globeDots };

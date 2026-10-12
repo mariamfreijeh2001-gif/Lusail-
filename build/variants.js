@@ -31,11 +31,9 @@ const QUALITY = 0.82;
 const WIDTHS = {
   hero: [2560, 1920, 1400, 980, 760],   // full-bleed, behind a page title: 2x a 1440 laptop
   still: [1220, 1010, 760], // the shot beside a company's opening (605px, 504px)
-  card: [880, 700, 560, 440],   // the home page's sector cards
   panel: [1060, 800, 620, 440], // a company panel in the row of four
   rail: [232, 168],         // a 116px product thumbnail, 84px on a phone
   plate: [680, 420],        // a company on the sectors index
-  thumb: [186],             // the 93px picture beside a company's name
 };
 
 /* Where the stylesheet pins a box to one shape and fills it with
@@ -45,12 +43,11 @@ const WIDTHS = {
 const ASPECT = {
   rail: 4 / 3,        // .prod img
   plate: 4 / 3,       // .cocard-shot img
-  thumb: 93 / 88,     // .minico img
 };
 
 /* Which role each photograph plays. An image used in two places takes the
-   union of both roles' widths, which is why the heroes also carry `thumb`:
-   the same file is a 1400px page hero and a 93px plate on /sectors/. */
+   union of both roles' widths: a company hero is a full-width page opening,
+   a card on the home grid and a plate in the other-companies row. */
 const ROLES = require('./imageroles.js');
 
 const jobs = [];
