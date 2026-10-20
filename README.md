@@ -13,9 +13,10 @@ npm run import -- "path/to/photo.png" hero-tibeco-group   # bring in any photo, 
 
 ## Structure
 
-Two tiers: a **sector** holds any number of **companies**. The Group runs four
-sectors today, and a company can sit in more than one of them — Lusail
-Commercial appears under both Trading and Supply & Distribution.
+Two tiers: a **sector** holds any number of **companies**. The Group runs seven
+sectors and five companies today, and a company can sit in more than one
+sector — Lusail Commercial appears under both Trading and Supply &
+Distribution, and TIBECO Group under five.
 
 | URL | |
 |---|---|
@@ -24,15 +25,19 @@ Commercial appears under both Trading and Supply & Distribution.
 | `/sectors/<slug>/` | One sector |
 | `/companies/<slug>/` | One company |
 | `/about/` | The Group: what it is and what it believes |
-| `/partnerships/` | Work With Us — who the Group wants to hear from |
+| `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
+| `/suppliers/` | The Supplier Portal: what the Group buys, what is open to quote, registration |
+| `/suppliers/opportunities/<ref>/` | One sourcing event — its requirement, clarifications and quotation form |
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
 There is **no portfolio index and no careers page**. Every company is reached
 from the sectors menu, the sectors index or its own sector's page, which is
-one move from anywhere on the site. Applications and partnership enquiries go
-through the contact form, which routes on the "area of interest" field. The
-old `/companies/`, `/portfolio/` and `/careers/` URLs redirect.
+one move from anywhere on the site. Suppliers register once on the Supplier
+Portal; every other enquiry goes through the contact form, which routes on
+the "area of interest" field. The old `/companies/`, `/portfolio/` and
+`/careers/` URLs redirect, and so do guessed ones like `/vendors/`,
+`/tenders/` and `/procurement/`.
 
 Adding a company to a sector means adding one object to that sector's
 `companies` array. The sectors menu, the sectors index, the sector page, the
@@ -42,7 +47,9 @@ routing behind it) and the sitemap all follow.
 ## Where things live
 
 ```
-data/site.js             ALL content — sectors, companies, values, reach, contact
+data/site.js             ALL content — sectors, companies, values, reach, contact,
+                         what the Group buys (SUPPLY), open events (OPPORTUNITIES),
+                         every form (FORMS)
 build/render.js          templates + generator
 build/variants.js        resizes the photographs; run by hand, results committed
 build/import.js          brings any photo in at web size (npm run import)
@@ -218,7 +225,39 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   showcase). The structure is shared; the colour and opening are the
   company's own.
 - **Work With Us** — who the Group wants to hear from, how it works (a
-  timeline), and what it is looking to do next (a grid ending in the ask).
+  timeline), the two ways in (the Supplier Portal, or the contact form), and
+  what it is looking to do next (a grid ending in the ask).
+- **The Supplier Portal** (`/suppliers/`) — the idea came in as a TIBECO
+  supplier-portal mock-up and is built for the whole Group in the Group's
+  design. It is ordered around the two things a supplier comes to do, quote
+  and register, with "what we do" explained before the form is asked for:
+  the port photograph with "Supply the Group. Register once." and two
+  buttons; a navy strip of what closes next; **open opportunities** (one
+  line per event on a wide screen — reference, type, title, buyer, closing
+  date with a live "in 9 days", status as a gold or grey word, and a Quote
+  button — three lines a card on a phone, with a category filter that is
+  short pills on a wide screen and a select on a phone); **what we buy**
+  (eight categories as dropdown rows for the three buying companies —
+  TIBECO Group, Lusail Commercial and ROMA Commercial; the café and the
+  laundry are not on the portal — closed, each shows its number, name,
+  three sample lines, who buys and "2 open", which filters the list; open,
+  every line and the buyers as links — one open at a time); how it works in
+  four short steps; **the registration form, folded** behind a "Register as
+  a supplier" row with a plus, which the opening's button, a company page's
+  "Supply …" button and any link to `#register` unfold; what to have ready,
+  beside the **terms in brief** (currency, payment, offer validity,
+  registration validity, and the line that every event is an invitation to
+  treat under Qatar law); then one linked line for the Code of Conduct, the
+  fraud warning and supplier support as three ruled columns.
+  The **Supplier Code of Conduct** has its own page at `/suppliers/code/`,
+  ten points. Each event has its own page: the requirement as a table, the
+  clarifications published so far, what else is open, and a quotation form
+  carrying the reference. A closed event keeps its page and says it has
+  closed; an invite-only one takes an invitation request instead of a
+  quotation. What a static site cannot do — a login, a sealed bid, a
+  dashboard — is left out rather than imitated, and the page promises
+  nothing the mail relay cannot keep: no receipts, no verification, no
+  expiry tracking, no "nobody else sees it".
 
 ### Interactive parts
 
@@ -333,7 +372,8 @@ can be routed to the right company; the function turns that code into the
 company's name and puts it in the subject line.
 
 Each company page's button links to `/contact/?company=<slug>`, which opens the
-form with that company already selected.
+form with that company already selected; its second button, "Supply
+<company>", opens the Supplier Portal with that company's categories ticked.
 
 The function needs `RESEND_API_KEY` set in the Vercel project. `CONTACT_TO`
 and `CONTACT_FROM` are optional overrides.
@@ -341,33 +381,95 @@ and `CONTACT_FROM` are optional overrides.
 If the key is missing, or the request fails for any reason, the form does
 **not** claim success — it says the send failed, leaves everything typed
 where it is so Send can be pressed again, and offers a link that opens the
-same message, prefilled, in the visitor's own mail program.
+same message, prefilled, in the visitor's own mail program. When the function
+refuses a message for a reason the visitor can fix (a bad address, too many
+links, a failed human check) the form repeats that reason instead.
 
-### The partnership application and the corner form
+### Spam
 
-Two more forms post to the same function. **Work With Us** carries the
-partnership application (`#apply`): company, website, country, partner type,
-the sectors — one, several or all — and the person to reply to. **Every page
-but Contact** has a "Get in touch" button in the corner that opens a short
-form (name, email, phone, what it is about, a line of message).
+Five checks in the function, in this order, and one more once two keys are
+set:
 
-All three forms — Contact (`enquiry`), the application (`partnership`) and the
-corner form (`callback`) — are defined once, in `FORMS` in
-[data/site.js](data/site.js), and share one design: underlined fields, numbered
-steps (`{ step: '…' }`), and a thank-you panel once sent. The page
-draws its fields from there and `api/contact.js` checks what arrives against
-the same definition, so:
+1. **Honeypot** — a field no person sees; anything in it is a bot, answered
+   with a silent 200 so it learns nothing.
+2. **Origin** — the browser's `Origin` header must be the site (or a Vercel
+   preview, or localhost). A script posting straight at the function
+   usually sends none. Silent 200.
+3. **Timing** — the page sends how long it had been open; under 2.5 seconds
+   is not a person. Silent 200.
+4. **Rate** — five messages in ten minutes from one address, per instance.
+5. **Links** — more than two links in any long field is refused with a
+   reason.
+6. **Cloudflare Turnstile** — a human check that shows nothing to most
+   visitors. `TURNSTILE_SITE_KEY` at build puts the widget into every form;
+   `TURNSTILE_SECRET_KEY` in the function verifies the token. Without the
+   keys neither side does anything, so the site works before they exist.
+   See [TODO.md](TODO.md) for the two-step setup.
+
+### The supplier registration, the quotation form and the corner form
+
+Three more forms post to the same function. The **Supplier Portal** carries
+the registration (`#register`), cut to what procurement screens on: the
+company, its country and registration number, its type, the person who may
+quote, the categories it can supply (one, several or all), its main
+products with origins and capacity, certificates held, any interest a Lusail
+Corp employee holds in it, and one declaration. Each **event page** carries
+a quotation form with the event's reference already in it, shaped like a
+real offer: currency, unit price, delivery basis (Incoterm), quantity,
+origin, delivery point, payment terms offered, validity, deviations, one
+declaration. It is the cover sheet; the signed offer and certificates follow
+by email quoting the reference. **Every page but Contact** has a "Get in
+touch" button in the corner that opens a short form.
+
+All four forms — Contact (`enquiry`), the registration (`supplier`), the
+quotation (`quote`) and the corner form (`callback`) — are defined once, in
+`FORMS` in [data/site.js](data/site.js), and share one design: underlined
+fields, numbered steps (`{ step: '…' }`), and a thank-you panel once sent.
+The page draws its fields from there and `api/contact.js` checks what arrives
+against the same definition, so:
 
 - **a new field** is one line in `FORMS` — it appears on the page, is
   validated and is printed in the email;
-- **a new sector** or **partner type** appears in the forms on its own;
+- **a new supply category** or **company type** appears in the forms on its
+  own (`SUPPLY` and `FORM_LISTS`);
 - **a new form** is a new entry in `FORMS` plus `formBlock('<name>', '<prefix>')`
   wherever it should appear.
 
-A link can preselect: `/partnerships/?sector=trading#apply` ticks that sector
-(every sector page links there), and `/contact/?company=<slug>` picks the desk.
-The email subject says which form it came from — "Partnership application —
-<company>", "Callback request — <name>".
+Field types beyond the usual: `checks` (a group of boxes with a tick-all),
+`agree` (one box that must be ticked, named by `short` in the email) and
+`hidden` (filled by the page at build time, such as the event reference).
+The field called `message` is the body of the email; every other field,
+long or short, is a row, so a registration's product list is never lost.
+
+A link can preselect: `/suppliers/?company=<slug>#register` ticks the
+categories that company buys in (every company page's "Supply …" button
+links there), and `/contact/?company=<slug>` picks the desk. A page can also
+hand a form a first draft (`data-prefill`), which is how an invite-only
+event's "Request an invitation" arrives addressed to the right desk with the
+reference in the message. The email subject says which form it came from —
+"Supplier registration — <company>", "Quotation — <reference> — <company>",
+"Callback request — <name>".
+
+Documents are **not** uploaded. The portal lists what to have ready and
+procurement asks for them by email at qualification: the form posts JSON and
+the mail relay carries no attachments, and a 4.5 MB function limit would have
+made uploads fail for exactly the certificates that matter.
+
+### Sourcing events
+
+`OPPORTUNITIES` in [data/site.js](data/site.js) holds every event: a
+reference (`XX-XXX-YY-NNN`), the issuing company, its category, the type
+(RFQ, Tender or RFI), a title and brief, the closing time in Doha time, the
+requirement as rows, and optionally clarifications and a question deadline.
+The build checks every reference, company and category and fails on a bad
+one. It drops closed events from the list and the sitemap but still writes
+their pages, marked `noindex`, so a link in an email lands somewhere that
+explains itself. The script keeps the list honest between builds: it writes
+"in 9 days", switches a badge to "Closing soon" inside 72 hours, retires a
+row at the hour, and on a closed event's page replaces the form with a note.
+Publishing an event is adding an entry and deploying. The five in the file
+today are illustrative — carried over from the mock-up — and must be replaced
+before launch (see [TODO.md](TODO.md)).
 
 ## Deploying
 

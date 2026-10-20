@@ -27,7 +27,7 @@ const LIMITS = {
    the two cannot drift apart. The list includes every company, which is how an
    enquiry reaches the right desk rather than a general inbox. Anything not on
    the list is treated as unspecified rather than trusted into a header. */
-const { SITE, ALL_COMPANIES, SECTORS, PARTNER_TYPES, FORMS } = require('../data/site.js');
+const { SITE, ALL_COMPANIES, SECTORS, PARTNER_TYPES, FORMS, FORM_LISTS, SUPPLY } = require('../data/site.js');
 
 const AREAS = Object.assign(
   { general: 'General Enquiry' },
@@ -53,9 +53,64 @@ const isEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
 
 /* Best-effort speed bump. Serverless instances are recycled and requests are
    spread across them, so this catches a crude flood from one address and
-   nothing more. Real abuse protection would need a shared store. */
+   nothing more. The checks that carry the weight are below: the honeypot,
+   the origin, the time the page had been open, the link count, and — once
+   the keys are set — Cloudflare Turnstile. */
 const seen = new Map();
 const RATE = { max: 5, windowMs: 10 * 60 * 1000 };
+
+/* Where a submission may come from: the site itself, and Vercel's preview
+   deployments. A browser always sends Origin with a cross-site or same-site
+   POST from fetch; a script posting straight at the function usually does
+   not, or sends someone else's. Local builds are served from localhost. */
+const SITE_HOST = new URL(SITE.domain).hostname.replace(/^www\./, '');
+function originOk(req) {
+  const o = req.headers.origin || '';
+  if (!o) return false;
+  let h;
+  try { h = new URL(o).hostname; } catch (e) { return false; }
+  return h === SITE_HOST || h.endsWith('.' + SITE_HOST) || h.endsWith('.vercel.app') || h === 'localhost' || h === '127.0.0.1';
+}
+
+/* A real person takes longer than this to fill in a form. The page sends how
+   long it had been open; a bot posting straight at the function sends
+   nothing, and one driving the page sends something tiny. */
+const MIN_FILL_MS = 2500;
+
+/* Cloudflare Turnstile. Verified only when the secret is set; the pages carry
+   the widget only when the site key was set at build time, so the two go
+   together. A missing or failed token is refused with a message the visitor
+   can act on. */
+const TURNSTILE_SECRET = (process.env.TURNSTILE_SECRET_KEY || '').trim();
+async function humanOk(body, ip) {
+  if (!TURNSTILE_SECRET) return { ok: true };
+  const token = typeof body['cf-turnstile-response'] === 'string' ? body['cf-turnstile-response'].slice(0, 2048) : '';
+  if (!token) return { ok: false, why: 'The human check did not load. Reload the page and try again.' };
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret: TURNSTILE_SECRET, response: token, remoteip: ip }).toString()
+    });
+    const j = await r.json().catch(() => ({}));
+    if (j.success) return { ok: true };
+    console.error('contact: turnstile refused ' + JSON.stringify(j['error-codes'] || []));
+    return { ok: false, why: 'The human check failed. Reload the page and try again.' };
+  } catch (err) {
+    console.error('contact: turnstile ' + (err && err.message));
+    return { ok: false, why: 'The human check could not be reached. Try again in a moment.' };
+  }
+}
+
+/* Spam reads like spam: a message that is mostly links, or that carries more
+   than a couple of them, is refused with a reason. Two is generous for a
+   genuine enquiry (a website and a product page). */
+const linkCount = s => (String(s).match(/https?:\/\/|www\./gi) || []).length;
+function looksLikeSpam(body) {
+  const texts = ['message', 'products', 'clients'].map(k => body[k]).filter(v => typeof v === 'string');
+  if (texts.some(t => linkCount(t) > 2)) return 'Please keep links out of the message — two at most — and send it again.';
+  return '';
+}
 
 function tooMany(ip) {
   const now = Date.now();
@@ -80,6 +135,11 @@ function qatarTime(d) {
 const OPTION_LABELS = {
   partnerTypes: Object.fromEntries(PARTNER_TYPES.map(p => [p.v, p.t])),
   sectors: Object.fromEntries(SECTORS.map(x => [x.slug, x.name])),
+  supplyCategories: Object.fromEntries(SUPPLY.map(x => [x.slug, x.name])),
+  companyTypes: Object.fromEntries(FORM_LISTS.companyTypes),
+  currencies: Object.fromEntries(FORM_LISTS.currencies),
+  incoterms: Object.fromEntries(FORM_LISTS.incoterms),
+  validity: Object.fromEntries(FORM_LISTS.validity),
   areas: AREAS,
   interests: Object.assign({ general: 'A general enquiry', partnership: 'Working with the Group' },
     Object.fromEntries(SECTORS.map(x => [x.slug, x.name])))
@@ -96,11 +156,15 @@ async function sendDefined(spec, body, res) {
       const allowed = OPTION_LABELS[fd.options] || {};
       const picked = (Array.isArray(raw) ? raw : raw ? [raw] : []).filter(x => allowed[x]);
       if (fd.required && !picked.length) return res.status(400).json({ error: 'Missing: ' + fd.name });
-      v = picked.length === Object.keys(allowed).length ? 'All sectors' : picked.map(x => allowed[x]).join(', ');
+      v = picked.length === Object.keys(allowed).length ? (fd.all || 'All sectors') : picked.map(x => allowed[x]).join(', ');
     } else if (fd.type === 'select') {
       const allowed = OPTION_LABELS[fd.options] || {};
       const x = clean(raw, 80);
       v = allowed[x] || '';
+    } else if (fd.type === 'agree') {
+      /* a single box; the browser sends 'yes' (or 'on') only when ticked */
+      const x = Array.isArray(raw) ? raw[0] : raw;
+      v = x === 'yes' || x === 'on' || x === true ? 'Yes' : '';
     } else if (fd.type === 'textarea') {
       v = typeof raw === 'string' ? raw.trim().slice(0, fd.max || 5000) : '';
     } else {
@@ -112,8 +176,11 @@ async function sendDefined(spec, body, res) {
     if (fd.name === 'name') name = v;
     if (fd.name === 'company') company = v;
     if (fd.name === spec.subjectFrom) subjectExtra = v;
-    if (fd.type === 'textarea') { message = v; continue; }
-    rows.push([fd.label, v || '—']);
+    /* the field called `message` is the body of the email; any other long
+       text is a row, so a registration's product list is not lost */
+    if (fd.name === 'message') { message = v; continue; }
+    if (fd.type === 'hidden' && !v) continue;
+    rows.push([fd.short || fd.label, v || '—']);
   }
   if (!email) return res.status(400).json({ error: 'Missing: email' });
   rows.push(['Received', qatarTime(new Date())]);
@@ -179,14 +246,23 @@ module.exports = async function handler(req, res) {
   }
 
   /* Honeypot. A real person never sees this field, so anything in it is a bot.
-     Answer 200 so the bot learns nothing from the response. */
+     Answer 200 so the bot learns nothing from the response. The same silent
+     200 goes to a post from nowhere (no Origin, or another site's) and to a
+     form "filled in" faster than a person could read it. */
   if (clean(body.website, 200)) return res.status(200).json({ ok: true });
+  if (!originOk(req)) { console.error('contact: origin refused ' + (req.headers.origin || '(none)')); return res.status(200).json({ ok: true }); }
+  if (typeof body.t !== 'number' || !(body.t >= MIN_FILL_MS)) { console.error('contact: too fast ' + body.t); return res.status(200).json({ ok: true }); }
 
   const ip = headerSafe(
     (req.headers['x-forwarded-for'] || '').split(',')[0] || 'unknown');
   if (tooMany(ip)) {
     return res.status(429).json({ error: 'Too many messages. Try again shortly.' });
   }
+
+  const spam = looksLikeSpam(body);
+  if (spam) return res.status(400).json({ error: spam });
+  const human = await humanOk(body, ip);
+  if (!human.ok) return res.status(400).json({ error: human.why });
 
   /* A form defined in data/site.js FORMS: checked field by field against
      that definition, so a field added there is validated and emailed here

@@ -183,6 +183,26 @@
      visitor's own mail program instead. */
   var CONTACT_ENDPOINT = '/api/contact';
 
+  /* Spam, from this side. Every submission says how long the page had been
+     open, which the function uses to drop anything "typed" in under a few
+     seconds, and carries a Cloudflare Turnstile token where the site has a
+     key: the widget is rendered into each form only once its script has
+     arrived, is invisible unless a visitor looks like a bot, and is reset
+     after every attempt because a token is good once. */
+  var LOADED_AT = Date.now();
+  var turnstileReady = function (fn) {
+    if (window.turnstile) return fn();
+    var n = 0, t = setInterval(function () { if (window.turnstile || ++n > 100) { clearInterval(t); if (window.turnstile) fn(); } }, 100);
+  };
+  $$('.turnstile').forEach(function (slot) {
+    turnstileReady(function () {
+      slot.setAttribute('data-widget', turnstile.render(slot, {
+        sitekey: slot.getAttribute('data-sitekey'), size: 'flexible', appearance: 'interaction-only',
+        theme: 'light', 'refresh-expired': 'auto'
+      }));
+    });
+  });
+
   var setupForm = function (form) {
     var status = form.querySelector('.status');
     var say = function (msg, isError) {
@@ -194,15 +214,27 @@
     var areaSel = form.querySelector('select[name="area"]');
 
     /* A link can preselect: /contact/?company=<slug> (or ?area=) picks the
-       desk, /partnerships/?sector=<slug> ticks that sector. */
+       desk; /suppliers/?company=<slug> ticks the categories that company
+       buys in. A page can also hand the form a first draft (data-prefill):
+       the desk an invitation request is for, the reference in its message. */
     try {
       var q = new URLSearchParams(location.search);
       var pre = q.get('company') || q.get('area');
       if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) areaSel.value = pre;
-      q.getAll('sector').forEach(function (v) {
-        var box = form.querySelector('input[type="checkbox"][value="' + v.replace(/[^a-z0-9-]/g, '') + '"]');
-        if (box) box.checked = true;
+      var co = (q.get('company') || '').replace(/[^a-z0-9-]/g, '');
+      if (co) $$('input[type="checkbox"][data-buyers]', form).forEach(function (b) {
+        if ((' ' + b.getAttribute('data-buyers') + ' ').indexOf(' ' + co + ' ') !== -1) b.checked = true;
       });
+      var fill = form.getAttribute('data-prefill');
+      if (fill) {
+        fill = JSON.parse(fill);
+        Object.keys(fill).forEach(function (k) {
+          var el = form.querySelector('[name="' + k + '"]');
+          if (!el) return;
+          if (el.tagName === 'SELECT') { if ([].some.call(el.options, function (o) { return o.value === fill[k]; })) el.value = fill[k]; }
+          else if (!el.value) el.value = fill[k];
+        });
+      }
     } catch (e) {}
 
     /* "All sectors" ticks every sector; unticking any one clears it. */
@@ -230,6 +262,7 @@
     var required = $$('[required]', form).concat($$('fieldset[data-required]', form));
     var isEmpty = function (el) {
       if (el.tagName === 'FIELDSET') return !el.querySelector('input[type="checkbox"][name]:checked');
+      if (el.type === 'checkbox') return !el.checked;   // a declaration that must be ticked
       if (!el.value.trim()) return true;
       return el.type === 'email' && !/^\S+@\S+\.\S+$/.test(el.value);
     };
@@ -240,7 +273,7 @@
       if (slot) slot.textContent = '';
     };
     required.forEach(function (el) {
-      if (el.tagName !== 'FIELDSET') el.addEventListener('input', function () { clearFault(el); });
+      if (el.tagName !== 'FIELDSET') el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', function () { clearFault(el); });
     });
 
     form.addEventListener('submit', function (e) {
@@ -262,25 +295,41 @@
       say('Sending…');
 
       /* Checkbox groups travel as arrays; everything else as one value. */
-      var body = { form: kind };
+      var body = { form: kind, t: Date.now() - LOADED_AT };
       var fd = new FormData(form);
       fd.forEach(function (v, k) {
-        if (form.querySelector('input[type="checkbox"][name="' + k + '"]')) body[k] = fd.getAll(k);
+        var box = form.querySelector('input[type="checkbox"][name="' + k + '"]');
+        if (box && box.closest('fieldset')) body[k] = fd.getAll(k);   // a group travels as a list
         else body[k] = v;
       });
+      var slot = form.querySelector('.turnstile');
+      var afterTry = function () {
+        if (slot && window.turnstile && slot.getAttribute('data-widget') !== null) {
+          try { turnstile.reset(slot.getAttribute('data-widget')); } catch (e) {}
+        }
+      };
 
       fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(body)
       }).then(function (res) {
+        if (res.status === 400) {
+          /* the function says what it will not accept — a bad address, a
+             failed human check, too many links — so repeat that rather
+             than offering the mail program for something it would refuse too */
+          return res.json().then(function (j) {
+            var e = new Error('refused'); e.said = j && j.error; throw e;
+          });
+        }
         if (!res.ok) throw new Error(res.status);
         say(form.getAttribute('data-ok') || 'Message sent.');
         form.reset();
         var done = form.querySelector('.fdone');
         if (done) { form.classList.add('is-sent'); done.hidden = false; done.focus(); }
         $$('[data-all]', form).forEach(function (a) { a.checked = false; });
-      }).catch(function () {
+      }).catch(function (err) {
+        if (err && err.said) { say(err.said + ' Check it and send again.', true); return; }
         /* Nothing typed is lost: the message stays in the form, and the same
            words are offered to the visitor's own mail program, prefilled. */
         var lines = [];
@@ -294,7 +343,12 @@
           var picked = $$('input[name]:checked', g).map(function (b) { return b.nextElementSibling.textContent; });
           if (picked.length) lines.push(g.querySelector('legend').textContent.replace('*', '').trim() + ': ' + picked.join(', '));
         });
-        var subject = { partnership: 'Partnership application', callback: 'Callback request' }[kind] || 'Website enquiry';
+        $$('.agree input:checked', form).forEach(function (b) {
+          lines.push('Confirmed: ' + b.nextElementSibling.textContent.replace('*', '').trim());
+        });
+        var ref = form.querySelector('input[name="reference"]');
+        var subject = ({ supplier: 'Supplier registration', quote: 'Quotation', callback: 'Callback request' }[kind] || 'Website enquiry')
+          + (ref && ref.value ? ' — ' + ref.value : '');
         var href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(lines.join('\n'));
         say('That did not send. Try again, or ', true);
         var a = document.createElement('a');
@@ -303,6 +357,7 @@
         status.appendChild(document.createTextNode('.'));
       }).then(function () {
         btn.disabled = false;
+        afterTry();
       });
     });
   };
@@ -316,6 +371,97 @@
       var first = form.querySelector('input:not([tabindex="-1"]):not([type="checkbox"])'); if (first) first.focus();
     });
   });
+
+  /* ---------- the supplier portal -------------------------------------------
+     The pages are built with each event's closing time written as data. Here
+     that becomes "in 9 days", "closing soon" inside 72 hours, and — because a
+     static page can outlive the event — the row goes once the hour passes
+     and the quotation form on its page gives way to a note. Without script
+     the dates are still printed, and the build already dropped anything
+     closed at the time it ran. */
+  var DAY = 864e5;
+  var leftText = function (ms) {
+    if (ms < 36e5) return 'closes within the hour';
+    if (ms < DAY) return 'in ' + Math.max(1, Math.round(ms / 36e5)) + ' hours';
+    var d = Math.round(ms / DAY);
+    return 'in ' + d + (d === 1 ? ' day' : ' days');
+  };
+  var tickEvents = function () {
+    var now = Date.now(), open = 0;
+    $$('[data-closes]').forEach(function (el) {
+      var left = new Date(el.getAttribute('data-closes')).getTime() - now;
+      var badges = $$('[data-badge]', el), inEl = el.querySelector('[data-in]');
+      var invite = el.getAttribute('data-invite') === '1';
+      var setBadge = function (text, cls) { badges.forEach(function (b) { b.textContent = text; b.className = 'badge ' + cls; }); };
+      if (left <= 0) {
+        if (el.classList.contains('opp') || el.parentNode.id === 'soonList') { el.hidden = true; return; }
+        setBadge('Closed', 'badge-closed');
+        if (inEl) inEl.textContent = '';
+        var ask = $('#quote');
+        if (ask && !ask.querySelector('[data-closed-note]')) {
+          ask.classList.add('is-closed');
+          var note = document.createElement('div');
+          note.className = 'opp-closed';
+          note.setAttribute('data-closed-note', '');
+          note.innerHTML = '<p class="eyebrow">Closed</p><h2>This event has closed.</h2><p>Award and regret notices go to every participant by email. To be invited to the next one, <a href="/suppliers/#register">register as a supplier</a>.</p>';
+          ask.querySelector('.wrap').appendChild(note);
+          var cta = el.querySelector('.opp-clock .btn'); if (cta) cta.remove();
+        }
+        return;
+      }
+      if (el.classList.contains('opp')) open++;
+      if (inEl) inEl.textContent = leftText(left);
+      if (badges.length && !invite) {
+        var soon = left < 72 * 36e5;
+        setBadge(soon ? 'Closing soon' : 'Open', soon ? 'badge-soon' : 'badge-open');
+      }
+    });
+    var none = $('#oppNone');
+    if (none && $('#opps')) none.hidden = open > 0;
+    var soonList = $('#soonList');
+    if (soonList && !soonList.querySelector('li:not([hidden])')) {
+      var li = document.createElement('li'); li.className = 'sp-soon-none';
+      li.textContent = 'Nothing is closing this week. Register, and you are invited the moment something opens in your categories.';
+      soonList.appendChild(li);
+    }
+  };
+  if ($('[data-closes]')) { tickEvents(); setInterval(tickEvents, 60e3); }
+
+  /* The category filter above the list: only shown with script, since it
+     does nothing without it. */
+  var filter = $('#oppFilter');
+  if (filter && $('#opps')) {
+    filter.hidden = false;
+    /* pills on a wide screen, a select on a phone; both drive the same list */
+    var pills = $$('.opp-pill', filter), sel = $('#oppSelect');
+    var pick = function (want) {
+      pills.forEach(function (x) { x.classList.toggle('on', x.getAttribute('data-cat') === want); });
+      if (sel && sel.value !== want) sel.value = want;
+      $$('.opp', $('#opps')).forEach(function (row) {
+        if (new Date(row.getAttribute('data-closes')).getTime() <= Date.now()) return;
+        row.hidden = !!(want && row.getAttribute('data-cat') !== want);
+      });
+    };
+    pills.forEach(function (p) { p.addEventListener('click', function () { pick(p.getAttribute('data-cat')); }); });
+    if (sel) sel.addEventListener('change', function () { pick(sel.value); });
+    /* "2 open" on a category row filters the list and goes to it */
+    $$('a[data-filter]').forEach(function (a) {
+      a.addEventListener('click', function () { pick(a.getAttribute('data-filter')); });
+    });
+  }
+
+  /* The registration form sits folded behind its own row. Any link to
+     #register — the opening's button, a company page's "Supply …", a sector
+     page — unfolds it, and so does arriving with that hash. */
+  var regBox = $('#regBox');
+  if (regBox) {
+    var unfold = function () { regBox.open = true; };
+    if (location.hash === '#register') unfold();
+    addEventListener('hashchange', function () { if (location.hash === '#register') unfold(); });
+    $$('a[href$="#register"]').forEach(function (a) { a.addEventListener('click', unfold); });
+    /* a form that failed to send stays open with the message in it */
+    regBox.addEventListener('submit', unfold, true);
+  }
 
   /* ---------- the corner form ----------------------------------------------
      A button in the corner of every page opens a small panel. Escape, the

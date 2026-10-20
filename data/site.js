@@ -611,16 +611,225 @@ const WHY = [
 
 
 /* --------------------------------------------------------------------------
+   THE SUPPLIER PORTAL — what the Group buys, and what it is buying now.
+
+   One registration covers every company. A supplier picks the categories it
+   can supply and is invited to events in those categories only. `buyers`
+   names the companies that buy in a category, by slug, which is how a link
+   from a company page (/suppliers/?company=<slug>) pre-ticks the right
+   boxes. The build refuses a buyer that is not a company on the site.
+
+   `items` is the plain list of what is actually bought — the sulphur, the
+   sugar, the generator sets — so a producer can tell at a glance whether
+   the Group is a customer for what it makes.
+   -------------------------------------------------------------------------- */
+
+const SUPPLY = [
+  { slug: 'energy-materials', short: 'Energy', icon: 'spark',
+    name: 'Energy & Industrial Materials',
+    buyers: ['tibeco-group', 'lusail-commercial'],
+    items: ['Granular sulphur', 'Refined fuels — EN590 diesel, jet A-1, gasoline', 'Petrochemicals and polymers', 'Lubricants and base oils', 'Bitumen and industrial chemicals'] },
+  { slug: 'commodities-food', short: 'Commodities', icon: 'crate',
+    name: 'Bulk Commodities & Food Security',
+    buyers: ['tibeco-group', 'lusail-commercial'],
+    items: ['Refined white cane sugar (ICUMSA 45) and raw sugar', 'Wheat and milling grains', 'Edible oils — palm olein, sunflower, soybean', 'Rice and pulses in bulk', 'Green coffee'] },
+  { slug: 'fresh-food', short: 'Produce', icon: 'supply',
+    name: 'Fresh Produce & Food Distribution',
+    buyers: ['roma-commercial'],
+    items: ['Fresh vegetables and fruit', 'Chilled and frozen poultry, meat and fish (Halal)', 'Dairy and beverages', 'Packed rice, grains and pulses', 'Shelf-stable dry foods and FMCG', 'Produce packaging'] },
+  { slug: 'technology', short: 'Technology', icon: 'solve',
+    name: 'Technology & Advanced Systems',
+    buyers: ['tibeco-group'],
+    items: ['Servers, storage and networking', 'Software licences and cloud services', 'Cybersecurity and identity', 'AI and data platforms', 'Supplied to institutional clients against their orders'] },
+  { slug: 'equipment', short: 'Equipment', icon: 'target',
+    name: 'Industrial, Institutional & Commercial Equipment',
+    buyers: ['tibeco-group'],
+    items: ['Generator sets and power equipment', 'Construction plant and machinery', 'Facility, site and institutional equipment', 'Medical and laboratory equipment, against client orders', 'Spare parts and consumables'] },
+  { slug: 'projects', short: 'Projects', icon: 'cycle',
+    name: 'Project-Based Commercial Supply',
+    buyers: ['tibeco-group'],
+    items: ['EPC and engineering packages', 'Fit-out and interior works', 'Site services and manpower', 'Project logistics and heavy lift'] },
+  { slug: 'logistics', short: 'Logistics', icon: 'markets',
+    name: 'Freight, Shipping & Logistics',
+    buyers: ['lusail-commercial', 'roma-commercial', 'tibeco-group'],
+    items: ['Vessel chartering and ocean freight', 'Container, bulk and break-bulk shipping', 'Road haulage — flatbed, low-bed, reefer', 'Air freight', 'Customs clearance, warehousing and cold chain', 'Marine survey, cargo inspection and insurance'] },
+  { slug: 'corporate', short: 'Corporate', icon: 'partnership',
+    name: 'Corporate Services & Indirect',
+    buyers: ['tibeco-group', 'lusail-commercial', 'roma-commercial'],
+    items: ['Insurance', 'Vehicles and fleet', 'Security, cleaning and facilities', 'PPE and workwear', 'Printing and marketing', 'Professional services and manpower outsourcing'] }
+];
+
+/* What the Group is buying now. One entry per sourcing event; the portal
+   lists the open ones and writes a page for each, with its requirement and
+   a quotation form that goes to the desk of the company that issued it.
+
+   `closes` is Doha time (UTC+3, no daylight saving). An event drops off the
+   list the moment it closes — at build, and in the browser between builds —
+   and its page then says so instead of taking quotations.
+
+   `type`: RFQ (a priced quotation), Tender (a priced, documented bid) or
+   RFI (information and an indicative price, before a tender).
+   `invite: true` means pre-qualified suppliers only; others may ask to be
+   invited.
+
+   ILLUSTRATIVE. These five were carried over from the portal mock-up to show
+   the page working, and the quantities, ports and dates are examples. Replace
+   them with live events before launch, or empty the list: the portal then
+   says there is nothing open and the registration still works. */
+
+const OPPORTUNITIES = [
+  { ref: 'TG-RFQ-26-041', company: 'tibeco-group', category: 'energy-materials', type: 'RFQ',
+    title: 'Granular sulphur, Grade A',
+    brief: '30,000 MT ±10% · CFR Zhenjiang, China · laycan 15–30 Nov 2026',
+    closes: '2026-11-05 14:00', questionsClose: '2026-10-30',
+    requirement: [
+      ['Product', 'Granular sulphur, Grade A, to specification sheet TG-SPEC-S-01'],
+      ['Origin', 'Middle East Gulf, or as offered. The end-receiver’s import licence and the draft contract are issued to shortlisted bidders.'],
+      ['Purity', '99.5% sulphur minimum, dry basis'],
+      ['Moisture', '0.5% maximum'],
+      ['Form', 'Granules 2–6 mm, bright yellow, low dust and fines'],
+      ['Quantity', '30,000 MT ±10% at seller’s option; up to two vessels'],
+      ['Delivery', 'CFR Zhenjiang, China (Yangtze). Granular only.'],
+      ['Laycan', '15–30 November 2026'],
+      ['Payment', 'Irrevocable letter of credit at sight'],
+      ['Inspection', 'SGS, Intertek or Bureau Veritas at load port, at seller’s cost'],
+      ['Evaluation', 'Lowest compliant CFR price; origin and laycan certainty break ties']
+    ],
+    clarifications: [
+      { on: '9 Oct 2026', q: 'Is crushed lump sulphur acceptable?', a: 'No. Only granular product is accepted, because Yangtze ports restrict bulk crushed lump.' },
+      { on: '11 Oct 2026', q: 'Can the quantity be split across two vessels?', a: 'Yes, up to two vessels within the laycan, at least 15,000 MT each.' }
+    ] },
+  { ref: 'TG-RFQ-26-042', company: 'tibeco-group', category: 'equipment', type: 'RFQ', invite: true,
+    title: 'Mobile lighting towers and site welfare units',
+    brief: '12 lighting towers, 6 welfare cabins · delivered Ras Laffan · pre-qualified suppliers',
+    closes: '2026-11-12 14:00',
+    requirement: [
+      ['Product', 'Twelve diesel mobile lighting towers (4 × LED, 9 m mast) and six site welfare cabins to the client’s specification'],
+      ['Delivery', 'DDP Ras Laffan Industrial City, within 10 weeks of order'],
+      ['Compliance', 'Client HSE standard; Qatar Civil Defence approval for cabins'],
+      ['Service', 'Twelve months’ warranty with a service agent in Qatar'],
+      ['Payment', '30 days from delivery and acceptance'],
+      ['Evaluation', 'Lowest compliant delivered price among pre-qualified suppliers']
+    ] },
+  { ref: 'RC-RFQ-26-031', company: 'roma-commercial', category: 'fresh-food', type: 'RFQ',
+    title: 'Fresh vegetables, weekly programme',
+    brief: 'Tomatoes, cucumbers, peppers, onions · four reefers a week · Hamad Port or Doha airport',
+    closes: '2026-11-09 14:00', questionsClose: '2026-11-04',
+    requirement: [
+      ['Product', 'Class I tomatoes, cucumbers, capsicum and onions to Qatar market specification'],
+      ['Quantity', 'Four 40-ft reefer containers a week for 12 weeks, mixed per order'],
+      ['Origin', 'Türkiye, Jordan, Egypt or India by sea; Spain or the Netherlands by air, CPT Doha'],
+      ['Delivery', 'CFR Hamad Port or CPT Doha airport; weekly arrivals from 1 December 2026'],
+      ['Shelf life', 'At least 70% remaining on arrival'],
+      ['Certification', 'GlobalG.A.P. or equivalent; phytosanitary certificate with every shipment; MoPH import registration and Arabic labelling'],
+      ['Payment', '30 days from arrival inspection'],
+      ['Evaluation', 'Landed price per kg, consistency of grade, and the ability to switch origin mid-season']
+    ] },
+  { ref: 'LC-TND-26-017', company: 'lusail-commercial', category: 'commodities-food', type: 'Tender',
+    title: 'Refined white cane sugar, ICUMSA 45',
+    brief: '25,000 MT · FOB origin or CFR Hamad Port · 50 kg PP bags',
+    closes: '2026-11-19 14:00', questionsClose: '2026-11-12',
+    requirement: [
+      ['Product', 'Refined white cane sugar, ICUMSA 45 maximum, polarisation 99.8° minimum, current crop year'],
+      ['Quality', 'Moisture 0.04% and ash 0.04% maximum'],
+      ['Packing', '50 kg polypropylene bags with inner liner'],
+      ['Quantity', '25,000 MT ±5%'],
+      ['Delivery', 'FOB origin port, or CFR Hamad Port, Qatar; quote both'],
+      ['Shipment', 'December 2026'],
+      ['Payment', 'Irrevocable letter of credit at sight; 2% bid bond with the tender'],
+      ['Inspection', 'SGS or Intertek at load port'],
+      ['Evaluation', 'Lowest compliant price; shipment certainty breaks ties']
+    ] },
+  { ref: 'LC-RFI-26-012', company: 'lusail-commercial', category: 'logistics', type: 'RFI',
+    title: 'Marine logistics, inbound to Hamad Port',
+    brief: 'Annual framework · bagged and bulk commodities from Red Sea, Indian and Black Sea ports',
+    closes: '2026-12-10 14:00',
+    requirement: [
+      ['Scope', 'Regular liftings of bagged and bulk commodities bought FOB from Red Sea, Indian and Black Sea ports, to Hamad Port, Qatar'],
+      ['Volume', 'Indicatively 60,000 MT a year, in parcels of 5,000 to 25,000 MT'],
+      ['Requirement', 'Owned or long-term chartered tonnage, port agency at the load ports, marine cargo and liability insurance'],
+      ['Term', 'Annual framework, renewable'],
+      ['Response', 'Company profile, fleet list, indicative freight per MT and transit time'],
+      ['Next step', 'Shortlisted respondents are invited to a priced tender in January 2027']
+    ] },
+];
+
+/* What a supplier has ready before registering. Listed so nobody starts a
+   registration they cannot finish; the documents themselves are asked for by
+   email at qualification, not uploaded here. */
+const SUPPLIER_DOCS = [
+  'Commercial registration or trade licence, and tax card',
+  'Company profile, and an authorisation letter for the person registering',
+  'Bank account confirmation letter on the bank’s letterhead',
+  'ISO certificates, if held',
+  'ICV certificate, if held — it counts in Qatar-delivered tenders',
+  'Manufacturer’s authorisation, for traders and agents',
+  'MoPH registration and Halal certificates, for food',
+  'Marine cargo and liability insurance, for carriers'
+];
+
+/* The terms every event is run on, in brief. The long form is in each
+   event's documents; this is what a supplier wants before deciding to
+   register. The last line is the one that keeps a losing bidder from
+   claiming the award. */
+const SOURCING_TERMS = [
+  { t: 'Currency and language', d: 'Quote in USD or QAR, in English.' },
+  { t: 'Payment', d: 'As stated in each event. Supply delivered in Qatar is paid 30 days from invoice unless the event says otherwise.' },
+  { t: 'Offers', d: 'Firm for the period you state, 30 days unless the event asks for more.' },
+  { t: 'Registration', d: 'Valid for two years. Renewing is a one-line email.' },
+  { t: 'Awards', d: 'Each event is an invitation to treat. Lusail Corp and its companies may accept any offer or none, may cancel or re-issue an event, and do not pay bidding costs. The laws of the State of Qatar apply.' }
+];
+
+/* The Supplier Code of Conduct, on its own page, in the short form a
+   supplier accepts when registering. */
+const CODE_OF_CONDUCT = [
+  { t: 'Lawful business', d: 'Comply with the laws of Qatar and of every country you operate in, including sanctions, export controls and customs rules.' },
+  { t: 'No bribery, no gifts', d: 'Offer nothing of value to any Lusail Corp employee, agent or their relatives to win or keep business. Hospitality beyond a working meal is declined.' },
+  { t: 'Conflicts disclosed', d: 'Tell us in writing if any Lusail Corp employee or their relative has an interest in your company, before you quote.' },
+  { t: 'Fair competition', d: 'Price independently. No agreement with another bidder on price, quantity, territory or whether to bid.' },
+  { t: 'People and safety', d: 'No forced or child labour, lawful wages and hours, and a safe workplace for everyone in your supply chain.' },
+  { t: 'Environment', d: 'Meet the environmental laws that apply to your operations, and tell us about any permit you rely on to supply us.' },
+  { t: 'Accurate documents', d: 'Every certificate, specification and test result you send is genuine, current and describes the goods actually shipped.' },
+  { t: 'Confidentiality', d: 'Specifications, quantities and prices in an event are shared with you for that event only.' },
+  { t: 'Subcontractors and audit', d: 'Anyone you subcontract is bound by this Code, and we may audit compliance on reasonable notice.' },
+  { t: 'Breach', d: 'A breach may suspend or end your registration. Report a concern to the Group at the address on the Supplier Portal.' }
+];
+/* The lists a form field can be drawn from, as value -> label. Shared by the
+   page that renders the form and the function that checks what arrives. */
+const FORM_LISTS = {
+  companyTypes: [
+    ['manufacturer', 'Manufacturer or producer'],
+    ['trader', 'Trader or distributor'],
+    ['service', 'Service provider'],
+    ['contractor', 'Contractor'],
+    ['logistics', 'Logistics or shipping company'],
+    ['agent', 'Agent or authorised representative']
+  ],
+  currencies: [['USD', 'USD'], ['QAR', 'QAR'], ['EUR', 'EUR']],
+  incoterms: [['EXW', 'EXW — ex works'], ['FOB', 'FOB — free on board'], ['CFR', 'CFR — cost and freight'], ['CIF', 'CIF — cost, insurance and freight'], ['CPT', 'CPT — carriage paid to'], ['DAP', 'DAP — delivered at place'], ['DDP', 'DDP — delivered duty paid'], ['local', 'Delivered in Qatar']],
+  validity: [
+    ['30', '30 days from closing'],
+    ['60', '60 days from closing'],
+    ['90', '90 days from closing']
+  ]
+};
+
+
+/* --------------------------------------------------------------------------
    FORMS — every form on the site beyond the contact page, defined once.
    The page templates draw the fields from here and api/contact.js checks
    what arrives against the same list, so a field added here appears on the
    page, is validated, and is printed in the email — with nothing else to
    edit. `options` names a list the build fills in:
-     partnerTypes  the PARTNER_TYPES below, by `v`
-     sectors       every sector, as checkboxes, with an "All sectors" box
-     interests     every sector, plus a general option
+     areas             every company, plus the general desks (Contact)
+     supplyCategories  the SUPPLY categories above, as checkboxes
+     companyTypes, validity   the FORM_LISTS above
    `why` is what the visitor is told beside the field when it is missing.
    `{ step: '…' }` starts a numbered stage of the form; it holds no data.
+   Field types beyond the usual: `checks` (a group of boxes, `all` labels
+   the tick-everything box), `agree` (one box that must be ticked; `short`
+   is how it is named in the email), `hidden` (filled by the page, such as
+   the reference of the event a quotation answers).
    -------------------------------------------------------------------------- */
 
 const FORMS = {
@@ -645,35 +854,88 @@ const FORMS = {
     ]
   },
 
-  /* Work With Us: a company applying to work with the Group, in one sector,
-     several, or all of them. Few fields, each one used to route or reply. */
-  partnership: {
-    subject: 'Partnership application',
-    submit: 'Send application',
-    ok: 'Application received. The right desk will reply within two working days.',
+  /* The Supplier Portal: one registration for every company in the Group,
+     cut to what procurement screens on. Everything else — the documents, the
+     references — is asked for by email at qualification. */
+  supplier: {
+    subject: 'Supplier registration',
+    submit: 'Register',
+    ok: 'Registration received. Procurement reviews new suppliers within five working days and asks for your documents by email.',
     fields: [
       { step: 'Your company' },
-      { name: 'company', label: 'Company name', type: 'text', required: true, max: 160, auto: 'organization',
-        why: 'Tell us which company is applying.' },
-      { name: 'site', label: 'Company website', type: 'url', max: 200, auto: 'url', placeholder: 'https://' },
-      { name: 'country', label: 'Country', type: 'text', max: 80, auto: 'country-name' },
-      { name: 'partnerType', label: 'We are', type: 'select', options: 'partnerTypes', required: true,
+      { name: 'company', label: 'Legal name', type: 'text', required: true, max: 160, auto: 'organization',
+        placeholder: 'As on your commercial registration', why: 'Tell us the company’s legal name.' },
+      { name: 'country', label: 'Country of registration', type: 'text', required: true, max: 80, auto: 'country-name',
+        why: 'Tell us where the company is registered.' },
+      { name: 'regNo', label: 'Commercial registration or licence no.', type: 'text', required: true, max: 60,
+        why: 'The registration or licence number is needed to qualify you.' },
+      { name: 'companyType', label: 'Company type', type: 'select', options: 'companyTypes', required: true,
         why: 'Pick the one that describes you best.' },
-      { step: 'Where you would like to work with us' },
-      { name: 'sectors', label: 'Sectors you would like to work with us in', type: 'checks', options: 'sectors', required: true, full: true,
-        why: 'Choose at least one sector, or all of them.' },
-      { step: 'How to reach you' },
-      { name: 'name', label: 'Your name', type: 'text', required: true, max: 120, auto: 'name',
-        why: 'Tell us who to reply to.' },
-      { name: 'role', label: 'Your role', type: 'text', max: 120, auto: 'organization-title' },
-      { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
-      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' },
-      { step: 'The opportunity' },
-      { name: 'message', label: 'Tell us about the opportunity', type: 'textarea', required: true, max: 5000, full: true,
-        why: 'A few lines on what you offer or what you are looking for.' }
+      { name: 'site', label: 'Website', type: 'url', max: 200, auto: 'url', placeholder: 'https://' },
+      { name: 'principal', label: 'Principal represented, if you are an agent', type: 'text', max: 160 },
+      { step: 'Who may quote' },
+      { name: 'name', label: 'Full name', type: 'text', required: true, max: 120, auto: 'name',
+        why: 'Tell us who is authorised to quote for the company.' },
+      { name: 'email', label: 'Company email', type: 'email', required: true, max: 254, auto: 'email',
+        note: 'On your company’s own domain, so we can tell it is you.' },
+      { name: 'phone', label: 'Mobile', type: 'tel', max: 40, auto: 'tel', placeholder: '+974' },
+      { step: 'What you supply' },
+      { name: 'categories', label: 'Categories you can supply', type: 'checks', options: 'supplyCategories', all: 'All categories',
+        required: true, full: true, why: 'Choose at least one category. You are invited to events in these only.' },
+      { name: 'products', label: 'Main products, origins and capacity', type: 'textarea', required: true, max: 2000, full: true, rows: 3,
+        placeholder: 'For example: granular sulphur, FOB Ras Laffan, 30,000 MT a month, producer-authorised',
+        why: 'Name what you supply, with the origin, capacity or scope.' },
+      { name: 'certs', label: 'Certificates and registrations held', type: 'text', max: 300, full: true,
+        placeholder: 'ISO 9001, ICV 48% to Mar 2027, MoPH, Halal, manufacturer’s authorisation…' },
+      { name: 'interests', label: 'Any interest a Lusail Corp employee or relative holds in your company', type: 'text', max: 300, full: true,
+        placeholder: 'None, or who and what' },
+      { step: 'Declaration' },
+      { name: 'agree', type: 'agree', required: true, full: true, short: 'Code accepted, interests declared, details confirmed',
+        label: 'We accept the Lusail Corp Supplier Code of Conduct, have declared any interest a Lusail Corp employee or relative holds in our company, and confirm these details are accurate.',
+        why: 'The declaration has to be accepted to register.' }
     ]
   },
 
+  /* A quotation against one open event: the cover sheet of an offer. The
+     signed offer and its documents follow by email, quoting the reference.
+     The page fills in the reference; the email goes to the issuing desk. */
+  quote: {
+    subject: 'Quotation',
+    subjectFrom: 'reference',
+    submit: 'Submit quotation',
+    ok: 'Quotation received by the issuing desk. Email the signed offer, specification and certificates quoting the reference; the desk replies after the event closes.',
+    fields: [
+      { name: 'reference', label: 'Reference', type: 'hidden', max: 40 },
+      { name: 'opportunity', label: 'Event', type: 'hidden', max: 160 },
+      { step: 'Your company' },
+      { name: 'company', label: 'Company name', type: 'text', required: true, max: 160, auto: 'organization',
+        why: 'Tell us which company is quoting.' },
+      { name: 'name', label: 'Your name', type: 'text', required: true, max: 120, auto: 'name',
+        why: 'Tell us who to reply to.' },
+      { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
+      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' },
+      { step: 'Your offer' },
+      { name: 'currency', label: 'Currency', type: 'select', options: 'currencies', required: true,
+        why: 'Pick the currency of the offer.' },
+      { name: 'price', label: 'Price per unit', type: 'text', required: true, max: 80,
+        placeholder: 'e.g. 1,040 per MT', why: 'State the unit price.' },
+      { name: 'incoterm', label: 'Delivery basis', type: 'select', options: 'incoterms', required: true,
+        why: 'Pick the delivery basis the price is quoted on.' },
+      { name: 'quantity', label: 'Quantity or scope offered', type: 'text', required: true, max: 160,
+        placeholder: 'e.g. 30,000 MT ±10%', why: 'Say how much, or what scope, you are offering.' },
+      { name: 'origin', label: 'Origin or manufacturer', type: 'text', max: 120 },
+      { name: 'delivery', label: 'Load port, delivery point or lead time', type: 'text', max: 160 },
+      { name: 'payment', label: 'Payment terms offered', type: 'text', max: 160, placeholder: 'e.g. irrevocable LC at sight' },
+      { name: 'validity', label: 'Offer valid for', type: 'select', options: 'validity', required: true,
+        why: 'Say how long the offer stands.' },
+      { name: 'message', label: 'Deviations from the requirement, and notes', type: 'textarea', max: 5000, full: true, rows: 4,
+        placeholder: 'Anything that differs from the requirement, and anything the desk should know.' },
+      { step: 'Declaration' },
+      { name: 'agreeTerms', type: 'agree', required: true, full: true, short: 'Terms accepted',
+        label: 'This offer is firm for the period stated, and we accept the event terms and the Lusail Corp Supplier Code of Conduct.',
+        why: 'The event terms have to be accepted to quote.' }
+    ]
+  },
   /* The small form in the corner of every page: enough to reach back. */
   callback: {
     subject: 'Callback request',
@@ -692,5 +954,6 @@ const FORMS = {
 module.exports = {
   SITE, SECTORS, ALL_COMPANIES, REACH, REACH_POINTS, HUB, WHY,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
-  PARTNER_TYPES, FORMS
+  PARTNER_TYPES, FORMS, FORM_LISTS,
+  SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 };

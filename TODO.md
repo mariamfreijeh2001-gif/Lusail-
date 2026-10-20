@@ -24,6 +24,53 @@ through `origins` in [data/site.js](data/site.js) and correct or delete them.
 Deleting is safe: a product with no `origins` simply renders without the row.
 
 
+### 0b. The Supplier Portal's events are examples — replace them *— blocking*
+
+`/suppliers/` lists five open sourcing events (granular sulphur, lighting
+towers and welfare cabins, ICUMSA 45 sugar, fresh vegetables, an inbound
+marine logistics RFI). **They were carried over from the portal mock-up to show
+the page working**, then corrected on a procurement review (the EN590
+diesel event was dropped as reading like a broker-chain template; origins,
+bonds, Kahramaa and MoPH requirements were added). The quantities, ports,
+dates and the two sulphur clarifications are still examples.
+
+Before launch, replace `OPPORTUNITIES` in [data/site.js](data/site.js) with
+real events, or empty the list: the portal then says nothing is open and
+the registration keeps working. Each entry needs a reference, the issuing
+company, a category, the type, a title, a brief, the closing time (Doha) and
+the requirement rows; see the comment above the list.
+
+Also decide:
+
+- **A procurement mailbox.** Registrations and quotations are emailed to
+  `info@lusailcorp.com` like everything else (`CONTACT_TO`). A dedicated
+  address — and the support phone and hours shown on the page, which are the
+  placeholder number and "Sunday to Thursday, 8:00 to 17:00" — need confirming.
+- **What "the categories" are.** The eight in `SUPPLY` and the lines under
+  each (sulphur, sugar, reefers, laundry chemicals…) were written from the
+  mock-up and the companies' own pages. Correct them; they are also the boxes
+  a supplier ticks when registering.
+- **Quotations are emails, not sealed bids.** A static site cannot hold a
+  bid unopened until closing. The page says a quotation goes to one desk
+  and nobody else until the closing time; keep that true at the inbox, or
+  soften the wording. A real portal with logins and sealed bids is a
+  separate application, and the mock-up's "My bids" dashboard is left out
+  for that reason.
+- **The Supplier Code of Conduct** at `/suppliers/code/` is a ten-point
+  short form written for the site. If the Group has a signed document, link
+  or replace it.
+- **The terms in brief** on the page — quotes in USD or QAR, local supply
+  paid 30 days from invoice, offers firm 30 days, registration valid two
+  years, "invitation to treat" under Qatar law — were written to the
+  procurement reviewer's advice. Confirm each with the Group's lawyer and
+  finance before launch; the wording is in `SOURCING_TERMS`.
+- **The categories were extended** on the same review: Halal poultry, meat
+  and fish, dairy and FMCG for ROMA, and an eighth category, Corporate
+  Services & Indirect (insurance, fleet, security, PPE, printing,
+  professional services). Delete what the Group does not buy. Nero Café and
+  Cavallo Laundry are **not** on the portal, by the owner's decision: their
+  pages carry no "Supply …" button and no category names them.
+
 ### 1. Social media handles — *footer*
 LinkedIn and Instagram were pointing at `#`, a dead link. They are now **hidden
 until real URLs exist**, so nothing broken is published in the meantime.
@@ -38,30 +85,62 @@ instagram: 'https://www.instagram.com/…',
 
 The links appear in the footer automatically.
 
-### 2. Contact form — set the Resend key in Vercel
+### 2a. Spam — turn on Cloudflare Turnstile (two keys)
 
-The form now posts to [api/contact.js](api/contact.js), which relays through
-Resend. **It needs one environment variable before it can send.**
+Every form already refuses the obvious: a honeypot field, a post that does not
+come from the site, a form "filled in" in under 2.5 seconds, more than two
+links, and a crude per-address rate limit. What stops the rest is a human
+check, and the code for it is in place — it just needs keys.
 
-Vercel → Project → Settings → Environment Variables:
+1. At [dash.cloudflare.com](https://dash.cloudflare.com) → Turnstile → Add
+   widget. Hostname `lusailcorp.com` (add `*.vercel.app` too if previews
+   should work). Widget mode **Managed**.
+2. In Vercel → Settings → Environment Variables, add both to Production,
+   Preview and Development, then redeploy:
 
-| Name | Value | Required |
+| Name | Value |
+|---|---|
+| `TURNSTILE_SITE_KEY` | the widget's site key (read at build; goes into the pages) |
+| `TURNSTILE_SECRET_KEY` | the widget's secret (read by the function) |
+
+Until both are set the pages carry no widget and the function skips the
+check, so nothing breaks in the meantime. Turnstile is free, sets no cookies
+and shows nothing to a visitor unless they look like a bot.
+
+### 2. Contact form — the Resend key is set *(done 2026-10-20)*
+
+The form posts to [api/contact.js](api/contact.js), which relays through
+Resend. The production function now has `RESEND_API_KEY` (an empty probe
+came back "Missing: name", not "Email is not configured"). Two things still
+decide whether a message *arrives*:
+
+- **Where it goes.** Everything is delivered to `CONTACT_TO`, which defaults
+  to `info@lusailcorp.com` — and that mailbox does not exist yet (item 5).
+  Until it does, set `CONTACT_TO` to a mailbox that is read. If suppliers
+  should land somewhere other than general enquiries, say which address and
+  the function can route by form.
+- **Who it comes from.** Until `lusailcorp.com` is verified in Resend, the
+  From address is Resend's `onboarding@resend.dev`, and Resend only lets that
+  sender deliver to the email address of the Resend account itself. So
+  either `CONTACT_TO` is that address for now, or the domain is verified
+  (below) and `CONTACT_FROM` becomes e.g. `Lusail Corp Website
+  <website@lusailcorp.com>`.
+
+The variables, in Vercel → Project → Settings → Environment Variables
+(Production, Preview and Development; a change needs a redeploy):
+
+| Name | Value | Status |
 |---|---|---|
-| `RESEND_API_KEY` | from resend.com/api-keys | **yes** |
-| `CONTACT_TO` | where enquiries land (defaults to `info@lusailcorp.com`) | no |
-| `CONTACT_FROM` | the From address | no |
+| `RESEND_API_KEY` | from resend.com/api-keys | **set** |
+| `CONTACT_TO` | where every form is delivered (defaults to `info@lusailcorp.com`) | set it to a read mailbox |
+| `CONTACT_FROM` | the From address, on a domain verified in Resend | after the domain is verified |
 
-Add it to **Production, Preview and Development**, then redeploy — env vars are
-read at deploy time, so an existing deployment will not pick it up.
+**Verifying the domain:** Resend → Domains → Add `lusailcorp.com` → paste the
+DKIM and SPF records it gives you into HostGator's DNS. Then set
+`CONTACT_FROM` and the site sends from its own address without a code change.
 
-**`CONTACT_FROM` needs a verified domain.** Until lusailcorp.com is verified in
-Resend (Domains → Add → paste the DKIM/SPF records into HostGator), Resend only
-accepts `onboarding@resend.dev`, which is the built-in default. So the form
-works as soon as the key is set, and starts sending from your own domain later
-without a code change.
-
-Until the key exists the form does not pretend to succeed — it opens the
-visitor's mail client with the message prefilled, so no enquiry is lost.
+If a send ever fails the form does not pretend to succeed — it says so, keeps
+what was typed, and offers the same message to the visitor's mail client.
 
 ### 3. Real phone number
 `+974 0000 0000` is a deliberate placeholder, as you asked. Replace `phone` in
@@ -103,9 +182,9 @@ are almost none to use. Each of these would earn its place on the site:
 The home page's figures band previously read **5+ years · 10+ markets · 50k+
 customers · 4 companies**. Three of those came from the design file and nobody
 had confirmed them — and "10+ markets" contradicted the map on the same page,
-which pins 21 countries. All four figures are now counted from the content, so
-they cannot be wrong: **4 companies · 4 sectors · 6 sourcing regions · 21
-source countries**.
+which pins the source countries. All four figures are now counted from the
+content, so they cannot be wrong: today **5 companies · 7 sectors · 6
+sourcing regions · 22 source countries**.
 
 ### 7. Arabic is off, and the old translations are stale
 
@@ -129,5 +208,7 @@ else on the site now has its own.
 
 The portfolio index and the careers page are gone. `vercel.json` sends
 `/companies/` and `/portfolio/` to `/sectors/`, and `/careers/` and `/jobs/` to
-`/contact/`. `/partnerships/` (Work With Us) is a live page. Worth spot checking after the first deploy, since
-search engines still hold the old URLs.
+`/contact/`. `/partnerships/` (Work With Us) is a live page; its partnership
+application form was replaced by the Supplier Portal and the contact form,
+so `/partnerships/#apply` now lands on the page top. Worth spot checking
+after the first deploy, since search engines still hold the old URLs.

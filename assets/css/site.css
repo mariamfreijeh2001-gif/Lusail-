@@ -249,7 +249,7 @@ h3{font-family:var(--body);letter-spacing:-.005em}
   font:400 var(--t-lg)/1.5 var(--body);color:#fff;
   max-width:52ch;margin-top:6px;
 }
-.pagehead-cta{margin-top:clamp(18px,2.4vw,30px)}
+.pagehead-cta{margin-top:clamp(18px,2.4vw,30px);display:flex;flex-wrap:wrap;gap:12px}
 
 /* ==========================================================================
    Running text, and the one wide photograph that follows it
@@ -2382,3 +2382,326 @@ input[type="checkbox"]{width:auto;padding:0}
 @media (max-width:560px){ .fcard{padding:22px 16px} }
 /* the sector chips are choices, not field labels: normal case */
 .lform label.chk{font:inherit;letter-spacing:0;text-transform:none;color:inherit}
+
+/* ==========================================================================
+   The Supplier Portal — /suppliers/ and one page per open event.
+   Appended after the phone block, so every narrow-screen rule here carries
+   its own media query. Same system as the rest: hairlines, a gold rule that
+   draws across on hover, Newsreader for the names, Archivo for the data.
+   ========================================================================== */
+
+/* the strip under the opening: what closes next */
+.sp-soon{background:var(--ink);color:#fff;padding-block:clamp(22px,2.6vw,34px);border-top:1px solid rgba(255,255,255,.12)}
+.sp-soon-in{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(18px,3vw,48px);align-items:center}
+.sp-soon-h{margin:0}
+.sp-soon .eyebrow{color:var(--ink-inv-2);margin:0}
+.sp-soon-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,32px)}
+.sp-soon-list li{border-inline-start:1px solid rgba(255,255,255,.18);padding-inline-start:16px;min-width:0}
+.sp-soon-list li[hidden]{display:none}
+.sp-soon-list a{display:grid;gap:3px;color:#fff;text-decoration:none}
+.sp-soon-list a:hover b{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:4px}
+.sp-soon-ref{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.sp-soon-list b{font:400 var(--t-lg)/1.3 var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-soon-when{font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-inv-2)}
+.sp-soon-none{border:0;padding:0;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-inv-2);grid-column:1/-1}
+.sp-soon-all{color:#fff;font:600 var(--t-sm)/1.3 var(--ui);text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:8px;min-height:44px}
+.sp-soon-all span{transition:transform .25s;color:var(--gold)}
+.sp-soon-all:hover span{transform:translateX(4px)}
+
+/* what we buy: one dropdown row per category. Closed, it says the name,
+   who buys and how many lines; open, every line and the buyers as links. */
+.catlist{margin:clamp(28px,3.4vw,44px) 0 0;border-top:1px solid var(--line-2)}
+.catrow{border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--head-h) + 16px)}
+.catrow > summary{
+  list-style:none;cursor:pointer;display:grid;grid-template-columns:48px minmax(0,1.5fr) minmax(0,1fr) 80px 20px;
+  gap:0 clamp(16px,2vw,32px);align-items:center;padding:clamp(14px,1.6vw,20px) 0;position:relative;
+}
+.catrow > summary::-webkit-details-marker{display:none}
+.catrow > summary::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.catrow:hover > summary::before,.catrow[open] > summary::before,.catrow:target > summary::before{transform:scaleX(1)}
+.catrow > summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.catrow-n{font:300 1.25rem/1.3 var(--display);color:var(--ink-3)}
+.catrow-main{display:grid;gap:3px}
+.catrow-name{font:400 clamp(1.125rem,1.4vw,1.3125rem)/1.25 var(--display);color:var(--ink)}
+.catrow-sample{font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-2)}
+.catrow-who{font:400 var(--t-sm)/1.45 var(--body);color:var(--ink-2)}
+.catrow-count{font:500 var(--t-sm)/1.45 var(--ui);color:var(--ink-3);text-align:right;white-space:nowrap}
+.catrow-count a{position:relative;z-index:1;color:var(--gold-text);text-decoration:none;border-bottom:1px solid var(--gold);display:inline-flex;align-items:center;min-height:44px}
+.catrow-count a:hover{color:var(--ink)}
+.catrow-plus{position:relative;width:14px;height:14px;justify-self:end}
+.catrow-plus::before,.catrow-plus::after{content:"";position:absolute;background:var(--gold-text);transition:transform .25s}
+.catrow-plus::before{left:0;top:6px;width:14px;height:2px}
+.catrow-plus::after{left:6px;top:0;width:2px;height:14px}
+.catrow[open] .catrow-plus::after{transform:rotate(90deg)}
+.catrow-body{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:12px clamp(16px,2vw,32px);padding:0 0 clamp(18px,2vw,26px) calc(48px + clamp(16px,2vw,32px))}
+.catrow-items{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px clamp(16px,2vw,32px)}
+.catrow-items li{position:relative;padding-left:18px;font:400 var(--t-sm)/1.45 var(--body);color:var(--ink)}
+.catrow-items li::before{content:"";position:absolute;left:0;top:.72em;width:10px;height:1.5px;background:var(--gold)}
+.catrow-buyers{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
+.catrow-buyers > span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);flex-basis:100%}
+.catrow-buyers a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-2)}
+.catrow-buyers a:hover{border-color:var(--gold)}
+@media (prefers-reduced-motion:reduce){ .catrow-plus::after,.catrow > summary::before{transition:none} }
+
+/* the list of open events: one row, one line each on a wide screen —
+   reference and type, the title, the buyer, when it closes, the status and
+   the one thing to do. Every column is a share or a fixed width, so the rows
+   line up with the header and with each other. The brief and the category
+   are on the event page, not here. */
+.opp-filter{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:clamp(24px,3vw,40px)}
+.opp-filter[hidden]{display:none}
+.opp-l{display:inline;margin-right:6px;font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.opp-pill{font:500 var(--t-sm)/1 var(--ui);color:var(--ink);background:transparent;border:1px solid var(--line-2);padding:11px 14px;cursor:pointer;min-height:40px;transition:border-color .2s,background .2s}
+.opp-pill:hover{border-color:var(--ink)}
+.opp-pill.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.opp-pill:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.opp-sel{display:none;flex:1 1 100%}
+.opp-sel select{width:100%;font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);background:#fff;border:1px solid var(--line-2);padding:12px 36px 12px 12px;min-height:44px;
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--gold-text) 50%),linear-gradient(135deg,var(--gold-text) 50%,transparent 50%);
+  background-position:calc(100% - 16px) 55%,calc(100% - 11px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.opps{--opp-pad:clamp(12px,1.4vw,20px);list-style:none;margin:clamp(20px,2.6vw,32px) 0 0;padding:0;border-top:1px solid var(--line-2)}
+.opp-head,.opp{
+  display:grid;grid-template-columns:124px 60px minmax(0,2fr) minmax(164px,.9fr) 168px 96px 138px;
+  gap:0 clamp(14px,1.4vw,20px);align-items:center;padding-inline:var(--opp-pad);margin-inline:calc(-1 * var(--opp-pad));
+}
+.opp-head{padding-block:14px;border-bottom:1px solid var(--line-2);font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.opp{position:relative;padding-block:16px;border-bottom:1px solid var(--line);transition:background .25s}
+.opp::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.opp:hover{background:#fff}
+.opp:hover::before{transform:scaleX(1)}
+.opp[hidden]{display:none}
+.opp p{margin:0}
+.opp-id{display:flex;align-items:center}
+.opp-ref{position:relative;z-index:1;font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.06em;color:var(--gold-text);text-decoration:none;white-space:nowrap}
+.opp-ref:hover{text-decoration:underline;text-underline-offset:3px}
+.opp-type span{display:inline-block;font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.opp-title{font:400 1.0625rem/1.3 var(--display);margin:0}
+.opp-title a{color:var(--ink);text-decoration:none}
+.opp-title a::after{content:"";position:absolute;inset:0}
+.opp:hover .opp-title a{text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:1.5px;text-underline-offset:4px}
+.opp-who a{position:relative;z-index:1;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink);text-decoration:none}
+.opp-who a:hover{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.opp-when{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
+.opp-in{font:400 var(--t-sm)/1.4 var(--body);color:var(--ink-3);white-space:nowrap}
+.opp-in:not(:empty)::before{content:" · "}
+.badge{display:inline-block;font:600 var(--t-xxs)/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;padding:7px 9px 6px;border:1px solid currentColor;white-space:nowrap}
+/* in the list and its key the status is a word, not a box: open in gold, invite-only in grey, closing soon filled */
+.opps .badge,.opp-key .badge{border:0;padding:0;line-height:1.4}
+.opps .badge-soon,.opp-key .badge-soon{padding:5px 8px 4px;line-height:1}
+.badge-open{color:var(--gold-text);border-color:var(--gold)}
+.badge-invite{color:var(--ink-3)}
+.badge-soon{color:var(--ink);border-color:var(--gold);background:var(--gold)}
+.badge-closed{color:#A3341A}
+.opp-act{justify-self:end}
+.opp-go{
+  position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;
+  font:600 var(--t-sm)/1.2 var(--ui);color:var(--ink);text-decoration:none;white-space:nowrap;
+  border:1px solid var(--ink);background:transparent;transition:background .25s,color .25s;
+}
+.opp-go span{transition:transform .25s}
+.opp-go:hover{background:var(--ink);color:#fff}
+.opp-go:hover span{transform:translateX(4px)}
+.opp-go:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.opp-none{margin-top:clamp(20px,2.6vw,32px);font:400 var(--t-lede)/1.6 var(--display);color:var(--ink-2);max-width:60ch}
+.opp-none[hidden]{display:none}
+.opp-key{margin:clamp(20px,2.6vw,32px) 0 0;display:flex;flex-wrap:wrap;gap:12px 32px}
+.opp-key > div{display:flex;gap:10px;align-items:center}
+.opp-key dt{margin:0}
+.opp-key dd{margin:0;font:400 var(--t-sm)/1.4 var(--body);color:var(--ink-2)}
+
+/* requirements beside principles */
+.sp-two{display:grid;grid-template-columns:minmax(0,58fr) minmax(0,42fr);gap:clamp(32px,5vw,88px);align-items:start}
+.sp-two h2{font-size:var(--t-h1);line-height:1.1;margin-top:14px}
+.sp-lede{font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2);margin-top:14px;max-width:46ch}
+.reqs{list-style:none;margin:clamp(20px,2.4vw,28px) 0 0;padding:0;display:grid;border-top:1px solid var(--line-2)}
+.reqs li{position:relative;padding:14px 0 14px 28px;border-bottom:1px solid var(--line);font:400 var(--t-sm)/1.5 var(--body);color:var(--ink)}
+.reqs li::before{content:"";position:absolute;left:0;top:24px;width:14px;height:2px;background:var(--gold)}
+.terms{margin:clamp(20px,2.4vw,28px) 0 0;display:grid;border-top:1px solid var(--line-2)}
+.terms > div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.terms dt{font:500 var(--t-sm)/1.55 var(--ui);color:var(--ink-2)}
+.terms dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink)}
+.rules{list-style:none;margin:clamp(20px,2.4vw,28px) 0 0;padding:0;display:grid;border-top:1px solid var(--line-2)}
+.rules li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}
+.rule-n{font:300 1.25rem/1.2 var(--display);color:var(--gold-text)}
+.rules h3{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink);margin:0 0 4px}
+.rules p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
+
+/* the code of conduct: eight points in two columns */
+.conduct{list-style:none;margin:clamp(28px,3.4vw,44px) 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(32px,5vw,88px);border-top:1px solid var(--line-2)}
+.conduct li{display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 12px;padding:20px 0;border-bottom:1px solid var(--line)}
+.conduct-n{grid-row:1/3;font:300 1.5rem/1.1 var(--display);color:var(--gold-text)}
+.conduct h3{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink);margin:0}
+.conduct p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
+
+/* the code, the fraud warning and support: three ruled columns */
+.sp-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3vw,48px)}
+.sp-notes > div{border-top:1px solid var(--line-2);padding-top:18px}
+.sp-notes > div > p:not(.eyebrow){font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);margin-top:12px}
+.sp-notes a,.fraud-line a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
+.sp-notes .channels{margin-top:12px;gap:10px}
+.fraud-line{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2);text-align:center}
+
+/* the registration: the same card as Contact, plus the two new field types */
+.fhelp{font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-3)}
+.agree-wrap{gap:4px}
+.lform label.agree{display:flex;gap:12px;align-items:flex-start;cursor:pointer;font:400 var(--t-sm)/1.5 var(--body);letter-spacing:0;text-transform:none;color:var(--ink)}
+.lform .agree input[type="checkbox"]{width:18px;height:18px;flex:none;margin:3px 0 0;padding:0;accent-color:var(--ink);cursor:pointer;background:transparent}
+.lform .agree input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.agree-wrap .field-err{margin-left:30px}
+.co-ask-btns{display:flex;flex-wrap:wrap;gap:12px}
+
+/* Work With Us: the two ways in */
+.route2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,28px);margin-top:clamp(28px,3.4vw,44px)}
+.route{position:relative;display:grid;gap:12px;align-content:start;padding:clamp(24px,2.8vw,36px);background:#fff;border-top:3px solid var(--line-2);text-decoration:none;color:inherit;transition:border-color .3s,transform .3s;box-shadow:0 24px 60px rgba(6,15,36,.06)}
+.route:hover{border-top-color:var(--gold);transform:translateY(-3px)}
+.route-n{font:300 1.25rem/1 var(--display);color:var(--ink-3)}
+.route h3{font:400 clamp(1.375rem,2vw,1.75rem)/1.2 var(--display);color:var(--ink);margin:0}
+.route p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
+.route-go{margin-top:8px;font:600 var(--t-sm)/1.3 var(--ui);color:var(--ink);display:inline-flex;gap:8px;align-items:center;min-height:44px}
+.route-go span{color:var(--gold-text);transition:transform .25s}
+.route:hover .route-go span{transform:translateX(4px)}
+
+/* one event: a navy opening with the closing time held to the right */
+.opp-hero{background:var(--ink);color:#fff;padding:clamp(28px,4vw,56px) 0 clamp(36px,4.6vw,64px)}
+.crumbs{display:flex;flex-wrap:wrap;gap:10px;font:500 var(--t-xs)/1.4 var(--ui);color:var(--ink-inv-2);margin-bottom:clamp(24px,3vw,40px)}
+.crumbs a{color:var(--ink-inv-2);text-decoration:none}
+.crumbs a:hover{color:#fff}
+.crumbs > span:last-child{color:var(--gold)}
+.opp-hero-in{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:clamp(28px,4vw,64px);align-items:end}
+.opp-tags{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:18px}
+.opp-tag{font:600 var(--t-xxs)/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-inv-2);padding:7px 0 6px;text-decoration:none}
+a.opp-tag{border-bottom:1px solid rgba(255,255,255,.25)}
+a.opp-tag:hover{color:#fff;border-color:var(--gold)}
+.opp-hero .badge-open{color:#9fd49a}
+.opp-hero .badge-invite{color:var(--ink-inv-2)}
+.opp-hero .badge-soon{background:transparent;color:var(--gold)}
+.opp-hero .badge-closed{color:#f0a08c}
+.opp-hero h1{font:300 clamp(2rem,3.6vw,3.25rem)/1.08 var(--display);color:#fff;max-width:20ch}
+.opp-brief{font:400 var(--t-lede)/1.5 var(--body);color:#fff;margin-top:14px;max-width:60ch}
+.opp-issuer{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-inv-2);margin-top:10px}
+.opp-issuer a{color:#fff;text-decoration-color:var(--gold);text-underline-offset:4px}
+.opp-clock{display:grid;gap:6px;justify-items:start;padding:clamp(18px,2vw,26px);border:1px solid rgba(255,255,255,.2);border-top:3px solid var(--gold)}
+.opp-clock .opp-l{display:block;color:var(--ink-inv-2)}
+.opp-clock time{font:300 clamp(1.5rem,2.2vw,2rem)/1.1 var(--display);color:#fff}
+.opp-clock-tz{font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-inv-2)}
+.opp-clock-tz [data-in]:not(:empty)::before{content:" · "}
+.opp-clock .btn{margin-top:12px}
+.opp-body{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(32px,5vw,88px);align-items:start}
+.opp-body h2{font-size:var(--t-h1);line-height:1.1;margin-top:14px}
+.spec{margin:clamp(20px,2.4vw,28px) 0 0;display:grid;border-top:1px solid var(--line-2)}
+.spec > div{display:grid;grid-template-columns:168px minmax(0,1fr);gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}
+.spec dt{font:500 var(--t-sm)/1.55 var(--ui);color:var(--ink-2)}
+.spec dd{margin:0;font:400 var(--t-body)/1.55 var(--body);color:var(--ink)}
+.spec-docs{margin-top:16px;font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3);max-width:60ch}
+.opp-aside{display:grid;gap:clamp(24px,3vw,40px);position:sticky;top:calc(var(--head-h) + 24px)}
+.opp-clar,.opp-also{border-top:1px solid var(--line-2);padding-top:18px}
+.clar{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:14px}
+.clar li{display:grid;gap:4px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.clar-on{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text)}
+.clar-q{font:400 var(--t-body)/1.4 var(--display);color:var(--ink)}
+.clar-q::before{content:"Q. ";color:var(--ink-3)}
+.clar-a{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
+.clar-a::before{content:"A. ";color:var(--ink-3)}
+.clar-none{margin-top:12px;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2)}
+.clar-note{margin-top:14px;font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3)}
+.clar-note a{color:var(--ink);text-decoration-color:var(--gold);text-underline-offset:3px}
+.opp-also ul{list-style:none;margin:12px 0 0;padding:0;display:grid}
+.opp-also li a{display:grid;gap:2px;padding:10px 0;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font:400 var(--t-sm)/1.4 var(--body)}
+.opp-also li a span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.08em;color:var(--gold-text)}
+.opp-also li a:hover{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:4px}
+.opp-also-none{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2);padding:10px 0}
+.opp-also-all{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:6px;font:600 var(--t-sm)/1.3 var(--ui);color:var(--ink);text-decoration:none}
+.opp-also-all:hover span{transform:translateX(4px)}
+.opp-also-all span{color:var(--gold-text);transition:transform .25s}
+.opp-closed{display:grid;gap:12px;justify-items:start;max-width:60ch}
+.opp-closed h2{font:300 clamp(1.5rem,2.4vw,2.125rem)/1.15 var(--display);color:var(--ink)}
+.opp-closed p:not(.eyebrow){font:400 var(--t-body)/1.6 var(--body);color:var(--ink-2)}
+.opp-closed a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
+/* once the script finds the event has closed, the form steps aside for the note it writes */
+.apply.is-closed .apply-in > *{display:none}
+.apply.is-closed .opp-closed{display:grid}
+
+@media (max-width:1100px){
+  /* three lines a card: reference, type and status; the title; buyer, closing and the action */
+  .opp-head{display:none}
+  .opps{--opp-pad:0}
+  .opp{grid-template-columns:auto auto minmax(0,1fr);gap:10px 14px;padding-block:18px;align-items:center}
+  .opp-id{grid-column:1;grid-row:1}
+  .opp-type{grid-column:2;grid-row:1}
+  .opp-st{grid-column:3;grid-row:1;justify-self:end}
+  .opp-title{grid-column:1/-1;grid-row:2;font-size:clamp(1.125rem,1.4vw,1.25rem)}
+  .opp-who{grid-column:1/3;grid-row:3}
+  .opp-when{grid-column:3;grid-row:3;justify-self:start}
+  .opp-act{grid-column:3;grid-row:3;justify-self:end}
+  .catrow > summary{grid-template-columns:36px minmax(0,1fr) 72px 18px;gap:4px 14px}
+  .catrow-n{grid-column:1;grid-row:1}
+  .catrow-main{grid-column:2;grid-row:1}
+  .catrow-who{grid-column:2;grid-row:2;font-size:var(--t-xs);color:var(--ink-3)}
+  .catrow-count,.catrow-plus{grid-row:1/3}
+  .catrow-body{grid-template-columns:1fr;padding-left:calc(36px + clamp(16px,2vw,32px))}
+  .catrow-items{grid-template-columns:1fr}
+  .opp-go{min-height:36px;padding:0 12px}
+}
+@media (max-width:900px){
+  .sp-soon-in{grid-template-columns:1fr}
+  .sp-soon-list{grid-template-columns:1fr;gap:12px}
+  .sp-two,.conduct,.sp-notes,.route2{grid-template-columns:1fr}
+  .catrow{grid-template-columns:40px minmax(0,1fr)}
+  .catrow-buyers{grid-column:2}
+  .opp-pill{display:none}
+  .opp-filter .opp-l{display:none}
+  .opp-sel{display:block}
+  .opp-hero-in{grid-template-columns:1fr;align-items:start}
+  .opp-clock{width:100%}
+  .opp-body{grid-template-columns:1fr}
+  .opp-aside{position:static}
+}
+@media (max-width:560px){
+  .terms > div{grid-template-columns:1fr;gap:4px}
+  .opp{grid-template-columns:auto auto minmax(0,1fr);gap:8px 12px}
+  .opp-who{grid-column:1/-1;grid-row:3}
+  .opp-when{grid-column:1/-1;grid-row:4;justify-self:start}
+  .opp-act{grid-column:1/-1;grid-row:5;justify-self:stretch}
+  .catrow-body{padding-left:0}
+  .opp-go{min-height:44px}
+  /* a thumb's targets: the reference, the issuing company and the buyer chips */
+  .opp-ref,.opp-who a{display:inline-flex;align-items:center;min-height:44px;padding:0}
+  .opp-who{gap:0}
+  .cat-buyers a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px}
+  .spec > div{grid-template-columns:1fr;gap:4px}
+  .opp-hero{padding-top:20px}
+  .opp-pill{min-height:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  .cat,.cat::before,.opp::before,.route,.opp-go span,.sp-soon-all span,.route-go span,.opp-also-all span{transition:none}
+  .route:hover{transform:none}
+}
+
+/* the registration, folded behind its own row until it is wanted */
+.regbox{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+.regbox > summary{
+  list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:clamp(20px,3vw,48px);
+  padding:clamp(22px,2.6vw,34px) 0;position:relative;
+}
+.regbox > summary::-webkit-details-marker{display:none}
+.regbox > summary::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.regbox:hover > summary::before,.regbox[open] > summary::before{transform:scaleX(1)}
+.regbox > summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.regbox-head{display:grid;gap:10px;justify-items:start}
+.regbox-head .eyebrow{margin:0}
+.regbox-title{font:300 var(--t-h1)/1.1 var(--display);color:var(--ink)}
+.regbox-line{font:400 var(--t-body)/1.55 var(--body);color:var(--ink-2);max-width:60ch}
+.regbox-open{display:inline-flex;align-items:center;gap:14px;flex:none;font:600 var(--t-sm)/1.2 var(--ui);color:var(--ink);white-space:nowrap}
+.regbox[open] .regbox-word{visibility:hidden}
+.regbox .catrow-plus{width:18px;height:18px}
+.regbox .catrow-plus::before{top:8px;width:18px}
+.regbox .catrow-plus::after{left:8px;height:18px}
+.regbox > .apply-in{padding:clamp(8px,1vw,16px) 0 clamp(28px,3.4vw,48px)}
+.regbox .apply-side{position:static}
+@media (max-width:900px){
+  .regbox > summary{align-items:flex-start}
+  .regbox-open .regbox-word{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .regbox > summary::before{transition:none} }

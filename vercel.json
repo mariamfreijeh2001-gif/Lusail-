@@ -492,6 +492,96 @@
       "source": "/portfolio",
       "destination": "/sectors/",
       "permanent": true
+    },
+    {
+      "source": "/supplier/",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/supplier",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/supplier-portal/",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/supplier-portal",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/register/",
+      "destination": "/suppliers/#register",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/register",
+      "destination": "/suppliers/#register",
+      "permanent": true
+    },
+    {
+      "source": "/procurement/",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/procurement",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/tenders/",
+      "destination": "/suppliers/#opportunities",
+      "permanent": true
+    },
+    {
+      "source": "/tenders",
+      "destination": "/suppliers/#opportunities",
+      "permanent": true
+    },
+    {
+      "source": "/vendors/",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/vendors",
+      "destination": "/suppliers/",
+      "permanent": true
+    },
+    {
+      "source": "/vendor-registration/",
+      "destination": "/suppliers/#register",
+      "permanent": true
+    },
+    {
+      "source": "/vendor-registration",
+      "destination": "/suppliers/#register",
+      "permanent": true
+    },
+    {
+      "source": "/opportunities/",
+      "destination": "/suppliers/#opportunities",
+      "permanent": true
+    },
+    {
+      "source": "/opportunities",
+      "destination": "/suppliers/#opportunities",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/opportunities/",
+      "destination": "/suppliers/#opportunities",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/opportunities",
+      "destination": "/suppliers/#opportunities",
+      "permanent": true
     }
   ]
 }

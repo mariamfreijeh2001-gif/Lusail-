@@ -39,13 +39,24 @@ const ASSET_V = {
   js: require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, '..', 'assets/js/site.js'))).digest('hex').slice(0, 10)
 };
 const {
-  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES, FORMS,
+  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES, FORMS, FORM_LISTS,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
-  PARTNER_TYPES
+  PARTNER_TYPES, SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 } = require('../data/site.js');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist');
+
+/* Spam. Every form carries a Cloudflare Turnstile check once the site key is
+   set at build time (TURNSTILE_SITE_KEY in Vercel) and the secret in the
+   function (TURNSTILE_SECRET_KEY). Without the key the pages carry no widget
+   and the function skips the check, so the site builds and sends either way;
+   the honeypot, the timing check and the origin check in api/contact.js
+   apply regardless. Turnstile is free, needs no cookies and shows nothing
+   unless a visitor looks like a bot. */
+const TURNSTILE = (process.env.TURNSTILE_SITE_KEY || '').trim();
+if (TURNSTILE) console.log('turnstile: widget on every form');
+else console.log('turnstile: TURNSTILE_SITE_KEY not set — forms rely on the honeypot, timing and origin checks');
 
 /* ==========================================================================
    Photographs
@@ -310,7 +321,7 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 <link rel="preload" href="/assets/font/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/font/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css?v=${ASSET_V.css}">
-${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
+${TURNSTILE ? `<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>\n` : ''}${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -325,7 +336,8 @@ const NAV = [
   ['Home', '/'],
   ['Sectors', '/sectors/'],
   ['About Us', '/about/'],
-  ['Work With Us', '/partnerships/']
+  ['Work With Us', '/partnerships/'],
+  ['Suppliers', '/suppliers/']
 ];
 
 /* A mark per sector, drawn from the set already in ICON_PATHS. */
@@ -398,6 +410,7 @@ ${ALL_COMPANIES.map(c => `    <a class="sub" href="/companies/${c.slug}/">${esc(
   </details>
   <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
   <a href="/partnerships/"${current === '/partnerships/' ? ' aria-current="page"' : ''}>Work with us</a>
+  <a href="/suppliers/"${current === '/suppliers/' ? ' aria-current="page"' : ''}>Suppliers</a>
   <a class="btn btn-light" href="/contact/">Contact us</a>
 </div>
 <main id="main">
@@ -410,6 +423,13 @@ ${ALL_COMPANIES.map(c => `    <a class="sub" href="/companies/${c.slug}/">${esc(
 const FORM_OPTIONS = {
   partnerTypes: () => PARTNER_TYPES.map(p => ({ v: p.v, t: p.t })),
   sectors: () => SECTORS.map(x => ({ v: x.slug, t: x.name })),
+  /* each category knows which companies buy in it, so a link from a company
+     page can tick its categories */
+  supplyCategories: () => SUPPLY.map(x => ({ v: x.slug, t: x.name, data: `data-buyers="${x.buyers.join(' ')}"` })),
+  companyTypes: () => FORM_LISTS.companyTypes.map(([v, t]) => ({ v, t })),
+  currencies: () => FORM_LISTS.currencies.map(([v, t]) => ({ v, t })),
+  incoterms: () => FORM_LISTS.incoterms.map(([v, t]) => ({ v, t })),
+  validity: () => FORM_LISTS.validity.map(([v, t]) => ({ v, t })),
   areas: () => [{ v: 'general', t: 'General enquiry' }]
     .concat(ALL_COMPANIES.map(c => ({ v: c.slug, t: c.name })))
     .concat([{ v: 'supplier', t: 'Supplier opportunity' }, { v: 'partnership', t: 'Business partnership' },
@@ -422,26 +442,34 @@ const FORM_OPTIONS = {
 /* One form, from its definition. `p` prefixes every id so two forms can sit
    on one page. Fields with `why` carry it as data-why, which is what the
    visitor is told beside the field when it is left empty. */
-function formFields(kind, p) {
+function formFields(kind, p, values = {}) {
   const F = FORMS[kind];
   const id = n => p + n.charAt(0).toUpperCase() + n.slice(1);
   const err = f => `<span class="field-err" id="${id(f.name)}-err"></span>`;
   const attrs = f => [
     f.required ? 'required' : '', f.max ? `maxlength="${f.max}"` : '',
     f.auto ? `autocomplete="${f.auto}"` : '', f.placeholder ? `placeholder="${esc(f.placeholder)}"` : '',
+    f.dir ? `dir="${f.dir}"` : '', f.inputmode ? `inputmode="${f.inputmode}"` : '',
     f.why ? `data-why="${esc(f.why)}"` : '', f.required ? `aria-describedby="${id(f.name)}-err"` : ''
   ].filter(Boolean).join(' ');
   const req = f => f.required ? ' <span class="req" aria-hidden="true">*</span>' : '';
+  const note = f => f.note ? `<span class="fhelp">${esc(f.note)}</span>` : '';
   let stepN = 0;
   return F.fields.map(f => {
     if (f.step) return `      <p class="fstep"><span>${num(stepN++)}</span>${esc(f.step)}</p>`;
     const cls = 'field' + (f.full || f.type === 'textarea' ? ' full' : '');
+    if (f.type === 'hidden') {
+      return `      <input type="hidden" id="${id(f.name)}" name="${f.name}" value="${esc(values[f.name] || '')}">`;
+    }
+    if (f.type === 'agree') {
+      return `      <div class="${cls} agree-wrap"><label class="agree" for="${id(f.name)}"><input type="checkbox" id="${id(f.name)}" name="${f.name}" value="yes" ${attrs(f)}><span>${esc(f.label)}${req(f)}</span></label>${err(f)}</div>`;
+    }
     if (f.type === 'checks') {
       const opts = FORM_OPTIONS[f.options]();
       return `      <fieldset class="${cls} checks" id="${id(f.name)}" data-group="${f.name}"${f.required ? ' data-required="1"' : ''}${f.why ? ` data-why="${esc(f.why)}"` : ''} aria-describedby="${id(f.name)}-err">
         <legend>${esc(f.label)}${req(f)}</legend>
-        <label class="chk chk-all"><input type="checkbox" data-all="${f.name}"><span>All sectors</span></label>
-${opts.map(o => `        <label class="chk"><input type="checkbox" name="${f.name}" value="${o.v}"><span>${esc(o.t)}</span></label>`).join('\n')}
+        <label class="chk chk-all"><input type="checkbox" data-all="${f.name}"><span>${esc(f.all || 'All sectors')}</span></label>
+${opts.map(o => `        <label class="chk"><input type="checkbox" name="${f.name}" value="${o.v}"${o.data ? ' ' + o.data : ''}><span>${esc(o.t)}</span></label>`).join('\n')}
         ${err(f)}
       </fieldset>`;
     }
@@ -453,9 +481,9 @@ ${f.required ? '          <option value="">Choose one</option>\n' : ''}${opts.ma
         </select>${f.required ? err(f) : ''}</div>`;
     }
     if (f.type === 'textarea') {
-      return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><textarea id="${id(f.name)}" name="${f.name}"${f.rows ? ` rows="${f.rows}"` : ''} ${attrs(f)}></textarea>${f.required ? err(f) : ''}</div>`;
+      return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><textarea id="${id(f.name)}" name="${f.name}"${f.rows ? ` rows="${f.rows}"` : ''} ${attrs(f)}></textarea>${note(f)}${f.required ? err(f) : ''}</div>`;
     }
-    return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><input id="${id(f.name)}" name="${f.name}" type="${f.type}" ${attrs(f)}>${f.required ? err(f) : ''}</div>`;
+    return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><input id="${id(f.name)}" name="${f.name}" type="${f.type}" ${attrs(f)}>${note(f)}${f.required ? err(f) : ''}</div>`;
   }).join('\n');
 }
 
@@ -469,15 +497,18 @@ function formDone(msg) {
       </div>`;
 }
 
-function formBlock(kind, p, extraClass) {
+/* `values` fills hidden fields at build time; `prefill` is what the script
+   writes into visible fields once the page is up (a preselected desk, a
+   first line of message), so a link can arrive with the form half done. */
+function formBlock(kind, p, extraClass, values, prefill) {
   const F = FORMS[kind];
-  return `<form class="lform${extraClass ? ' ' + extraClass : ''}" data-form="${kind}" data-ok="${esc(F.ok)}" novalidate data-mail="${SITE.contact.email}">
+  return `<form class="lform${extraClass ? ' ' + extraClass : ''}" data-form="${kind}" data-ok="${esc(F.ok)}" novalidate data-mail="${SITE.contact.email}"${prefill ? ` data-prefill="${esc(JSON.stringify(prefill))}"` : ''}>
       <div class="hp" aria-hidden="true"><label for="${p}Hp">Website</label><input id="${p}Hp" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-${formFields(kind, p)}
-      <div class="form-end">
+${formFields(kind, p, values)}
+${TURNSTILE ? `      <div class="turnstile" data-sitekey="${esc(TURNSTILE)}"></div>\n` : ''}      <div class="form-end">
         <button class="btn btn-dark fbtn" type="submit">${esc(F.submit)} <span aria-hidden="true">&#8594;</span></button>
         <span class="status" role="status"></span>
-        <p class="fnote">We use these details only to reply to you.</p>
+        <p class="fnote">We keep what you send only to run the event and reply to you, under Qatar's data protection law.</p>
       </div>
 ${formDone(F.ok)}
     </form>`;
@@ -531,6 +562,7 @@ ${ALL_COMPANIES.map(c => `            <li><a href="/companies/${c.slug}/">${esc(
         <div class="foot-col">
           <p class="foot-h">Contact</p>
           <ul>
+            <li><a href="/suppliers/">Supplier portal</a></li>
             <li><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></li>
             <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></li>
             <li><span>${esc(SITE.contact.location)}</span></li>
@@ -553,17 +585,19 @@ ${opts.noQuick ? '' : quickForm()}
 
 /* Every page but the home page opens the same way: a photograph, a dark
    wash, and the title sitting on it. */
-function pageHead({ eyebrow, eyebrowHref, h1, lede, photo, action }) {
+function pageHead({ eyebrow, eyebrowHref, h1, lede, photo, action, action2 }) {
   const brow = eyebrowHref
     ? `<a class="pagehead-eyebrow" href="${eyebrowHref}">${esc(eyebrow)}</a>`
     : `<span class="pagehead-eyebrow">${esc(eyebrow)}</span>`;
+  const ctas = [action && `<a class="btn btn-light" href="${action.href}">${esc(action.label)}</a>`,
+    action2 && `<a class="btn btn-ghost" href="${action2.href}">${esc(action2.label)}</a>`].filter(Boolean);
   return `<section class="pagehead">
   ${pic(photo, '100vw', 'class="pagehead-bg" alt="" fetchpriority="high"')}
   <div class="wrap">
     ${brow}
     <h1>${esc(h1)}</h1>
     ${lede ? `<p class="pagehead-lede">${esc(lede)}</p>` : ''}
-${action ? `    <a class="btn btn-light pagehead-cta" href="${action.href}">${esc(action.label)}</a>` : ''}
+${ctas.length ? `    <div class="pagehead-cta">${ctas.join('\n      ')}</div>` : ''}
   </div>
 </section>
 
@@ -580,7 +614,9 @@ const EYEBROW = {
   svcTitle: 'Services', actTitle: 'Capabilities', othTitle: 'Explore further',
   srcTitle: 'Sourcing', mktTitle: 'Global reach', pwTitle: 'Partnerships',
   pillarTitle: 'How it is built', stepTitle: 'How it works',
-  howTitle: 'The process', growTitle: 'What comes next'
+  howTitle: 'The process', growTitle: 'What comes next',
+  spHowTitle: 'How it works', catTitle: 'What we buy', oppTitle: 'Open opportunities',
+  routesTitle: 'Two ways in'
 };
 
 function head2(id, html, aside) {
@@ -631,7 +667,7 @@ function ctaBand() {
       </div>
       <div class="next-act">
         <a class="btn btn-light" href="/contact/">Send an enquiry</a>
-        <a class="btn btn-ghost" href="/sectors/">Explore our sectors</a>
+        <a class="btn btn-ghost" href="/suppliers/">Register as a supplier</a>
       </div>
     </div>
   </div>
@@ -1180,7 +1216,9 @@ ${figures}${pillars}${steps}${showcase}${products}${services}${quote}${sourcing}
       <p>Tell us what you need and the message goes straight to the ${esc(c.name)} desk.</p>
     </div>
     <div class="co-ask-cta">
-      <a class="btn co-btn" href="/contact/?company=${c.slug}">Send an enquiry</a>
+      <div class="co-ask-btns">
+        <a class="btn co-btn" href="/contact/?company=${c.slug}">Send an enquiry</a>
+${SUPPLY.some(x => x.buyers.includes(c.slug)) ? `        <a class="btn co-btn-line" href="/suppliers/?company=${c.slug}#register">Supply ${esc(c.name)}</a>\n` : ''}      </div>
       <a class="co-ask-mail" href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
     </div>
   </div>
@@ -1357,7 +1395,7 @@ ${s.slug === 'trading' ? `<section class="section src" aria-labelledby="mktTitle
     n === 1 ? 'One business, with its own market and its own customers.'
       : `${n} businesses, each with its own market and its own customers.`)}
     ${companyRail(s.companies.map(c => Object.assign({}, c, { sectorName: s.name })))}
-    <p class="after rise"><a class="btn btn-dark" href="/partnerships/?sector=${s.slug}#apply">Work with us in ${esc(s.name)}</a></p>
+    <p class="after rise"><a class="btn btn-dark" href="/suppliers/#register">Supply the companies in ${esc(s.name)}</a></p>
   </div>
 </section>
 
@@ -1424,7 +1462,7 @@ ${PARTNER_TYPES.map(p => `      <div class="pline rise">
     ${head2('howTitle', 'How it <span class="soft">works</span>', 'From your first message to a specific answer, in four steps.')}
     <ol class="tline">
 ${[
-  ['Tell us which you are', 'The enquiry form asks for an area of interest. That is what routes your message — it is not a formality.'],
+  ['Tell us which you are', 'Choose an area of interest on the form. Your message goes straight to the company that can answer it, not to a general inbox.'],
   ['It reaches the right desk', 'A supplier enquiry goes to the company that would buy from you, not to a general inbox that forwards it on.'],
   ['We answer with specifics', 'Where it is a commodity, that means the origin, the specification and the route together, because we hold the trading and the freight in one business.'],
   ['We build from there', 'A first order, a trial shipment or a meeting in Doha — the relationship starts with something real, not a brochure.']
@@ -1434,24 +1472,27 @@ ${[
         <p>${d}</p>
       </li>`).join('\n')}
     </ol>
-    <p class="after rise"><a class="btn co-btn tl-cta" href="#apply">Apply to work with us</a></p>
+    <p class="after rise"><a class="btn co-btn tl-cta" href="#routes">Choose your way in</a></p>
   </div>
 </section>
 
-<section class="section apply" id="apply" aria-labelledby="applyTitle">
-  <div class="wrap apply-in">
-    <div class="apply-side rise">
-      <p class="eyebrow">Apply</p>
-      <h2 id="applyTitle">Work with <span class="soft">Lusail Corp</span></h2>
-      <p class="apply-lede">Tell us who you are and where you would like to work with us. Choose one sector, several, or all of them — the application goes to every desk it concerns.</p>
-      <ul class="apply-points">
-        <li>A reply within two working days</li>
-        <li>Read by the companies in the sectors you choose</li>
-        <li>No commitment on either side</li>
-      </ul>
-      <p class="apply-alt">Prefer email? <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></p>
+<section class="section stone routes" id="routes" aria-labelledby="routesTitle">
+  <div class="wrap">
+    ${head2('routesTitle', 'Two ways <span class="soft">in</span>', 'Suppliers register once and are invited to every event in their categories. Everyone else writes to the desk that can answer.')}
+    <div class="route2">
+      <a class="route rise" href="/suppliers/">
+        <span class="route-n">01</span>
+        <h3>You supply something we buy</h3>
+        <p>Producers, exporters, manufacturers, contractors and carriers. The Supplier Portal lists everything the Group buys — from granular sulphur to fresh produce — and what it is buying now. One registration covers every company.</p>
+        <span class="route-go">Open the Supplier Portal <span aria-hidden="true">&#8594;</span></span>
+      </a>
+      <a class="route rise d1" href="/contact/">
+        <span class="route-n">02</span>
+        <h3>You have something else in mind</h3>
+        <p>A distributor looking for supply, a joint venture, a new concept, a market we should be in, or a business that fits the Group. Pick the area of interest and the message goes to the right desk.</p>
+        <span class="route-go">Send an enquiry <span aria-hidden="true">&#8594;</span></span>
+      </a>
     </div>
-    ${formBlock('partnership', 'p', 'fcard rise d1')}
   </div>
 </section>
 
@@ -1466,7 +1507,7 @@ ${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
       </li>`).join('\n')}
       <li class="dir dir-ask rise d3">
         <p class="dir-ask-q">Have one of these?</p>
-        <a class="dir-ask-go" href="#apply">Bring us an opportunity <span aria-hidden="true">&#8594;</span></a>
+        <a class="dir-ask-go" href="/contact/?area=partnership">Bring us an opportunity <span aria-hidden="true">&#8594;</span></a>
       </li>
     </ol>
   </div>
@@ -1474,6 +1515,407 @@ ${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
 
 `
     /* no closing band: the directions grid ends in its own ask */
+    + footer();
+}
+
+/* ---------- the supplier portal --------------------------------------------- */
+
+/* One page for every company's buying. The idea came in as a TIBECO portal
+   mock-up — register once, pick categories, see what is open, quote online —
+   and is built here for the whole Group in the Group's own design. What a
+   static site cannot do is a login, a sealed bid or a dashboard; what it can
+   do is everything in front of that door: say what is bought, show what is
+   open, take a registration and take a quotation, each to the right desk.
+
+   Events are in OPPORTUNITIES. They are dated in Doha time; the build drops
+   the closed ones from the list and the script keeps that true between
+   builds. A closed event keeps its page, which says it has closed. */
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const pad2 = n => String(n).padStart(2, '0');
+/* 'YYYY-MM-DD HH:MM' in Doha (UTC+3, no daylight saving) -> Date */
+const dohaDate = s => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?$/.exec(s || '');
+  if (!m) { console.error('\n  bad date in OPPORTUNITIES: ' + s + '\n'); process.exit(1); }
+  return new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4] || '23'}:${m[5] || '59'}:00+03:00`);
+};
+const fmtDoha = (d, withTime = true) => {
+  const t = new Date(d.getTime() + 3 * 3600e3);
+  return `${t.getUTCDate()} ${MONTHS[t.getUTCMonth()]} ${t.getUTCFullYear()}` +
+    (withTime ? `, ${pad2(t.getUTCHours())}:${pad2(t.getUTCMinutes())}` : '');
+};
+const oppUrl = o => `/suppliers/opportunities/${o.ref.toLowerCase()}/`;
+const companyOf = slug => ALL_COMPANIES.find(c => c.slug === slug);
+const categoryOf = slug => SUPPLY.find(x => x.slug === slug);
+
+/* The same checks the rest of the build makes: a broken reference fails the
+   build rather than shipping a page that points nowhere. */
+(function checkSupply() {
+  for (const cat of SUPPLY) {
+    for (const b of cat.buyers) if (!companyOf(b)) {
+      console.error(`\n  SUPPLY: '${cat.slug}' names a buyer '${b}' that is not a company.\n`); process.exit(1);
+    }
+  }
+  const refs = new Set();
+  for (const o of OPPORTUNITIES) {
+    if (refs.has(o.ref)) { console.error(`\n  OPPORTUNITIES: '${o.ref}' appears twice.\n`); process.exit(1); }
+    refs.add(o.ref);
+    if (!/^[A-Z]{2,4}-[A-Z]{2,4}-\d{2}-\d{3}$/.test(o.ref)) {
+      console.error(`\n  OPPORTUNITIES: '${o.ref}' is not of the form XX-XXX-YY-NNN.\n`); process.exit(1);
+    }
+    if (!companyOf(o.company)) { console.error(`\n  ${o.ref}: '${o.company}' is not a company.\n`); process.exit(1); }
+    if (!categoryOf(o.category)) { console.error(`\n  ${o.ref}: '${o.category}' is not a SUPPLY category.\n`); process.exit(1); }
+    if (!['RFQ', 'Tender', 'RFI'].includes(o.type)) { console.error(`\n  ${o.ref}: type must be RFQ, Tender or RFI.\n`); process.exit(1); }
+    dohaDate(o.closes);
+  }
+})();
+
+const NOW = new Date();
+const oppState = o => {
+  const d = dohaDate(o.closes), left = d - NOW;
+  if (left <= 0) return 'closed';
+  if (o.invite) return 'invite';
+  if (left < 72 * 3600e3) return 'soon';
+  return 'open';
+};
+const STATE_LABEL = { open: 'Open', invite: 'Invite only', soon: 'Closing soon', closed: 'Closed' };
+const OPEN = OPPORTUNITIES
+  .filter(o => oppState(o) !== 'closed')
+  .sort((a, b) => dohaDate(a.closes) - dohaDate(b.closes));
+
+/* One row of the list: the reference, the event, who is buying, when it
+   closes and what you can do. The closing date is also written as data, so
+   the script can turn it into "in 9 days" and retire the row at the hour. */
+function oppRow(o) {
+  const st = oppState(o), co = companyOf(o.company), cat = categoryOf(o.category);
+  /* The badge is written twice — beside the reference, and in the action
+     column — and the stylesheet shows one or the other by screen width, so
+     on a phone the status sits on the first line where a thumb reads it. */
+  const badge = `<span class="badge badge-${st}" data-badge>${STATE_LABEL[st]}</span>`;
+  const act = o.invite ? 'Request invite' : o.type === 'RFI' ? 'Respond' : 'Quote';
+  /* One row, one line on a wide screen: reference and type, the title, who
+     is buying, when it closes, the status, and the one thing to do. The
+     brief and the category live on the event page, not here. */
+  return `      <li class="opp rise" data-closes="${dohaDate(o.closes).toISOString()}" data-invite="${o.invite ? 1 : 0}" data-cat="${cat.slug}">
+        <p class="opp-id"><a class="opp-ref" href="${oppUrl(o)}">${esc(o.ref)}</a></p>
+        <p class="opp-type"><span>${esc(o.type)}</span></p>
+        <h3 class="opp-title"><a href="${oppUrl(o)}">${esc(o.title)}</a></h3>
+        <p class="opp-who"><a href="/companies/${co.slug}/">${esc(co.name)}</a></p>
+        <p class="opp-when"><time datetime="${dohaDate(o.closes).toISOString()}" title="${fmtDoha(dohaDate(o.closes))} Doha time">${fmtDoha(dohaDate(o.closes), false)}</time><span class="opp-in" data-in></span></p>
+        <p class="opp-st">${badge}</p>
+        <p class="opp-act"><a class="opp-go" href="${oppUrl(o)}">${act} <span aria-hidden="true">&#8594;</span></a></p>
+      </li>`;
+}
+
+function pageSuppliers() {
+  const soon = OPEN.slice(0, 3);
+  const buyers = cat => cat.buyers.map(b => companyOf(b)).map(c => `<a href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('');
+  const nCats = SUPPLY.length;
+  const nBuyers = new Set(SUPPLY.flatMap(c => c.buyers)).size;
+  return head({
+    title: `Supplier Portal · ${SITE.name}`,
+    desc: 'Supply the companies of Lusail Corp. What the Group buys — from granular sulphur and sugar to fresh produce, equipment, technology and freight — what is open to quote now, and one registration for TIBECO Group, Lusail Commercial and ROMA Commercial.',
+    url: '/suppliers/', image: 'hero-sector-trading',
+    schema: graph(crumbs([{ name: 'Supplier Portal' }]), {
+      '@type': 'ItemList', name: 'Open sourcing events',
+      itemListElement: OPEN.map((o, i) => ({ '@type': 'ListItem', position: i + 1, name: `${o.ref} — ${o.title}`, url: abs(oppUrl(o)) }))
+    })
+  })
+    + header('/suppliers/', true)
+    + pageHead({
+      eyebrow: 'Supplier Portal',
+      h1: 'Supply the Group. Register once.',
+      lede: 'One free registration covers TIBECO Group, Lusail Commercial and ROMA Commercial — sulphur and sugar to fresh produce, equipment, technology and freight.',
+      photo: 'hero-sector-trading',
+      action: { href: '#register', label: 'Register as a supplier' },
+      action2: { href: '#opportunities', label: 'See open opportunities' }
+    })
+    + `<section class="sp-soon" aria-label="Closing soon">
+  <div class="wrap sp-soon-in">
+    <p class="sp-soon-h"><span class="eyebrow">Closing soon</span></p>
+    <ul class="sp-soon-list" id="soonList">
+${soon.map(o => `      <li data-closes="${dohaDate(o.closes).toISOString()}"><a href="${oppUrl(o)}"><span class="sp-soon-ref">${esc(o.ref)} · ${esc(o.type)}</span><b>${esc(o.title)}</b><span class="sp-soon-when">Closes ${fmtDoha(dohaDate(o.closes), false)}</span></a></li>`).join('\n')}
+${soon.length ? '' : '      <li class="sp-soon-none">Nothing is closing this week. Register, and you are invited the moment something opens in your categories.</li>'}
+    </ul>
+    <a class="sp-soon-all" href="#opportunities">All open opportunities <span aria-hidden="true">&#8594;</span></a>
+  </div>
+</section>
+
+<section class="section stone" id="opportunities" aria-labelledby="oppTitle">
+  <div class="wrap">
+    ${head2('oppTitle', 'Open <span class="soft">opportunities</span>', 'Registered suppliers quote from the event page. Invite-only events are for suppliers already qualified in that category.')}
+    <div class="opp-filter rise" id="oppFilter" hidden>
+      <span class="opp-l">Category</span>
+      <button type="button" class="opp-pill on" data-cat="">All</button>
+${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `      <button type="button" class="opp-pill" data-cat="${c.slug}">${esc(c.short)}</button>`).join('\n')}
+      <label class="opp-sel"><span class="vh">Category</span><select id="oppSelect">
+        <option value="">All categories</option>
+${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `        <option value="${c.slug}">${esc(c.name)}</option>`).join('\n')}
+      </select></label>
+    </div>
+    <ol class="opps" id="opps">
+      <li class="opp-head" aria-hidden="true"><span>Reference</span><span>Type</span><span>Opportunity</span><span>Buyer</span><span>Closes (Doha)</span><span>Status</span><span></span></li>
+${OPEN.map(oppRow).join('\n')}
+    </ol>
+    <p class="opp-none" id="oppNone"${OPEN.length ? ' hidden' : ''}>Nothing is open right now. Register below and you are invited the moment an event opens in your categories.</p>
+    <dl class="opp-key rise">
+      <div><dt><span class="badge badge-open">Open</span></dt><dd>any qualified supplier in the category can quote</dd></div>
+      <div><dt><span class="badge badge-invite">Invite only</span></dt><dd>pre-qualified suppliers; others can request an invitation</dd></div>
+      <div><dt><span class="badge badge-soon">Closing soon</span></dt><dd>closes within 72 hours</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section" id="categories" aria-labelledby="catTitle">
+  <div class="wrap">
+    ${head2('catTitle', 'What we <span class="soft">buy</span>', `${cap(count(nCats))} categories. Open one to see every line it covers.`)}
+    <div class="catlist">
+${SUPPLY.map((c, i) => `      <details class="catrow rise d${i % 4}" id="cat-${c.slug}" name="cat">
+        <summary>
+          <span class="catrow-n">${num(i)}</span>
+          <span class="catrow-main">
+            <span class="catrow-name">${esc(c.name)}</span>
+            <span class="catrow-sample">${esc(c.items.slice(0, 3).map(x => x.replace(/ —.*$/, '').replace(/ \(.*\)$/, '').replace(/^([A-Z])(?![A-Z])/, m => m.toLowerCase())).join(', '))}…</span>
+          </span>
+          <span class="catrow-who">${c.buyers.map(b => esc(companyOf(b).name)).join(' · ')}</span>
+          <span class="catrow-count">${(n => n ? `<a href="#opportunities" data-filter="${c.slug}">${n} open</a>` : '<span>none open</span>')(OPEN.filter(o => o.category === c.slug).length)}</span>
+          <span class="catrow-plus" aria-hidden="true"></span>
+        </summary>
+        <div class="catrow-body">
+          <ul class="catrow-items">
+${c.items.map(x => `            <li>${esc(x)}</li>`).join('\n')}
+          </ul>
+          <p class="catrow-buyers"><span>Bought by</span>${buyers(c)}</p>
+        </div>
+      </details>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="section how" aria-labelledby="spHowTitle">
+  <div class="wrap">
+    ${head2('spHowTitle', 'How it <span class="soft">works</span>', 'Register once, qualify once, and every event in your categories comes to you.')}
+    <ol class="tline">
+${[
+  ['Register once', 'One profile for the whole Group: what you supply, and who may quote.'],
+  ['Get qualified', 'Procurement checks the profile and asks for your licence, tax and bank documents by email.'],
+  ['Quote from the event page', 'Clarifications go to every bidder. Your price is emailed to the issuing desk, tagged with the reference.'],
+  ['Award and deliver', 'The issuing company awards, contracts and pays you directly.']
+].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
+        <span class="tl-node" aria-hidden="true">${num(i)}</span>
+        <h3>${t}</h3>
+        <p>${d}</p>
+      </li>`).join('\n')}
+    </ol>
+  </div>
+</section>
+
+<section class="section apply" id="register" aria-labelledby="regTitle">
+  <div class="wrap">
+    <details class="regbox rise" id="regBox">
+      <summary>
+        <span class="regbox-head">
+          <span class="eyebrow">Register</span>
+          <span class="regbox-title" id="regTitle">Register as <span class="soft">a supplier</span></span>
+          <span class="regbox-line">One profile for the Group’s ${count(nBuyers)} buying companies. Free to register and to quote; reviewed within five working days.</span>
+        </span>
+        <span class="regbox-open"><span class="regbox-word">Open the form</span><span class="catrow-plus" aria-hidden="true"></span></span>
+      </summary>
+      <div class="apply-in">
+        <div class="apply-side">
+          <p class="apply-lede">Tick what you supply; invitations follow for those categories only.</p>
+          <ul class="apply-points">
+            <li>Free to register and to quote</li>
+            <li>Reviewed by procurement within five working days</li>
+            <li>Documents asked for by email, once</li>
+          </ul>
+          <p class="apply-alt">Prefer email? <a href="mailto:${SITE.contact.email}?subject=Supplier%20registration">${esc(SITE.contact.email)}</a></p>
+        </div>
+        ${formBlock('supplier', 's', 'fcard')}
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="section stone" aria-labelledby="docsTitle">
+  <div class="wrap sp-two">
+    <div class="rise">
+      <p class="eyebrow">Before you register</p>
+      <h2 id="docsTitle">Have these <span class="soft">ready</span></h2>
+      <p class="sp-lede">Asked for by email at qualification; nothing is uploaded here.</p>
+      <ul class="reqs">
+${SUPPLIER_DOCS.map(x => `        <li>${esc(x)}</li>`).join('\n')}
+      </ul>
+    </div>
+    <div class="rise d1">
+      <p class="eyebrow">Terms in brief</p>
+      <h2 id="termsTitle">How every event <span class="soft">is run</span></h2>
+      <p class="sp-lede">The long form is in each event’s documents.</p>
+      <dl class="terms">
+${SOURCING_TERMS.map(t => `        <div><dt>${esc(t.t)}</dt><dd>${esc(t.d)}</dd></div>`).join('\n')}
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="section tight" aria-label="Code of Conduct, fraud warning and supplier support">
+  <div class="wrap sp-notes">
+    <div class="rise">
+      <p class="eyebrow">Code of Conduct</p>
+      <p>Every supplier accepts the <a href="/suppliers/code/">Supplier Code of Conduct</a> when registering: lawful business, no gifts, conflicts disclosed, fair competition, safety, environment, accurate documents, confidentiality.</p>
+    </div>
+    <div class="fraud rise d1">
+      <p class="eyebrow">Protect yourself from fraud</p>
+      <p>Lusail Corp and its companies publish sourcing events only on this page and deal with no mandates or intermediaries. We never ask for registration fees, advance payments, proof of funds or bank messages (MT799, MT760). Report any such request to <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>.</p>
+    </div>
+    <div class="rise d2">
+      <p class="eyebrow">Supplier support</p>
+      <dl class="channels">
+        <div><dt>Email</dt><dd><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></dd></div>
+        <div><dt>Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></dd></div>
+        <div><dt>Hours</dt><dd>Sunday to Thursday, 8:00 to 17:00 Doha time</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+`
+    + footer();
+}
+
+/* The Supplier Code of Conduct on its own page: the text a supplier accepts
+   at registration and a quotation refers to, out of the way of the hub. */
+function pageCode() {
+  return head({
+    title: `Supplier Code of Conduct · ${SITE.name}`,
+    desc: 'What every supplier to Lusail Corp and its companies agrees to: lawful business, no bribery, conflicts disclosed, fair competition, safety, environment, accurate documents and confidentiality.',
+    url: '/suppliers/code/', image: 'hero-sector-trading',
+    schema: graph(crumbs([{ name: 'Supplier Portal', url: '/suppliers/' }, { name: 'Supplier Code of Conduct' }]))
+  })
+    + header('/suppliers/', false)
+    + `<section class="opp-hero">
+  <div class="wrap">
+    <p class="crumbs"><a href="/suppliers/">Supplier Portal</a><span aria-hidden="true">/</span><span>Code of Conduct</span></p>
+    <div class="opp-hero-say">
+      <h1>Supplier Code of Conduct</h1>
+      <p class="opp-brief">${count(CODE_OF_CONDUCT.length).replace(/^./, c => c.toUpperCase())} points, accepted by every supplier at registration and with every quotation.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="codeTitle">
+  <div class="wrap">
+    <h2 id="codeTitle" class="vh">The Code</h2>
+    <ol class="conduct">
+${CODE_OF_CONDUCT.map((c, i) => `      <li class="rise d${i % 4}"><span class="conduct-n">${num(i)}</span><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p></li>`).join('\n')}
+    </ol>
+    <p class="after"><a class="btn btn-dark" href="/suppliers/#register">Register as a supplier</a></p>
+  </div>
+</section>
+
+`
+    + footer();
+}
+
+/* One event: the requirement, the clarifications so far, and the quotation
+   form. Once it has closed the form gives way to a line saying so. */
+function pageOpportunity(o) {
+  const st = oppState(o), co = companyOf(o.company), cat = categoryOf(o.category);
+  const closesAt = dohaDate(o.closes);
+  const closed = st === 'closed';
+  const verb = o.type === 'RFI' ? 'response' : 'quotation';
+  const qClose = o.questionsClose ? fmtDoha(dohaDate(o.questionsClose), false) : null;
+  const form = closed
+    ? `<div class="opp-closed rise" data-closed-note>
+      <p class="eyebrow">Closed</p>
+      <h2>This event closed on ${fmtDoha(closesAt)} Doha time.</h2>
+      <p>Award and regret notices go to every participant by email from the ${esc(co.name)} desk. To be invited to the next event in ${esc(cat.name)}, <a href="/suppliers/#register">register as a supplier</a>.</p>
+    </div>`
+    : o.invite
+      ? `<div class="apply-side rise">
+      <p class="eyebrow">Invite only</p>
+      <h2 id="qTitle">Request an <span class="soft">invitation</span></h2>
+      <p class="apply-lede">For suppliers already qualified in ${esc(cat.name)}. Not invited yet, or not yet qualified? Tell the ${esc(co.name)} desk, quoting ${esc(o.ref)}.</p>
+    </div>
+    ${formBlock('enquiry', 'q', 'fcard rise d1', null, { area: co.slug, message: `Invitation request — ${o.ref} ${o.title}.\n\nOur company and what we supply: ` })}`
+      : `<div class="apply-side rise">
+      <p class="eyebrow">Your ${verb}</p>
+      <h2 id="qTitle">Quote on <span class="soft">${esc(o.ref)}</span></h2>
+      <p class="apply-lede">Emailed to the ${esc(co.name)} desk, tagged with the reference. Send again before closing to revise; the last one counts. This form is the cover sheet: email the signed offer, specification and certificates to <a href="mailto:${SITE.contact.email}?subject=${encodeURIComponent(o.ref)}">${esc(SITE.contact.email)}</a> quoting ${esc(o.ref)}.</p>
+      <p class="apply-alt">Not registered yet? <a href="/suppliers/#register">Register first</a> — it takes a few minutes.</p>
+    </div>
+    ${formBlock('quote', 'q', 'fcard rise d1', { reference: o.ref, opportunity: o.title })}`;
+
+  return head({
+    title: `${o.ref} · ${o.title} · ${SITE.name}`,
+    desc: `${o.type} from ${co.name}: ${o.title}. ${o.brief}. Closes ${fmtDoha(closesAt)} Doha time.`,
+    url: oppUrl(o), image: co.hero, noindex: closed,
+    schema: graph(crumbs([{ name: 'Supplier Portal', url: '/suppliers/' }, { name: o.ref }]))
+  })
+    + header('/suppliers/', false)
+    + `<section class="opp-hero" data-closes="${closesAt.toISOString()}" data-invite="${o.invite ? 1 : 0}">
+  <div class="wrap">
+    <p class="crumbs"><a href="/suppliers/">Supplier Portal</a><span aria-hidden="true">/</span><a href="/suppliers/#opportunities">Opportunities</a><span aria-hidden="true">/</span><span>${esc(o.ref)}</span></p>
+    <div class="opp-hero-in">
+      <div class="opp-hero-say">
+        <p class="opp-tags"><span class="badge badge-${st}" data-badge>${STATE_LABEL[st]}</span><span class="opp-tag">${esc(o.type)} · ${esc(o.ref)}</span><a class="opp-tag" href="/suppliers/#cat-${cat.slug}">${esc(cat.name)}</a></p>
+        <h1>${esc(o.title)}</h1>
+        <p class="opp-sum">${esc(o.brief)}</p>
+        <p class="opp-issuer">Issued by <a href="/companies/${co.slug}/">${esc(co.name)}</a></p>
+      </div>
+      <div class="opp-clock">
+        <span class="opp-l">${closed ? 'Closed' : 'Quotations close'}</span>
+        <time datetime="${closesAt.toISOString()}">${fmtDoha(closesAt)}</time>
+        <span class="opp-clock-tz">Doha time<span data-in></span></span>
+${closed ? '' : `        <a class="btn btn-light" href="#quote">${o.invite ? 'Request an invitation' : 'Submit a ' + verb}</a>`}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight" aria-labelledby="specTitle">
+  <div class="wrap opp-body">
+    <div class="rise">
+      <p class="eyebrow">Requirement</p>
+      <h2 id="specTitle">What is <span class="soft">asked for</span></h2>
+      <dl class="spec">
+${o.requirement.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('\n')}
+      </dl>
+      <p class="spec-docs">Specification sheets, terms and the draft contract are issued to registered suppliers on request from the ${esc(co.name)} desk, quoting ${esc(o.ref)}.</p>
+    </div>
+    <aside class="opp-aside rise d1">
+      <div class="opp-clar">
+        <p class="eyebrow">Clarifications</p>
+${(o.clarifications || []).length ? `        <ol class="clar">
+${o.clarifications.map(c => `          <li><span class="clar-on">Answered ${esc(c.on)}</span><p class="clar-q">${esc(c.q)}</p><p class="clar-a">${esc(c.a)}</p></li>`).join('\n')}
+        </ol>` : `        <p class="clar-none">No questions have been asked yet.</p>`}
+        <p class="clar-note">${qClose ? `Questions close ${qClose}. ` : ''}Answers are published here to every bidder, without naming who asked. To ask one, email <a href="mailto:${SITE.contact.email}?subject=${encodeURIComponent('Question on ' + o.ref)}">${esc(SITE.contact.email)}</a> quoting the reference.</p>
+      </div>
+      <div class="opp-also">
+        <p class="eyebrow">Also open</p>
+        <ul>
+${OPEN.filter(x => x.ref !== o.ref).slice(0, 4).map(x => `          <li><a href="${oppUrl(x)}"><span>${esc(x.ref)}</span>${esc(x.title)}</a></li>`).join('\n')}
+${OPEN.filter(x => x.ref !== o.ref).length ? '' : '          <li class="opp-also-none">Nothing else is open right now.</li>'}
+        </ul>
+        <a class="opp-also-all" href="/suppliers/#opportunities">All opportunities <span aria-hidden="true">&#8594;</span></a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="section apply" id="quote" aria-labelledby="qTitle">
+  <div class="wrap${closed ? '' : ' apply-in'}">
+    ${form}
+  </div>
+</section>
+
+<section class="section tight" aria-label="Fraud warning">
+  <div class="wrap">
+    <p class="fraud-line">Lusail Corp never charges a fee to register or to quote. Report suspicious requests to <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>.</p>
+  </div>
+</section>
+
+`
     + footer();
 }
 
@@ -1510,7 +1952,7 @@ function pageContact() {
         <div><dt>Email</dt><dd><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></dd></div>
         <div><dt>Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></dd></div>
         <div><dt>Location</dt><dd>${esc(SITE.contact.location)}</dd></div>
-        <div><dt>Routing</dt><dd>Pick an area of interest and the message goes to the desk that can answer it.</dd></div>
+        <div><dt>Where your message goes</dt><dd>Choose an area of interest in the form and your message goes straight to the company that can answer it, not to a general inbox.</dd></div>
       </dl>
     </div>
     ${formBlock('enquiry', 'f', 'fcard rise d1')}
@@ -1654,6 +2096,11 @@ function build() {
   write('sectors/index.html', pageSectorsIndex());
   SECTORS.forEach(s => write(`sectors/${s.slug}/index.html`, pageSector(s)));
   write('partnerships/index.html', pagePartnerships());
+  write('suppliers/index.html', pageSuppliers());
+  write('suppliers/code/index.html', pageCode());
+  // every event keeps its page after it closes, so a link in an email still
+  // lands somewhere that explains itself
+  OPPORTUNITIES.forEach(o => write(oppUrl(o).slice(1) + 'index.html', pageOpportunity(o)));
   write('contact/index.html', pageContact());
   write('404.html', page404());
 
@@ -1692,7 +2139,8 @@ function build() {
   console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
   const urls = ['/', '/about/', ...ALL_COMPANIES.map(c => `/companies/${c.slug}/`),
-    '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/', '/contact/'];
+    '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/',
+    '/suppliers/', '/suppliers/code/', ...OPEN.map(oppUrl), '/contact/'];
   const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
     `User-agent: *\nAllow: /\n\nSitemap: ${SITE.domain}/sitemap.xml\n`);
@@ -1702,7 +2150,8 @@ function build() {
     `\n</urlset>\n`);
 
   console.log('  robots.txt, sitemap.xml (' + urls.length + ' urls)');
-  console.log(`done -> dist/  (${urls.length + 1} pages, ${ALL_COMPANIES.length} companies)`);
+  const closedN = OPPORTUNITIES.length - OPEN.length;
+  console.log(`done -> dist/  (${urls.length + 1 + closedN} pages, ${ALL_COMPANIES.length} companies, ${OPEN.length} open opportunities${closedN ? `, ${closedN} closed` : ''})`);
 }
 
 build();
