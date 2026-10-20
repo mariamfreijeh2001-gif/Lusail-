@@ -585,7 +585,7 @@ ${opts.noQuick ? '' : quickForm()}
 
 /* Every page but the home page opens the same way: a photograph, a dark
    wash, and the title sitting on it. */
-function pageHead({ eyebrow, eyebrowHref, h1, lede, photo, action, action2 }) {
+function pageHead({ eyebrow, eyebrowHref, h1, lede, photo, action, action2, note }) {
   const brow = eyebrowHref
     ? `<a class="pagehead-eyebrow" href="${eyebrowHref}">${esc(eyebrow)}</a>`
     : `<span class="pagehead-eyebrow">${esc(eyebrow)}</span>`;
@@ -598,6 +598,7 @@ function pageHead({ eyebrow, eyebrowHref, h1, lede, photo, action, action2 }) {
     <h1>${esc(h1)}</h1>
     ${lede ? `<p class="pagehead-lede">${esc(lede)}</p>` : ''}
 ${ctas.length ? `    <div class="pagehead-cta">${ctas.join('\n      ')}</div>` : ''}
+${note ? `    <p class="pagehead-note">${note}</p>` : ''}
   </div>
 </section>
 
@@ -1608,7 +1609,7 @@ function oppRow(o) {
 }
 
 function pageSuppliers() {
-  const soon = OPEN.slice(0, 3);
+  const soon = OPEN.slice(0, 1);
   const buyers = cat => cat.buyers.map(b => companyOf(b)).map(c => `<a href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('');
   const nCats = SUPPLY.length;
   const nBuyers = new Set(SUPPLY.flatMap(c => c.buyers)).size;
@@ -1628,20 +1629,10 @@ function pageSuppliers() {
       lede: 'One free registration covers TIBECO Group, Lusail Commercial and ROMA Commercial — sulphur and sugar to fresh produce, equipment, technology and freight.',
       photo: 'hero-sector-trading',
       action: { href: '#register', label: 'Register as a supplier' },
-      action2: { href: '#opportunities', label: 'See open opportunities' }
+      action2: { href: '#opportunities', label: 'See open opportunities' },
+      note: soon.length ? `Next to close <a href="${oppUrl(soon[0])}"><span>${esc(soon[0].ref)}</span> ${esc(soon[0].title)}</a> <time datetime="${dohaDate(soon[0].closes).toISOString()}">${fmtDoha(dohaDate(soon[0].closes), false)}</time>` : ''
     })
-    + `<section class="sp-soon" aria-label="Closing soon">
-  <div class="wrap sp-soon-in">
-    <p class="sp-soon-h"><span class="eyebrow">Closing soon</span></p>
-    <ul class="sp-soon-list" id="soonList">
-${soon.map(o => `      <li data-closes="${dohaDate(o.closes).toISOString()}"><a href="${oppUrl(o)}"><span class="sp-soon-ref">${esc(o.ref)} · ${esc(o.type)}</span><b>${esc(o.title)}</b><span class="sp-soon-when">Closes ${fmtDoha(dohaDate(o.closes), false)}</span></a></li>`).join('\n')}
-${soon.length ? '' : '      <li class="sp-soon-none">Nothing is closing this week. Register, and you are invited the moment something opens in your categories.</li>'}
-    </ul>
-    <a class="sp-soon-all" href="#opportunities">All open opportunities <span aria-hidden="true">&#8594;</span></a>
-  </div>
-</section>
-
-<section class="section stone" id="opportunities" aria-labelledby="oppTitle">
+    + `<section class="section stone" id="opportunities" aria-labelledby="oppTitle">
   <div class="wrap">
     ${head2('oppTitle', 'Open <span class="soft">opportunities</span>', 'Registered suppliers quote from the event page. Invite-only events are for suppliers already qualified in that category.')}
     <div class="opp-filter rise" id="oppFilter" hidden>
@@ -1650,7 +1641,7 @@ ${soon.length ? '' : '      <li class="sp-soon-none">Nothing is closing this wee
 ${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `      <button type="button" class="opp-pill" data-cat="${c.slug}">${esc(c.short)}</button>`).join('\n')}
       <label class="opp-sel"><span class="vh">Category</span><select id="oppSelect">
         <option value="">All categories</option>
-${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `        <option value="${c.slug}">${esc(c.name)}</option>`).join('\n')}
+${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `        <option value="${c.slug}">${esc(c.short)}</option>`).join('\n')}
       </select></label>
     </div>
     <ol class="opps" id="opps">
@@ -1658,11 +1649,6 @@ ${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `        <o
 ${OPEN.map(oppRow).join('\n')}
     </ol>
     <p class="opp-none" id="oppNone"${OPEN.length ? ' hidden' : ''}>Nothing is open right now. Register below and you are invited the moment an event opens in your categories.</p>
-    <dl class="opp-key rise">
-      <div><dt><span class="badge badge-open">Open</span></dt><dd>any qualified supplier in the category can quote</dd></div>
-      <div><dt><span class="badge badge-invite">Invite only</span></dt><dd>pre-qualified suppliers; others can request an invitation</dd></div>
-      <div><dt><span class="badge badge-soon">Closing soon</span></dt><dd>closes within 72 hours</dd></div>
-    </dl>
   </div>
 </section>
 
@@ -1677,7 +1663,7 @@ ${SUPPLY.map((c, i) => `      <details class="catrow rise d${i % 4}" id="cat-${c
             <span class="catrow-name">${esc(c.name)}</span>
             <span class="catrow-sample">${esc(c.items.slice(0, 3).map(x => x.replace(/ —.*$/, '').replace(/ \(.*\)$/, '').replace(/^([A-Z])(?![A-Z])/, m => m.toLowerCase())).join(', '))}…</span>
           </span>
-          <span class="catrow-who">${c.buyers.map(b => esc(companyOf(b).name)).join(' · ')}</span>
+          <span class="catrow-who">${c.buyers.length > 2 ? plural(c.buyers.length, 'buyer', 'buyers') : c.buyers.map(b => esc(companyOf(b).name)).join(' · ')}</span>
           <span class="catrow-count">${(n => n ? `<a href="#opportunities" data-filter="${c.slug}">${n} open</a>` : '<span>none open</span>')(OPEN.filter(o => o.category === c.slug).length)}</span>
           <span class="catrow-plus" aria-hidden="true"></span>
         </summary>
@@ -1719,7 +1705,7 @@ ${[
           <span class="regbox-title" id="regTitle">Register as <span class="soft">a supplier</span></span>
           <span class="regbox-line">One profile for the Group’s ${count(nBuyers)} buying companies. Free to register and to quote; reviewed within five working days.</span>
         </span>
-        <span class="regbox-open"><span class="regbox-word">Open the form</span><span class="catrow-plus" aria-hidden="true"></span></span>
+        <span class="regbox-open"><span class="btn btn-dark regbox-btn"><span class="regbox-word">Open the form</span><span class="catrow-plus" aria-hidden="true"></span></span></span>
       </summary>
       <div class="apply-in">
         <div class="apply-side">
@@ -1730,6 +1716,11 @@ ${[
             <li>Documents asked for by email, once</li>
           </ul>
           <p class="apply-alt">Prefer email? <a href="mailto:${SITE.contact.email}?subject=Supplier%20registration">${esc(SITE.contact.email)}</a></p>
+          <p class="apply-h">Have these ready</p>
+          <p class="apply-sub">Asked for by email at qualification; nothing is uploaded here.</p>
+          <ul class="reqs reqs-side">
+${SUPPLIER_DOCS.map(x => `            <li>${esc(x)}</li>`).join('\n')}
+          </ul>
         </div>
         ${formBlock('supplier', 's', 'fcard')}
       </div>
@@ -1737,24 +1728,16 @@ ${[
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="docsTitle">
+<section class="section stone" aria-labelledby="termsTitle">
   <div class="wrap sp-two">
     <div class="rise">
-      <p class="eyebrow">Before you register</p>
-      <h2 id="docsTitle">Have these <span class="soft">ready</span></h2>
-      <p class="sp-lede">Asked for by email at qualification; nothing is uploaded here.</p>
-      <ul class="reqs">
-${SUPPLIER_DOCS.map(x => `        <li>${esc(x)}</li>`).join('\n')}
-      </ul>
-    </div>
-    <div class="rise d1">
       <p class="eyebrow">Terms in brief</p>
       <h2 id="termsTitle">How every event <span class="soft">is run</span></h2>
-      <p class="sp-lede">The long form is in each event’s documents.</p>
-      <dl class="terms">
-${SOURCING_TERMS.map(t => `        <div><dt>${esc(t.t)}</dt><dd>${esc(t.d)}</dd></div>`).join('\n')}
-      </dl>
+      <p class="sp-lede">The long form is in each event’s documents. Quotes in USD or QAR, in English; every event is an invitation to treat under the laws of the State of Qatar.</p>
     </div>
+    <dl class="terms rise d1">
+${SOURCING_TERMS.map(t => `      <div><dt>${esc(t.t)}</dt><dd>${esc(t.d)}</dd></div>`).join('\n')}
+    </dl>
   </div>
 </section>
 
@@ -1770,11 +1753,7 @@ ${SOURCING_TERMS.map(t => `        <div><dt>${esc(t.t)}</dt><dd>${esc(t.d)}</dd>
     </div>
     <div class="rise d2">
       <p class="eyebrow">Supplier support</p>
-      <dl class="channels">
-        <div><dt>Email</dt><dd><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></dd></div>
-        <div><dt>Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></dd></div>
-        <div><dt>Hours</dt><dd>Sunday to Thursday, 8:00 to 17:00 Doha time</dd></div>
-      </dl>
+      <p>Write to <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>${/0{4}/.test(SITE.contact.phone) ? '' : ` or call <a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a>`}, Sunday to Thursday, 8:00 to 17:00 Doha time. Quote the event reference if you have one.</p>
     </div>
   </div>
 </section>

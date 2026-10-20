@@ -231,24 +231,29 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   supplier-portal mock-up and is built for the whole Group in the Group's
   design. It is ordered around the two things a supplier comes to do, quote
   and register, with "what we do" explained before the form is asked for:
-  the port photograph with "Supply the Group. Register once." and two
-  buttons; a navy strip of what closes next; **open opportunities** (one
-  line per event on a wide screen — reference, type, title, buyer, closing
-  date with a live "in 9 days", status as a gold or grey word, and a Quote
-  button — three lines a card on a phone, with a category filter that is
-  short pills on a wide screen and a select on a phone); **what we buy**
+  the port photograph with "Supply the Group. Register once.", two buttons
+  and a "Next to close" line naming the nearest event; **open
+  opportunities** (one line per event on a wide screen — reference, type,
+  title, buyer, closing date with a live "in 9 days", status as a gold or
+  grey word, and a Quote button — three lines a card on a phone, with a
+  category filter that is short pills on a wide screen and a select on a
+  phone); **what we buy**
   (eight categories as dropdown rows for the three buying companies —
   TIBECO Group, Lusail Commercial and ROMA Commercial; the café and the
   laundry are not on the portal — closed, each shows its number, name,
   three sample lines, who buys and "2 open", which filters the list; open,
   every line and the buyers as links — one open at a time); how it works in
   four short steps; **the registration form, folded** behind a "Register as
-  a supplier" row with a plus, which the opening's button, a company page's
-  "Supply …" button and any link to `#register` unfold; what to have ready,
-  beside the **terms in brief** (currency, payment, offer validity,
-  registration validity, and the line that every event is an invitation to
-  treat under Qatar law); then one linked line for the Code of Conduct, the
-  fraud warning and supplier support as three ruled columns.
+  a supplier" row with an "Open the form" button, which the opening's
+  button, a company page's "Supply …" button and any link to `#register`
+  unfold — the documents to have ready sit in the form's side column; the
+  **terms in brief** (currency, payment, offer validity, registration
+  validity, and the line that every event is an invitation to treat under
+  Qatar law); then one linked line for the Code of Conduct, the fraud
+  warning and supplier support as three ruled columns. Three design reviews
+  and a procurement review shaped it; the third removed a "closing soon"
+  strip that repeated the list and a status legend the button labels made
+  redundant.
   The **Supplier Code of Conduct** has its own page at `/suppliers/code/`,
   ten points. Each event has its own page: the requirement as a table, the
   clarifications published so far, what else is open, and a quotation form
