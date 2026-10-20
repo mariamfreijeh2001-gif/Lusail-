@@ -238,7 +238,7 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   grey word, and a Quote button — three lines a card on a phone, with a
   category filter that is short pills on a wide screen and a select on a
   phone); **what we buy**
-  (eight categories as dropdown rows for the three buying companies —
+  (eight categories as a grid of ruled cards for the three buying companies —
   TIBECO Group, Lusail Commercial and ROMA Commercial; the café and the
   laundry are not on the portal — closed, each shows its number, name,
   three sample lines, who buys and "2 open", which filters the list; open,

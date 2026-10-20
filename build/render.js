@@ -1654,7 +1654,7 @@ ${OPEN.map(oppRow).join('\n')}
 
 <section class="section" id="categories" aria-labelledby="catTitle">
   <div class="wrap">
-    ${head2('catTitle', 'What we <span class="soft">buy</span>', `${cap(count(nCats))} categories. Open one to see every line it covers.`)}
+    ${head2('catTitle', 'What we <span class="soft">buy</span>', `${cap(count(nCats))} categories. Open a card to see every line it covers.`)}
     <div class="catlist">
 ${SUPPLY.map((c, i) => `      <details class="catrow rise d${i % 4}" id="cat-${c.slug}" name="cat">
         <summary>

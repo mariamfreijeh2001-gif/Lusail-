@@ -2413,40 +2413,45 @@ input[type="checkbox"]{width:auto;padding:0}
 .sp-soon-all span{transition:transform .25s;color:var(--gold)}
 .sp-soon-all:hover span{transform:translateX(4px)}
 
-/* what we buy: one dropdown row per category. Closed, it says the name,
-   who buys and how many lines; open, every line and the buyers as links. */
-.catlist{margin:clamp(28px,3.4vw,44px) 0 0;border-top:1px solid var(--line-2)}
-.catrow{border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--head-h) + 16px)}
+/* what we buy: a card per category, four across, ruled like the rest of
+   the system — a hairline above, a gold rule drawn across on hover. Closed,
+   a card names the category, three sample lines, who buys and what is open;
+   the plus opens it to every line, and the row grows with it. */
+.catlist{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(16px,2.2vw,32px);
+  margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--line-2);
+}
+.catrow{position:relative;border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--head-h) + 16px)}
+.catrow::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.catrow:hover::before,.catrow[open]::before,.catrow:target::before{transform:scaleX(1)}
 .catrow > summary{
-  list-style:none;cursor:pointer;display:grid;grid-template-columns:48px minmax(0,1.6fr) 230px 80px 20px;
-  gap:0 clamp(16px,2vw,32px);align-items:center;padding:16px 0;position:relative;
+  list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 20px;gap:8px 12px;
+  align-content:start;padding:clamp(18px,2vw,24px) 0 clamp(16px,1.8vw,20px);
 }
 .catrow > summary::-webkit-details-marker{display:none}
-.catrow > summary::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.catrow:hover > summary::before,.catrow[open] > summary::before,.catrow:target > summary::before{transform:scaleX(1)}
 .catrow > summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.catrow-n{font:300 1.25rem/1.3 var(--display);color:var(--gold-text)}
-.catrow-main{display:grid;gap:3px}
-.catrow-name{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink)}
-.catrow-sample{font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.catrow-who{font:400 var(--t-sm)/1.45 var(--body);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.catrow-count{font:500 var(--t-sm)/1.45 var(--ui);color:var(--ink-3);text-align:right;white-space:nowrap}
-.catrow-count a{position:relative;z-index:1;color:var(--gold-text);text-decoration:none;border-bottom:1px solid var(--gold);display:inline-flex;align-items:center;min-height:44px}
-.catrow-count a:hover{color:var(--ink)}
-.catrow-plus{position:relative;width:14px;height:14px;justify-self:end}
+.catrow-n{grid-column:1;font:300 1.25rem/1 var(--display);color:var(--gold-text)}
+.catrow-plus{grid-column:2;grid-row:1;position:relative;width:14px;height:14px;justify-self:end;align-self:start;margin-top:2px}
 .catrow-plus::before,.catrow-plus::after{content:"";position:absolute;background:var(--gold-text);transition:transform .25s}
 .catrow-plus::before{left:0;top:6px;width:14px;height:2px}
 .catrow-plus::after{left:6px;top:0;width:2px;height:14px}
 .catrow[open] .catrow-plus::after{transform:rotate(90deg)}
-.catrow-body{display:grid;gap:14px;padding:0 0 clamp(18px,2vw,26px) calc(48px + clamp(16px,2vw,32px))}
-.catrow-items{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px clamp(16px,2vw,32px)}
+.catrow-main{grid-column:1/-1;display:grid;gap:6px;margin-top:6px}
+.catrow-name{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink)}
+.catrow-sample{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
+.catrow-who{grid-column:1/-1;font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-3);margin-top:4px}
+.catrow-count{grid-column:1/-1;font:500 var(--t-sm)/1.45 var(--ui);color:var(--ink-3)}
+.catrow-count a{position:relative;z-index:1;color:var(--gold-text);text-decoration:none;border-bottom:1px solid var(--gold);display:inline-flex;align-items:center;min-height:32px}
+.catrow-count a:hover{color:var(--ink)}
+.catrow-body{display:grid;gap:12px;padding:0 0 clamp(18px,2vw,24px);border-top:1px solid var(--line);padding-top:14px}
+.catrow-items{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .catrow-items li{position:relative;padding-left:18px;font:400 var(--t-sm)/1.45 var(--body);color:var(--ink)}
 .catrow-items li::before{content:"";position:absolute;left:0;top:.72em;width:10px;height:1.5px;background:var(--gold)}
 .catrow-buyers{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
 .catrow-buyers > span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .catrow-buyers a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-2)}
 .catrow-buyers a:hover{border-color:var(--gold)}
-@media (prefers-reduced-motion:reduce){ .catrow-plus::after,.catrow > summary::before{transition:none} }
+@media (prefers-reduced-motion:reduce){ .catrow-plus::after,.catrow::before{transition:none} }
 
 /* the list of open events: one row, one line each on a wide screen —
    reference and type, the title, the buyer, when it closes, the status and
@@ -2640,13 +2645,7 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
   .opp-who{grid-column:1/3;grid-row:3}
   .opp-when{grid-column:3;grid-row:3;justify-self:start}
   .opp-act{grid-column:3;grid-row:3;justify-self:end}
-  .catrow > summary{grid-template-columns:36px minmax(0,1fr) 72px 18px;gap:4px 14px}
-  .catrow-n{grid-column:1;grid-row:1}
-  .catrow-main{grid-column:2;grid-row:1}
-  .catrow-who{grid-column:2;grid-row:2;font-size:var(--t-xs);color:var(--ink-3)}
-  .catrow-count,.catrow-plus{grid-row:1/3}
-  .catrow-body{padding-left:calc(36px + 14px)}
-  .catrow-items{grid-template-columns:1fr}
+  .catlist{grid-template-columns:repeat(2,minmax(0,1fr))}
   .opp-go{min-height:36px;padding:0 12px}
 }
 @media (max-width:900px){
@@ -2669,7 +2668,7 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
   .opp-when .opp-in{display:none}
   .opp-act{grid-column:1/-1;grid-row:4;justify-self:stretch}
   .opp-go{width:100%;justify-content:center}
-  .catrow-body{padding-left:0}
+  .catlist{grid-template-columns:1fr}
   .opp-go{min-height:44px}
   /* a thumb's targets: the reference, the issuing company and the buyer chips */
   .opp-ref,.opp-who a{display:inline-flex;align-items:center;min-height:44px;padding:0}
