@@ -10,6 +10,18 @@
  *   CONTACT_TO       optional   where enquiries land   (default info@lusailcorp.com)
  *   CONTACT_FROM     optional   the From address       (default onboarding@resend.dev)
  *
+ * Routing to a company's own desk, each optional; unset ones fall back to
+ * CONTACT_TO. A value may hold several addresses separated by commas.
+ *
+ *   CONTACT_TO_TIBECO_GROUP        everything addressed to TIBECO Group: an
+ *   CONTACT_TO_LUSAIL_COMMERCIAL   enquiry with that area of interest, a
+ *   CONTACT_TO_ROMA_COMMERCIAL     quotation on one of its events (by the
+ *   CONTACT_TO_CAVALLO_LAUNDRY     reference prefix), an invitation request
+ *   CONTACT_TO_NERO_CAFE
+ *   CONTACT_TO_SUPPLIERS           supplier registrations (default: TIBECO
+ *                                  Group's address if set, else CONTACT_TO)
+ *   CONTACT_CC                     copied on every message, e.g. the general inbox
+ *
  * CONTACT_FROM must be on a domain verified in Resend. Until lusailcorp.com is
  * verified there, Resend only accepts onboarding@resend.dev, which is why that
  * is the default — the form works the moment the key is set, and starts sending
@@ -27,7 +39,30 @@ const LIMITS = {
    the two cannot drift apart. The list includes every company, which is how an
    enquiry reaches the right desk rather than a general inbox. Anything not on
    the list is treated as unspecified rather than trusted into a header. */
-const { SITE, ALL_COMPANIES, SECTORS, PARTNER_TYPES, FORMS, FORM_LISTS, SUPPLY } = require('../data/site.js');
+const { SITE, ALL_COMPANIES, SECTORS, PARTNER_TYPES, FORMS, FORM_LISTS, SUPPLY, OPPORTUNITIES } = require('../data/site.js');
+
+/* Where a message goes. The general inbox unless a desk is configured for
+   the company the message concerns: the area of interest on an enquiry, or
+   the issuing company of the event a quotation answers. */
+const envList = name => (process.env[name] || '').split(',').map(s => s.trim()).filter(Boolean);
+const deskOf = slug => envList('CONTACT_TO_' + String(slug || '').toUpperCase().replace(/-/g, '_'));
+function recipients(form, body) {
+  const general = envList('CONTACT_TO');
+  const fallback = general.length ? general : [SITE.contact.email];
+  let to = [];
+  if (form === 'supplier') to = envList('CONTACT_TO_SUPPLIERS').length ? envList('CONTACT_TO_SUPPLIERS') : deskOf('tibeco-group');
+  else if (form === 'quote') {
+    const ref = typeof body.reference === 'string' ? body.reference.trim() : '';
+    const ev = OPPORTUNITIES.find(o => o.ref === ref);
+    if (ev) to = deskOf(ev.company);
+  } else if (form === 'enquiry' || !form) {
+    const area = typeof body.area === 'string' ? body.area.trim() : '';
+    if (ALL_COMPANIES.some(c => c.slug === area)) to = deskOf(area);
+  }
+  if (!to.length) to = fallback;
+  const cc = envList('CONTACT_CC').filter(a => !to.includes(a));
+  return { to, cc };
+}
 
 const AREAS = Object.assign(
   { general: 'General Enquiry' },
@@ -185,7 +220,7 @@ async function sendDefined(spec, body, res) {
   if (!email) return res.status(400).json({ error: 'Missing: email' });
   rows.push(['Received', qatarTime(new Date())]);
 
-  const to = process.env.CONTACT_TO || SITE.contact.email;
+  const { to, cc } = recipients(body.form, body);
   const from = process.env.CONTACT_FROM || 'Lusail Corp Website <onboarding@resend.dev>';
   const title = spec.subject;
   const html = `<!doctype html>
@@ -207,11 +242,11 @@ async function sendDefined(spec, body, res) {
     const r = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from, to: [to], reply_to: email,
+      body: JSON.stringify(Object.assign({
+        from, to, reply_to: email,
         subject: headerSafe(`${title}${subjectExtra && subjectExtra !== '—' ? ' — ' + subjectExtra : ''} — ${company || name || email}`),
         html, text
-      })
+      }, cc.length ? { cc } : {}))
     });
     if (!r.ok) {
       console.error('contact: resend ' + r.status + ' ' + await r.text());
@@ -291,7 +326,7 @@ module.exports = async function handler(req, res) {
   }
 
   const areaLabel = AREAS[f.area] || 'General Enquiry';
-  const to = process.env.CONTACT_TO || SITE.contact.email;
+  const { to, cc } = recipients('enquiry', f);
   const from = process.env.CONTACT_FROM || 'Lusail Corp Website <onboarding@resend.dev>';
 
   const rows = [
@@ -332,15 +367,15 @@ module.exports = async function handler(req, res) {
         Authorization: 'Bearer ' + key,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
+      body: JSON.stringify(Object.assign({
         from,
-        to: [to],
+        to,
         // so a reply from the inbox goes straight back to the enquirer
         reply_to: f.email,
         subject: headerSafe(`Website enquiry — ${areaLabel} — ${f.name}`),
         html,
         text
-      })
+      }, cc.length ? { cc } : {}))
     });
 
     if (!r.ok) {

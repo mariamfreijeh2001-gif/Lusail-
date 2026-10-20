@@ -115,10 +115,19 @@ came back "Missing: name", not "Email is not configured"). Two things still
 decide whether a message *arrives*:
 
 - **Where it goes.** Everything is delivered to `CONTACT_TO`, which defaults
-  to `info@lusailcorp.com` — and that mailbox does not exist yet (item 5).
-  Until it does, set `CONTACT_TO` to a mailbox that is read. If suppliers
-  should land somewhere other than general enquiries, say which address and
-  the function can route by form.
+  to `info@lusailcorp.com` (the mailbox now exists). To send a company's
+  messages to its own desk, set that company's variable in Vercel and
+  redeploy; anything unset keeps going to `CONTACT_TO`:
+
+  | Variable | Reaches it |
+  |---|---|
+  | `CONTACT_TO_TIBECO_GROUP` | enquiries with TIBECO as the area of interest, quotations on TG- events, invitation requests for them, and supplier registrations (unless `CONTACT_TO_SUPPLIERS` is set) |
+  | `CONTACT_TO_LUSAIL_COMMERCIAL` | the same for Lusail Commercial and LC- events |
+  | `CONTACT_TO_ROMA_COMMERCIAL` | the same for ROMA and RC- events |
+  | `CONTACT_TO_SUPPLIERS` | supplier registrations, if they should go somewhere else |
+  | `CONTACT_CC` | copied on every message, e.g. `info@lusailcorp.com` |
+
+  A value may hold several addresses separated by commas.
 - **Who it comes from.** Until `lusailcorp.com` is verified in Resend, the
   From address is Resend's `onboarding@resend.dev`, and Resend only lets that
   sender deliver to the email address of the Resend account itself. So
