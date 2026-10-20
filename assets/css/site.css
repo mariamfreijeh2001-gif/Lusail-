@@ -2451,6 +2451,11 @@ input[type="checkbox"]{width:auto;padding:0}
 .catrow-buyers > span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .catrow-buyers a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-2)}
 .catrow-buyers a:hover{border-color:var(--gold)}
+/* open, a card takes two columns and shows its lines to the right of the
+   summary, so the row keeps its height instead of growing downward */
+.catrow[open]{grid-column:span 2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 clamp(16px,2.2vw,32px);align-items:start}
+.catrow[open] > summary{grid-column:1}
+.catrow[open] .catrow-body{grid-column:2;border-top:0;border-left:1px solid var(--line);padding:clamp(18px,2vw,24px) 0 clamp(18px,2vw,24px) clamp(16px,2vw,28px)}
 @media (prefers-reduced-motion:reduce){ .catrow-plus::after,.catrow::before{transition:none} }
 
 /* the list of open events: one row, one line each on a wide screen —
@@ -2669,6 +2674,8 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
   .opp-act{grid-column:1/-1;grid-row:4;justify-self:stretch}
   .opp-go{width:100%;justify-content:center}
   .catlist{grid-template-columns:1fr}
+  .catrow[open]{grid-column:auto;display:block}
+  .catrow[open] .catrow-body{border-left:0;border-top:1px solid var(--line);padding:14px 0 18px}
   .opp-go{min-height:44px}
   /* a thumb's targets: the reference, the issuing company and the buyer chips */
   .opp-ref,.opp-who a{display:inline-flex;align-items:center;min-height:44px;padding:0}
