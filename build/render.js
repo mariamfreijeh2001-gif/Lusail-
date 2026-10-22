@@ -575,35 +575,21 @@ function footer(opts = {}) {
         <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}</a>
         <p>${esc(SITE.tagline)}<br>${esc(SITE.blurb)}</p>
       </div>
-      <div class="foot-cols">
-        <div class="foot-col">
-          <p class="foot-h">Sectors</p>
-          <ul>
-${SECTORS.map(s => `            <li><a href="${secHref(s)}">${esc(s.name)}</a></li>`).join('\n')}
-          </ul>
-        </div>
-        <div class="foot-col">
-          <p class="foot-h">Companies</p>
-          <ul>
-${ALL_COMPANIES.map(c => `            <li><a ${coLink(c)}>${esc(c.name)}${coMark(c)}</a></li>`).join('\n')}
-          </ul>
-        </div>
-        <div class="foot-col">
-          <p class="foot-h">Contact</p>
-          <ul>
-            <li><a href="/about/">About us</a></li>
-            <li><a href="/partnerships/">Work with us</a></li>
-            <li><a href="/contact/">Contact</a></li>
-            <li><a href="/supplier-portal/">Supplier portal</a></li>
-            <li><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></li>
-            <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></li>
-            <li><span>${esc(SITE.contact.location)}</span></li>
-${social.map(([label, href]) => `            <li><a href="${href}">${esc(label)}</a></li>`).join('\n')}
-          </ul>
-        </div>
+      <div class="foot-go">
+        <nav class="foot-nav" aria-label="Footer">
+          <a href="/about/">About us</a>
+          <a href="/partnerships/">Work with us</a>
+          <a href="/supplier-portal/">Supplier Portal</a>
+          <a href="/contact/">Contact</a>
+        </nav>
+        <p class="foot-reach">
+          <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
+          <a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a>
+${social.map(([label, href]) => `          <a href="${href}">${esc(label)}</a>`).join('\n')}
+        </p>
       </div>
     </div>
-    <p class="foot-legal">© ${esc(SITE.name)}. All Rights Reserved.</p>
+    <p class="foot-legal">© ${esc(SITE.name)}. All Rights Reserved. · ${esc(SITE.contact.location)}</p>
   </div>
 </footer>
 ${opts.noQuick ? '' : quickForm()}
@@ -1901,7 +1887,7 @@ function page404() {
     + pageHead({
       eyebrow: '404',
       h1: 'That page does not exist.',
-      lede: 'The link may have changed. Try the portfolio, or go back to the home page.',
+      lede: 'The link may have changed. Head back to the home page, or see our sectors.',
       photo: 'hero-contact'
     })
     + `<section class="section tight">

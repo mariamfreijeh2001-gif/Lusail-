@@ -817,6 +817,21 @@ then the two lists that answer
 /* Compact: the seven sectors run in two columns rather than one long one,
 and the legal line sits on a rule rather than under a gap. */
 .site-foot{background:var(--ink);color:var(--warm);padding-block:44px 22px}
+.foot-go{display:grid;gap:18px;justify-items:end;align-content:start}
+.foot-nav{display:flex;flex-wrap:wrap;gap:6px 26px}
+.foot-nav a{
+  display:inline-flex;align-items:center;min-height:44px;
+  font:500 var(--t-sm)/1.4 var(--ui);color:rgba(255,255,255,.78);text-decoration:none;
+  transition:color .2s;
+}
+.foot-nav a:hover,.foot-nav a:focus-visible{color:#fff}
+.foot-reach{display:flex;flex-wrap:wrap;gap:6px 26px;justify-content:flex-end}
+.foot-reach a{
+  display:inline-flex;align-items:center;min-height:44px;
+  font:400 var(--t-sm)/1.4 var(--ui);color:rgba(255,255,255,.55);text-decoration:none;
+  transition:color .2s;
+}
+.foot-reach a:hover,.foot-reach a:focus-visible{color:#fff}
 .foot{
   display:grid;grid-template-columns:minmax(0,320px) minmax(0,auto);
   gap:clamp(32px,6vw,96px);justify-content:space-between;align-items:start;
@@ -824,19 +839,7 @@ and the legal line sits on a rule rather than under a gap. */
 .foot-id{display:grid;gap:14px;align-content:start}
 .foot-id img{height:38px;width:auto}
 .foot-id p{font:400 var(--t-micro)/1.6 var(--body);color:var(--ink-inv-2);max-width:32ch}
-.foot-cols{display:flex;gap:clamp(28px,4vw,64px);flex-wrap:wrap}
-.foot-col{display:grid;gap:12px;align-content:start}
-.foot-col ul{list-style:none;margin:0;padding:0;display:grid;gap:2px 32px}
-.foot-col:first-child ul{grid-template-columns:repeat(2,auto)}
-.foot-col a,
-.foot-col span{
-  font:400 var(--t-micro)/1.43 var(--ui);color:rgba(255,255,255,.7);text-decoration:none;
-  transition:color .2s;
-}
-/* an inline link is only as tall as its type; these need to be a target */
-.foot-col a{display:inline-flex;align-items:center;min-height:28px}
-.foot-col span{display:inline-flex;align-items:center;min-height:28px}
-.foot-col a:hover{color:#fff}
+
 .foot-legal{
   margin-top:clamp(28px,3.4vw,40px);padding-top:16px;border-top:1px solid rgba(255,255,255,.1);
   font:400 var(--t-xxs)/1.67 var(--ui);color:rgba(255,255,255,.5);
@@ -859,10 +862,6 @@ and everything draws in. */
   .foot-id{gap:14px}
   .foot-id img{height:32px}
   .foot-id p{display:none}
-  .foot-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
-  .foot-col{gap:12px;min-width:0}
-  .foot-col:first-child ul{grid-template-columns:1fr}
-  .foot-col ul{gap:4px}
   .foot-legal{margin-top:20px}
 }
 
@@ -1661,7 +1660,6 @@ so "Sourced from
 
 /* the footer column labels are labels,
 not page sections */
-.foot-h{font:600 .6875rem/1.4 var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:0}
 
 /* ==========================================================================
    The phone pass
@@ -1676,7 +1674,6 @@ and these were the ones that fell between the two. The
   .site-head .brand,.foot-id a{display:inline-flex;align-items:center;min-height:44px}
   .burger{width:44px}
   a.pagehead-eyebrow{display:inline-flex;align-items:center;min-height:44px}
-  .foot-col a{min-height:44px}
   .prod-from a{min-height:44px;font-size:var(--t-micro)}
   .secrail a{min-height:48px}
   .cotile{min-height:52px}
@@ -2057,7 +2054,6 @@ not four tall cards */
 /* ---- after the sizing audit ---- */
 /* the footer's three columns stay on one row at every desktop width */
 .foot{grid-template-columns:minmax(0,240px) minmax(0,1fr);gap:clamp(24px,3vw,48px)}
-.foot-cols{gap:clamp(24px,2.5vw,40px)}
 /* the globe band fits a 900px screen */
 .globe{width:min(100%,560px)}
 .section.tight{padding-block:clamp(40px,4.5vw,64px)}
@@ -2339,18 +2335,11 @@ not four tall rows */
   .co-facts dl > div:nth-child(even){padding-inline-start:14px;border-inline-start:1px solid rgba(255,255,255,.14)}
   .co-facts dd{font-size:var(--t-sm)}
 
-  /* the footer: the mark,
-then sectors across the width,
-then companies
-     and contact side by side */
-  .foot{grid-template-columns:1fr;gap:30px}
+  /* the footer stacks: the mark, then the destinations, then how to reach us */
+  .foot{grid-template-columns:1fr;gap:26px}
   .foot-id p{display:block;font-size:var(--t-sm);max-width:none}
-  .foot-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 20px}
-  .foot-col{min-width:0;gap:10px}
-  .foot-col:first-child{grid-column:1 / -1}
-  .foot-col:first-child ul{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
-  .foot-col a,
-.foot-col span{font-size:var(--t-sm);overflow-wrap:anywhere;min-height:36px}
+  .foot-go{justify-items:start}
+  .foot-reach{justify-content:flex-start}
 
   /* touch targets */
   .co-ask-mail,
@@ -2380,13 +2369,7 @@ one under the other */
 even over a photograph */
   html:has(.menu.open) .site-head.over{background:var(--ink)}
 }
-@media (max-width:860px){
-  /* on a phone the footer is the mark and how to reach us: sectors and
-     companies are one tap away in the menu */
-  .foot-col:has(a[href^="/sectors/"]),
-.foot-col:has(a[href^="/companies/"]){display:none}
-  .foot-cols{grid-template-columns:1fr}
-}
+
 
 /* ==========================================================================
    Forms drawn from FORMS: the partnership application and the corner form
