@@ -146,6 +146,17 @@ const count = n => WORDS[n] || String(n);
 const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
 const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
 
+/* Where a company link points. A company with a website of its own — TIBECO —
+   is linked there, in a new tab, and gets no page here; the rest keep their
+   pages until they have sites. One helper, so no link can disagree. */
+const coHref = c => c.site || `/companies/${c.slug}/`;
+const coLink = c => c.site
+  ? `href="${c.site}" target="_blank" rel="noopener"`
+  : `href="/companies/${c.slug}/"`;
+
+/* A sector's one address is its block on the index. */
+const secHref = s => `/sectors/#sec-${typeof s === 'string' ? s : s.slug}`;
+
 /* A social link is only rendered once it points somewhere. While the handles
    are unset the link simply is not there, rather than a link to '#'. */
 const SOCIAL = () => [
@@ -216,7 +227,7 @@ const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><p
 
 const ORG_ID = SITE.domain + '/#organization';
 const abs = p => SITE.domain + p;
-const coId = c => abs('/companies/' + c.slug + '/') + '#organization';
+const coId = c => (c.site || abs('/companies/' + c.slug + '/')) + '#organization';
 
 function orgSchema() {
   const social = SOCIAL().map(([, href]) => href);
@@ -257,7 +268,7 @@ function companySchema(c) {
     '@type': 'Organization',
     '@id': coId(c),
     name: c.name,
-    url: abs('/companies/' + c.slug + '/'),
+    url: c.site || abs('/companies/' + c.slug + '/'),
     image: abs('/assets/img/' + c.hero + '.jpg'),
     description: c.short,
     parentOrganization: { '@id': ORG_ID },
@@ -356,11 +367,10 @@ function sectorsPanel() {
         <a class="secmenu-eyebrow" href="/sectors/">Our sectors <span aria-hidden="true">&#8594;</span></a>
         <div class="secmenu-cols">
 ${SECTORS.map(s => `          <div class="secmenu-col">
-            <a class="secmenu-head" href="/sectors/${s.slug}/">
+            <a class="secmenu-head" href="${secHref(s)}">
               ${icon(SECTOR_ICON[s.slug] || 'markets')}
               <span>${esc(s.name)}</span>
             </a>
-${s.companies.map(c => `            <a class="secmenu-co" href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('\n')}
           </div>`).join('\n')}
         </div>
       </div>`;
@@ -399,15 +409,12 @@ ${NAV.map(link).join('\n')}
 </header>
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
   <a href="/"${current === '/' ? ' aria-current="page"' : ''}>Home</a>
-  <details class="menu-grp"${current && current.startsWith('/sectors/') && current !== '/sectors/' ? ' open' : ''}>
+  <details class="menu-grp">
     <summary>Sectors</summary>
     <a class="sub" href="/sectors/"${current === '/sectors/' ? ' aria-current="page"' : ''}>All sectors</a>
-${SECTORS.map(x => `    <a class="sub" href="/sectors/${x.slug}/"${'/sectors/' + x.slug + '/' === current ? ' aria-current="page"' : ''}>${esc(x.name)}</a>`).join('\n')}
+${SECTORS.map(x => `    <a class="sub" href="${secHref(x)}">${esc(x.name)}</a>`).join('\n')}
   </details>
-  <details class="menu-grp">
-    <summary>Companies</summary>
-${ALL_COMPANIES.map(c => `    <a class="sub" href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('\n')}
-  </details>
+
   <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
   <a href="/partnerships/"${current === '/partnerships/' ? ' aria-current="page"' : ''}>Work with us</a>
   <a href="/suppliers/"${current === '/suppliers/' ? ' aria-current="page"' : ''}>Suppliers</a>
@@ -550,13 +557,13 @@ function footer(opts = {}) {
         <div class="foot-col">
           <p class="foot-h">Sectors</p>
           <ul>
-${SECTORS.map(s => `            <li><a href="/sectors/${s.slug}/">${esc(s.name)}</a></li>`).join('\n')}
+${SECTORS.map(s => `            <li><a href="${secHref(s)}">${esc(s.name)}</a></li>`).join('\n')}
           </ul>
         </div>
         <div class="foot-col">
           <p class="foot-h">Companies</p>
           <ul>
-${ALL_COMPANIES.map(c => `            <li><a href="/companies/${c.slug}/">${esc(c.name)}</a></li>`).join('\n')}
+${ALL_COMPANIES.map(c => `            <li><a ${coLink(c)}>${esc(c.name)}</a></li>`).join('\n')}
           </ul>
         </div>
         <div class="foot-col">
@@ -634,7 +641,7 @@ function coCard(c) {
   /* a company can sit in more than one sector, so this is a space-separated
      list and the filter matches any of them */
   const inSectors = (c.sectors || [c.sectorSlug]).join(' ');
-  return `      <a class="cocard" href="/companies/${c.slug}/" data-sector="${inSectors}">
+  return `      <a class="cocard" ${coLink(c)} data-sector="${inSectors}">
         <span class="cocard-shot">${pic(c.hero, '(max-width:700px) 72vw, 334px', `alt="${esc(c.name)}" loading="lazy"`)}</span>
         <span class="cocard-body">
           <span class="cocard-sector">${esc(c.sectorName)}</span>
@@ -743,7 +750,7 @@ ${WHY.map((x, i) => `        <li class="why-item rise d${Math.min(i, 3)}">
    any script runs and on a keyboard. */
 function companyLadder() {
   return `<div class="ladder">
-${ALL_COMPANIES.map((c, i) => `      <a class="lad${i === 0 ? ' lad-lead' : ''}" href="/companies/${c.slug}/">
+${ALL_COMPANIES.map((c, i) => `      <a class="lad${i === 0 ? ' lad-lead' : ''}" ${coLink(c)}>
         ${pic(c.hero, i === 0 ? '(max-width:860px) 100vw, 41vw' : '(max-width:860px) 100vw, 25vw', 'class="lad-bg" alt="" loading="lazy"')}
         <span class="n">${num(i)}</span>
         <div class="lad-b">
@@ -831,7 +838,7 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
       <p>${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies. Each one serves a market we can see from Qatar.</p>
     </div>
     <div class="acc" id="acc">
-${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="/sectors/${sec.slug}/">
+${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="${secHref(sec)}">
         ${pic(sec.hero, '(max-width:860px) 100vw, 46vw', 'class="acc-bg" alt="" loading="lazy"')}
         <span class="acc-num" aria-hidden="true">${num(i)}</span>
         <span class="acc-tab" aria-hidden="true">${esc(sec.name)}</span>
@@ -844,7 +851,7 @@ ${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}"
       </a>`).join('\n')}
     </div>
     <ul class="secgrid">
-${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="/sectors/${sec.slug}/">
+${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="${secHref(sec)}">
         ${pic(sec.hero, '(max-width:560px) 50vw, 33vw', 'alt="" loading="lazy"')}
         <span class="secgrid-n">${num(i)}</span>
         <span class="secgrid-t">${esc(sec.name)}</span>
@@ -1048,7 +1055,7 @@ ${c.products.map((p, i) => `      <article class="prod rise d${Math.min(i, 3)}">
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
 ${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
-    `<a href="/sectors/trading/#markets">${esc(o)}</a>`).join('')}</p>` : ''}
+    `<a href="/#markets">${esc(o)}</a>`).join('')}</p>` : ''}
       </article>`).join('\n')}
     </div>
   </div>
@@ -1159,11 +1166,12 @@ ${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}
     url: `/companies/${c.slug}/`, image: c.hero,
     schema: graph(companySchema(c), crumbs([
       { name: 'Our Sectors', url: '/sectors/' },
-      { name: c.sectorName, url: '/sectors/' + c.sectorSlug + '/' },
+      /* the sector's one address is its block on the index */
+      { name: c.sectorName, url: '/sectors/#sec-' + c.sectorSlug },
       { name: c.name }
     ]))
   })
-    + header(`/sectors/${c.sectorSlug}/`, (c.look || 'full') === 'full')
+    + header('/sectors/', (c.look || 'full') === 'full')
     + `<div class="co co-${look} co-${c.slug}" style="${vars}">
 
 <section class="co-hero">
@@ -1171,7 +1179,7 @@ ${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}
   <div class="co-hero-in">
     <div class="wrap co-hero-wrap">
       <div class="co-hero-say">
-        <a class="eyebrow co-eyebrow" href="/sectors/${c.sectorSlug}/">${esc(c.sectorName)}</a>
+        <a class="eyebrow co-eyebrow" href="${secHref(c.sectorSlug)}">${esc(c.sectorName)}</a>
         <h1>${esc(c.name)}</h1>
         <p class="co-hero-line">${esc(c.headline)}</p>
         <div class="co-hero-cta">
@@ -1274,7 +1282,7 @@ ${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(
         </ul>
       </div>`).join(String.fromCharCode(10))}
     </div>
-    <p class="srcmore"><a href="/sectors/trading/#markets">The Group's full sourcing register <span aria-hidden="true">&#8594;</span></a></p>
+    <p class="srcmore"><a href="/#markets">The Group's full sourcing register <span aria-hidden="true">&#8594;</span></a></p>
   </div>
 </section>
 
@@ -1323,16 +1331,15 @@ ${SECTORS.map((s, i) => `      <li><a href="#sec-${s.slug}"${i === 0 ? ' aria-cu
 
 ${SECTORS.map((s, i) => `  <section class="secblk" data-tone="${i % 4}" id="sec-${s.slug}" aria-labelledby="h-${s.slug}">
     <div class="secblk-col rise">
-      <h2 id="h-${s.slug}"><a href="/sectors/${s.slug}/">${esc(s.name)}</a></h2>
+      <h2 id="h-${s.slug}">${esc(s.name)}</h2>
       <p class="secblk-lede">${esc(s.intro)}</p>
 ${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join(String.fromCharCode(10))}
 
       <h3 class="secblk-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</h3>
       <div class="cotiles">
-${s.companies.map(c => `        <a class="cotile" href="/companies/${c.slug}/">${esc(c.name)}</a>`).join(String.fromCharCode(10))}
+${s.companies.map(c => `        <a class="cotile" ${coLink(c)}>${esc(c.name)}</a>`).join(String.fromCharCode(10))}
       </div>
 
-      <p class="secblk-more"><a href="/sectors/${s.slug}/">More on ${esc(s.name)} <span aria-hidden="true">&#8594;</span></a></p>
     </div>
   </section>`).join(String.fromCharCode(10) + String.fromCharCode(10))}
 </div>
@@ -1342,95 +1349,6 @@ ${s.companies.map(c => `        <a class="cotile" href="/companies/${c.slug}/">$
     + footer();
 }
 
-/* ---------- one sector --------------------------------------------------- */
-
-/* A sector page says what the Group does in that market and hands over to the
-   companies that do it. It is short on purpose: the detail belongs on the
-   company pages, and repeating it here would only make two pages that say the
-   same thing in a different order. */
-function pageSector(s) {
-  const n = s.companies.length;
-  const others = SECTORS.filter(x => x.slug !== s.slug);
-
-  return head({
-    title: `${s.name} · ${SITE.name}`, desc: s.short,
-    url: `/sectors/${s.slug}/`, image: s.hero,
-    schema: graph(crumbs([{ name: 'Our Sectors', url: '/sectors/' }, { name: s.name }]), {
-      '@type': 'ItemList', name: s.name + ' — companies',
-      itemListElement: s.companies.map((c, i) => ({
-        '@type': 'ListItem', position: i + 1, name: c.name, url: abs('/companies/' + c.slug + '/')
-      }))
-    })
-  })
-    + header(`/sectors/${s.slug}/`, true)
-    + pageHead({
-      eyebrow: 'Our Sectors',
-      eyebrowHref: '/sectors/',
-      h1: s.name,
-      lede: s.intro,
-      photo: s.hero
-    })
-    + `<section class="section tight">
-  <div class="wrap">
-    <div class="head2 rise">
-      <h2 id="secTitle">${esc(s.headline)}</h2>
-      <p>${esc(s.short)}</p>
-    </div>
-    <div class="prose2 rise">
-${s.body.map(p => `      <p>${esc(p)}</p>`).join('\n')}
-    </div>
-  </div>
-</section>
-
-${s.slug === 'trading' ? `<section class="section src" aria-labelledby="mktTitle">
-  <div class="wrap">
-    ${head2('mktTitle', 'The markets we <span class="soft">source from</span>', 'Not every commodity comes from every country. The origin is chosen per product — by season, quality, availability and the terms of the transaction.')}
-    ${reachList()}
-  </div>
-</section>
-
-` : ''}
-<section class="section stone" aria-labelledby="coTitle">
-  <div class="wrap">
-    ${head2('coTitle', `The ${n === 1 ? 'company' : 'companies'} working <span class="soft">here</span>`,
-    n === 1 ? 'One business, with its own market and its own customers.'
-      : `${n} businesses, each with its own market and its own customers.`)}
-    ${companyRail(s.companies.map(c => Object.assign({}, c, { sectorName: s.name })))}
-    <p class="after rise"><a class="btn btn-dark" href="/suppliers/#register">Supply the companies in ${esc(s.name)}</a></p>
-  </div>
-</section>
-
-<section class="section tight" aria-labelledby="othTitle">
-  <div class="wrap">
-    ${head2('othTitle', 'The other <span class="soft">sectors</span>', '')}
-    <div class="othsecs rise">
-${others.map(x => `      <a class="othsec" href="/sectors/${x.slug}/">
-        ${icon(SECTOR_ICON[x.slug] || 'markets')}
-        <span class="othsec-id">
-          <b>${esc(x.name)}</b>
-          <em>${esc(x.short)}</em>
-        </span>
-        <span class="othsec-go" aria-hidden="true">&#8594;</span>
-      </a>`).join('\n')}
-    </div>
-  </div>
-</section>
-
-`
-    + ctaBand()
-    + footer();
-}
-
-/* ---------- work with us -------------------------------------------------- */
-
-/* The Group buys, sells and ships for a living, so the people it most needs
-   to hear from are suppliers, producers and buyers. This page says who they
-   are and hands each of them to the right desk through the contact form.
-
-   It is deliberately not a careers page. There are no vacancies to list, and
-   a careers page with nothing on it reads as a company that is not hiring
-   rather than one that is growing. Speculative applications still have a
-   route: "Careers" is one of the options on the contact form. */
 function pagePartnerships() {
   return head({
     title: `Work With Us · ${SITE.name}`,
@@ -1601,7 +1519,7 @@ function oppRow(o) {
         <p class="opp-id"><a class="opp-ref" href="${oppUrl(o)}">${esc(o.ref)}</a></p>
         <p class="opp-type"><span>${esc(o.type)}</span></p>
         <h3 class="opp-title"><a href="${oppUrl(o)}">${esc(o.title)}</a></h3>
-        <p class="opp-who"><a href="/companies/${co.slug}/">${esc(co.name)}</a></p>
+        <p class="opp-who"><a ${coLink(co)}>${esc(co.name)}</a></p>
         <p class="opp-when"><time datetime="${dohaDate(o.closes).toISOString()}" title="${fmtDoha(dohaDate(o.closes))} Doha time">${fmtDoha(dohaDate(o.closes), false)}</time><span class="opp-in" data-in></span></p>
         <p class="opp-st">${badge}</p>
         <p class="opp-act"><a class="opp-go" href="${oppUrl(o)}">${act} <span aria-hidden="true">&#8594;</span></a></p>
@@ -1610,7 +1528,7 @@ function oppRow(o) {
 
 function pageSuppliers() {
   const soon = OPEN.slice(0, 1);
-  const buyers = cat => cat.buyers.map(b => companyOf(b)).map(c => `<a href="/companies/${c.slug}/">${esc(c.name)}</a>`).join('');
+  const buyers = cat => cat.buyers.map(b => companyOf(b)).map(c => `<a ${coLink(c)}>${esc(c.name)}</a>`).join('');
   const nCats = SUPPLY.length;
   const nBuyers = new Set(SUPPLY.flatMap(c => c.buyers)).size;
   return head({
@@ -1840,7 +1758,7 @@ function pageOpportunity(o) {
         <p class="opp-tags"><span class="badge badge-${st}" data-badge>${STATE_LABEL[st]}</span><span class="opp-tag">${esc(o.type)} · ${esc(o.ref)}</span><a class="opp-tag" href="/suppliers/#cat-${cat.slug}">${esc(cat.name)}</a></p>
         <h1>${esc(o.title)}</h1>
         <p class="opp-sum">${esc(o.brief)}</p>
-        <p class="opp-issuer">Issued by <a href="/companies/${co.slug}/">${esc(co.name)}</a></p>
+        <p class="opp-issuer">Issued by <a ${coLink(co)}>${esc(co.name)}</a></p>
       </div>
       <div class="opp-clock">
         <span class="opp-l">${closed ? 'Closed' : 'Quotations close'}</span>
@@ -2070,10 +1988,12 @@ function build() {
   write('index.html', pageHome());
   write('about/index.html', pageAbout());
   // one page per company, from the flat list, so a company listed in two
-  // sectors is still written exactly once
-  ALL_COMPANIES.forEach(c => write(`companies/${c.slug}/index.html`, pageCompany(c)));
+  // sectors is still written exactly once. A company with a site of its own
+  // is linked there instead and gets no page here.
+  ALL_COMPANIES.filter(c => !c.site).forEach(c => write(`companies/${c.slug}/index.html`, pageCompany(c)));
+  // the sectors live on one page; each block carries the anchor the old
+  // per-sector pages answered to
   write('sectors/index.html', pageSectorsIndex());
-  SECTORS.forEach(s => write(`sectors/${s.slug}/index.html`, pageSector(s)));
   write('partnerships/index.html', pagePartnerships());
   write('suppliers/index.html', pageSuppliers());
   write('suppliers/code/index.html', pageCode());
@@ -2117,8 +2037,8 @@ function build() {
   fs.writeFileSync(path.join(imgOut, 'globe.json'), globeJson);
   console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
-  const urls = ['/', '/about/', ...ALL_COMPANIES.map(c => `/companies/${c.slug}/`),
-    '/sectors/', ...SECTORS.map(s => `/sectors/${s.slug}/`), '/partnerships/',
+  const urls = ['/', '/about/', ...ALL_COMPANIES.filter(c => !c.site).map(c => `/companies/${c.slug}/`),
+    '/sectors/', '/partnerships/',
     '/suppliers/', '/suppliers/code/', ...OPEN.map(oppUrl), '/contact/'];
   const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(OUT, 'robots.txt'),

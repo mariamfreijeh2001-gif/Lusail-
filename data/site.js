@@ -48,11 +48,11 @@ const SITE = {
 
   /* One published address. Enquiries are routed internally from there, which
      is why the form sends the 'area' field — it tells the Group which desk a
-     message belongs to. The phone number is a placeholder: replace the zeros. */
+     message belongs to. */
   contact: {
     location: 'State of Qatar',
     email: 'info@lusailcorp.com',
-    phone: '+974 0000 0000',
+    phone: '+974 4434 1999',
     linkedin: '#',
     instagram: '#'
   }
@@ -78,6 +78,10 @@ const SECTORS = [
     companies: [
       {
         slug: 'tibeco-group',
+        /* The one company with its own website. A company with a `site` is
+           linked there, in a new tab, and gets no page here; the others keep
+           their pages until they have sites of their own. */
+        site: 'https://www.tibecogroup.com/',
         /* how its own page looks: the opening layout, and its colour */
         look: 'full', accent: '#3b82c4', accentText: '#1f5c94', tint: '#eef4fa', offerStyle: 'showcase',
         /* Defined here, in its primary sector, and cross-listed in every
@@ -869,8 +873,11 @@ const FORMS = {
         why: 'Tell us where the company is registered.' },
       { name: 'regNo', label: 'Commercial registration or licence no.', type: 'text', required: true, max: 60,
         why: 'The registration or licence number is needed to qualify you.' },
+      { name: 'taxNo', label: 'Tax number', type: 'text', required: true, max: 60,
+        why: 'The tax number is needed to qualify you.' },
       { name: 'companyType', label: 'Company type', type: 'select', options: 'companyTypes', required: true,
         why: 'Pick the one that describes you best.' },
+      { name: 'yearEst', label: 'Year established', type: 'text', max: 12, placeholder: 'For example: 2009' },
       { name: 'site', label: 'Website', type: 'url', max: 200, auto: 'url', placeholder: 'https://' },
       { name: 'principal', label: 'Principal represented, if you are an agent', type: 'text', max: 160 },
       { step: 'Who may quote' },
@@ -878,7 +885,8 @@ const FORMS = {
         why: 'Tell us who is authorised to quote for the company.' },
       { name: 'email', label: 'Company email', type: 'email', required: true, max: 254, auto: 'email',
         note: 'On your company’s own domain, so we can tell it is you.' },
-      { name: 'phone', label: 'Mobile', type: 'tel', max: 40, auto: 'tel', placeholder: '+974' },
+      { name: 'phone', label: 'Mobile', type: 'tel', required: true, max: 40, auto: 'tel', placeholder: '+974',
+        why: 'A number procurement can reach you on is needed.' },
       { step: 'What you supply' },
       { name: 'categories', label: 'Categories you can supply', type: 'checks', options: 'supplyCategories', all: 'All categories',
         required: true, full: true, why: 'Choose at least one category. You are invited to events in these only.' },
@@ -890,9 +898,15 @@ const FORMS = {
       { name: 'interests', label: 'Any interest a Lusail Corp employee or relative holds in your company', type: 'text', max: 300, full: true,
         placeholder: 'None, or who and what' },
       { step: 'Declaration' },
-      { name: 'agree', type: 'agree', required: true, full: true, short: 'Code accepted, interests declared, details confirmed',
-        label: 'We accept the Lusail Corp Supplier Code of Conduct, have declared any interest a Lusail Corp employee or relative holds in our company, and confirm these details are accurate.',
-        why: 'The declaration has to be accepted to register.' }
+      { name: 'agreeCode', type: 'agree', required: true, full: true, short: 'Code of Conduct accepted',
+        label: 'We have read and accept the Lusail Corp Supplier Code of Conduct.',
+        why: 'The Code of Conduct has to be accepted to register.' },
+      { name: 'agreeInterest', type: 'agree', required: true, full: true, short: 'Interests declared',
+        label: 'No Lusail Corp employee or their relative holds an interest in our company, or we have declared it above.',
+        why: 'The declaration of interests has to be made to register.' },
+      { name: 'agreeAccurate', type: 'agree', required: true, full: true, short: 'Details confirmed accurate',
+        label: 'The information given here is complete and accurate.',
+        why: 'The details have to be confirmed to register.' }
     ]
   },
 

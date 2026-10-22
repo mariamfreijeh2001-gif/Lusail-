@@ -151,10 +151,6 @@ DKIM and SPF records it gives you into HostGator's DNS. Then set
 If a send ever fails the form does not pretend to succeed — it says so, keeps
 what was typed, and offers the same message to the visitor's mail client.
 
-### 3. Real phone number
-`+974 0000 0000` is a deliberate placeholder, as you asked. Replace `phone` in
-[data/site.js](data/site.js) when the line is live.
-
 ### 4. Domain and DNS — done
 
 Fixed. On 2026-10-12 `lusailcorp.com` redirects (308) to `www.lusailcorp.com`,
@@ -180,7 +176,6 @@ are almost none to use. Each of these would earn its place on the site:
 | | Where it would go |
 |---|---|
 | **Founding year** of the Group, and of each company | the About opening, which currently has no date anywhere |
-| **The phone number** (still `+974 0000 0000`) | every page |
 | **LinkedIn and Instagram URLs** | the footer |
 | **Anything countable** — supplier relationships, customers ROMA delivers to, deliveries per week, headcount | the figures band, which now shows only what can be counted from the site itself |
 | **Confirmation of the 21 sourcing countries** — is every one a live origin today? | the map |

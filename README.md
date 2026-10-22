@@ -22,8 +22,8 @@ Distribution, and TIBECO Group under five.
 |---|---|
 | `/` | Home |
 | `/sectors/` | Every sector, each with the businesses inside it |
-| `/sectors/<slug>/` | One sector |
-| `/companies/<slug>/` | One company |
+| `/sectors/#sec-<slug>` | One sector — a block on the index, not a page of its own |
+| `/companies/<slug>/` | One company. TIBECO has no page here: every link to it opens tibecogroup.com in a new tab |
 | `/about/` | The Group: what it is and what it believes |
 | `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
 | `/suppliers/` | The Supplier Portal: what the Group buys, what is open to quote, registration |
@@ -31,9 +31,12 @@ Distribution, and TIBECO Group under five.
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
-There is **no portfolio index and no careers page**. Every company is reached
-from the sectors menu, the sectors index or its own sector's page, which is
-one move from anywhere on the site. Suppliers register once on the Supplier
+There is **no portfolio index, no careers page, and no page per sector** —
+each sector is a block on /sectors/ with an anchor, which is what the menus,
+the footer and the old per-sector URLs (by redirect) all point at. The menus
+name no companies either: a company is reached from its sector's block or
+from the home page, and TIBECO — the one company with a website of its own —
+is linked straight there, in a new tab. Suppliers register once on the Supplier
 Portal; every other enquiry goes through the contact form, which routes on
 the "area of interest" field. The old `/companies/`, `/portfolio/` and
 `/careers/` URLs redirect, and so do guessed ones like `/vendors/`,
