@@ -71,6 +71,15 @@ Also decide:
   Cavallo Laundry are **not** on the portal, by the owner's decision: their
   pages carry no "Supply …" button and no category names them.
 
+### 0b. The credibility layer a counterpart checks for — needs you
+
+A buyer or bank verifying the Group will look for things the site cannot
+invent: a **street address** (footer and /contact/ say only "State of
+Qatar"), the **commercial registration number**, **named leadership** for the
+About page, and a short **privacy page** to stand behind the two forms that
+collect personal data (today there is one inline sentence citing Qatar's
+data-protection law). Send these and each lands in its place the same day.
+
 ### 1. Social media handles — *footer*
 LinkedIn and Instagram were pointing at `#`, a dead link. They are now **hidden
 until real URLs exist**, so nothing broken is published in the meantime.

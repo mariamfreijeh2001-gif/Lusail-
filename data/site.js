@@ -81,6 +81,10 @@ const SECTORS = [
         /* The one company with its own website. A company with a `site` is
            linked there, in a new tab, and gets no page here; the others keep
            their pages until they have sites of their own. */
+        /* With a site of its own, TIBECO gets no page here, so only the tile
+           fields render (name, role, short, accent, hero). The rest of this
+           record is kept dormant: it is the content a local page would need
+           if the company ever came back in-house. */
         site: 'https://www.tibecogroup.com/',
         /* how its own page looks: the opening layout, and its colour */
         look: 'full', accent: '#3b82c4', accentText: '#1f5c94', tint: '#eef4fa', offerStyle: 'showcase',
@@ -903,6 +907,9 @@ const FORMS = {
       { step: 'Declarations' },
       { name: 'agreeCode', type: 'agree', required: true, full: true, short: 'Code of Conduct accepted',
         label: 'We have read and accept the Lusail Corp Supplier Code of Conduct.',
+        /* the words of the label that open the document itself — a supplier
+           must never be asked to accept something the page will not show */
+        link: { text: 'Supplier Code of Conduct', href: '/supplier-portal/code/' },
         why: 'The Code of Conduct has to be accepted to register.' },
       { name: 'agreeInterest', type: 'agree', required: true, full: true, short: 'Interests declared',
         label: 'No Lusail Corp employee or their relative holds an interest in our company, or we have declared it above.',

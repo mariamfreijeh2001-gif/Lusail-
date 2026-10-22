@@ -150,6 +150,11 @@ const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
    is linked there, in a new tab, and gets no page here; the rest keep their
    pages until they have sites. One helper, so no link can disagree. */
 const coHref = c => c.site || `/companies/${c.slug}/`;
+/* The mark an external company link wears, so it is never dressed as an
+   internal one: the away-arrow for the eye, the destination for a reader. */
+const coMark = c => c.site
+  ? ' <span class="ext" aria-hidden="true">&#8599;</span><span class="vh"> — opens tibecogroup.com in a new tab</span>'
+  : '';
 const coLink = c => c.site
   ? `href="${c.site}" target="_blank" rel="noopener"`
   : `href="/companies/${c.slug}/"`;
@@ -481,7 +486,12 @@ function formFields(kind, p, values = {}) {
       return `      <input type="hidden" id="${id(f.name)}" name="${f.name}" value="${esc(values[f.name] || '')}">`;
     }
     if (f.type === 'agree') {
-      return `      <div class="${cls} agree-wrap"><label class="agree" for="${id(f.name)}"><input type="checkbox" id="${id(f.name)}" name="${f.name}" value="yes" ${attrs(f)}><span>${esc(f.label)}${req(f)}</span></label>${err(f)}</div>`;
+      /* f.link names the words of the label that open the document being
+         accepted — in a new tab, so the half-filled form is not lost */
+      let said = esc(f.label);
+      if (f.link) said = said.replace(esc(f.link.text),
+        `<a href="${f.link.href}" target="_blank" rel="noopener">${esc(f.link.text)}<span class="vh"> (opens in a new tab)</span></a>`);
+      return `      <div class="${cls} agree-wrap"><label class="agree" for="${id(f.name)}"><input type="checkbox" id="${id(f.name)}" name="${f.name}" value="yes" ${attrs(f)}><span>${said}${req(f)}</span></label>${err(f)}</div>`;
     }
     if (f.type === 'checks') {
       const opts = FORM_OPTIONS[f.options]();
@@ -575,12 +585,15 @@ ${SECTORS.map(s => `            <li><a href="${secHref(s)}">${esc(s.name)}</a></
         <div class="foot-col">
           <p class="foot-h">Companies</p>
           <ul>
-${ALL_COMPANIES.map(c => `            <li><a ${coLink(c)}>${esc(c.name)}</a></li>`).join('\n')}
+${ALL_COMPANIES.map(c => `            <li><a ${coLink(c)}>${esc(c.name)}${coMark(c)}</a></li>`).join('\n')}
           </ul>
         </div>
         <div class="foot-col">
           <p class="foot-h">Contact</p>
           <ul>
+            <li><a href="/about/">About us</a></li>
+            <li><a href="/partnerships/">Work with us</a></li>
+            <li><a href="/contact/">Contact</a></li>
             <li><a href="/supplier-portal/">Supplier portal</a></li>
             <li><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></li>
             <li><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></li>
@@ -657,7 +670,7 @@ function coCard(c) {
         <span class="cocard-shot">${pic(c.hero, '(max-width:700px) 72vw, 334px', `alt="${esc(c.name)}" loading="lazy"`)}</span>
         <span class="cocard-body">
           <span class="cocard-sector">${esc(c.sectorName)}</span>
-          <span class="cocard-name">${esc(c.name)}</span>
+          <span class="cocard-name">${esc(c.name)}${coMark(c)}</span>
           <span class="cocard-role">${esc(c.role)}</span>
         </span>
       </a>`;
@@ -767,8 +780,9 @@ ${ALL_COMPANIES.map((c, i) => `      <a class="lad${i === 0 ? ' lad-lead' : ''}"
         <span class="n">${num(i)}</span>
         <div class="lad-b">
           <span class="lad-sec">${esc(c.sectorName)}</span>
-          <h3>${esc(c.name)} <span class="lad-arrow" aria-hidden="true">&#8594;</span></h3>
-${i === 0 ? `          <span class="lad-role">${esc(c.role)}</span>\n` : ''}        </div>
+          <h3>${esc(c.name)} <span class="lad-arrow" aria-hidden="true">${c.site ? '&#8599;' : '&#8594;'}</span>${c.site ? '<span class="vh"> — opens tibecogroup.com in a new tab</span>' : ''}</h3>
+          <span class="lad-role">${esc(c.role)}</span>
+        </div>
       </a>`).join('\n')}
     </div>`;
 }
@@ -842,7 +856,14 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
   </div>
 </section>
 
-<section class="section sectors" aria-labelledby="secTitle">
+<section class="section" aria-labelledby="coTitle">
+  <div class="wrap">
+    ${head2('coTitle', 'Our <span class="soft">businesses</span>', 'Each runs in its own market with its own customers.')}
+    ${companyLadder()}
+  </div>
+</section>
+
+<section class="section sectors stone" aria-labelledby="secTitle">
   <div class="wrap">
     <div class="sec-intro rise">
       <p class="eyebrow">Our sectors</p>
@@ -869,13 +890,6 @@ ${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="${secHref(sec)}"
         <span class="secgrid-t">${esc(sec.name)}</span>
       </a></li>`).join('\n')}
     </ul>
-  </div>
-</section>
-
-<section class="section stone" aria-labelledby="coTitle">
-  <div class="wrap">
-    ${head2('coTitle', 'Our <span class="soft">businesses</span>', 'Each runs in its own market with its own customers.')}
-    ${companyLadder()}
   </div>
 </section>
 
@@ -1067,7 +1081,7 @@ ${c.products.map((p, i) => `      <article class="prod rise d${Math.min(i, 3)}">
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
 ${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
-    `<a href="/#markets">${esc(o)}</a>`).join('')}</p>` : ''}
+    `<span>${esc(o)}</span>`).join('')}</p>` : ''}
       </article>`).join('\n')}
     </div>
   </div>
@@ -1191,7 +1205,7 @@ ${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}
   <div class="co-hero-in">
     <div class="wrap co-hero-wrap">
       <div class="co-hero-say">
-        <a class="eyebrow co-eyebrow" href="${secHref(c.sectorSlug)}">${esc(c.sectorName)}</a>
+        <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span><a href="${secHref(c.sectorSlug)}">${esc(c.sectorName)}</a><span aria-hidden="true">/</span><span>${esc(c.name)}</span></p>
         <h1>${esc(c.name)}</h1>
         <p class="co-hero-line">${esc(c.headline)}</p>
         <div class="co-hero-cta">
@@ -1349,7 +1363,7 @@ ${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join(String.fromC
 
       <h3 class="secblk-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</h3>
       <div class="cotiles">
-${s.companies.map(c => `        <a class="cotile" ${coLink(c)}>${esc(c.name)}</a>`).join(String.fromCharCode(10))}
+${s.companies.map(c => `        <a class="cotile" ${coLink(c)}>${s.companies.length === 1 && c.site ? 'through ' : ''}${esc(c.name)}${coMark(c)}</a>`).join(String.fromCharCode(10))}
       </div>
 
     </div>
@@ -1521,7 +1535,7 @@ const OPEN = OPPORTUNITIES
 /* One row of the list: the reference, the event, who is buying, when it
    closes and what you can do. The closing date is also written as data, so
    the script can turn it into "in 9 days" and retire the row at the hour. */
-function oppRow(o) {
+function oppRow(o, full) {
   const st = oppState(o), co = companyOf(o.company), cat = categoryOf(o.category);
   /* The badge is written twice — beside the reference, and in the action
      column — and the stylesheet shows one or the other by screen width, so
@@ -1534,42 +1548,34 @@ function oppRow(o) {
         <p class="opp-id"><span class="opp-ref">${esc(o.ref)}</span></p>
         <p class="opp-type"><span>${esc(o.type)}</span></p>
         <h3 class="opp-title">${esc(o.title)}${o.brief ? `<span class="opp-brief-line">${esc(o.brief)}</span>` : ''}</h3>
-        <p class="opp-who"><a ${coLink(co)}>${esc(co.name)}</a></p>
+        <p class="opp-who">${co.site ? `<span>${esc(co.name)}</span>` : `<a ${coLink(co)}>${esc(co.name)}</a>`}</p>
         <p class="opp-when"><time datetime="${dohaDate(o.closes).toISOString()}" title="${fmtDoha(dohaDate(o.closes))} Doha time">${fmtDoha(dohaDate(o.closes), false)}</time><span class="opp-in" data-in></span></p>
         <p class="opp-st">${badge}</p>
         <p class="opp-act"><a class="opp-go" href="${regUrl(o)}">${regAct(o)} <span aria-hidden="true">&#8594;</span></a></p>
-      </li>`;
-}
-
-/* The portal's own places, in a strip under the bar on every portal page —
-   the same four TIBECO shows: the list, how it works, what to have ready,
-   and the register. */
-function portalNav(current) {
-  const item = (href, label, key, cls) =>
-    `<a${cls ? ` class="${cls}"` : ''} href="${href}"${current === key ? ' aria-current="page"' : ''}>${label}</a>`;
-  return `<nav class="pnav" aria-label="Supplier Portal">
-  <div class="wrap pnav-in">
-    ${item('/supplier-portal/', 'Supplier Portal', 'portal', 'pnav-home')}
-    <span class="pnav-links">
-      ${item('/supplier-portal/opportunities/', 'Opportunities', 'opps')}
-      ${item('/supplier-portal/#how', 'How it works', '')}
-      ${item('/supplier-portal/#requirements', 'Requirements', '')}
-      ${item('/supplier-portal/register/', 'Register', 'register', 'pnav-reg')}
-    </span>
-  </div>
-</nav>
-
-`;
+${full && (o.requirement || (o.clarifications && o.clarifications.length)) ? `        <details class="opp-req">
+          <summary>The requirement</summary>
+          <div class="opp-req-in">
+${o.requirement ? `            <dl class="opp-req-rows">
+${o.requirement.map(([k, v]) => `              <div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('\n')}
+            </dl>` : ''}
+${o.questionsClose ? `            <p class="opp-req-note">Questions close ${esc(o.questionsClose)}, Doha time.</p>` : ''}
+${o.clarifications && o.clarifications.length ? `            <div class="opp-req-clar">
+              <p class="opp-req-note">Clarifications, published to every bidder:</p>
+${o.clarifications.map(c => `              <p><strong>${esc(c.q)}</strong> ${esc(c.a)} <em>(${esc(c.on)})</em></p>`).join('\n')}
+            </div>` : ''}
+          </div>
+        </details>
+` : ''}      </li>`;
 }
 
 function pageSuppliers() {
   const soon = OPEN.slice(0, 1);
-  const buyers = cat => cat.buyers.map(b => companyOf(b)).map(c => `<a ${coLink(c)}>${esc(c.name)}</a>`).join('');
+  const buyers = cat => cat.buyers.map(b => companyOf(b)).map(c => `<a ${coLink(c)}>${esc(c.name)}${coMark(c)}</a>`).join('');
   const nCats = SUPPLY.length;
   const nBuyers = new Set(SUPPLY.flatMap(c => c.buyers)).size;
   return head({
     title: `Supplier Portal · ${SITE.name}`,
-    desc: 'Supply the companies of Lusail Corp. What the Group buys — from granular sulphur and sugar to fresh produce, equipment, technology and freight — what is open to quote now, and one registration for TIBECO Group, Lusail Commercial and ROMA Commercial.',
+    desc: 'What the Lusail Corp companies buy, what is open to quote now, and the one free registration that covers all of them.',
     url: '/supplier-portal/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal' }]), {
       '@type': 'ItemList', name: 'Open sourcing events',
@@ -1580,7 +1586,6 @@ function pageSuppliers() {
        first in the flow here, and a bar drawn over the page prints on top of
        it instead of above it */
     + header('/supplier-portal/', false)
-    + portalNav('portal')
     + pageHead({
       eyebrow: 'Supplier Portal',
       h1: 'Supply the Group. Register once.',
@@ -1599,6 +1604,24 @@ ${OPEN.slice(0, 4).map(oppRow).join('\n')}
     </ol>
     <p class="opp-none" id="oppNone"${OPEN.length ? ' hidden' : ''}>Nothing is open right now. Register and you are invited the moment an event opens in your categories.</p>
     ${OPEN.length ? `<p class="opp-all"><a href="/supplier-portal/opportunities/">All ${count(OPEN.length)} open opportunities <span aria-hidden="true">&#8594;</span></a></p>` : ''}
+  </div>
+</section>
+
+<section class="section how" id="how" aria-labelledby="spHowTitle">
+  <div class="wrap">
+    ${head2('spHowTitle', 'How it <span class="soft">works</span>', 'Register once, qualify once, and every event in your categories comes to you.')}
+    <ol class="tline">
+${[
+  ['Register once', 'One profile for the whole Group: what you supply, and who may quote.'],
+  ['Get qualified', 'Procurement checks the profile and asks for your licence, tax and bank documents by email.'],
+  ['Receive invitations', 'Events in your categories arrive by email with the requirement and the reference. Clarifications go to every bidder.'],
+  ['Award and deliver', 'The issuing company awards, contracts and pays you directly.']
+].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
+        <span class="tl-node" aria-hidden="true">${num(i)}</span>
+        <h3>${t}</h3>
+        <p>${d}</p>
+      </li>`).join('\n')}
+    </ol>
   </div>
 </section>
 
@@ -1628,23 +1651,7 @@ ${c.items.map(x => `            <li>${esc(x)}</li>`).join('\n')}
   </div>
 </section>
 
-<section class="section how" id="how" aria-labelledby="spHowTitle">
-  <div class="wrap">
-    ${head2('spHowTitle', 'How it <span class="soft">works</span>', 'Register once, qualify once, and every event in your categories comes to you.')}
-    <ol class="tline">
-${[
-  ['Register once', 'One profile for the whole Group: what you supply, and who may quote.'],
-  ['Get qualified', 'Procurement checks the profile and asks for your licence, tax and bank documents by email.'],
-  ['Receive invitations', 'Events in your categories arrive by email with the requirement and the reference. Clarifications go to every bidder.'],
-  ['Award and deliver', 'The issuing company awards, contracts and pays you directly.']
-].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
-        <span class="tl-node" aria-hidden="true">${num(i)}</span>
-        <h3>${t}</h3>
-        <p>${d}</p>
-      </li>`).join('\n')}
-    </ol>
-  </div>
-</section>
+
 
 <section class="section" id="requirements" aria-labelledby="reqTitle">
   <div class="wrap sp-two">
@@ -1711,12 +1718,11 @@ ${SOURCING_TERMS.map(t => `      <div><dt>${esc(t.t)}</dt><dd>${esc(t.d)}</dd></
 function pageCode() {
   return head({
     title: `Supplier Code of Conduct · ${SITE.name}`,
-    desc: 'What every supplier to Lusail Corp and its companies agrees to: lawful business, no bribery, conflicts disclosed, fair competition, safety, environment, accurate documents and confidentiality.',
+    desc: 'What every supplier to Lusail Corp agrees to at registration: lawful business, no bribery, conflicts disclosed, fair competition and accurate documents.',
     url: '/supplier-portal/code/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal', url: '/supplier-portal/' }, { name: 'Supplier Code of Conduct' }]))
   })
     + header('/supplier-portal/', false)
-    + portalNav('code')
     + `<section class="opp-hero">
   <div class="wrap">
     <p class="crumbs"><a href="/supplier-portal/">Supplier Portal</a><span aria-hidden="true">/</span><span>Code of Conduct</span></p>
@@ -1747,7 +1753,7 @@ ${CODE_OF_CONDUCT.map((c, i) => `      <li class="rise d${i % 4}"><span class="c
 function pageOpportunities() {
   return head({
     title: `Open Opportunities · Supplier Portal · ${SITE.name}`,
-    desc: 'Every sourcing event open across Lusail Corp — RFQs, tenders and RFIs from TIBECO Group, Lusail Commercial and ROMA Commercial — and the one registration that lets you bid.',
+    desc: 'Every sourcing event open across the Lusail Corp companies — RFQs, tenders and RFIs — and the one registration that lets you bid.',
     url: '/supplier-portal/opportunities/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal', url: '/supplier-portal/' }, { name: 'Open Opportunities' }]), {
       '@type': 'ItemList', name: 'Open sourcing events',
@@ -1755,7 +1761,6 @@ function pageOpportunities() {
     })
   })
     + header('/supplier-portal/', false)
-    + portalNav('opps')
     + `<section class="opp-hero">
   <div class="wrap">
     <p class="crumbs"><a href="/supplier-portal/">Supplier Portal</a><span aria-hidden="true">/</span><span>Opportunities</span></p>
@@ -1780,7 +1785,7 @@ ${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `        <o
     </div>
     <ol class="opps" id="opps">
       <li class="opp-head" aria-hidden="true"><span>Reference</span><span>Type</span><span>Opportunity</span><span>Buyer</span><span>Closes (Doha)</span><span>Status</span><span></span></li>
-${OPEN.map(oppRow).join('\n')}
+${OPEN.map(o => oppRow(o, true)).join('\n')}
     </ol>
     <p class="opp-none" id="oppNone"${OPEN.length ? ' hidden' : ''}>Nothing is open right now. Register and you are invited the moment an event opens in your categories.</p>
   </div>
@@ -1810,12 +1815,11 @@ function pageRegister() {
   const steps = FORMS.supplier.fields.filter(f => f.step).map(f => f.step);
   return head({
     title: `Register as a Supplier · ${SITE.name}`,
-    desc: 'One free registration covers TIBECO Group, Lusail Commercial and ROMA Commercial. Company details, the categories you supply, your documents and the declarations — reviewed within five working days.',
+    desc: 'One free registration covers every Lusail Corp company. Your details, categories and documents — reviewed within five working days.',
     url: '/supplier-portal/register/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal', url: '/supplier-portal/' }, { name: 'Register' }]))
   })
     + header('/supplier-portal/', false)
-    + portalNav('register')
     + `<section class="opp-hero">
   <div class="wrap">
     <p class="crumbs"><a href="/supplier-portal/">Supplier Portal</a><span aria-hidden="true">/</span><span>Register</span></p>

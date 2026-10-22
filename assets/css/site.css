@@ -2853,39 +2853,6 @@ the issuing company and the buyer chips */
 #register{padding-bottom:clamp(28px,3vw,40px)}
 #register + .section{padding-top:clamp(36px,4vw,56px)}
 
-/* ==========================================================================
-   The Supplier Portal's own places — a strip under the bar on every portal
-   page,
-the way TIBECO carries its own: the list,
-the two anchors,
-and
-   Register held apart at the end.
-   ========================================================================== */
-
-.pnav{background:var(--ink);border-top:1px solid rgba(255,255,255,.08)}
-.pnav-in{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:52px}
-.pnav a{
-  display:inline-flex;align-items:center;min-height:44px;
-  font:500 var(--t-sm)/1.3 var(--ui);color:rgba(255,255,255,.72);
-  text-decoration:none;transition:color .2s;
-}
-.pnav a:hover,
-.pnav a:focus-visible{color:#fff}
-.pnav a[aria-current="page"]{color:var(--gold)}
-.pnav-home{font-weight:600;color:#fff}
-.pnav-links{display:flex;align-items:center;gap:clamp(14px,2.4vw,30px)}
-.pnav-reg{
-  padding:0 14px;border:1px solid var(--gold);color:var(--gold) !important;
-}
-.pnav-reg:hover,
-.pnav-reg:focus-visible{background:var(--gold);color:var(--ink) !important}
-.pnav-reg[aria-current="page"]{background:var(--gold);color:var(--ink) !important}
-@media (max-width:700px){
-  .pnav-in{overflow-x:auto;justify-content:flex-start;gap:18px;scrollbar-width:none}
-  .pnav-in::-webkit-scrollbar{display:none}
-  .pnav a{white-space:nowrap}
-}
-
 /* ---- the hand-over panels on the portal pages ---------------------------- */
 .regcta{
   display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
@@ -2954,6 +2921,39 @@ and the document rows ----------------------------- */
 .regprog li.is-done .regprog-s::after{content:" ✓"}
 
 /* ---- the list pages' small pieces ------------------------------------------ */
+/* the mark an external link wears */
+.ext{font-size:.8em;opacity:.75}
+
+/* an event's requirement, folded into its own row on the list page */
+.opp-req{grid-column:1/-1;margin:2px 0 6px;border:1px solid var(--line);background:var(--white)}
+.opp-req summary{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:44px;padding:0 16px;cursor:pointer;list-style:none;
+  font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);
+}
+.opp-req summary::-webkit-details-marker{display:none}
+.opp-req summary::after{content:"+";font-size:1.1rem;color:var(--ink-3)}
+.opp-req[open] summary::after{content:"\2212"}
+.opp-req-in{padding:4px 16px 16px;display:grid;gap:12px}
+.opp-req-rows{margin:0;display:grid;gap:0}
+.opp-req-rows > div{
+  display:grid;grid-template-columns:minmax(120px,220px) minmax(0,1fr);gap:16px;
+  padding:8px 0;border-bottom:1px solid var(--line);
+}
+.opp-req-rows dt{font:500 var(--t-xs)/1.5 var(--mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
+.opp-req-rows dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink)}
+.opp-req-note{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3)}
+.opp-req-clar{display:grid;gap:8px}
+.opp-req-clar p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
+.opp-req-clar strong{color:var(--ink);font-weight:500}
+.opp-req-clar em{color:var(--ink-3);font-style:normal}
+@media (max-width:700px){ .opp-req-rows > div{grid-template-columns:1fr;gap:2px} }
+
+/* crumbs over a company's photograph speak in its light */
+.co-crumbs,.co-crumbs a{color:rgba(255,255,255,.78)}
+.co-crumbs a:hover,.co-crumbs a:focus-visible{color:#fff}
+.co-crumbs span[aria-hidden]{color:rgba(255,255,255,.45)}
+
 .opp-all{margin-top:22px}
 .opp-all a{
   display:inline-flex;align-items:center;gap:8px;min-height:44px;
