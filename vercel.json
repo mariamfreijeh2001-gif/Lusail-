@@ -504,16 +504,6 @@
       "permanent": true
     },
     {
-      "source": "/supplier-portal/",
-      "destination": "/supplier-portal/",
-      "permanent": true
-    },
-    {
-      "source": "/supplier-portal",
-      "destination": "/supplier-portal/",
-      "permanent": true
-    },
-    {
       "source": "/suppliers/register/",
       "destination": "/supplier-portal/#register",
       "permanent": true
@@ -690,11 +680,6 @@
     },
     {
       "source": "/suppliers/opportunities/:ref",
-      "destination": "/supplier-portal/opportunities/",
-      "permanent": true
-    },
-    {
-      "source": "/supplier-portal/opportunities",
       "destination": "/supplier-portal/opportunities/",
       "permanent": true
     },
