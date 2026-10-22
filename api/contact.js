@@ -180,7 +180,42 @@ const OPTION_LABELS = {
     Object.fromEntries(SECTORS.map(x => [x.slug, x.name])))
 };
 
+/* The documents a registration may attach. The browser enforces the same
+   limits with a message per file; these are the server's own, because a
+   request can skip the page. 2 MB a file and 3 MB in all keeps the whole
+   request inside what the function may receive, base64 included. */
+const DOC_ONE = 2 * 1024 * 1024, DOC_ALL = 3 * 1024 * 1024;
+const DOC_EXT = /\.(pdf|jpe?g|png|webp)$/i;
+const B64 = /^[A-Za-z0-9+/=]+$/;
+function vetAttachments(spec, body) {
+  const raw = body.attachments;
+  if (raw === undefined) return { files: [] };
+  if (!Array.isArray(raw) || raw.length > 7) return { bad: 'Too many attachments.' };
+  const allowed = new Set(spec.fields.filter(f => f.type === 'file').map(f => f.name));
+  const files = [];
+  let total = 0;
+  for (const a of raw) {
+    if (!a || typeof a !== 'object') return { bad: 'A document could not be read.' };
+    const field = String(a.field || '');
+    if (!allowed.has(field)) return { bad: 'A document arrived for a field that does not exist.' };
+    if (files.some(f => f.field === field)) return { bad: 'Two files for one document.' };
+    const filename = String(a.filename || '').replace(/[\r\n"\\/]+/g, ' ').trim().slice(0, 120);
+    if (!filename || !DOC_EXT.test(filename)) return { bad: 'Documents have to be PDF or image files.' };
+    const content = typeof a.content === 'string' ? a.content : '';
+    if (!content || content.length > Math.ceil(DOC_ONE / 3) * 4 + 8 || !B64.test(content))
+      return { bad: 'A document is larger than 2 MB. Email larger files instead.' };
+    const size = Math.floor(content.length * 3 / 4);
+    total += size;
+    if (total > DOC_ALL) return { bad: 'Together the documents pass 3 MB. Attach the essentials and email the rest.' };
+    files.push({ field, filename, content, size });
+  }
+  return { files };
+}
+
 async function sendDefined(spec, body, res) {
+  const vet = vetAttachments(spec, body);
+  if (vet.bad) return res.status(400).json({ error: vet.bad });
+  const attached = vet.files;
   const rows = [];
   let email = '', name = '', company = '', message = '', subjectExtra = '';
   for (const fd of spec.fields) {
@@ -200,6 +235,10 @@ async function sendDefined(spec, body, res) {
       /* a single box; the browser sends 'yes' (or 'on') only when ticked */
       const x = Array.isArray(raw) ? raw[0] : raw;
       v = x === 'yes' || x === 'on' || x === true ? 'Yes' : '';
+    } else if (fd.type === 'file') {
+      const got = attached.find(a => a.field === fd.name);
+      if (got) rows.push([fd.short || fd.label, got.filename + ' (' + (got.size / 1048576).toFixed(got.size < 1048576 ? 2 : 1) + ' MB, attached)']);
+      continue;
     } else if (fd.type === 'textarea') {
       v = typeof raw === 'string' ? raw.trim().slice(0, fd.max || 5000) : '';
     } else {
@@ -246,7 +285,8 @@ async function sendDefined(spec, body, res) {
         from, to, reply_to: email,
         subject: headerSafe(`${title}${subjectExtra && subjectExtra !== '—' ? ' — ' + subjectExtra : ''} — ${company || name || email}`),
         html, text
-      }, cc.length ? { cc } : {}))
+      }, cc.length ? { cc } : {},
+        attached.length ? { attachments: attached.map(a => ({ filename: a.filename, content: a.content })) } : {}))
     });
     if (!r.ok) {
       console.error('contact: resend ' + r.status + ' ' + await r.text());
@@ -391,3 +431,6 @@ module.exports = async function handler(req, res) {
     return res.status(502).json({ error: 'Could not send the message' });
   }
 };
+
+/* exported so the checks can be exercised without sending an email */
+module.exports.vetAttachments = vetAttachments;

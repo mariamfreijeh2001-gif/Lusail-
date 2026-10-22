@@ -26,8 +26,9 @@ Distribution, and TIBECO Group under five.
 | `/companies/<slug>/` | One company. TIBECO has no page here: every link to it opens tibecogroup.com in a new tab |
 | `/about/` | The Group: what it is and what it believes |
 | `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
-| `/suppliers/` | The Supplier Portal: what the Group buys, what is open to quote, registration |
-| `/suppliers/opportunities/<ref>/` | One sourcing event — its requirement, clarifications and quotation form |
+| `/supplier-portal/` | The Supplier Portal: what the Group buys, the next events, how it works, requirements |
+| `/supplier-portal/opportunities/` | Every open sourcing event, filterable; each one's action leads to the registration |
+| `/supplier-portal/register/` | The registration — progress rail, documents, a draft that stays in the browser |
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
@@ -230,17 +231,22 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 - **Work With Us** — who the Group wants to hear from, how it works (a
   timeline), the two ways in (the Supplier Portal, or the contact form), and
   what it is looking to do next (a grid ending in the ask).
-- **The Supplier Portal** (`/suppliers/`) — the idea came in as a TIBECO
-  supplier-portal mock-up and is built for the whole Group in the Group's
-  design. It is ordered around the two things a supplier comes to do, quote
-  and register, with "what we do" explained before the form is asked for:
+- **The Supplier Portal** (`/supplier-portal/`) — TIBECO's portal, carried
+  over whole for the Group in the Group's design: the same three routes
+  (portal, opportunities, register), the same portal-local strip under the
+  bar (Opportunities · How it works · Requirements · Register), and the same
+  opening rule — an event's one action is the register page carrying
+  `?ref=`, so there is no page per event. The main page explains before it
+  asks:
   the port photograph with "Supply the Group. Register once.", two buttons
   and a "Next to close" line naming the nearest event; **open
   opportunities** (one line per event on a wide screen — reference, type,
   title, buyer, closing date with a live "in 9 days", status as a gold or
-  grey word, and a Quote button — three lines a card on a phone, with a
-  category filter that is short pills on a wide screen and a select on a
-  phone); **what we buy**
+  grey word, and a "Register to bid" / "Request invite" / "Register to
+  respond" action by type — three lines a card on a phone; the full list,
+  with the category filter, lives on /supplier-portal/opportunities/ and a
+  category card's "n open" arrives there already filtered by `?cat=`);
+  **what we buy**
   (eight categories as a grid of ruled cards for the three buying companies —
   TIBECO Group, Lusail Commercial and ROMA Commercial; the café and the
   laundry are not on the portal — closed, each shows its number, name,
@@ -257,7 +263,7 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   and a procurement review shaped it; the third removed a "closing soon"
   strip that repeated the list and a status legend the button labels made
   redundant.
-  The **Supplier Code of Conduct** has its own page at `/suppliers/code/`,
+  The **Supplier Code of Conduct** has its own page at `/supplier-portal/code/`,
   ten points. Each event has its own page: the requirement as a table, the
   clarifications published so far, what else is open, and a quotation form
   carrying the reference. A closed event keeps its page and says it has
@@ -416,13 +422,19 @@ set:
 
 ### The supplier registration, the quotation form and the corner form
 
-Three more forms post to the same function. The **Supplier Portal** carries
-the registration (`#register`), cut to what procurement screens on: the
-company, its country and registration number, its type, the person who may
-quote, the categories it can supply (one, several or all), its main
-products with origins and capacity, certificates held, any interest a Lusail
-Corp employee holds in it, and one declaration. Each **event page** carries
-a quotation form with the event's reference already in it, shaped like a
+Two more forms post to the same function. The **registration**
+(`/supplier-portal/register/`) collects what TIBECO's does: the company,
+its country, registration and tax numbers, its type and year established,
+the person who may quote (company email, mobile), the categories it can
+supply, its main products with origins and capacity, certificates, any
+interest a Lusail Corp employee holds in it, and three declarations ticked
+one by one. Seven optional **documents** attach as files — PDF or image, up
+to 2 MB a file and 3 MB in all, limits the page and the function each
+enforce for themselves — and ride the email to procurement as attachments.
+What is typed **saves as a draft in the browser** and clears when the
+registration sends; a progress rail answers for each step the way TIBECO's
+does. The old quotation form went with the event pages: an event's action is
+registering for it, and quoting happens by email once qualified, shaped like a
 real offer: currency, unit price, delivery basis (Incoterm), quantity,
 origin, delivery point, payment terms offered, validity, deviations, one
 declaration. It is the cover sheet; the signed offer and certificates follow
@@ -449,7 +461,7 @@ Field types beyond the usual: `checks` (a group of boxes with a tick-all),
 The field called `message` is the body of the email; every other field,
 long or short, is a row, so a registration's product list is never lost.
 
-A link can preselect: `/suppliers/?company=<slug>#register` ticks the
+A link can preselect: `/supplier-portal/register/?company=<slug>` ticks the
 categories that company buys in (every company page's "Supply …" button
 links there), and `/contact/?company=<slug>` picks the desk. A page can also
 hand a form a first draft (`data-prefill`), which is how an invite-only

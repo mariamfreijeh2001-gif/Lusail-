@@ -495,92 +495,92 @@
     },
     {
       "source": "/supplier/",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/supplier",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/supplier-portal/",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/supplier-portal",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/suppliers/register/",
-      "destination": "/suppliers/#register",
+      "destination": "/supplier-portal/#register",
       "permanent": true
     },
     {
       "source": "/suppliers/register",
-      "destination": "/suppliers/#register",
+      "destination": "/supplier-portal/#register",
       "permanent": true
     },
     {
       "source": "/procurement/",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/procurement",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/tenders/",
-      "destination": "/suppliers/#opportunities",
+      "destination": "/supplier-portal/#opportunities",
       "permanent": true
     },
     {
       "source": "/tenders",
-      "destination": "/suppliers/#opportunities",
+      "destination": "/supplier-portal/#opportunities",
       "permanent": true
     },
     {
       "source": "/vendors/",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/vendors",
-      "destination": "/suppliers/",
+      "destination": "/supplier-portal/",
       "permanent": true
     },
     {
       "source": "/vendor-registration/",
-      "destination": "/suppliers/#register",
+      "destination": "/supplier-portal/#register",
       "permanent": true
     },
     {
       "source": "/vendor-registration",
-      "destination": "/suppliers/#register",
+      "destination": "/supplier-portal/#register",
       "permanent": true
     },
     {
       "source": "/opportunities/",
-      "destination": "/suppliers/#opportunities",
+      "destination": "/supplier-portal/#opportunities",
       "permanent": true
     },
     {
       "source": "/opportunities",
-      "destination": "/suppliers/#opportunities",
+      "destination": "/supplier-portal/#opportunities",
       "permanent": true
     },
     {
       "source": "/suppliers/opportunities/",
-      "destination": "/suppliers/#opportunities",
+      "destination": "/supplier-portal/#opportunities",
       "permanent": true
     },
     {
       "source": "/suppliers/opportunities",
-      "destination": "/suppliers/#opportunities",
+      "destination": "/supplier-portal/#opportunities",
       "permanent": true
     },
     {
@@ -661,6 +661,51 @@
     {
       "source": "/companies/tibeco-group",
       "destination": "https://www.tibecogroup.com/",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/",
+      "destination": "/supplier-portal/",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers",
+      "destination": "/supplier-portal/",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/code/",
+      "destination": "/supplier-portal/code/",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/code",
+      "destination": "/supplier-portal/code/",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/opportunities/:ref/",
+      "destination": "/supplier-portal/opportunities/",
+      "permanent": true
+    },
+    {
+      "source": "/suppliers/opportunities/:ref",
+      "destination": "/supplier-portal/opportunities/",
+      "permanent": true
+    },
+    {
+      "source": "/supplier-portal/opportunities",
+      "destination": "/supplier-portal/opportunities/",
+      "permanent": true
+    },
+    {
+      "source": "/register/",
+      "destination": "/supplier-portal/register/",
+      "permanent": true
+    },
+    {
+      "source": "/register",
+      "destination": "/supplier-portal/register/",
       "permanent": true
     }
   ]

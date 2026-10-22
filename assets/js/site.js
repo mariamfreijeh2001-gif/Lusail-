@@ -219,6 +219,14 @@
        the desk an invitation request is for, the reference in its message. */
     try {
       var q = new URLSearchParams(location.search);
+      /* an event's action arrives carrying its reference */
+      var ref = (q.get('ref') || '').replace(/[^A-Za-z0-9-]/g, '').toUpperCase().slice(0, 40);
+      var refInput = form.querySelector('input[name="reference"]');
+      if (ref && refInput) {
+        refInput.value = ref;
+        var refSay = document.getElementById('regRef');
+        if (refSay) { refSay.querySelector('[data-ref]').textContent = ref; refSay.hidden = false; }
+      }
       var pre = q.get('company') || q.get('area');
       if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) areaSel.value = pre;
       var co = (q.get('company') || '').replace(/[^a-z0-9-]/g, '');
@@ -236,6 +244,150 @@
         });
       }
     } catch (e) {}
+
+    /* The documents. Each row is optional; a chosen file has to be a PDF or
+       an image within what one email can carry — 2 MB a file, 3 MB in all —
+       and the row says so itself when one is not. */
+    var DOC_ONE = 2 * 1024 * 1024, DOC_ALL = 3 * 1024 * 1024;
+    var DOC_TYPES = /\.(pdf|jpe?g|png|webp)$/i;
+    var docInputs = $$('[data-doc-input]', form);
+    var docsTotal = function () {
+      return docInputs.reduce(function (n, i) { return n + (i.files[0] ? i.files[0].size : 0); }, 0);
+    };
+    var docRow = function (input) {
+      var row = input.closest('[data-doc]');
+      return { row: row, name: row.querySelector('[data-doc-name]'), x: row.querySelector('[data-doc-clear]'), err: row.querySelector('[data-doc-err]') };
+    };
+    var mb = function (n) { return (n / 1048576).toFixed(n < 1048576 ? 2 : 1) + ' MB'; };
+    var resetDoc = function (input) {
+      var r = docRow(input);
+      input.value = '';
+      r.name.textContent = 'Optional';
+      r.row.classList.remove('has-file');
+      r.x.hidden = true;
+      r.err.textContent = '';
+    };
+    docInputs.forEach(function (input) {
+      var r = docRow(input);
+      input.addEventListener('change', function () {
+        var f = input.files[0];
+        r.err.textContent = '';
+        if (!f) { resetDoc(input); return; }
+        if (!DOC_TYPES.test(f.name)) { input.value = ''; r.err.textContent = 'PDF or image only — send anything else by email.'; return; }
+        if (f.size > DOC_ONE) { input.value = ''; r.err.textContent = 'That file is ' + mb(f.size) + '; up to 2 MB here. Email larger files.'; return; }
+        if (docsTotal() > DOC_ALL) { input.value = ''; r.err.textContent = 'Together the files pass 3 MB. Attach the essentials and email the rest.'; return; }
+        r.name.textContent = f.name + ' · ' + mb(f.size);
+        r.row.classList.add('has-file');
+        r.x.hidden = false;
+        if (typeof refreshProg === 'function') refreshProg();
+      });
+      r.x.addEventListener('click', function () { resetDoc(input); if (typeof refreshProg === 'function') refreshProg(); });
+    });
+    var resetDocs = function () { docInputs.forEach(resetDoc); };
+    /* read what was chosen, as base64 the function can hand to the email */
+    var readDocs = function () {
+      var picked = docInputs.filter(function (i) { return i.files[0]; });
+      if (!picked.length) return Promise.resolve([]);
+      if (docsTotal() > DOC_ALL) return Promise.resolve(null);
+      return Promise.all(picked.map(function (i) {
+        return new Promise(function (res, rej) {
+          var f = i.files[0], rd = new FileReader();
+          rd.onload = function () { res({ field: i.name, filename: f.name, type: f.type || 'application/octet-stream', content: String(rd.result).split(',')[1] || '' }); };
+          rd.onerror = function () { rej(new Error(f.name)); };
+          rd.readAsDataURL(f);
+        });
+      })).catch(function () { return null; });
+    };
+
+    /* The draft. What is typed stays in this browser, so the form can be
+       finished later — files stay out of it, they are too big to keep. */
+    var DRAFT_KEY = 'lusail-draft-' + kind;
+    var draftable = kind === 'supplier' && 'localStorage' in window;
+    var saveDraft = function () {
+      if (!draftable) return;
+      try {
+        var d = {};
+        $$('input[name],select[name],textarea[name]', form).forEach(function (el) {
+          if (el.type === 'file' || el.type === 'hidden' || el.name === 'website') return;
+          if (el.type === 'checkbox') { if (el.checked) (d[el.name] = d[el.name] || []).push(el.value); }
+          else if (el.value) d[el.name] = el.value;
+        });
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+      } catch (e) {}
+    };
+    var clearDraft = function () { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} };
+    if (draftable) {
+      try {
+        var saved = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+        Object.keys(saved).forEach(function (k) {
+          var v = saved[k];
+          if (Array.isArray(v)) {
+            $$('input[type="checkbox"][name="' + k + '"]', form).forEach(function (b) { if (v.indexOf(b.value) !== -1) b.checked = true; });
+          } else {
+            var el = form.querySelector('[name="' + k + '"]');
+            if (el && !el.value && el.type !== 'file') el.value = v;
+          }
+        });
+      } catch (e) {}
+      var saveSoon;
+      form.addEventListener('input', function () { clearTimeout(saveSoon); saveSoon = setTimeout(saveDraft, 400); });
+      form.addEventListener('change', saveDraft);
+    }
+
+    /* The progress rail beside the register form, when the page has one:
+       each step answers for its own fields, the way TIBECO's does. */
+    var prog = document.getElementById('regProg');
+    var refreshProg;
+    if (prog && form.getAttribute('data-form') === 'supplier') {
+      var stepEls = $$('li', prog);
+      /* fields belong to the step heading above them, in document order */
+      var groups = [];
+      $$('.fstep, input[name], select[name], textarea[name], fieldset[data-group]', form).forEach(function (el) {
+        if (el.classList && el.classList.contains('fstep')) { groups.push([]); return; }
+        if (!groups.length) return;
+        if (el.type === 'hidden' || el.name === 'website') return;
+        if (el.closest('fieldset[data-group]') && el.tagName !== 'FIELDSET') return;
+        groups[groups.length - 1].push(el);
+      });
+      refreshProg = function () {
+        groups.forEach(function (fields, i) {
+          var li = stepEls[i];
+          if (!li) return;
+          var state = li.querySelector('[data-state]');
+          var filled = 0, required = 0, reqDone = 0, started = false, text = '';
+          var cats = null, files = 0, agrees = [], agreesOn = 0;
+          fields.forEach(function (el) {
+            if (el.tagName === 'FIELDSET') { cats = el; return; }
+            if (el.type === 'file') { if (el.files[0]) files++; return; }
+            if (el.type === 'checkbox' && el.closest('.agree')) { agrees.push(el); if (el.checked) agreesOn++; return; }
+            var has = el.type === 'checkbox' ? el.checked : !!String(el.value).trim();
+            if (has) { filled++; started = true; }
+            if (el.required) { required++; if (has) reqDone++; }
+          });
+          if (cats) {
+            var boxes = $$('input[name]', cats), on = boxes.filter(function (b) { return b.checked; }).length;
+            text = on ? on + ' of ' + boxes.length + ' selected' : '';
+            started = started || on > 0;
+            required++; if (on) reqDone++;
+          }
+          if (fields.some(function (el) { return el.type === 'file'; })) {
+            text = files ? files + ' attached' : 'Optional';
+            started = files > 0;
+          } else if (agrees.length) {
+            text = agreesOn ? agreesOn + ' of ' + agrees.length + ' ticked' : '';
+            started = started || agreesOn > 0;
+            required += agrees.length; reqDone += agreesOn;
+          }
+          var done = required > 0 && reqDone >= required;
+          li.classList.toggle('is-done', done);
+          li.classList.toggle('is-going', !done && started);
+          state.textContent = done ? (text || 'Complete') : started ? (text || 'In progress') : (text || 'Not started');
+        });
+      };
+      form.addEventListener('input', refreshProg);
+      form.addEventListener('change', refreshProg);
+      refreshProg();
+    }
 
     /* "All sectors" ticks every sector; unticking any one clears it. */
     $$('[data-all]', form).forEach(function (all) {
@@ -298,6 +450,7 @@
       var body = { form: kind, t: Date.now() - LOADED_AT };
       var fd = new FormData(form);
       fd.forEach(function (v, k) {
+        if (v instanceof File) return;             // documents travel separately, read below
         var box = form.querySelector('input[type="checkbox"][name="' + k + '"]');
         if (box && box.closest('fieldset')) body[k] = fd.getAll(k);   // a group travels as a list
         else body[k] = v;
@@ -309,6 +462,9 @@
         }
       };
 
+      readDocs().then(function (atts) {
+      if (atts === null) { say('A document could not be read — check the messages beside the files.', true); btn.disabled = false; afterTry(); return; }
+      if (atts.length) body.attachments = atts;
       fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -328,6 +484,8 @@
         var done = form.querySelector('.fdone');
         if (done) { form.classList.add('is-sent'); done.hidden = false; done.focus(); }
         $$('[data-all]', form).forEach(function (a) { a.checked = false; });
+        resetDocs(); clearDraft();
+        if (typeof refreshProg === 'function') refreshProg();
       }).catch(function (err) {
         if (err && err.said) { say(err.said + ' Check it and send again.', true); return; }
         /* Nothing typed is lost: the message stays in the form, and the same
@@ -358,6 +516,7 @@
       }).then(function () {
         btn.disabled = false;
         afterTry();
+      });
       });
     });
   };
@@ -444,23 +603,13 @@
     };
     pills.forEach(function (p) { p.addEventListener('click', function () { pick(p.getAttribute('data-cat')); }); });
     if (sel) sel.addEventListener('change', function () { pick(sel.value); });
+    /* a category card's "n open" arrives here already filtered */
+    var qcat = (new URLSearchParams(location.search).get('cat') || '').replace(/[^a-z0-9-]/g, '');
+    if (qcat && pills.some(function (x) { return x.getAttribute('data-cat') === qcat; })) pick(qcat);
     /* "2 open" on a category row filters the list and goes to it */
     $$('a[data-filter]').forEach(function (a) {
       a.addEventListener('click', function () { pick(a.getAttribute('data-filter')); });
     });
-  }
-
-  /* The registration form sits folded behind its own row. Any link to
-     #register — the opening's button, a company page's "Supply …", a sector
-     page — unfolds it, and so does arriving with that hash. */
-  var regBox = $('#regBox');
-  if (regBox) {
-    var unfold = function () { regBox.open = true; };
-    if (location.hash === '#register') unfold();
-    addEventListener('hashchange', function () { if (location.hash === '#register') unfold(); });
-    $$('a[href$="#register"]').forEach(function (a) { a.addEventListener('click', unfold); });
-    /* a form that failed to send stays open with the message in it */
-    regBox.addEventListener('submit', unfold, true);
   }
 
   /* ---------- the corner form ----------------------------------------------
