@@ -1579,7 +1579,10 @@ function pageSuppliers() {
       itemListElement: OPEN.map((o, i) => ({ '@type': 'ListItem', position: i + 1, name: `${o.ref} — ${o.title}`, url: abs('/supplier-portal/opportunities/') }))
     })
   })
-    + header('/supplier-portal/', true)
+    /* the solid bar, not the over-the-photograph one: the portal strip sits
+       first in the flow here, and a bar drawn over the page prints on top of
+       it instead of above it */
+    + header('/supplier-portal/', false)
     + portalNav('portal')
     + pageHead({
       eyebrow: 'Supplier Portal',
