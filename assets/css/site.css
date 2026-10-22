@@ -2,26 +2,42 @@
    Lusail Corp — site stylesheet
 
    DIRECTION: the Lusail Corp design system (Claude Design). Editorial and
-   architectural: navy type on a near-white ground, fine rules instead of
-   shadows and boxes, a light serif for the voice and a grotesque for the
-   work, and gold spent in small, deliberate amounts. Navy carries the hero,
-   the sourcing map, the closing card and the footer.
+   architectural: navy type on a near-white ground,
+fine rules instead of
+   shadows and boxes,
+a light serif for the voice and a grotesque for the
+   work,
+and gold spent in small,
+deliberate amounts. Navy carries the hero,
+the sourcing map,
+the closing card and the footer.
 
-   COLOUR: navy is the ink, gold is the mark, warm grey is the material,
-   white is the air. Gold is never small text on paper — it reads at about
+   COLOUR: navy is the ink,
+gold is the mark,
+warm grey is the material,
+white is the air. Gold is never small text on paper — it reads at about
    2:1 there — so where gold has to be read on a light ground it is
-   --gold-text, a deepened gold that holds 5.8:1.
+   --gold-text,
+a deepened gold that holds 5.8:1.
 
-   TYPE: Newsreader (light serif) for page titles, section headings, card
-   titles and the large numerals; Inter for everything else, labels and
+   TYPE: Newsreader (light serif) for page titles,
+section headings,
+card
+   titles and the large numerals; Inter for everything else,
+labels and
    eyebrows included. Both are served from this origin rather than from
-   Google, which saves a DNS lookup, a TLS handshake and a render-blocking
+   Google,
+which saves a DNS lookup,
+a TLS handshake and a render-blocking
    stylesheet. SIL Open Font License; see site-assets/font/.
    ========================================================================== */
 
-/* The latin cut of each, which is all an English-only site needs. Inter is
-   the text face — the one TIBECO's site is set in, and its ampersand is a
-   plain one, where Archivo's read like a backwards E in every "&" name the
+/* The latin cut of each,
+which is all an English-only site needs. Inter is
+   the text face — the one TIBECO's site is set in,
+and its ampersand is a
+   plain one,
+where Archivo's read like a backwards E in every "&" name the
    footer lists. */
 @font-face{
   font-family:"Inter";
@@ -59,7 +75,6 @@
      on the darkest ground they sit on now. */
   --ink-2:#474d63;          /* secondary copy: the system's ink-muted */
   --ink-3:#7a7f90;          /* the greyed word in a heading; 24px and up only */
-  --num:#7a7f90;            /* the oversized numerals on the cards */
   --label:#474d63;          /* labels and eyebrows on paper */
   --ink-inv-2:#b6bcd0;      /* secondary copy on a navy band */
 
@@ -71,14 +86,12 @@
   --line:#dedcd9;
   --warm:#f7f4f1;           /* type on a dark ground */
 
-  --pin:#D3A750;            /* the sourcing pins, and the one accent: the logo gold */
   --gold:#D3A750;           /* the brand gold: rules, dashes, markers — a mark, not text on paper */
   --gold-text:#7d5a1d;      /* gold that has to be read on a light ground: 5.8:1 */
 
   --display:"Newsreader","Iowan Old Style",Georgia,serif;
   --body:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
   --ui:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
-  --serif:var(--display);
   /* labels: the text face, uppercase and tracked, rather than a third one */
   --mono:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
 
@@ -91,9 +104,6 @@
      mess to maintain. Nothing sets a size that is not one of these. */
   --t-display:clamp(2.375rem, 4.4vw, 3.75rem); /* 60px: the serif runs smaller than the grotesque did */
   --t-h1:clamp(1.875rem, 3vw, 2.625rem);       /* 42px: a section heading */
-  --t-h3:clamp(1.0625rem, 1.2vw, 1.125rem);    /* 18px, fluid */
-  --t-h4:1.3125rem;                            /* 21px */
-  --t-stat:clamp(2rem,3.2vw,2.75rem);          /* 32–44px, the four figures */
   --t-lg:1.125rem;                             /* 18px, a lead line, a card name */
   --t-lede:clamp(.9375rem, 1.05vw, 1.0625rem); /* 17px */
   --t-body:1rem;                               /* 16px, running text */
@@ -125,12 +135,14 @@
 
 *{box-sizing:border-box}
 /* Any author rule that sets display beats the browser default for [hidden],
-   so a hidden card with display:grid stays on screen. This puts it back. */
+so a hidden card with display:grid stays on screen. This puts it back. */
 [hidden]{display:none!important}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  *,
+*::before,
+*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
 }
 
 body{
@@ -145,8 +157,12 @@ img{display:block;max-width:100%}
 svg{max-width:100%}
 a{color:inherit}
 p{margin:0}
-h1,h2,h3,h4{margin:0;font-weight:600;line-height:1.2;text-wrap:balance}
-h1,h2{font-family:var(--display);font-weight:400;letter-spacing:-.012em}
+h1,
+h2,
+h3,
+h4{margin:0;font-weight:600;line-height:1.2;text-wrap:balance}
+h1,
+h2{font-family:var(--display);font-weight:400;letter-spacing:-.012em}
 h3{font-family:var(--body);letter-spacing:-.005em}
 
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
@@ -154,15 +170,20 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 /* The one flourish: a heading greys out a word to name its own subject. */
 .soft{color:var(--ink-3)}
 
-/* The measure. `width:100%` matters: several of these sit in a grid, and an
-   auto inline margin on a grid item turns off stretch, shrinks the item to
-   its widest child and centres it. In normal flow it is a no-op, so every
+/* The measure. `width:100%` matters: several of these sit in a grid,
+and an
+   auto inline margin on a grid item turns off stretch,
+shrinks the item to
+   its widest child and centres it. In normal flow it is a no-op,
+so every
    page hero was quietly centred and started at a different place on every
-   page — 410px on About, 525px on Nero — instead of at the gutter. */
+   page — 410px on About,
+525px on Nero — instead of at the gutter. */
 .wrap{width:100%;max-width:var(--wrap);margin-inline:auto;padding-inline:var(--gutter)}
 
 /* The sector and value marks are line drawings. Their paths set neither fill
-   nor stroke, so this is what makes them lines rather than solid blobs — as
+   nor stroke,
+so this is what makes them lines rather than solid blobs — as
    they were wherever a context forgot to say so. Size and colour are set
    where each one is used; this is everything they have in common. */
 .ico{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:square;stroke-linejoin:miter}
@@ -172,20 +193,27 @@ h3{font-family:var(--body);letter-spacing:-.005em}
   background:var(--gold);color:#0A1020;padding:12px 18px;z-index:100;
 }
 
-/* ---------- eyebrow: the label above a heading, led by a gold dash ------- */
+/* ---------- eyebrow: the label above a heading,
+led by a gold dash ------- */
 
-.eyebrow,.pagehead-eyebrow{
+.eyebrow,
+.pagehead-eyebrow{
   text-decoration:none;
   display:inline-flex;align-items:center;gap:12px;
   font:600 .75rem/1.2 var(--ui)!important;letter-spacing:.18em!important;text-transform:uppercase;
 }
-.eyebrow::before,.pagehead-eyebrow::before{content:"";width:24px;height:2px;background:var(--gold);flex:none}
+.eyebrow::before,
+.pagehead-eyebrow::before{content:"";width:24px;height:2px;background:var(--gold);flex:none}
 
-/* ---------- micro label: one face, one size, everywhere ----------------- */
+/* ---------- micro label: one face,
+one size,
+everywhere ----------------- */
 
 /* ---------- buttons and links ------------------------------------------ */
 
-/* Square, not rounded, and set in the UI face rather than the body one. */
+/* Square,
+not rounded,
+and set in the UI face rather than the body one. */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.6em;
   font:600 var(--t-sm)/1.5 var(--ui);letter-spacing:.02em;padding:14px 26px;border-radius:2px;
@@ -201,8 +229,6 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 /* on paper */
 .btn-dark{background:var(--ink);color:var(--warm)}
 .btn-dark:hover{background:var(--gold);color:var(--ink)}
-.btn-line{border-color:var(--line);color:var(--ink)}
-.btn-line:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
 
 .section{padding-block:var(--band)}
 .section.stone{background:var(--paper)}
@@ -210,7 +236,9 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 
 /* ==========================================================================
    The page opening — every page but the home page starts here
-   A photograph, a wash dark enough to carry type over any of it, and the
+   A photograph,
+a wash dark enough to carry type over any of it,
+and the
    title sitting in the upper third.
    ========================================================================== */
 
@@ -237,7 +265,8 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 }
 .pagehead > .wrap{position:relative;z-index:1;display:grid;justify-items:start;gap:10px}
 /* An eyebrow says where you are and should not compete with what you came to
-   read. It was 18px — larger than the body copy under it, and the same size
+   read. It was 18px — larger than the body copy under it,
+and the same size
    as the lede — which made three things ask for attention at once. */
 .pagehead-eyebrow{
   font:600 .75rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;
@@ -247,7 +276,9 @@ h3{font-family:var(--body);letter-spacing:-.005em}
   font-size:var(--t-display);line-height:1.05;font-weight:300;letter-spacing:-.018em;
   color:#fff;max-width:16ch;
 }
-/* 500, not 600: this is a sentence to read, not a second heading. */
+/* 500,
+not 600: this is a sentence to read,
+not a second heading. */
 .pagehead-lede{
   font:400 var(--t-lg)/1.5 var(--body);color:#fff;
   max-width:52ch;margin-top:6px;
@@ -260,10 +291,7 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 .pagehead-note time{color:rgba(255,255,255,.82);margin-left:6px}
 
 /* ==========================================================================
-   Running text, and the one wide photograph that follows it
-   ========================================================================== */
-
-.prose2{
+   Running text{
   display:grid;gap:1.15em;max-width:74ch;
   font-size:var(--t-lg);line-height:1.56;color:var(--ink-2);
 }
@@ -297,12 +325,17 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 @media (max-width:820px){ .vm-grid{grid-template-columns:1fr} }
 
 /* ==========================================================================
-   The values — six cards, all of them open
+   The values — six cards,
+all of them open
 
    This was a six-row accordion beside a photograph a third of the page tall:
-   five values hidden at any moment, a lot of height spent, and a picture
+   five values hidden at any moment,
+a lot of height spent,
+and a picture
    carrying none of it. Six one-line values are not worth a click each. They
-   are a grid now, all readable at a glance, and the section is about half as
+   are a grid now,
+all readable at a glance,
+and the section is about half as
    tall as it was.
    ========================================================================== */
 
@@ -331,9 +364,12 @@ h3{font-family:var(--body);letter-spacing:-.005em}
    How we create value — five numbered statements across the measure
    ========================================================================== */
 
-/* Cards, not cells divided by rules. The rules made a table of it and the
+/* Cards,
+not cells divided by rules. The rules made a table of it and the
    nth-child arithmetic underneath was holding five items in a six-column grid
-   by hand. A card says "this is one idea", answers a pointer, and does not
+   by hand. A card says "this is one idea",
+answers a pointer,
+and does not
    care how many of them there are. */
 .vcreate{
   display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
@@ -343,7 +379,9 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 /* Five into three columns leaves two over. Centre them rather than leaving a
    hole on the right — the six-column track exists only so the orphan row can
    sit on the half-column. Scoped with :has so the three-card version of this
-   block, on Work With Us, is untouched. */
+   block,
+on Work With Us,
+is untouched. */
 .vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(4){grid-column:2 / span 2}
 .vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(5){grid-column:4 / span 2}
 .vc{
@@ -358,8 +396,9 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 .vc p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){
   .vcreate{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .vc,.vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(4),
-  .vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(5){grid-column:span 1}
+  .vc,
+.vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(4),
+.vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(5){grid-column:span 1}
 }
 @media (max-width:560px){ .vcreate{grid-template-columns:minmax(0,1fr)} }
 @media (prefers-reduced-motion:reduce){
@@ -375,7 +414,8 @@ h3{font-family:var(--body);letter-spacing:-.005em}
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
   gap:clamp(12px,1.6vw,20px);margin-top:clamp(28px,3.4vw,44px);
 }
-/* ruled like the rest of the system: a hairline above, a gold one drawn
+/* ruled like the rest of the system: a hairline above,
+a gold one drawn
    across it on hover */
 .pline{
   position:relative;border-top:1px solid var(--line-2);
@@ -397,8 +437,10 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 }
 
 /* ==========================================================================
-   A company page — the lead statement, the upright photograph beside the
-   reading, and the facts underneath
+   A company page — the lead statement,
+the upright photograph beside the
+   reading,
+and the facts underneath
    ========================================================================== */
 
 .cosplit{
@@ -416,12 +458,21 @@ h3{font-family:var(--body);letter-spacing:-.005em}
    What we trade today — a rail of products that scrolls when it has to
    ========================================================================== */
 
-/* A grid, not a rail. Sideways scrolling kept most of the list behind the
-   right edge, cut the last card in half, and hid its own Prev/Next buttons
+/* A grid,
+not a rail. Sideways scrolling kept most of the list behind the
+   right edge,
+cut the last card in half,
+and hid its own Prev/Next buttons
    below 700px — on the screen where swiping was the only way left. Every
-   product is on the page now, in rows, and the row count follows the width. */
-/* What a company offers: compact rows, two to a line, so five or six fit
-   on one screen — a photograph, the number, the name and a line. */
+   product is on the page now,
+in rows,
+and the row count follows the width. */
+/* What a company offers: compact rows,
+two to a line,
+so five or six fit
+   on one screen — a photograph,
+the number,
+the name and a line. */
 .prodgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(28px,4vw,64px);margin-top:clamp(20px,2.6vw,32px)}
 .prod{
   display:grid;grid-template-columns:116px minmax(0,1fr);grid-template-rows:auto auto auto;
@@ -437,8 +488,10 @@ h3{font-family:var(--body);letter-spacing:-.005em}
 @media (max-width:860px){ .prodgrid{grid-template-columns:1fr} }
 @media (max-width:520px){ .prod{grid-template-columns:84px minmax(0,1fr)} }
 @media (prefers-reduced-motion:reduce){
-  .prod img,.prod-pic{transition:none}
-  .prod:hover img,.prod:focus-within img{transform:none}
+  .prod img,
+.prod-pic{transition:none}
+  .prod:hover img,
+.prod:focus-within img{transform:none}
 }
 
 /* activity tags */
@@ -473,38 +526,52 @@ form{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;align-content:star
 .field{display:grid;gap:8px}
 .field.full{grid-column:1/-1}
 label{font-size:var(--t-sm);color:var(--ink-2)}
-input,select,textarea{
+input,
+select,
+textarea{
   font:inherit;color:var(--ink);background:var(--paper);
   border:1px solid var(--line-2);border-radius:2px;padding:.9em .95em;width:100%;
   transition:border-color .2s;
 }
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
+input:focus,
+select:focus,
+textarea:focus{outline:none;border-color:var(--ink)}
 /* The darkened border cannot carry focus on its own: it is also what an
-   invalid field wears, so "you are here" and "this is wrong" looked the same,
-   and 28 of the 59 tab stops on this page had no focus mark at all. */
-input:focus-visible,select:focus-visible,textarea:focus-visible{
+   invalid field wears,
+so "you are here" and "this is wrong" looked the same,
+and 28 of the 59 tab stops on this page had no focus mark at all. */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{
   outline:2px solid var(--ink);outline-offset:2px;
 }
-input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="true"]{
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"]{
   border-color:#A3341A;background:#fdf7f5;
 }
-/* What is wrong is said beside the field it is wrong about, not 479px below
-   it in the status line, which is where the focus had been sent from. */
+/* What is wrong is said beside the field it is wrong about,
+not 479px below
+   it in the status line,
+which is where the focus had been sent from. */
 .field-err{font:500 var(--t-micro)/1.4 var(--body);color:#A3341A}
 .field-err:empty{display:none}
 textarea{min-height:140px;resize:vertical}
 .form-end{grid-column:1/-1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .status{color:var(--gold-deep);font-size:var(--t-sm)}
 .status.err{color:#A3341A}
-/* Honeypot. Off-screen rather than display:none, and out of the tab order.
-   A person never reaches it, so anything in it came from a bot. */
+/* Honeypot. Off-screen rather than display:none,
+and out of the tab order.
+   A person never reaches it,
+so anything in it came from a bot. */
 .hp{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 @media (max-width:560px){ form{grid-template-columns:1fr} }
 
 /* ==========================================================================
    Hero — the statement sits on the floor of a full-bleed photograph
-   The bar above is transparent, so the picture runs the whole screen and the
+   The bar above is transparent,
+so the picture runs the whole screen and the
    type is held down by one soft wash across the bottom rather than a scrim
    over the whole frame.
    ========================================================================== */
@@ -522,7 +589,9 @@ textarea{min-height:140px;resize:vertical}
   position:absolute;inset:0;z-index:-2;
   width:100%;height:100%;object-fit:cover;object-position:50% 38%;
 }
-/* One wash, weighted to the floor where the words are, plus a light veil at
+/* One wash,
+weighted to the floor where the words are,
+plus a light veil at
    the very top so the navigation holds over a bright sky. */
 .hero::before{
   content:"";position:absolute;inset:0;z-index:-1;
@@ -542,7 +611,8 @@ textarea{min-height:140px;resize:vertical}
   font-size:clamp(2.75rem,5.4vw,4.75rem);line-height:1.02;color:#fff;
   font-weight:300;letter-spacing:-.022em;text-wrap:balance;
 }
-/* the one italic word, in gold: the hero's single flourish */
+/* the one italic word,
+in gold: the hero's single flourish */
 .hero h1 em{font-style:italic;font-weight:300;color:var(--gold);letter-spacing:-.01em}
 .hero-lede{
   margin-top:clamp(18px,2vw,26px);max-width:54ch;
@@ -573,7 +643,9 @@ textarea{min-height:140px;resize:vertical}
 .tags li:hover{border-color:var(--gold);color:var(--ink)}
 
 /* ==========================================================================
-   The bar — the mark on the left, the links through the middle, one action
+   The bar — the mark on the left,
+the links through the middle,
+one action
    on the right. Over the home photograph it starts transparent and fills as
    the page moves; everywhere else it is carbon from the first pixel.
    ========================================================================== */
@@ -588,41 +660,53 @@ textarea{min-height:140px;resize:vertical}
 .site-head .brand{display:flex;align-items:center;flex:none;text-decoration:none}
 .site-head .brand img{height:46px;width:auto}
 
-/* Set in sentence case at reading size with room around each item, rather
+/* Set in sentence case at reading size with room around each item,
+rather
    than small uppercase packed together: a navigation is a list of words
-   people read, not a row of labels. */
+   people read,
+not a row of labels. */
 .nav{display:flex;align-items:center;gap:clamp(4px,1.6vw,26px);margin-inline:auto}
-.nav-link,.nav-caret{
+.nav-link,
+.nav-caret{
   display:flex;align-items:center;gap:2px;height:44px;padding-inline:10px;
   font:500 var(--t-sm)/1.4 var(--body);letter-spacing:.012em;
   color:var(--warm);text-decoration:none;
   background:none;border:0;cursor:pointer;
   transition:color .2s;
 }
-.nav-link:hover,.nav-caret:hover,
-.nav-caret[aria-expanded="true"],.navwrap.open .nav-sec{color:var(--gold)}
+.nav-link:hover,
+.nav-caret:hover,
+.nav-caret[aria-expanded="true"],
+.navwrap.open .nav-sec{color:var(--gold)}
 /* the page you are on is named in gold */
-.nav-link[aria-current="page"],.nav-link[aria-current="true"]{color:var(--gold)}
+.nav-link[aria-current="page"],
+.nav-link[aria-current="true"]{color:var(--gold)}
 .nav-caret svg{width:22px;height:22px;flex:none;fill:currentColor;transition:transform .25s}
 .nav-caret[aria-expanded="true"] svg{transform:rotate(180deg)}
-/* the caret is its own control, so it carries its own hit area and sits
+/* the caret is its own control,
+so it carries its own hit area and sits
    tight against the word it belongs to */
 .nav-sec{padding-right:2px}
 .nav-caret{padding-inline:4px;min-width:26px;justify-content:center}
 
-/* the one action on the bar, in the brand's own gold */
+/* the one action on the bar,
+in the brand's own gold */
 .head-cta{
   flex:none;background:var(--gold);border:1px solid var(--gold);color:var(--ink);
   font:600 var(--t-xs)/1.6 var(--ui);letter-spacing:.11em;text-transform:uppercase;
   padding:12px 24px;text-align:center;text-decoration:none;white-space:nowrap;
   transition:background .2s,border-color .2s,color .2s;
 }
-.head-cta:hover,.head-cta:focus-visible{background:#c2963f;border-color:#c2963f}
+.head-cta:hover,
+.head-cta:focus-visible{background:#c2963f;border-color:#c2963f}
 
 /* ---- the sectors panel --------------------------------------------------
-   A white sheet the width of the measure, not a dropdown hanging off the
-   button. The whole portfolio is four sectors and five listings, so it all
-   fits, and a visitor reaches the business they came for in one move. */
+   A white sheet the width of the measure,
+not a dropdown hanging off the
+   button. The whole portfolio is four sectors and five listings,
+so it all
+   fits,
+and a visitor reaches the business they came for in one move. */
 .navwrap{position:static;display:flex;align-items:center}
 .secmenu{
   /* the measure, not the frame: it lines up with the content below it */
@@ -635,7 +719,8 @@ textarea{min-height:140px;resize:vertical}
 }
 .navwrap.open .secmenu{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0)}
 /* The pointer has to cross the bottom of the bar to reach the panel. This
-   strip belongs to the panel, so that journey never counts as leaving. */
+   strip belongs to the panel,
+so that journey never counts as leaving. */
 .secmenu::before{
   content:"";position:absolute;left:0;right:0;top:-40px;height:40px;
 }
@@ -655,7 +740,8 @@ textarea{min-height:140px;resize:vertical}
 }
 .secmenu-col + .secmenu-col{border-inline-start:1px solid #e9e9e9}
 
-/* WCAG 2.2 asks for a 24px target. These were the text's own 20px, so each
+/* WCAG 2.2 asks for a 24px target. These were the text's own 20px,
+so each
    one now carries a little height of its own. */
 .secmenu-head{
   display:flex;align-items:center;gap:7px;text-decoration:none;
@@ -664,13 +750,6 @@ textarea{min-height:140px;resize:vertical}
 .secmenu-head .ico{width:18px;height:18px;flex:none;color:var(--ink)}
 .secmenu-head span{font:600 var(--t-body)/1.25 var(--ui);color:var(--ink)}
 .secmenu-head:hover span{color:#030C2B}
-
-.secmenu-co{
-  font:500 var(--t-body)/1.25 var(--ui);color:#767676;text-decoration:none;
-  display:flex;align-items:center;min-height:24px;padding-block:3px;
-  transition:color .18s,padding-inline-start .18s;
-}
-.secmenu-co:hover,.secmenu-co:focus-visible{color:var(--ink);padding-inline-start:4px}
 
 .secmenu a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
@@ -706,7 +785,8 @@ textarea{min-height:140px;resize:vertical}
 .menu .btn{margin-top:22px}
 
 @media (max-width:1080px){
-  .nav,.head-cta{display:none}
+  .nav,
+.head-cta{display:none}
   .burger{display:block;margin-inline-start:auto}
   .site-head{justify-content:space-between}
 }
@@ -714,7 +794,9 @@ textarea{min-height:140px;resize:vertical}
   .site-head .brand img{height:38px}
 }
 @media (prefers-reduced-motion:reduce){
-  .secmenu,.menu,.nav-caret svg{transition:none}
+  .secmenu,
+.menu,
+.nav-caret svg{transition:none}
 }
 
 /* ---- over the photograph ------------------------------------------------ */
@@ -727,12 +809,13 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Footer — the mark and what the Group is, then the two lists that answer
+   Footer — the mark and what the Group is,
+then the two lists that answer
    "which business?" and "how do I reach you?"
    ========================================================================== */
 
 /* Compact: the seven sectors run in two columns rather than one long one,
-   and the legal line sits on a rule rather than under a gap. */
+and the legal line sits on a rule rather than under a gap. */
 .site-foot{background:var(--ink);color:var(--warm);padding-block:44px 22px}
 .foot{
   display:grid;grid-template-columns:minmax(0,320px) minmax(0,auto);
@@ -745,7 +828,8 @@ textarea{min-height:140px;resize:vertical}
 .foot-col{display:grid;gap:12px;align-content:start}
 .foot-col ul{list-style:none;margin:0;padding:0;display:grid;gap:2px 32px}
 .foot-col:first-child ul{grid-template-columns:repeat(2,auto)}
-.foot-col a,.foot-col span{
+.foot-col a,
+.foot-col span{
   font:400 var(--t-micro)/1.43 var(--ui);color:rgba(255,255,255,.7);text-decoration:none;
   transition:color .2s;
 }
@@ -763,9 +847,12 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* On a phone the footer was 695px — most of a screen of furniture under
-   every page, on top of the closing band above it. The two link columns sit
-   side by side instead of stacking, the sentence under the mark goes (the
-   page above it has just said as much), and everything draws in. */
+   every page,
+on top of the closing band above it. The two link columns sit
+   side by side instead of stacking,
+the sentence under the mark goes (the
+   page above it has just said as much),
+and everything draws in. */
 @media (max-width:700px){
   .site-foot{padding-block:30px 22px}
   .foot{gap:24px}
@@ -781,7 +868,8 @@ textarea{min-height:140px;resize:vertical}
 
 /* ==========================================================================
    A section head used across the home page: the statement on the left with
-   one word greyed out, and the qualifying line held to the right of it.
+   one word greyed out,
+and the qualifying line held to the right of it.
    ========================================================================== */
 
 .head2{
@@ -796,12 +884,16 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Introduction — the claim, the paragraph beside it, and the four figures
+   Introduction — the claim,
+the paragraph beside it,
+and the four figures
    ========================================================================== */
 
 .intro{background:var(--paper)}
 .intro .wrap{display:grid;gap:clamp(36px,5vw,72px)}
-/* The Group's opening statement: a label, the claim set large, and the
+/* The Group's opening statement: a label,
+the claim set large,
+and the
    reasoning beside it behind a gold rule. */
 .intro-top{
   display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
@@ -819,8 +911,10 @@ textarea{min-height:140px;resize:vertical}
 .intro-note p{font-size:var(--t-lg);line-height:1.6;font-weight:400;color:var(--ink-2)}
 .intro-note p + p{margin-top:18px}
 
-/* Four figures in a row, read number first. The <dt> comes first in the
-   markup, as a description list requires; the grid draws the <dd> above it. */
+/* Four figures in a row,
+read number first. The <dt> comes first in the
+   markup,
+as a description list requires; the grid draws the <dd> above it. */
 .stats{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
 .stats dl{margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .stats dl > div{
@@ -831,7 +925,8 @@ textarea{min-height:140px;resize:vertical}
 .stats dl > div:first-child{padding-inline-start:0}
 .stats dd{grid-row:1}
 .stats dt{grid-row:2;font:600 .75rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--label)}
-/* Tabular figures: every digit the same width, so counting up changes the
+/* Tabular figures: every digit the same width,
+so counting up changes the
    glyphs without changing the measure and relaying out the row 56 times. */
 .stats dd{margin:0;font:300 clamp(2.5rem,4.2vw,4rem)/1 var(--display);color:var(--ink);letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums}
 .stats dd::before{content:"";display:block;width:28px;height:2px;background:var(--gold);margin-bottom:16px}
@@ -846,8 +941,11 @@ textarea{min-height:140px;resize:vertical}
 /* ==========================================================================
    Diversified by Design — the sectors as an accordion
    One sector stands open with its line and a way in; the rest are narrow
-   strips with their names set upright. Pointing at a strip, or tabbing to
-   it, opens it — and it stays open when the pointer leaves, so the row never
+   strips with their names set upright. Pointing at a strip,
+or tabbing to
+   it,
+opens it — and it stays open when the pointer leaves,
+so the row never
    collapses into seven equal slivers. Without script the first is open and
    every strip is still a plain link to its sector.
    ========================================================================== */
@@ -859,7 +957,8 @@ textarea{min-height:140px;resize:vertical}
 .sec-intro p{font-size:var(--t-lg);line-height:1.39;font-weight:500;color:var(--ink-2)}
 
 /* The accordion runs wider than the page column — nearly the full screen,
-   up to 1680px — and tall, so the open sector reads as a feature rather
+up to 1680px — and tall,
+so the open sector reads as a feature rather
    than a card. --acc-pad is the inset from the screen edge. */
 .acc{
   --acc-pad:clamp(16px,2.4vw,40px);
@@ -874,7 +973,8 @@ textarea{min-height:140px;resize:vertical}
   background:var(--ink);text-decoration:none;color:#fff;
   transition:flex-grow .7s cubic-bezier(.65,0,.35,1);
 }
-/* about half the row, as the reference draws it */
+/* about half the row,
+as the reference draws it */
 .acc-item.is-open{flex-grow:6}
 .acc-bg{
   position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;
@@ -894,7 +994,9 @@ textarea{min-height:140px;resize:vertical}
 }
 .acc-item:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
-/* a closed strip: its number at the top, its name upright, read bottom-up */
+/* a closed strip: its number at the top,
+its name upright,
+read bottom-up */
 .acc-num{
   position:absolute;top:30px;left:50%;transform:translateX(-50%);
   font:400 1.0625rem/1 var(--display);letter-spacing:.1em;color:var(--gold);
@@ -907,10 +1009,13 @@ textarea{min-height:140px;resize:vertical}
   text-shadow:0 1px 12px rgba(6,15,36,.5);
   transition:opacity .3s;
 }
-.acc-item.is-open .acc-num,.acc-item.is-open .acc-tab{opacity:0}
+.acc-item.is-open .acc-num,
+.acc-item.is-open .acc-tab{opacity:0}
 
-/* The open sector's text keeps one fixed width, so nothing re-wraps while
-   the panel grows; the panel clips it until there is room, then it fades
+/* The open sector's text keeps one fixed width,
+so nothing re-wraps while
+   the panel grows; the panel clips it until there is room,
+then it fades
    in once the panel has opened. */
 .acc-body{
   position:absolute;left:clamp(28px,3.6vw,64px);bottom:clamp(32px,4vw,64px);
@@ -934,8 +1039,10 @@ textarea{min-height:140px;resize:vertical}
 }
 .acc-item:hover .acc-arrow{transform:translateX(5px);background:var(--gold);border-color:var(--gold);color:var(--ink)}
 
-/* Below this seven upright strips are too thin to hold a name, so the
-   sectors stack: each a band with its name, the open one tall with its line. */
+/* Below this seven upright strips are too thin to hold a name,
+so the
+   sectors stack: each a band with its name,
+the open one tall with its line. */
 @media (max-width:860px){
   .acc{flex-direction:column;height:auto;gap:6px;width:auto;margin-inline:0}
   .acc-item,.acc-item.is-open{flex:none;height:78px;transition:height .5s cubic-bezier(.4,0,.2,1)}
@@ -950,13 +1057,19 @@ textarea{min-height:140px;resize:vertical}
   .acc-body h3{font-size:2rem}
 }
 @media (prefers-reduced-motion:reduce){
-  .acc-item,.acc-bg,.acc-body,.acc-arrow{transition:none}
+  .acc-item,
+.acc-bg,
+.acc-body,
+.acc-arrow{transition:none}
 }
 
 /* ==========================================================================
    What makes it a group — a photograph and four numbered claims
-   An editorial list rather than a grid of boxes: large gold numerals, the
-   claim, one line of reasoning, and a hairline between each. Pointing at a
+   An editorial list rather than a grid of boxes: large gold numerals,
+the
+   claim,
+one line of reasoning,
+and a hairline between each. Pointing at a
    claim draws a gold rule down its edge.
    ========================================================================== */
 
@@ -993,10 +1106,16 @@ textarea{min-height:140px;resize:vertical}
 @media (prefers-reduced-motion:reduce){ .why-item::before{transition:none} }
 
 /* ==========================================================================
-   Where we source from — the register beside the globe, on navy
-   One band, two columns: the heading, a line and the regions on the left;
-   the Earth on the right, turned slowly, with a gold arc from every source
-   country to Doha. Both read from the same list, so a market cannot appear
+   Where we source from — the register beside the globe,
+on navy
+   One band,
+two columns: the heading,
+a line and the regions on the left;
+   the Earth on the right,
+turned slowly,
+with a gold arc from every source
+   country to Doha. Both read from the same list,
+so a market cannot appear
    in one and not the other. Pointing at a region lights its arcs.
    ========================================================================== */
 
@@ -1013,7 +1132,8 @@ textarea{min-height:140px;resize:vertical}
 .src-side h2{font-size:var(--t-h1);line-height:1.1;max-width:16ch}
 .src-lede{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-inv-2);max-width:38ch}
 
-/* the register: two columns of regions, each with its count */
+/* the register: two columns of regions,
+each with its count */
 .reg{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
 .reg > li{
   padding:12px 0 13px;border-top:1px solid rgba(255,255,255,.12);
@@ -1025,7 +1145,8 @@ textarea{min-height:140px;resize:vertical}
 .reg > li.on h3{color:var(--gold)}
 
 /* The globe is a square canvas the script draws into. Without the script
-   the stylesheet still shows the sphere, so the band is never a hole. */
+   the stylesheet still shows the sphere,
+so the band is never a hole. */
 .globe{display:grid;gap:18px;justify-items:center;width:min(100%,620px);margin-inline:auto}
 .globe canvas{
   display:block;width:100%;aspect-ratio:1;touch-action:pan-y;cursor:grab;
@@ -1037,11 +1158,13 @@ textarea{min-height:140px;resize:vertical}
   display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;
   font:500 var(--t-xs)/1.4 var(--body);color:var(--ink-inv-2);
 }
-.lg-dot,.lg-hub{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.lg-dot,
+.lg-hub{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold)}
 .lg-hub{margin-inline-start:14px;background:var(--ink);box-shadow:0 0 0 2px var(--gold)}
 .lg-drag{margin-inline-start:14px;opacity:.6}
 
-/* On the trading sector page the register stands alone, three to a row. */
+/* On the trading sector page the register stands alone,
+three to a row. */
 .src .wrap > .reg{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(24px,3vw,48px);margin-top:clamp(28px,3.4vw,44px)}
 .src .wrap > .reg > li{padding:18px 0 22px}
 
@@ -1057,11 +1180,16 @@ textarea{min-height:140px;resize:vertical}
 /* ==========================================================================
    The closing band — one carbon strip under every page
 
-   It used to be a 573px photograph carrying a panel with a heading, a
-   paragraph, two buttons and a seven-item list: a whole section, repeated
-   under every page on the site. A closing band is a door, not a room. This
+   It used to be a 573px photograph carrying a panel with a heading,
+a
+   paragraph,
+two buttons and a seven-item list: a whole section,
+repeated
+   under every page on the site. A closing band is a door,
+not a room. This
    one states the ask on the left and puts the two ways through it on the
-   right, and is about a third of the height.
+   right,
+and is about a third of the height.
    ========================================================================== */
 
 .next{padding-block:clamp(44px,5vw,72px)}
@@ -1072,7 +1200,9 @@ textarea{min-height:140px;resize:vertical}
   display:grid;grid-template-columns:minmax(0,1fr) auto;
   align-items:center;gap:clamp(24px,3vw,48px);
 }
-/* the mark, oversized and barely there, so the strip is not a plain slab */
+/* the mark,
+oversized and barely there,
+so the strip is not a plain slab */
 .next-card .watermark{
   position:absolute;top:50%;right:-46px;translate:0 -50%;
   width:230px;height:auto;opacity:.07;pointer-events:none;
@@ -1088,7 +1218,8 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Arrival — each band lifts into place once, and only once
+   Arrival — each band lifts into place once,
+and only once
    ========================================================================== */
 
 @media (prefers-reduced-motion:no-preference){
@@ -1105,14 +1236,18 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   The company card, and the rail that holds it
+   The company card,
+and the rail that holds it
    One shape wherever a company is listed. The rail scrolls sideways only
-   when the row cannot hold every card, and snaps so a card never stops
+   when the row cannot hold every card,
+and snaps so a card never stops
    half off the edge.
    ========================================================================== */
 
-/* A grid that wraps, not a rail that scrolls sideways. A max as well as a
-   min: with one company in it, a 1fr track would stretch the card across the
+/* A grid that wraps,
+not a rail that scrolls sideways. A max as well as a
+   min: with one company in it,
+a 1fr track would stretch the card across the
    whole measure and its 4:3 photograph would stand 578px tall. */
 .cogrid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,336px));
@@ -1144,20 +1279,25 @@ textarea{min-height:140px;resize:vertical}
 .cocard-role{color:var(--ink-3);font-size:var(--t-micro);line-height:1.5}
 
 @media (prefers-reduced-motion:reduce){
-  .cocard,.cocard-shot img{transition:none}
+  .cocard,
+.cocard-shot img{transition:none}
   .cocard:hover{transform:none}
   .cocard:hover .cocard-shot img{transform:none}
 }
 
 /* ---- every card in a rail is the same height ---------------------------- */
-/* The name gets its own row and the role the one under it, so a role that
+/* The name gets its own row and the role the one under it,
+so a role that
    wraps to two lines does not make its card taller than its neighbours. */
 .cogrid{align-items:stretch}
 .cocard-body{grid-template-rows:auto auto 1fr}
 .cocard-role{align-self:start}
 
 /* ---- the bar over the home photograph -----------------------------------
-   Transparent to start, filling on hover, on focus, and once the page has
+   Transparent to start,
+filling on hover,
+on focus,
+and once the page has
    scrolled far enough that the picture is no longer behind it. */
 
 .site-head.over{
@@ -1174,11 +1314,16 @@ textarea{min-height:140px;resize:vertical}
    The sectors index — built to the Figma (node 200:360)
 
    One grid holds the whole page: a 330px index at the left that sticks while
-   you scroll, and a 746px column at the right carrying the four sectors in
-   turn. Each sector is a heading, its line, its argument, the businesses
+   you scroll,
+and a 746px column at the right carrying the four sectors in
+   turn. Each sector is a heading,
+its line,
+its argument,
+the businesses
    inside it and a photograph — the reading leads and the picture follows,
-   because a sector is an argument about a market rather than a picture of
-   one. The index marks whichever sector is on screen, so the page always
+because a sector is an argument about a market rather than a picture of
+   one. The index marks whichever sector is on screen,
+so the page always
    says where you are and what else there is.
    ========================================================================== */
 
@@ -1198,9 +1343,11 @@ textarea{min-height:140px;resize:vertical}
 
 /* ---- the index ---------------------------------------------------------- */
 
-/* A list, not a table of contents in a box. The entries are quiet until the
+/* A list,
+not a table of contents in a box. The entries are quiet until the
    reading reaches them; the one you are in goes to full carbon and puts a
-   marker in the margin. The cells, the dividers and the filled row were all
+   marker in the margin. The cells,
+the dividers and the filled row were all
    drawing attention to the index rather than to what it points at. */
 .secrail{
   grid-column:rail;grid-row:1 / span 99;
@@ -1216,57 +1363,43 @@ textarea{min-height:140px;resize:vertical}
   transition:color .25s;
 }
 .secrail-n{font-variant-numeric:tabular-nums;transition:color .25s}
-/* the marker sits in the margin, so nothing moves when it appears */
+/* the marker sits in the margin,
+so nothing moves when it appears */
 .secrail-go{
   position:absolute;left:2px;top:50%;translate:-5px -50%;
   opacity:0;color:var(--on);transition:opacity .25s,translate .25s;
 }
 .secrail a[aria-current="location"]{color:var(--on);font-weight:600}
 .secrail a[aria-current="location"] .secrail-go{opacity:1;translate:0 -50%}
-/* After the mark, not before it: an attribute selector and :hover weigh the
-   same, so source order decided which won, and pointing at the sector you
+/* After the mark,
+not before it: an attribute selector and :hover weigh the
+   same,
+so source order decided which won,
+and pointing at the sector you
    were already reading did nothing at all. */
-.secrail a:hover,.secrail a:focus-visible{color:var(--on)}
-.secrail a:hover .secrail-go,.secrail a:focus-visible .secrail-go{opacity:.45;translate:0 -50%}
+.secrail a:hover,
+.secrail a:focus-visible{color:var(--on)}
+.secrail a:hover .secrail-go,
+.secrail a:focus-visible .secrail-go{opacity:.45;translate:0 -50%}
 @media (prefers-reduced-motion:reduce){
-  .secrail a,.secrail-n,.secrail-go{transition:none}
+  .secrail a,
+.secrail-n,
+.secrail-go{transition:none}
 }
 
-/* ---- the other sectors, at the foot of a sector page --------------------
+/* ---- the other sectors,
+at the foot of a sector page --------------------
    Three cards in a row. This had been carrying the class the sectors index
-   uses for its rail-and-reading layout, so the three were being dealt into a
-   360px column and a 746px one and the third wrapped underneath. */
-
-.othsecs{
+   uses for its rail-and-reading layout{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
   gap:clamp(12px,1.6vw,20px);margin-top:clamp(26px,3.4vw,44px);
-}
-.othsec{
-  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
-  gap:16px;padding:clamp(18px,2vw,24px);min-height:96px;
-  background:var(--white);border:1px solid var(--line);text-decoration:none;
-  transition:border-color .3s,background .3s,transform .3s;
-}
-.othsec .ico{width:26px;height:26px;flex:none;color:var(--ink-3);transition:color .3s}
-.othsec-id{display:grid;gap:3px;min-width:0}
-.othsec-id b{font:400 1.25rem/1.25 var(--display);color:var(--ink)}
-.othsec-id em{font:400 var(--t-micro)/1.45 var(--body);color:var(--ink-2);font-style:normal}
-.othsec-go{color:var(--ink-3);translate:-4px 0;opacity:0;transition:opacity .3s,translate .3s}
-.othsec:hover,.othsec:focus-visible{
-  border-color:var(--ink);background:var(--paper);transform:translateY(-3px);
-}
-.othsec:hover .ico,.othsec:focus-visible .ico{color:var(--ink)}
-.othsec:hover .othsec-go,.othsec:focus-visible .othsec-go{opacity:1;translate:0 0}
-@media (max-width:860px){ .othsecs{grid-template-columns:1fr} }
-@media (prefers-reduced-motion:reduce){
-  .othsec,.othsec .ico,.othsec-go{transition:none}
-  .othsec:hover,.othsec:focus-visible{transform:none}
 }
 
 /* ---- one sector --------------------------------------------------------- */
 
 /* Each sector is as tall as its reading. Holding every sector to a full
-   screen left most of each one empty on a laptop — 2,800px of page for four
+   screen left most of each one empty on a laptop — 2,
+800px of page for four
    short blocks — so the page read as gaps rather than as a portfolio. */
 .secblk{
   grid-column:main;
@@ -1275,13 +1408,17 @@ textarea{min-height:140px;resize:vertical}
   padding-block:clamp(44px,5.4vw,84px);
   scroll-margin-top:calc(var(--head-h) + 24px);
 }
-/* The ground belongs to the whole index, not to each block, so moving from
+/* The ground belongs to the whole index,
+not to each block,
+so moving from
    one sector to the next washes the colour across rather than cutting to it.
    The scroll-spy sets data-tone; without script the page keeps the first.
 
    The four come off the logo — gold #D3A750 and navy #030C2B — as two tints
    and the navy itself. Text moves with the ground: on the tints the body grey
-   steps darker, and on the navy the whole set inverts. Measured, all of them:
+   steps darker,
+and on the navy the whole set inverts. Measured,
+all of them:
    body copy 4.96 to 12.96 against its ground where 4.5 is wanted. */
 .secidx{
   --ground:#ffffff; --on:var(--ink); --on-2:#6c6b6b; --rule:var(--line);
@@ -1307,18 +1444,12 @@ textarea{min-height:140px;resize:vertical}
 .secblk-count{
   font:500 var(--t-body)/1.4 var(--body);color:var(--on);margin-top:20px;
 }
-.secblk-more{margin-top:4px}
-.secblk-more a{
-  display:inline-flex;align-items:center;gap:7px;min-height:28px;
-  font:500 var(--t-micro)/1.4 var(--ui);color:var(--on);
-  text-underline-offset:4px;text-decoration-thickness:1px;
-}
-.secblk-more a span{display:inline-block;transition:transform .25s}
-.secblk-more a:hover span{transform:translateX(4px)}
 
 /* ---- the businesses inside the sector ------------------------------------
-   Names side by side. Each tile had been a photograph, a name and a sentence
-   stacked down the column, which repeated what the sector paragraph above it
+   Names side by side. Each tile had been a photograph,
+a name and a sentence
+   stacked down the column,
+which repeated what the sector paragraph above it
    had just said and cost most of the height. A logo goes in each of these
    when there are logos to put in them. */
 
@@ -1329,13 +1460,15 @@ textarea{min-height:140px;resize:vertical}
   font:500 var(--t-lede)/1.3 var(--body);color:var(--on);text-decoration:none;
   transition:border-color .25s,transform .25s,box-shadow .25s;
 }
-.cotile:hover,.cotile:focus-visible{
+.cotile:hover,
+.cotile:focus-visible{
   border-color:var(--on);transform:translateY(-2px);
   
 }
 @media (prefers-reduced-motion:reduce){
   .cotile{transition:none}
-  .cotile:hover,.cotile:focus-visible{transform:none}
+  .cotile:hover,
+.cotile:focus-visible{transform:none}
 }
 
 @media (max-width:1180px){
@@ -1344,7 +1477,8 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* Below the two-column width the index becomes a strip above the reading,
-   still sticky and still marking where you are, scrolled sideways rather
+still sticky and still marking where you are,
+scrolled sideways rather
    than stacked — four tall rows would push the first sector off screen. */
 @media (max-width:900px){
   .secidx{display:block}
@@ -1377,7 +1511,8 @@ textarea{min-height:140px;resize:vertical}
   
 }
 
-/* ---- the platform section on About, and the map on Contact -------------- */
+/* ---- the platform section on About,
+and the map on Contact -------------- */
 
 .platform-h{font-size:var(--t-h1);line-height:1.2;max-width:24ch}
 .twocol{
@@ -1393,11 +1528,14 @@ textarea{min-height:140px;resize:vertical}
 @media (max-width:820px){ .bandshot img{aspect-ratio:16/9} }
 
 /* ==========================================================================
-   The businesses — a photograph, its sector and its name
-   A grid that wraps rather than a row that squeezes, so the portfolio can
+   The businesses — a photograph,
+its sector and its name
+   A grid that wraps rather than a row that squeezes,
+so the portfolio can
    grow without every panel getting narrower: four sit in a row on a laptop,
-   and a fifth starts the next row at the same size. Nothing opens on hover;
-   the photograph brightens and the arrow moves, and a click goes there.
+and a fifth starts the next row at the same size. Nothing opens on hover;
+   the photograph brightens and the arrow moves,
+and a click goes there.
    ========================================================================== */
 
 .ladder{
@@ -1418,7 +1556,8 @@ textarea{min-height:140px;resize:vertical}
   content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(to top,rgba(6,15,36,.92) 0%,rgba(6,15,36,.45) 40%,rgba(6,15,36,.05) 70%);
 }
-.lad:hover .lad-bg,.lad:focus-visible .lad-bg{opacity:1;transform:scale(1.05)}
+.lad:hover .lad-bg,
+.lad:focus-visible .lad-bg{opacity:1;transform:scale(1.05)}
 .lad:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
 .lad .n{
@@ -1429,10 +1568,12 @@ textarea{min-height:140px;resize:vertical}
 .lad-sec{font:600 .6875rem/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);overflow-wrap:anywhere}
 .lad h3{font:400 clamp(1.25rem,1.7vw,1.625rem)/1.15 var(--display);color:#fff;overflow-wrap:anywhere}
 .lad-arrow{display:inline-block;color:var(--gold);transition:transform .3s}
-.lad:hover .lad-arrow,.lad:focus-visible .lad-arrow{transform:translateX(5px)}
+.lad:hover .lad-arrow,
+.lad:focus-visible .lad-arrow{transform:translateX(5px)}
 
 /* The lead company — the Group's largest — takes a double square at the
-   start: two columns and two rows on a laptop, with the four after it in a
+   start: two columns and two rows on a laptop,
+with the four after it in a
    two-by-two beside it. More companies continue in rows of four below. */
 @media (min-width:861px){
   .ladder{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -1448,7 +1589,8 @@ textarea{min-height:140px;resize:vertical}
   .lad{aspect-ratio:4/3;min-height:0}
 }
 @media (prefers-reduced-motion:reduce){
-  .lad-bg,.lad-arrow{transition:none}
+  .lad-bg,
+.lad-arrow{transition:none}
 }
 
 /* ---- what the Group does with them: four plain cards -------------------- */
@@ -1472,7 +1614,8 @@ textarea{min-height:140px;resize:vertical}
 @media (max-width:520px){ .wwd{grid-template-columns:1fr} }
 
 /* ---- where a product comes from ----------------------------------------- */
-/* Each origin is a link back to the sourcing register, so "Sourced from
+/* Each origin is a link back to the sourcing register,
+so "Sourced from
    Ukraine" is a thing you can follow rather than a word on a card. */
 .prod-from{
   display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-top:4px;
@@ -1486,7 +1629,8 @@ textarea{min-height:140px;resize:vertical}
   border:1px solid var(--line);padding:5px 9px;
   transition:border-color .2s,color .2s,background .2s;
 }
-.prod-from a:hover,.prod-from a:focus-visible{
+.prod-from a:hover,
+.prod-from a:focus-visible{
   border-color:var(--ink);color:var(--ink);background:var(--white);
 }
 
@@ -1511,17 +1655,20 @@ textarea{min-height:140px;resize:vertical}
 }
 @media (max-width:560px){
   .svcs{grid-template-columns:1fr}
-  .svc,.svc + .svc{padding-inline-start:0;border-inline-start:0}
+  .svc,
+.svc + .svc{padding-inline-start:0;border-inline-start:0}
 }
 
-/* the footer column labels are labels, not page sections */
+/* the footer column labels are labels,
+not page sections */
 .foot-h{font:600 .6875rem/1.4 var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:0}
 
 /* ==========================================================================
    The phone pass
    Measured at 390 x 844 in a real viewport. 24px is the floor WCAG sets for a
    target and the site already met it everywhere; 44px is the size a thumb
-   actually wants, and these were the ones that fell between the two. The
+   actually wants,
+and these were the ones that fell between the two. The
    small type is lifted for the same reason: 12px is a desk size.
    ========================================================================== */
 
@@ -1531,7 +1678,6 @@ textarea{min-height:140px;resize:vertical}
   a.pagehead-eyebrow{display:inline-flex;align-items:center;min-height:44px}
   .foot-col a{min-height:44px}
   .prod-from a{min-height:44px;font-size:var(--t-micro)}
-  .secblk-more a{min-height:44px}
   .secrail a{min-height:48px}
   .cotile{min-height:52px}
   .foot-legal{font-size:var(--t-xs)}
@@ -1555,9 +1701,11 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ---- where a company buys from ------------------------------------------
-   The countries were only ever a line under each product card, so a company
+   The countries were only ever a line under each product card,
+so a company
    buying from eleven of them never said so in one place. Grouped by the
-   Group sourcing regions, which is the same register the home page prints. */
+   Group sourcing regions,
+which is the same register the home page prints. */
 
 .srcregs{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
@@ -1577,7 +1725,8 @@ textarea{min-height:140px;resize:vertical}
 .srcreg ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 10px}
 .srcreg li{font:400 var(--t-body)/1.5 var(--body);color:var(--ink)}
 /* no separator between them: a pseudo-element divider wraps onto the start
-   of the next line, so a region read "· Turkmenistan". The gap is enough. */
+   of the next line,
+so a region read "· Turkmenistan". The gap is enough. */
 .srcreg ul{gap:4px 16px}
 .srcmore{margin-top:clamp(18px,2.2vw,26px)}
 .srcmore a{
@@ -1596,17 +1745,22 @@ textarea{min-height:140px;resize:vertical}
 
 /* ==========================================================================
    Company landing pages
-   One structure, three openings and a colour per company. Each company page
-   sets --co (its accent), --co-text (the accent as readable text on a light
-   ground), --co-tint (a pale ground) and --co-on (text on the accent) in a
-   style attribute on .co; everything below reads those, so a company's
+   One structure,
+three openings and a colour per company. Each company page
+   sets --co (its accent),
+--co-text (the accent as readable text on a light
+   ground),
+--co-tint (a pale ground) and --co-on (text on the accent) in a
+   style attribute on .co; everything below reads those,
+so a company's
    colour is one line in data/site.js.
    ========================================================================== */
 
 .co{--co:var(--gold);--co-text:var(--gold-text);--co-tint:var(--paper);--co-on:#fff}
 .co .eyebrow{color:var(--co-text);text-decoration:none}
 .co .eyebrow::before{background:var(--co)}
-.co .svc-n,.co .prod-n{color:var(--co-text)}
+.co .svc-n,
+.co .prod-n{color:var(--co-text)}
 .co .tags li{border-color:color-mix(in srgb,var(--co) 45%,transparent)}
 
 .co-btn{background:var(--co);border-color:var(--co);color:var(--co-on)}
@@ -1629,14 +1783,16 @@ textarea{min-height:140px;resize:vertical}
 .co-hero .co-eyebrow{color:#fff}
 .co-hero-wrap{position:relative}
 
-/* the key facts, along the foot of the opening */
+/* the key facts,
+along the foot of the opening */
 .co-facts dl{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))}
 .co-facts dl > div{padding:20px clamp(16px,2vw,28px) 22px 0;display:grid;gap:6px;align-content:start}
 .co-facts dl > div + div{padding-inline-start:clamp(16px,2vw,28px);border-inline-start:1px solid rgba(255,255,255,.16)}
 .co-facts dt{font:600 .6875rem/1.3 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--co)}
 .co-facts dd{margin:0;font:400 var(--t-body)/1.45 var(--body)}
 
-/* full: a full-screen photograph, the name over it */
+/* full: a full-screen photograph,
+the name over it */
 .co-full .co-hero{grid-template-rows:1fr auto}
 .co-full .co-hero-img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover}
 .co-full .co-hero::before{
@@ -1649,7 +1805,8 @@ textarea{min-height:140px;resize:vertical}
 .co-full .co-hero-line{color:rgba(255,255,255,.9)}
 .co-full .co-facts{border-top:1px solid rgba(255,255,255,.16);background:rgba(6,15,36,.5);backdrop-filter:blur(6px)}
 
-/* split: a colour panel with the name, the photograph beside it */
+/* split: a colour panel with the name,
+the photograph beside it */
 .co-split .co-hero{
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:1fr auto;
   background:var(--co-tint);color:var(--ink);
@@ -1663,7 +1820,8 @@ textarea{min-height:140px;resize:vertical}
 .co-split .co-facts{grid-column:1 / -1;grid-row:2;background:var(--ink);color:#fff}
 .co-split .co-facts dt{color:var(--co)}
 
-/* dark: a warm dark ground, the photograph framed beside the name */
+/* dark: a warm dark ground,
+the photograph framed beside the name */
 .co-dark .co-hero{
   grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-rows:1fr auto;
   background:#1d1410;
@@ -1694,7 +1852,8 @@ textarea{min-height:140px;resize:vertical}
 
 .co-offer{background:var(--co-tint)}
 
-/* ---- the closing ask, in the company's colour ---------------------------- */
+/* ---- the closing ask,
+in the company's colour ---------------------------- */
 
 .co-ask{background:var(--ink);color:#fff;padding-block:clamp(48px,6vw,80px)}
 .co-ask-in{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:28px clamp(32px,5vw,80px)}
@@ -1711,11 +1870,16 @@ textarea{min-height:140px;resize:vertical}
 .co-dark .co-ask .co-btn{background:var(--co);border-color:var(--co);color:#1d1410}
 
 @media (max-width:860px){
-  .co-split .co-hero,.co-dark .co-hero{grid-template-columns:1fr;grid-template-rows:auto auto auto}
-  .co-split .co-hero-img,.co-dark .co-hero-img{grid-column:1;grid-row:1;width:100%;height:auto;aspect-ratio:4/3;margin:0}
-  .co-split .co-hero-in,.co-dark .co-hero-in{grid-column:1;grid-row:2;padding-block:36px 40px}
-  .co-split .co-facts,.co-dark .co-facts{grid-row:3}
-  .co-split .co-hero-wrap,.co-dark .co-hero-wrap{padding-inline:var(--gutter)}
+  .co-split .co-hero,
+.co-dark .co-hero{grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  .co-split .co-hero-img,
+.co-dark .co-hero-img{grid-column:1;grid-row:1;width:100%;height:auto;aspect-ratio:4/3;margin:0}
+  .co-split .co-hero-in,
+.co-dark .co-hero-in{grid-column:1;grid-row:2;padding-block:36px 40px}
+  .co-split .co-facts,
+.co-dark .co-facts{grid-row:3}
+  .co-split .co-hero-wrap,
+.co-dark .co-hero-wrap{padding-inline:var(--gutter)}
   .co-story{grid-template-columns:1fr}
   .co-split .co-story-pic{order:0}
   .co-facts dl > div + div{border-inline-start:0;padding-inline-start:0}
@@ -1724,7 +1888,8 @@ textarea{min-height:140px;resize:vertical}
 
 /* ---- pillars: two or three columns that say how the company is built ---- */
 .co-pillars{background:var(--ink);color:#fff}
-.co-pillars .head2 h2,.co-pillars h3{color:#fff}
+.co-pillars .head2 h2,
+.co-pillars h3{color:#fff}
 .co-pillars .eyebrow{color:var(--ink-inv-2)}
 .pillars{display:grid;gap:clamp(16px,2vw,28px);margin-top:clamp(24px,3vw,40px)}
 .pillars-3{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -1744,26 +1909,21 @@ textarea{min-height:140px;resize:vertical}
 .pillar-n{font:300 2rem/1 var(--display);color:var(--co)}
 .pillar h3{font:400 clamp(1.375rem,1.9vw,1.75rem)/1.2 var(--display);margin:0}
 .pillar p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-inv-2);max-width:40ch}
-.creds{
-  list-style:none;margin:clamp(28px,3.4vw,44px) 0 0;padding:clamp(18px,2vw,24px) 0 0;
-  border-top:1px solid rgba(255,255,255,.18);display:flex;flex-wrap:wrap;gap:10px 28px;
-}
-.creds li{font:500 var(--t-xs)/1.4 var(--ui);color:#fff;display:inline-flex;align-items:center;gap:10px}
-.creds li::before{content:"";width:14px;height:2px;background:var(--co)}
-.presence{margin-top:16px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px;font:400 var(--t-sm)/1.4 var(--body);color:var(--ink-inv-2)}
-.presence span{font:600 .6875rem/1.3 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--co)}
-.presence b{font-weight:400;color:#fff}
 
-/* a light, airy company keeps its pillars on white */
+/* a light,
+airy company keeps its pillars on white */
 .co-cavallo-laundry .co-pillars{background:#fff;color:var(--ink)}
-.co-cavallo-laundry .co-pillars .head2 h2,.co-cavallo-laundry .co-pillars h3{color:var(--ink)}
+.co-cavallo-laundry .co-pillars .head2 h2,
+.co-cavallo-laundry .co-pillars h3{color:var(--ink)}
 .co-cavallo-laundry .co-pillars .eyebrow{color:var(--co-text)}
 .co-cavallo-laundry .pillar{border-top-color:var(--line-2)}
 .co-cavallo-laundry .pillar p{color:var(--ink-2)}
 .co-cavallo-laundry .pillar-n{color:var(--co-text)}
 .co-cavallo-laundry .co-about{background:var(--co-tint)}
 
-/* ---- steps: a flow, left to right, in the company's colour ---- */
+/* ---- steps: a flow,
+left to right,
+in the company's colour ---- */
 .steps{
   list-style:none;margin:clamp(24px,3vw,40px) 0 0;padding:0;
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,2.4vw,36px);
@@ -1793,7 +1953,9 @@ textarea{min-height:140px;resize:vertical}
 
 @media (max-width:900px){
   .co .cogrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .pillars-3,.pillars-2,.steps{grid-template-columns:1fr}
+  .pillars-3,
+.pillars-2,
+.steps{grid-template-columns:1fr}
   .step + .step::before{left:50%;top:calc(-1 * clamp(10px,1.2vw,18px));transform:translate(-50%,-50%) rotate(90deg)}
 }
 @media (max-width:860px){
@@ -1803,7 +1965,8 @@ textarea{min-height:140px;resize:vertical}
 @media (max-width:560px){ .co .cogrid{grid-template-columns:1fr} }
 
 /* ==========================================================================
-   After the design review: boxes become rules, labels become labels
+   After the design review: boxes become rules,
+labels become labels
    ========================================================================== */
 
 /* a dark band for the About page's vision and mission */
@@ -1817,25 +1980,30 @@ textarea{min-height:140px;resize:vertical}
 .contact-h{font-size:var(--t-h1);line-height:1.1;margin:12px 0 16px}
 .channels dt{font:600 .75rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label)}
 
-/* company cards: a rule above, not a box */
+/* company cards: a rule above,
+not a box */
 .cocard{background:none;border:0;border-top:1px solid var(--line-2);border-radius:0}
 .cocard:hover{transform:none;border-top-color:var(--gold)}
 .cocard-body{padding-inline:0}
 .cocard-sector{font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-text)}
 
-/* the five ways the Group creates value, five to the row */
+/* the five ways the Group creates value,
+five to the row */
 @media (min-width:901px){
   .vcreate{grid-template-columns:repeat(5,minmax(0,1fr))}
   .vc,.vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(4),
   .vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(5){grid-column:auto}
 }
 
-/* the sectors index: the count as a label, the companies as a ruled list */
+/* the sectors index: the count as a label,
+the companies as a ruled list */
 .secblk-count{font:600 .75rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--on-2)}
 .cotile{border:0;border-top:1px solid var(--rule);background:none;padding:14px 0;min-width:200px;border-radius:0}
-.cotile:hover,.cotile:focus-visible{border-top-color:var(--on);transform:none;background:none}
+.cotile:hover,
+.cotile:focus-visible{border-top-color:var(--on);transform:none;background:none}
 
-/* ROMA's steps: ruled like the pillars, the arrows kept */
+/* ROMA's steps: ruled like the pillars,
+the arrows kept */
 .step{background:none;padding-inline:0;border-top:1px solid var(--line-2)}
 .step::after{content:"";position:absolute;left:0;top:-1px;height:2px;width:72px;background:var(--co);transition:width .5s cubic-bezier(.2,.7,.3,1)}
 .step:hover::after{width:100%}
@@ -1843,7 +2011,8 @@ textarea{min-height:140px;resize:vertical}
 /* origin chips centre their text */
 .prod-from a{display:inline-flex;align-items:center}
 
-/* on a phone the other companies are rows, not four tall cards */
+/* on a phone the other companies are rows,
+not four tall cards */
 @media (max-width:560px){
   .co .cogrid{gap:0}
   .co .cocard{display:grid;grid-template-columns:96px minmax(0,1fr);grid-template-rows:auto;gap:0 14px;align-items:center;padding:10px 0}
@@ -1872,14 +2041,17 @@ textarea{min-height:140px;resize:vertical}
 .co-about .eyebrow{grid-column:1 / -1}
 .co-statement{grid-column:1;margin:0;max-width:none;font-size:clamp(1.5rem,2.2vw,1.9375rem);line-height:1.22}
 .co-story{grid-column:2;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:clamp(24px,3vw,44px)}
-.co-story-pic,.co-split .co-story-pic{order:2;min-height:280px}
+.co-story-pic,
+.co-split .co-story-pic{order:2;min-height:280px}
 .co-story-text{align-content:start;font-size:.9375rem;line-height:1.6}
 .co-story-text .tags{gap:8px}
 @media (max-width:900px){
   .co-about .wrap{grid-template-columns:1fr}
-  .co-statement,.co-story{grid-column:auto}
+  .co-statement,
+.co-story{grid-column:auto}
   .co-story{grid-template-columns:1fr}
-  .co-story-pic,.co-split .co-story-pic{order:0}
+  .co-story-pic,
+.co-split .co-story-pic{order:0}
 }
 
 /* ---- after the sizing audit ---- */
@@ -1889,7 +2061,8 @@ textarea{min-height:140px;resize:vertical}
 /* the globe band fits a 900px screen */
 .globe{width:min(100%,560px)}
 .section.tight{padding-block:clamp(40px,4.5vw,64px)}
-/* a short laptop screen: less air between sections, products three to a row */
+/* a short laptop screen: less air between sections,
+products three to a row */
 @media (max-height:760px){
   :root{--band:clamp(36px,4vw,48px)}
   .section.tight,.next{padding-block:40px}
@@ -1898,7 +2071,8 @@ textarea{min-height:140px;resize:vertical}
   .prodgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 /* phones: every company opening lands its facts bar on the first screen,
-   the home grid is two to a row, the sectors strip fits more tabs */
+the home grid is two to a row,
+the sectors strip fits more tabs */
 @media (max-width:860px){
   .co-split .co-hero-img,.co-dark .co-hero-img{aspect-ratio:16/10}
 }
@@ -1910,10 +2084,13 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Every page opens full-screen, as the home page does: the photograph fills
-   the window and the bar sits over it, filling in once the page scrolls.
+   Every page opens full-screen,
+as the home page does: the photograph fills
+   the window and the bar sits over it,
+filling in once the page scrolls.
    The split and dark company openings keep their solid bar (white type over
-   a pale panel would not read), and fill the rest of the screen beneath it.
+   a pale panel would not read),
+and fill the rest of the screen beneath it.
    ========================================================================== */
 .pagehead{
   height:100svh;min-height:560px;max-height:none;
@@ -1931,10 +2108,12 @@ textarea{min-height:140px;resize:vertical}
 }
 
 /* ==========================================================================
-   Work With Us — How it works, as a timeline on navy
+   Work With Us — How it works,
+as a timeline on navy
    A line runs across the four steps; each sits on it as a numbered node.
    The gold line draws along it once the section scrolls into view (the
-   last step's arrival), and on a phone the line runs down the left side.
+   last step's arrival),
+and on a phone the line runs down the left side.
    ========================================================================== */
 .how{background:var(--ink);color:#fff}
 .how .head2 h2{color:#fff}
@@ -1944,14 +2123,17 @@ textarea{min-height:140px;resize:vertical}
   list-style:none;margin:clamp(40px,5vw,64px) 0 0;padding:0;position:relative;
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(20px,2.6vw,40px);
 }
-/* the track, and the gold line that draws along it */
-.tline::before,.tline::after{content:"";position:absolute;left:0;right:0;top:27px;height:1px}
+/* the track,
+and the gold line that draws along it */
+.tline::before,
+.tline::after{content:"";position:absolute;left:0;right:0;top:27px;height:1px}
 .tline::before{background:rgba(255,255,255,.18)}
 .tline::after{
   height:2px;top:26.5px;background:var(--gold);transform-origin:left;transform:scaleX(0);
   transition:transform 1.6s cubic-bezier(.65,0,.35,1) .2s;
 }
-.tline:has(.tl-step.in)::after,html:not(.js) .tline::after{transform:scaleX(1)}
+.tline:has(.tl-step.in)::after,
+html:not(.js) .tline::after{transform:scaleX(1)}
 .tl-step{position:relative;display:grid;gap:12px;align-content:start}
 .tl-node{
   position:relative;z-index:1;display:grid;place-items:center;width:54px;height:54px;
@@ -1967,7 +2149,8 @@ textarea{min-height:140px;resize:vertical}
 .tl-cta:hover{background:#fff;border-color:#fff;color:var(--ink)}
 @media (max-width:900px){
   .tline{grid-template-columns:1fr;gap:28px;padding-left:78px}
-  .tline::before,.tline::after{left:27px;right:auto;top:0;bottom:0;width:1px;height:auto}
+  .tline::before,
+.tline::after{left:27px;right:auto;top:0;bottom:0;width:1px;height:auto}
   .tline::after{width:2px;left:26.5px;transform:scaleY(0);transform-origin:top}
   .tline:has(.tl-step.in)::after{transform:scaleY(1)}
   .tl-node{position:absolute;left:-78px;top:-4px;margin:0}
@@ -1975,10 +2158,14 @@ textarea{min-height:140px;resize:vertical}
 @media (prefers-reduced-motion:reduce){ .tline::after{transition:none} }
 
 /* ==========================================================================
-   Company pages, polished: a figures band, a scroll cue, larger thumbnails
+   Company pages,
+polished: a figures band,
+a scroll cue,
+larger thumbnails
    ========================================================================== */
 
-/* the company in four numbers, in its own colour */
+/* the company in four numbers,
+in its own colour */
 .co-figs{padding-block:clamp(28px,3.4vw,44px);border-block:1px solid var(--line)}
 .co-figs dl{margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .co-figs dl > div{display:grid;gap:8px;padding:6px clamp(16px,2.2vw,32px)}
@@ -2006,7 +2193,8 @@ textarea{min-height:140px;resize:vertical}
 @media (max-width:860px){ .co-full .co-scroll{display:none} }
 @media (prefers-reduced-motion:reduce){ .co-full .co-scroll::after{animation:none} }
 
-/* product rows: a larger picture, a cleaner hover */
+/* product rows: a larger picture,
+a cleaner hover */
 .prod{grid-template-columns:140px minmax(0,1fr);gap:4px 24px;transition:background .3s}
 .prod h3{transition:color .25s}
 .prod:hover h3{color:var(--co-text,var(--gold-text))}
@@ -2016,23 +2204,30 @@ textarea{min-height:140px;resize:vertical}
 .pillar-pic{position:relative}
 .pillar-pic::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;background:var(--co)}
 
-/* ---- the sectors menu, compact: a panel under the word, not a page-wide sheet ---- */
+/* ---- the sectors menu,
+compact: a panel under the word,
+not a page-wide sheet ---- */
 .secmenu{width:min(720px,calc(100vw - 2 * var(--gutter)))}
 .secmenu-eyebrow{padding:11px 20px;font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;color:var(--gold-text)}
 .secmenu-cols{grid-template-columns:repeat(3,minmax(0,1fr))}
 .secmenu-col{gap:2px;padding:14px 18px 16px;border-top:1px solid #efefef}
 .secmenu-col + .secmenu-col{border-inline-start:0}
-.secmenu-col:nth-child(3n+2),.secmenu-col:nth-child(3n+3){border-inline-start:1px solid #efefef}
+.secmenu-col:nth-child(3n+2),
+.secmenu-col:nth-child(3n+3){border-inline-start:1px solid #efefef}
 .secmenu-head{gap:8px;margin:0;padding-block:2px}
 .secmenu-head .ico{width:15px;height:15px;color:var(--gold-text)}
 .secmenu-head span{font:600 var(--t-micro)/1.3 var(--ui)}
-.secmenu-co{font:400 var(--t-xs)/1.3 var(--ui);color:var(--ink-2);min-height:24px;padding-block:2px;padding-inline-start:23px}
-.secmenu-co:hover,.secmenu-co:focus-visible{padding-inline-start:27px}
 
 /* ==========================================================================
-   Work With Us — what comes next, as a grid of eight
-   Seven directions, each a mark, a number, a name and what it means in
-   practice; the eighth cell is the ask, on navy, so the grid ends in an
+   Work With Us — what comes next,
+as a grid of eight
+   Seven directions,
+each a mark,
+a number,
+a name and what it means in
+   practice; the eighth cell is the ask,
+on navy,
+so the grid ends in an
    action. A gold rule draws across the top of a tile on hover.
    ========================================================================== */
 .dirs{
@@ -2075,44 +2270,9 @@ textarea{min-height:140px;resize:vertical}
 @media (prefers-reduced-motion:reduce){ .dir::before{transition:none} }
 
 /* ==========================================================================
-   A company's showcase (TIBECO): the areas on the left, one large photograph
-   on the right that crossfades to the area pointed at. On navy, with the
-   company's blue as the only colour.
-   ========================================================================== */
-.co-show{background:var(--ink);color:#fff}
-.co-show .head2 h2{color:#fff}
-.co-show .head2 > p,.co-show .eyebrow{color:var(--ink-inv-2)}
-.show{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,4vw,64px);margin-top:clamp(24px,3vw,40px);align-items:stretch}
-.show-list{list-style:none;margin:0;padding:0;border-top:1px solid rgba(255,255,255,.14)}
-.show-item{
-  position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;
-  padding:16px 0 16px 18px;border-bottom:1px solid rgba(255,255,255,.14);cursor:pointer;outline:0;
-}
-.show-item::before{
-  content:"";position:absolute;left:0;top:-1px;bottom:-1px;width:3px;background:var(--co);
-  transform:scaleY(0);transform-origin:top;transition:transform .4s cubic-bezier(.2,.7,.2,1);
-}
-.show-item.on::before{transform:scaleY(1)}
-.show-item:focus-visible{outline:2px solid var(--co);outline-offset:-2px}
-.show-n{font:300 1.125rem/1.4 var(--display);color:rgba(255,255,255,.45);transition:color .3s}
-.show-item h3{font:400 clamp(1.125rem,1.5vw,1.375rem)/1.3 var(--display);color:rgba(255,255,255,.7);margin:0;transition:color .3s}
-.show-item p{
-  font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-inv-2);
-  max-height:0;opacity:0;overflow:hidden;transition:max-height .45s,opacity .35s,margin .35s;
-}
-.show-item.on .show-n{color:var(--co)}
-.show-item.on h3{color:#fff}
-.show-item.on p{max-height:6em;opacity:1;margin-top:8px}
-.show-pics{position:relative;min-height:360px;overflow:hidden;background:#0a1530}
-.show-pic{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .6s,transform 1.2s cubic-bezier(.2,.7,.2,1);transform:scale(1.04)}
-.show-pic.on{opacity:1;transform:none}
-.show-pic img{width:100%;height:100%;object-fit:cover}
-.show-pics::after{content:"";position:absolute;left:0;bottom:0;width:96px;height:3px;background:var(--co)}
-@media (max-width:900px){
-  .show{grid-template-columns:1fr}
-  .show-pics{order:-1;min-height:0;aspect-ratio:16/10}
-}
-@media (prefers-reduced-motion:reduce){ .show-pic,.show-item p,.show-item::before{transition:none} }
+   A company's showcase (TIBECO): the areas on the left,
+one large photograph
+   on the right that crossfades to the area pointed at. On navy{background:var(--ink);color:#fff}
 
 /* ==========================================================================
    PHONES — the last word. Everything below is scoped to small screens and
@@ -2144,7 +2304,9 @@ textarea{min-height:140px;resize:vertical}
 .secgrid{display:none}
 
 @media (max-width:860px){
-  /* sectors: the accordion gives way to tiles, two to a row, the first wide */
+  /* sectors: the accordion gives way to tiles,
+two to a row,
+the first wide */
   .acc{display:none}
   .secgrid{list-style:none;margin:0;padding:0;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .secgrid li:first-child{grid-column:1 / -1}
@@ -2161,18 +2323,25 @@ textarea{min-height:140px;resize:vertical}
 
   /* the four figures: a clean two by two */
   .stats dl{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .stats dl > div,.stats dl > div + div,.stats dl > div:first-child,.stats dl > div:nth-child(3){
+  .stats dl > div,
+.stats dl > div + div,
+.stats dl > div:first-child,
+.stats dl > div:nth-child(3){
     padding:20px 0 18px;border:0;padding-inline-start:0}
   .stats dl > div:nth-child(even){padding-inline-start:20px;border-inline-start:1px solid var(--line-2)}
   .stats dl > div:nth-child(n+3){border-top:1px solid var(--line-2)}
 
-  /* a company opening: the facts as a two by two, not four tall rows */
+  /* a company opening: the facts as a two by two,
+not four tall rows */
   .co-facts dl{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .co-facts dl > div,.co-facts dl > div + div{padding:14px 12px 14px 0;border:0;border-top:1px solid rgba(255,255,255,.14)}
+  .co-facts dl > div,
+.co-facts dl > div + div{padding:14px 12px 14px 0;border:0;border-top:1px solid rgba(255,255,255,.14)}
   .co-facts dl > div:nth-child(even){padding-inline-start:14px;border-inline-start:1px solid rgba(255,255,255,.14)}
   .co-facts dd{font-size:var(--t-sm)}
 
-  /* the footer: the mark, then sectors across the width, then companies
+  /* the footer: the mark,
+then sectors across the width,
+then companies
      and contact side by side */
   .foot{grid-template-columns:1fr;gap:30px}
   .foot-id p{display:block;font-size:var(--t-sm);max-width:none}
@@ -2180,10 +2349,12 @@ textarea{min-height:140px;resize:vertical}
   .foot-col{min-width:0;gap:10px}
   .foot-col:first-child{grid-column:1 / -1}
   .foot-col:first-child ul{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
-  .foot-col a,.foot-col span{font-size:var(--t-sm);overflow-wrap:anywhere;min-height:36px}
+  .foot-col a,
+.foot-col span{font-size:var(--t-sm);overflow-wrap:anywhere;min-height:36px}
 
   /* touch targets */
-  .co-ask-mail,.dir-ask-go{display:inline-flex;align-items:center;min-height:44px}
+  .co-ask-mail,
+.dir-ask-go{display:inline-flex;align-items:center;min-height:44px}
   .reg-n{font-size:.6875rem}
 }
 
@@ -2196,20 +2367,24 @@ textarea{min-height:140px;resize:vertical}
   .lad h3{font-size:1.125rem}
   .lad{padding:14px}
   .lad .n{top:12px;left:14px}
-  /* buttons on a phone run the full width, one under the other */
-  .hero-cta .btn,.co-hero-cta .btn{width:100%}
+  /* buttons on a phone run the full width,
+one under the other */
+  .hero-cta .btn,
+.co-hero-cta .btn{width:100%}
   .co-hero-cta{flex-direction:column}
 }
 @media (max-width:1080px){
   /* the menu's own button keeps its dark label on white */
   .menu a.btn-light{color:var(--ink);border-bottom:0;justify-content:center;font-weight:600}
-  /* with the menu open the bar is solid, even over a photograph */
+  /* with the menu open the bar is solid,
+even over a photograph */
   html:has(.menu.open) .site-head.over{background:var(--ink)}
 }
 @media (max-width:860px){
   /* on a phone the footer is the mark and how to reach us: sectors and
      companies are one tap away in the menu */
-  .foot-col:has(a[href^="/sectors/"]),.foot-col:has(a[href^="/companies/"]){display:none}
+  .foot-col:has(a[href^="/sectors/"]),
+.foot-col:has(a[href^="/companies/"]){display:none}
   .foot-cols{grid-template-columns:1fr}
 }
 
@@ -2245,7 +2420,6 @@ input[type="checkbox"]{width:auto;padding:0}
 .apply-in{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(32px,5vw,88px);align-items:start}
 .apply-side{display:grid;gap:18px;justify-items:start;position:sticky;top:calc(var(--head-h) + 32px)}
 .apply-side h2{font-size:var(--t-h1);line-height:1.1}
-.apply-lede{font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2)}
 .apply-points{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:10px;border-top:1px solid var(--line-2);padding-top:18px;width:100%}
 .apply-points li{display:flex;gap:12px;align-items:baseline;font:500 var(--t-sm)/1.45 var(--ui);color:var(--ink)}
 .apply-points li::before{content:"";width:14px;height:2px;background:var(--gold);flex:none;transform:translateY(-4px)}
@@ -2262,7 +2436,6 @@ input[type="checkbox"]{width:auto;padding:0}
 }
 .qf-btn:hover{background:#13264f;transform:translateY(-2px)}
 .qf-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.qf-dot{width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(211,167,80,.25)}
 .qf.open .qf-btn{opacity:0;pointer-events:none}
 .qf.qf-away:not(.open) .qf-btn{opacity:0;pointer-events:none;transform:translateY(12px)}
 .qf-panel{
@@ -2277,7 +2450,9 @@ input[type="checkbox"]{width:auto;padding:0}
 .qf-close:hover{border-color:var(--ink)}
 .qf-form{grid-template-columns:1fr;gap:12px}
 .qf-form label{font-size:var(--t-xs)}
-.qf-form input,.qf-form select,.qf-form textarea{padding:.7em .8em;font-size:var(--t-sm)}
+.qf-form input,
+.qf-form select,
+.qf-form textarea{padding:.7em .8em;font-size:var(--t-sm)}
 .qf-form textarea{min-height:76px}
 .qf-form .btn{width:100%}
 @media (prefers-reduced-motion:reduce){ .qf-btn{transition:none} }
@@ -2295,25 +2470,39 @@ input[type="checkbox"]{width:auto;padding:0}
 }
 
 /* ==========================================================================
-   Form design, shared by every form (.lform): underlined fields that turn
-   gold on focus, small tracked labels, numbered steps, a thank-you panel.
+   Form design,
+shared by every form (.lform): underlined fields that turn
+   gold on focus,
+small tracked labels,
+numbered steps,
+a thank-you panel.
    ========================================================================== */
 .lform{gap:26px 28px}
 .lform .field{gap:6px;position:relative}
-.lform label,.lform .checks legend{
+.lform label,
+.lform .checks legend{
   font:600 .6875rem/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);
 }
-.lform input:not([type="checkbox"]),.lform select,.lform textarea{
+.lform input:not([type="checkbox"]),
+.lform select,
+.lform textarea{
   background:transparent;border:0;border-bottom:1px solid var(--line-2);border-radius:0;
   padding:.55em 0 .7em;font:400 var(--t-body)/1.4 var(--body);color:var(--ink);
   transition:border-color .25s,box-shadow .25s;
 }
-.lform input::placeholder,.lform textarea::placeholder{color:#a3a7b4}
-.lform input:hover:not([type="checkbox"]),.lform select:hover,.lform textarea:hover{border-bottom-color:var(--ink-3)}
-.lform input:focus:not([type="checkbox"]),.lform select:focus,.lform textarea:focus{
+.lform input::placeholder,
+.lform textarea::placeholder{color:#a3a7b4}
+.lform input:hover:not([type="checkbox"]),
+.lform select:hover,
+.lform textarea:hover{border-bottom-color:var(--ink-3)}
+.lform input:focus:not([type="checkbox"]),
+.lform select:focus,
+.lform textarea:focus{
   outline:none;border-bottom-color:var(--gold);box-shadow:0 1px 0 0 var(--gold);
 }
-.lform input:focus-visible:not([type="checkbox"]),.lform select:focus-visible,.lform textarea:focus-visible{outline:none}
+.lform input:focus-visible:not([type="checkbox"]),
+.lform select:focus-visible,
+.lform textarea:focus-visible{outline:none}
 .lform [aria-invalid="true"]{border-bottom-color:#A3341A!important;box-shadow:0 1px 0 0 #A3341A!important;background:transparent!important}
 .lform textarea{min-height:110px;border:1px solid var(--line-2);padding:.8em .9em;resize:vertical}
 .lform textarea:focus{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
@@ -2332,7 +2521,8 @@ input[type="checkbox"]{width:auto;padding:0}
 .fstep:first-of-type{padding-top:0;border-top:0;margin-top:0}
 .fstep span{font:300 1.0625rem/1 var(--display);color:var(--gold-text);letter-spacing:.06em}
 
-/* the end of a form: the button with its arrow, and a quiet note */
+/* the end of a form: the button with its arrow,
+and a quiet note */
 .form-end{gap:14px 22px;margin-top:4px}
 .fbtn{min-height:52px;padding-inline:28px}
 .fbtn span{transition:transform .25s}
@@ -2350,7 +2540,8 @@ input[type="checkbox"]{width:auto;padding:0}
 .fdone-again{margin-top:8px;background:none;border:0;padding:6px 0;font:600 var(--t-sm)/1.3 var(--ui);color:var(--ink);
   text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:5px;cursor:pointer}
 
-/* the application card and the corner form, tuned */
+/* the application card and the corner form,
+tuned */
 .qf-form{gap:16px}
 .qf-form .fnote{text-align:center}
 .qf-form .fbtn{width:100%;justify-content:center}
@@ -2360,7 +2551,8 @@ input[type="checkbox"]{width:auto;padding:0}
   .fbtn{width:100%;justify-content:center}
 }
 
-/* the corner form: a small round mail button, a compact panel */
+/* the corner form: a small round mail button,
+a compact panel */
 .qf-btn{width:56px;height:56px;padding:0;justify-content:center;border-radius:50%;position:relative}
 .qf-btn svg{width:24px;height:24px;color:var(--gold)}
 .qf-tip{
@@ -2368,7 +2560,8 @@ input[type="checkbox"]{width:auto;padding:0}
   background:var(--ink);color:#fff;font:600 var(--t-xs)/1 var(--ui);padding:9px 12px;
   opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
 }
-.qf-btn:hover .qf-tip,.qf-btn:focus-visible .qf-tip{opacity:1;transform:translate(0,-50%)}
+.qf-btn:hover .qf-tip,
+.qf-btn:focus-visible .qf-tip{opacity:1;transform:translate(0,-50%)}
 .qf-panel{width:min(320px,calc(100vw - 28px));padding:18px 18px 16px}
 .qf-head{margin-bottom:8px}
 .qf-head h2{font:400 1.375rem/1.2 var(--display);margin:0 0 4px}
@@ -2386,47 +2579,43 @@ input[type="checkbox"]{width:auto;padding:0}
 
 /* Contact and Work With Us share one form card. */
 .fcard{background:#fff;padding:clamp(26px,3.4vw,48px);border:0;border-top:3px solid var(--gold);box-shadow:0 24px 60px rgba(6,15,36,.08)}
-.fcard input:not([type="checkbox"]),.fcard select,.fcard textarea{background:transparent}
+.fcard input:not([type="checkbox"]),
+.fcard select,
+.fcard textarea{background:transparent}
 @media (max-width:560px){ .fcard{padding:22px 16px} }
-/* the sector chips are choices, not field labels: normal case */
+/* the sector chips are choices,
+not field labels: normal case */
 .lform label.chk{font:inherit;letter-spacing:0;text-transform:none;color:inherit}
 
 /* ==========================================================================
    The Supplier Portal — /suppliers/ and one page per open event.
-   Appended after the phone block, so every narrow-screen rule here carries
-   its own media query. Same system as the rest: hairlines, a gold rule that
-   draws across on hover, Newsreader for the names, Inter for the data.
-   ========================================================================== */
-
-/* the strip under the opening: what closes next */
-.sp-soon{background:var(--ink);color:#fff;padding-block:clamp(22px,2.6vw,34px);border-top:1px solid rgba(255,255,255,.12)}
-.sp-soon-in{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(18px,3vw,48px);align-items:center}
-.sp-soon-h{margin:0}
-.sp-soon .eyebrow{color:var(--ink-inv-2);margin:0}
-.sp-soon-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,32px)}
-.sp-soon-list li{border-inline-start:1px solid rgba(255,255,255,.18);padding-inline-start:16px;min-width:0}
-.sp-soon-list li[hidden]{display:none}
-.sp-soon-list a{display:grid;gap:3px;color:#fff;text-decoration:none}
-.sp-soon-list a:hover b{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:4px}
-.sp-soon-ref{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
-.sp-soon-list b{font:400 var(--t-lg)/1.3 var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sp-soon-when{font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-inv-2)}
+   Appended after the phone block,
+so every narrow-screen rule here carries
+   its own media query. Same system as the rest: hairlines,
+a gold rule that
+   draws across on hover,
+Newsreader for the names{background:var(--ink);color:#fff;padding-block:clamp(22px,2.6vw,34px);border-top:1px solid rgba(255,255,255,.12)}
 .sp-soon-none{border:0;padding:0;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-inv-2);grid-column:1/-1}
-.sp-soon-all{color:#fff;font:600 var(--t-sm)/1.3 var(--ui);text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:8px;min-height:44px}
-.sp-soon-all span{transition:transform .25s;color:var(--gold)}
-.sp-soon-all:hover span{transform:translateX(4px)}
 
-/* what we buy: a card per category, four across, ruled like the rest of
-   the system — a hairline above, a gold rule drawn across on hover. Closed,
-   a card names the category, three sample lines, who buys and what is open;
-   the plus opens it to every line, and the row grows with it. */
+/* what we buy: a card per category,
+four across,
+ruled like the rest of
+   the system — a hairline above,
+a gold rule drawn across on hover. Closed,
+a card names the category,
+three sample lines,
+who buys and what is open;
+   the plus opens it to every line,
+and the row grows with it. */
 .catlist{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(16px,2.2vw,32px);
   margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--line-2);
 }
 .catrow{position:relative;border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--head-h) + 16px)}
 .catrow::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.catrow:hover::before,.catrow[open]::before,.catrow:target::before{transform:scaleX(1)}
+.catrow:hover::before,
+.catrow[open]::before,
+.catrow:target::before{transform:scaleX(1)}
 .catrow > summary{
   list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 20px;gap:8px 12px;
   align-content:start;padding:clamp(18px,2vw,24px) 0 clamp(16px,1.8vw,20px);
@@ -2435,7 +2624,8 @@ input[type="checkbox"]{width:auto;padding:0}
 .catrow > summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .catrow-n{grid-column:1;font:300 1.25rem/1 var(--display);color:var(--gold-text)}
 .catrow-plus{grid-column:2;grid-row:1;position:relative;width:14px;height:14px;justify-self:end;align-self:start;margin-top:2px}
-.catrow-plus::before,.catrow-plus::after{content:"";position:absolute;background:var(--gold-text);transition:transform .25s}
+.catrow-plus::before,
+.catrow-plus::after{content:"";position:absolute;background:var(--gold-text);transition:transform .25s}
 .catrow-plus::before{left:0;top:6px;width:14px;height:2px}
 .catrow-plus::after{left:6px;top:0;width:2px;height:14px}
 .catrow[open] .catrow-plus::after{transform:rotate(90deg)}
@@ -2454,18 +2644,28 @@ input[type="checkbox"]{width:auto;padding:0}
 .catrow-buyers > span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .catrow-buyers a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-2)}
 .catrow-buyers a:hover{border-color:var(--gold)}
-/* open, a card takes two columns and shows its lines to the right of the
-   summary, so the row keeps its height instead of growing downward */
+/* open,
+a card takes two columns and shows its lines to the right of the
+   summary,
+so the row keeps its height instead of growing downward */
 .catrow[open]{grid-column:span 2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 clamp(16px,2.2vw,32px);align-items:start}
 .catrow[open] > summary{grid-column:1}
 .catrow[open] .catrow-body{grid-column:2;border-top:0;border-left:1px solid var(--line);padding:clamp(18px,2vw,24px) 0 clamp(18px,2vw,24px) clamp(16px,2vw,28px)}
-@media (prefers-reduced-motion:reduce){ .catrow-plus::after,.catrow::before{transition:none} }
+@media (prefers-reduced-motion:reduce){ .catrow-plus::after,
+.catrow::before{transition:none} }
 
-/* the list of open events: one row, one line each on a wide screen —
-   reference and type, the title, the buyer, when it closes, the status and
-   the one thing to do. Every column is a share or a fixed width, so the rows
+/* the list of open events: one row,
+one line each on a wide screen —
+   reference and type,
+the title,
+the buyer,
+when it closes,
+the status and
+   the one thing to do. Every column is a share or a fixed width,
+so the rows
    line up with the header and with each other. The brief and the category
-   are on the event page, not here. */
+   are on the event page,
+not here. */
 .opp-filter{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:clamp(24px,3vw,40px)}
 .opp-filter[hidden]{display:none}
 .opp-l{display:inline;margin-right:6px;font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
@@ -2480,7 +2680,8 @@ input[type="checkbox"]{width:auto;padding:0}
   background-position:calc(100% - 16px) 55%,calc(100% - 11px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .opps{--opp-pad:clamp(12px,1.4vw,20px);list-style:none;margin:clamp(20px,2.6vw,32px) 0 0;padding:0;border-top:1px solid var(--line-2)}
-.opp-head,.opp{
+.opp-head,
+.opp{
   display:grid;grid-template-columns:124px 60px minmax(0,2fr) minmax(164px,.9fr) 168px 96px 138px;
   gap:0 clamp(14px,1.4vw,20px);align-items:center;padding-inline:var(--opp-pad);margin-inline:calc(-1 * var(--opp-pad));
 }
@@ -2505,9 +2706,12 @@ input[type="checkbox"]{width:auto;padding:0}
 .opp-in{font:400 var(--t-sm)/1.4 var(--body);color:var(--ink-3);white-space:nowrap}
 .opp-in:not(:empty)::before{content:" · "}
 .badge{display:inline-block;font:600 var(--t-xxs)/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;padding:7px 9px 6px;border:1px solid currentColor;white-space:nowrap}
-/* in the list and its key the status is a word, not a box: open in gold, invite-only in grey, closing soon filled */
-.opps .badge,.opp-key .badge{border:0;padding:0;line-height:1.4}
-.opps .badge-soon,.opp-key .badge-soon{padding:5px 8px 4px;line-height:1}
+/* in the list and its key the status is a word,
+not a box: open in gold,
+invite-only in grey,
+closing soon filled */
+.opps .badge{border:0;padding:0;line-height:1.4}
+.opps .badge-soon{padding:5px 8px 4px;line-height:1}
 .badge-open{color:var(--gold-text);border-color:var(--gold)}
 .badge-invite{color:var(--ink-3)}
 .badge-soon{color:var(--ink);border-color:var(--gold);background:var(--gold)}
@@ -2524,10 +2728,6 @@ input[type="checkbox"]{width:auto;padding:0}
 .opp-go:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .opp-none{margin-top:clamp(20px,2.6vw,32px);font:400 var(--t-lede)/1.6 var(--display);color:var(--ink-2);max-width:60ch}
 .opp-none[hidden]{display:none}
-.opp-key{margin:clamp(20px,2.6vw,32px) 0 0;display:flex;flex-wrap:wrap;gap:12px 32px}
-.opp-key > div{display:flex;gap:10px;align-items:center}
-.opp-key dt{margin:0}
-.opp-key dd{margin:0;font:400 var(--t-sm)/1.4 var(--body);color:var(--ink-2)}
 
 /* requirements beside principles */
 .sp-two{display:grid;grid-template-columns:minmax(0,58fr) minmax(0,42fr);gap:clamp(32px,5vw,88px);align-items:start}
@@ -2540,11 +2740,6 @@ input[type="checkbox"]{width:auto;padding:0}
 .terms > div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
 .terms dt{font:500 var(--t-sm)/1.55 var(--ui);color:var(--ink-2)}
 .terms dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink)}
-.rules{list-style:none;margin:clamp(20px,2.4vw,28px) 0 0;padding:0;display:grid;border-top:1px solid var(--line-2)}
-.rules li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}
-.rule-n{font:300 1.25rem/1.2 var(--display);color:var(--gold-text)}
-.rules h3{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink);margin:0 0 4px}
-.rules p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
 
 /* the code of conduct: eight points in two columns */
 .conduct{list-style:none;margin:clamp(28px,3.4vw,44px) 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(32px,5vw,88px);border-top:1px solid var(--line-2)}
@@ -2553,15 +2748,16 @@ input[type="checkbox"]{width:auto;padding:0}
 .conduct h3{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink);margin:0}
 .conduct p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
 
-/* the code, the fraud warning and support: three ruled columns */
+/* the code,
+the fraud warning and support: three ruled columns */
 .sp-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3vw,48px)}
 .sp-notes > div{border-top:1px solid var(--line-2);padding-top:18px}
 .sp-notes > div > p:not(.eyebrow){font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);margin-top:12px}
-.sp-notes a,.fraud-line a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
+.sp-notes a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
 .sp-notes .channels{margin-top:12px;gap:10px}
-.fraud-line{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2);text-align:center}
 
-/* the registration: the same card as Contact, plus the two new field types */
+/* the registration: the same card as Contact,
+plus the two new field types */
 .fhelp{font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-3)}
 .agree-wrap{gap:4px}
 .lform label.agree{display:flex;gap:12px;align-items:flex-start;cursor:pointer;font:400 var(--t-sm)/1.5 var(--body);letter-spacing:0;text-transform:none;color:var(--ink)}
@@ -2587,62 +2783,19 @@ input[type="checkbox"]{width:auto;padding:0}
 .crumbs a{color:var(--ink-inv-2);text-decoration:none}
 .crumbs a:hover{color:#fff}
 .crumbs > span:last-child{color:var(--gold)}
-.opp-hero-in{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:clamp(28px,4vw,64px);align-items:end}
-.opp-tags{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:18px}
-.opp-tag{font:600 var(--t-xxs)/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-inv-2);padding:7px 0 6px;text-decoration:none}
-a.opp-tag{border-bottom:1px solid rgba(255,255,255,.25)}
-a.opp-tag:hover{color:#fff;border-color:var(--gold)}
 .opp-hero .badge-open{color:#9fd49a}
 .opp-hero .badge-invite{color:var(--ink-inv-2)}
 .opp-hero .badge-soon{background:transparent;color:var(--gold)}
 .opp-hero .badge-closed{color:#f0a08c}
 .opp-hero h1{font:300 clamp(2rem,3.6vw,3.25rem)/1.08 var(--display);color:#fff;max-width:20ch}
 .opp-brief{font:400 var(--t-lede)/1.5 var(--body);color:#fff;margin-top:14px;max-width:60ch}
-.opp-issuer{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-inv-2);margin-top:10px}
-.opp-issuer a{color:#fff;text-decoration-color:var(--gold);text-underline-offset:4px}
-.opp-clock{display:grid;gap:6px;justify-items:start;padding:clamp(18px,2vw,26px);border:1px solid rgba(255,255,255,.2);border-top:3px solid var(--gold)}
-.opp-clock .opp-l{display:block;color:var(--ink-inv-2)}
-.opp-clock time{font:300 clamp(1.5rem,2.2vw,2rem)/1.1 var(--display);color:#fff}
-.opp-clock-tz{font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-inv-2)}
-.opp-clock-tz [data-in]:not(:empty)::before{content:" · "}
-.opp-clock .btn{margin-top:12px}
-.opp-body{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(32px,5vw,88px);align-items:start}
-.opp-body h2{font-size:var(--t-h1);line-height:1.1;margin-top:14px}
-.spec{margin:clamp(20px,2.4vw,28px) 0 0;display:grid;border-top:1px solid var(--line-2)}
-.spec > div{display:grid;grid-template-columns:168px minmax(0,1fr);gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}
-.spec dt{font:500 var(--t-sm)/1.55 var(--ui);color:var(--ink-2)}
-.spec dd{margin:0;font:400 var(--t-body)/1.55 var(--body);color:var(--ink)}
-.spec-docs{margin-top:16px;font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3);max-width:60ch}
-.opp-aside{display:grid;gap:clamp(24px,3vw,40px);position:sticky;top:calc(var(--head-h) + 24px)}
-.opp-clar,.opp-also{border-top:1px solid var(--line-2);padding-top:18px}
-.clar{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:14px}
-.clar li{display:grid;gap:4px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-.clar-on{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text)}
-.clar-q{font:400 var(--t-body)/1.4 var(--display);color:var(--ink)}
-.clar-q::before{content:"Q. ";color:var(--ink-3)}
-.clar-a{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
-.clar-a::before{content:"A. ";color:var(--ink-3)}
-.clar-none{margin-top:12px;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2)}
-.clar-note{margin-top:14px;font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3)}
-.clar-note a{color:var(--ink);text-decoration-color:var(--gold);text-underline-offset:3px}
-.opp-also ul{list-style:none;margin:12px 0 0;padding:0;display:grid}
-.opp-also li a{display:grid;gap:2px;padding:10px 0;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font:400 var(--t-sm)/1.4 var(--body)}
-.opp-also li a span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.08em;color:var(--gold-text)}
-.opp-also li a:hover{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:4px}
-.opp-also-none{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2);padding:10px 0}
-.opp-also-all{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:6px;font:600 var(--t-sm)/1.3 var(--ui);color:var(--ink);text-decoration:none}
-.opp-also-all:hover span{transform:translateX(4px)}
-.opp-also-all span{color:var(--gold-text);transition:transform .25s}
-.opp-closed{display:grid;gap:12px;justify-items:start;max-width:60ch}
-.opp-closed h2{font:300 clamp(1.5rem,2.4vw,2.125rem)/1.15 var(--display);color:var(--ink)}
-.opp-closed p:not(.eyebrow){font:400 var(--t-body)/1.6 var(--body);color:var(--ink-2)}
-.opp-closed a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
-/* once the script finds the event has closed, the form steps aside for the note it writes */
-.apply.is-closed .apply-in > *{display:none}
-.apply.is-closed .opp-closed{display:grid}
+/* once the script finds the event has closed,
+the form steps aside for the note it writes */
 
 @media (max-width:1100px){
-  /* three lines a card: reference, type and status; the title; buyer, closing and the action */
+  /* three lines a card: reference,
+type and status; the title; buyer,
+closing and the action */
   .opp-head{display:none}
   .opps{--opp-pad:0}
   .opp{grid-template-columns:auto auto minmax(0,1fr);gap:10px 14px;padding-block:18px;align-items:center}
@@ -2657,16 +2810,13 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
   .opp-go{min-height:36px;padding:0 12px}
 }
 @media (max-width:900px){
-  .sp-soon-in{grid-template-columns:1fr}
-  .sp-soon-list{grid-template-columns:1fr;gap:12px}
-  .sp-two,.conduct,.sp-notes,.route2{grid-template-columns:1fr}
+  .sp-two,
+.conduct,
+.sp-notes,
+.route2{grid-template-columns:1fr}
   .opp-pill{display:none}
   .opp-filter .opp-l{display:none}
   .opp-sel{display:block}
-  .opp-hero-in{grid-template-columns:1fr;align-items:start}
-  .opp-clock{width:100%}
-  .opp-body{grid-template-columns:1fr}
-  .opp-aside{position:static}
 }
 @media (max-width:560px){
   .terms > div{grid-template-columns:1fr;gap:4px}
@@ -2680,62 +2830,35 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
   .catrow[open]{grid-column:auto;display:block}
   .catrow[open] .catrow-body{border-left:0;border-top:1px solid var(--line);padding:14px 0 18px}
   .opp-go{min-height:44px}
-  /* a thumb's targets: the reference, the issuing company and the buyer chips */
-  .opp-ref,.opp-who a{display:inline-flex;align-items:center;min-height:44px;padding:0}
+  /* a thumb's targets: the reference,
+the issuing company and the buyer chips */
+  .opp-ref,
+.opp-who a{display:inline-flex;align-items:center;min-height:44px;padding:0}
   .opp-who{gap:0}
-  .cat-buyers a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px}
-  .spec > div{grid-template-columns:1fr;gap:4px}
   .opp-hero{padding-top:20px}
   .opp-pill{min-height:44px}
 }
 @media (prefers-reduced-motion:reduce){
-  .cat,.cat::before,.opp::before,.route,.opp-go span,.sp-soon-all span,.route-go span,.opp-also-all span{transition:none}
+  .opp::before,
+.route,
+.opp-go span,
+.route-go span{transition:none}
   .route:hover{transform:none}
 }
 
-/* the registration, folded behind its own row until it is wanted */
-.regbox{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
-.regbox > summary{
-  list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:clamp(20px,3vw,48px);
-  padding:clamp(22px,2.6vw,34px) 0;position:relative;
-}
-.regbox > summary::-webkit-details-marker{display:none}
-.regbox > summary::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.regbox:hover > summary::before,.regbox[open] > summary::before{transform:scaleX(1)}
-.regbox > summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.regbox-head{display:grid;gap:10px;justify-items:start}
-.regbox-head .eyebrow{margin:0}
-.regbox-title{font:300 var(--t-h1)/1.1 var(--display);color:var(--ink)}
-.regbox-line{font:400 var(--t-body)/1.55 var(--body);color:var(--ink-2);max-width:60ch}
-.regbox-open{flex:none}
-.regbox-btn{display:inline-flex;align-items:center;gap:14px;white-space:nowrap}
-.regbox[open] .regbox-word{display:none}
-.regbox .catrow-plus{width:16px;height:16px}
-.regbox .catrow-plus::before,.regbox .catrow-plus::after{background:currentColor}
-.regbox .catrow-plus::before{top:7px;width:16px}
-.regbox .catrow-plus::after{left:7px;height:16px}
-.regbox[open] .catrow-plus::after{transform:rotate(90deg)}
-.regbox[open] .regbox-btn{padding-inline:14px}
+/* the registration{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
 /* the checklist in the form's side column */
 .apply-h{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink);margin-top:18px;padding-top:18px;border-top:1px solid var(--line-2);width:100%}
-.apply-sub{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3)}
-.reqs-side{margin-top:4px;width:100%}
-.reqs-side li{padding:10px 0 10px 24px;font-size:var(--t-xs)}
-.reqs-side li::before{top:18px;width:12px}
 /* no dead ground under the folded row */
 #register{padding-bottom:clamp(28px,3vw,40px)}
 #register + .section{padding-top:clamp(36px,4vw,56px)}
-.regbox > .apply-in{padding:clamp(8px,1vw,16px) 0 clamp(28px,3.4vw,48px)}
-.regbox .apply-side{position:static}
-@media (max-width:900px){
-  .regbox > summary{flex-direction:column;align-items:flex-start;gap:18px}
-  .regbox-btn{min-height:46px}
-}
-@media (prefers-reduced-motion:reduce){ .regbox > summary::before{transition:none} }
 
 /* ==========================================================================
    The Supplier Portal's own places — a strip under the bar on every portal
-   page, the way TIBECO carries its own: the list, the two anchors, and
+   page,
+the way TIBECO carries its own: the list,
+the two anchors,
+and
    Register held apart at the end.
    ========================================================================== */
 
@@ -2746,14 +2869,16 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
   font:500 var(--t-sm)/1.3 var(--ui);color:rgba(255,255,255,.72);
   text-decoration:none;transition:color .2s;
 }
-.pnav a:hover,.pnav a:focus-visible{color:#fff}
+.pnav a:hover,
+.pnav a:focus-visible{color:#fff}
 .pnav a[aria-current="page"]{color:var(--gold)}
 .pnav-home{font-weight:600;color:#fff}
 .pnav-links{display:flex;align-items:center;gap:clamp(14px,2.4vw,30px)}
 .pnav-reg{
   padding:0 14px;border:1px solid var(--gold);color:var(--gold) !important;
 }
-.pnav-reg:hover,.pnav-reg:focus-visible{background:var(--gold);color:var(--ink) !important}
+.pnav-reg:hover,
+.pnav-reg:focus-visible{background:var(--gold);color:var(--ink) !important}
 .pnav-reg[aria-current="page"]{background:var(--gold);color:var(--ink) !important}
 @media (max-width:700px){
   .pnav-in{overflow-x:auto;justify-content:flex-start;gap:18px;scrollbar-width:none}
@@ -2771,7 +2896,8 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
 @media (max-width:760px){ .regcta{grid-template-columns:1fr} }
 
 /* the note an event's action leaves on the register page */
-/* It sits on the navy hero, so it speaks in the hero's own light. */
+/* It sits on the navy hero,
+so it speaks in the hero's own light. */
 .reg-ref{
   margin-top:14px;display:inline-block;padding:9px 14px;
   background:rgba(211,167,80,.14);border:1px solid rgba(211,167,80,.55);
@@ -2779,7 +2905,8 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
 }
 .reg-ref strong{color:var(--gold)}
 
-/* ---- a step's own note, and the document rows ----------------------------- */
+/* ---- a step's own note,
+and the document rows ----------------------------- */
 .fstep-note{grid-column:1/-1;margin:-6px 0 2px;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2);max-width:62ch}
 .fdoc{
   display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 18px;
@@ -2822,7 +2949,8 @@ a.opp-tag:hover{color:#fff;border-color:var(--gold)}
 .regprog-t{font:500 var(--t-body)/1.4 var(--body);color:var(--ink)}
 .regprog-s{grid-column:2;font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-3)}
 .regprog li.is-going .regprog-s{color:var(--gold-deep)}
-.regprog li.is-done .regprog-n,.regprog li.is-done .regprog-s{color:var(--gold-deep)}
+.regprog li.is-done .regprog-n,
+.regprog li.is-done .regprog-s{color:var(--gold-deep)}
 .regprog li.is-done .regprog-s::after{content:" ✓"}
 
 /* ---- the list pages' small pieces ------------------------------------------ */

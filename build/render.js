@@ -434,9 +434,6 @@ const FORM_OPTIONS = {
      page can tick its categories */
   supplyCategories: () => SUPPLY.map(x => ({ v: x.slug, t: x.name, data: `data-buyers="${x.buyers.join(' ')}"` })),
   companyTypes: () => FORM_LISTS.companyTypes.map(([v, t]) => ({ v, t })),
-  currencies: () => FORM_LISTS.currencies.map(([v, t]) => ({ v, t })),
-  incoterms: () => FORM_LISTS.incoterms.map(([v, t]) => ({ v, t })),
-  validity: () => FORM_LISTS.validity.map(([v, t]) => ({ v, t })),
   areas: () => [{ v: 'general', t: 'General enquiry' }]
     .concat(ALL_COMPANIES.map(c => ({ v: c.slug, t: c.name })))
     .concat([{ v: 'supplier', t: 'Supplier opportunity' }, { v: 'partnership', t: 'Business partnership' },

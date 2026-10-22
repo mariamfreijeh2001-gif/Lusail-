@@ -214,7 +214,7 @@
     var areaSel = form.querySelector('select[name="area"]');
 
     /* A link can preselect: /contact/?company=<slug> (or ?area=) picks the
-       desk; /suppliers/?company=<slug> ticks the categories that company
+       desk; /supplier-portal/register/?company=<slug> ticks the categories that company
        buys in. A page can also hand the form a first draft (data-prefill):
        the desk an invitation request is for, the reference in its message. */
     try {
@@ -553,19 +553,9 @@
       var invite = el.getAttribute('data-invite') === '1';
       var setBadge = function (text, cls) { badges.forEach(function (b) { b.textContent = text; b.className = 'badge ' + cls; }); };
       if (left <= 0) {
-        if (el.classList.contains('opp') || el.parentNode.id === 'soonList') { el.hidden = true; return; }
-        setBadge('Closed', 'badge-closed');
-        if (inEl) inEl.textContent = '';
-        var ask = $('#quote');
-        if (ask && !ask.querySelector('[data-closed-note]')) {
-          ask.classList.add('is-closed');
-          var note = document.createElement('div');
-          note.className = 'opp-closed';
-          note.setAttribute('data-closed-note', '');
-          note.innerHTML = '<p class="eyebrow">Closed</p><h2>This event has closed.</h2><p>Award and regret notices go to every participant by email. To be invited to the next one, <a href="/suppliers/#register">register as a supplier</a>.</p>';
-          ask.querySelector('.wrap').appendChild(note);
-          var cta = el.querySelector('.opp-clock .btn'); if (cta) cta.remove();
-        }
+        /* a row for a closed event simply leaves the list; its register link
+           would still work, but there is nothing left to bid on */
+        el.hidden = true;
         return;
       }
       if (el.classList.contains('opp')) open++;
@@ -577,12 +567,6 @@
     });
     var none = $('#oppNone');
     if (none && $('#opps')) none.hidden = open > 0;
-    var soonList = $('#soonList');
-    if (soonList && !soonList.querySelector('li:not([hidden])')) {
-      var li = document.createElement('li'); li.className = 'sp-soon-none';
-      li.textContent = 'Nothing is closing this week. Register, and you are invited the moment something opens in your categories.';
-      soonList.appendChild(li);
-    }
   };
   if ($('[data-closes]')) { tickEvents(); setInterval(tickEvents, 60e3); }
 
@@ -606,10 +590,6 @@
     /* a category card's "n open" arrives here already filtered */
     var qcat = (new URLSearchParams(location.search).get('cat') || '').replace(/[^a-z0-9-]/g, '');
     if (qcat && pills.some(function (x) { return x.getAttribute('data-cat') === qcat; })) pick(qcat);
-    /* "2 open" on a category row filters the list and goes to it */
-    $$('a[data-filter]').forEach(function (a) {
-      a.addEventListener('click', function () { pick(a.getAttribute('data-filter')); });
-    });
   }
 
   /* ---------- the corner form ----------------------------------------------
@@ -742,24 +722,6 @@
       it.addEventListener('click', function (e) {
         if (!it.classList.contains('is-open')) { e.preventDefault(); open(it); }
       });
-    });
-  }
-
-  /* ---------- a company's showcase ---------------------------------------- */
-
-  /* Pointing at an area, focusing it, or tapping it brings its photograph
-     forward. The last one chosen stays, so the picture never goes blank. */
-  var show = $('#show');
-  if (show) {
-    var showItems = $$('.show-item', show), showPics = $$('.show-pic', show);
-    var showPick = function (i) {
-      showItems.forEach(function (x, k) { x.classList.toggle('on', k === i); });
-      showPics.forEach(function (x, k) { x.classList.toggle('on', k === i); });
-    };
-    showItems.forEach(function (it, i) {
-      it.addEventListener('pointerenter', function () { showPick(i); });
-      it.addEventListener('focus', function () { showPick(i); });
-      it.addEventListener('click', function () { showPick(i); });
     });
   }
 

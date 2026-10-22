@@ -51,11 +51,7 @@ function recipients(form, body) {
   const fallback = general.length ? general : [SITE.contact.email];
   let to = [];
   if (form === 'supplier') to = envList('CONTACT_TO_SUPPLIERS').length ? envList('CONTACT_TO_SUPPLIERS') : deskOf('tibeco-group');
-  else if (form === 'quote') {
-    const ref = typeof body.reference === 'string' ? body.reference.trim() : '';
-    const ev = OPPORTUNITIES.find(o => o.ref === ref);
-    if (ev) to = deskOf(ev.company);
-  } else if (form === 'enquiry' || !form) {
+  else if (form === 'enquiry' || !form) {
     const area = typeof body.area === 'string' ? body.area.trim() : '';
     if (ALL_COMPANIES.some(c => c.slug === area)) to = deskOf(area);
   }
@@ -172,9 +168,6 @@ const OPTION_LABELS = {
   sectors: Object.fromEntries(SECTORS.map(x => [x.slug, x.name])),
   supplyCategories: Object.fromEntries(SUPPLY.map(x => [x.slug, x.name])),
   companyTypes: Object.fromEntries(FORM_LISTS.companyTypes),
-  currencies: Object.fromEntries(FORM_LISTS.currencies),
-  incoterms: Object.fromEntries(FORM_LISTS.incoterms),
-  validity: Object.fromEntries(FORM_LISTS.validity),
   areas: AREAS,
   interests: Object.assign({ general: 'A general enquiry', partnership: 'Working with the Group' },
     Object.fromEntries(SECTORS.map(x => [x.slug, x.name])))

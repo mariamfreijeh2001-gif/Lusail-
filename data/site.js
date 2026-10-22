@@ -620,7 +620,7 @@ const WHY = [
    One registration covers every company. A supplier picks the categories it
    can supply and is invited to events in those categories only. `buyers`
    names the companies that buy in a category, by slug, which is how a link
-   from a company page (/suppliers/?company=<slug>) pre-ticks the right
+   from a company page (/supplier-portal/register/?company=<slug>) pre-ticks the right
    boxes. The build refuses a buyer that is not a company on the site.
 
    `items` is the plain list of what is actually bought — the sulphur, the
@@ -808,13 +808,6 @@ const FORM_LISTS = {
     ['contractor', 'Contractor'],
     ['logistics', 'Logistics or shipping company'],
     ['agent', 'Agent or authorised representative']
-  ],
-  currencies: [['USD', 'USD'], ['QAR', 'QAR'], ['EUR', 'EUR']],
-  incoterms: [['EXW', 'EXW — ex works'], ['FOB', 'FOB — free on board'], ['CFR', 'CFR — cost and freight'], ['CIF', 'CIF — cost, insurance and freight'], ['CPT', 'CPT — carriage paid to'], ['DAP', 'DAP — delivered at place'], ['DDP', 'DDP — delivered duty paid'], ['local', 'Delivered in Qatar']],
-  validity: [
-    ['30', '30 days from closing'],
-    ['60', '60 days from closing'],
-    ['90', '90 days from closing']
   ]
 };
 
@@ -827,7 +820,7 @@ const FORM_LISTS = {
    edit. `options` names a list the build fills in:
      areas             every company, plus the general desks (Contact)
      supplyCategories  the SUPPLY categories above, as checkboxes
-     companyTypes, validity   the FORM_LISTS above
+     companyTypes       the FORM_LISTS above
    `why` is what the visitor is told beside the field when it is missing.
    `{ step: '…' }` starts a numbered stage of the form; it holds no data.
    Field types beyond the usual: `checks` (a group of boxes, `all` labels
@@ -920,47 +913,6 @@ const FORMS = {
     ]
   },
 
-  /* A quotation against one open event: the cover sheet of an offer. The
-     signed offer and its documents follow by email, quoting the reference.
-     The page fills in the reference; the email goes to the issuing desk. */
-  quote: {
-    subject: 'Quotation',
-    subjectFrom: 'reference',
-    submit: 'Submit quotation',
-    ok: 'Quotation received by the issuing desk. Email the signed offer, specification and certificates quoting the reference; the desk replies after the event closes.',
-    fields: [
-      { name: 'reference', label: 'Reference', type: 'hidden', max: 40 },
-      { name: 'opportunity', label: 'Event', type: 'hidden', max: 160 },
-      { step: 'Your company' },
-      { name: 'company', label: 'Company name', type: 'text', required: true, max: 160, auto: 'organization',
-        why: 'Tell us which company is quoting.' },
-      { name: 'name', label: 'Your name', type: 'text', required: true, max: 120, auto: 'name',
-        why: 'Tell us who to reply to.' },
-      { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
-      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' },
-      { step: 'Your offer' },
-      { name: 'currency', label: 'Currency', type: 'select', options: 'currencies', required: true,
-        why: 'Pick the currency of the offer.' },
-      { name: 'price', label: 'Price per unit', type: 'text', required: true, max: 80,
-        placeholder: 'e.g. 1,040 per MT', why: 'State the unit price.' },
-      { name: 'incoterm', label: 'Delivery basis', type: 'select', options: 'incoterms', required: true,
-        why: 'Pick the delivery basis the price is quoted on.' },
-      { name: 'quantity', label: 'Quantity or scope offered', type: 'text', required: true, max: 160,
-        placeholder: 'e.g. 30,000 MT ±10%', why: 'Say how much, or what scope, you are offering.' },
-      { name: 'origin', label: 'Origin or manufacturer', type: 'text', max: 120 },
-      { name: 'delivery', label: 'Load port, delivery point or lead time', type: 'text', max: 160 },
-      { name: 'payment', label: 'Payment terms offered', type: 'text', max: 160, placeholder: 'e.g. irrevocable LC at sight' },
-      { name: 'validity', label: 'Offer valid for', type: 'select', options: 'validity', required: true,
-        why: 'Say how long the offer stands.' },
-      { name: 'message', label: 'Deviations from the requirement, and notes', type: 'textarea', max: 5000, full: true, rows: 4,
-        placeholder: 'Anything that differs from the requirement, and anything the desk should know.' },
-      { step: 'Declaration' },
-      { name: 'agreeTerms', type: 'agree', required: true, full: true, short: 'Terms accepted',
-        label: 'This offer is firm for the period stated, and we accept the event terms and the Lusail Corp Supplier Code of Conduct.',
-        why: 'The event terms have to be accepted to quote.' }
-    ]
-  },
-  /* The small form in the corner of every page: enough to reach back. */
   callback: {
     subject: 'Callback request',
     submit: 'Send',
