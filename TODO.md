@@ -7,19 +7,22 @@ Everything still outstanding on the site, and where each one lives. Items under
 
 ## Needs you
 
-### 0. Check the redesign against tibecogroup.com *— blocking*
+### 0. Look over the TIBECO redesign *— needs a decision*
 
-The site was redrawn with **TIBECO Group's website as the design reference**,
-as management asked, with sectors in the place of TIBECO's platforms. The
-reference itself could not be opened from the build environment: its network
-policy blocks `tibecogroup.com` (and the web archive), so the visual grammar
-was built from what this repository already documented about the site, its
-search-index description and the Supplier Portal work carried over from it.
-[docs/tibeco-reference-study.md](docs/tibeco-reference-study.md) lists, item by
-item, what to compare against the live site — the bar, the hero, the cards,
-the colours, the platform page layout — and where each is set here. Either
-allow the domain in the environment's network settings and ask for a second
-pass, or walk through the checklist with the site open.
+The site was redrawn to **TIBECO Group's website as the design reference**,
+from that site's own source (the `tibeco-9a2c97f1` repository), with sectors
+in the place of TIBECO's platforms. Three choices were made for the Group
+and should be confirmed:
+
+- **The gold is Lusail's** (`#D3A750`, from the logo), not TIBECO's warmer
+  amber (`hsl(38 90% 55%)`). One token, `--gold` in `assets/css/site.css`.
+- **Arabic sub-labels** sit under the section headings and the sector names,
+  as on TIBECO's site. They were written for this redesign (`AR` in
+  `build/render.js`, `ar` on each sector in `data/site.js`); a native reader
+  should check them before launch, or they can be removed by emptying `AR`.
+- **The descriptor** "Diversified Qatari Business Group" and the line
+  "Investment | Trade | Supply | Services" under the Group's name were written
+  for this redesign (`SITE.descriptor`, `SITE.fields`).
 
 ### 0. Product origins are indicative — confirm them before launch *— blocking*
 

@@ -42,7 +42,12 @@ const SITE = {
      Group". And the line under it: what the Group does, in the fields it
      works in. */
   descriptor: 'Diversified Qatari Business Group',
-  fields: 'Investment, Trade, Supply & Services across Qatar and international markets.',
+  /* the line under the name on the home page, the way TIBECO's reads
+     "Commerce | Investment | Services" */
+  fields: 'Investment | Trade | Supply | Services',
+  /* the Arabic that sits under the Group's name where TIBECO's site puts
+     its own Arabic sub-labels */
+  nameAr: 'لوسيل كورب',
   domain: 'https://www.lusailcorp.com',
 
   /* The logo is an asset, not a design ingredient. Nothing in the layout is
@@ -55,6 +60,8 @@ const SITE = {
     logoWidth: 564, logoHeight: 142,
     /* The monogram on its own, used large and quietly. */
     markOnLight: 'lusail-corp-mark-full-color.svg',
+    /* the mark alone on a dark ground: the bar on a phone */
+    markOnDark: 'lusail-corp-mark-gold.svg',
     faviconSvg: 'favicon.svg',
     faviconIco: 'favicon.ico',
     appleTouch: 'apple-touch-icon.png'
@@ -80,6 +87,7 @@ const SECTORS = [
   {
     slug: 'investments',
     name: 'Investments & Strategic Services',
+    ar: 'الاستثمارات والخدمات الاستراتيجية',
     label: 'Investments',
     short: 'Capital, commerce and services across energy, technology and industrial development.',
     headline: 'Capital With a Long Horizon',
@@ -163,6 +171,7 @@ const SECTORS = [
   {
     slug: 'energy-industrial',
     name: 'Energy & Industrial',
+    ar: 'الطاقة والصناعة',
     label: 'Energy & Industrial',
     short: 'Materials, equipment and investment for energy operators and industrial sites.',
     headline: 'Supplying the Industries That Run the Economy',
@@ -179,6 +188,7 @@ const SECTORS = [
   {
     slug: 'technology',
     name: 'Technology & Advanced Systems',
+    ar: 'التكنولوجيا والأنظمة المتقدمة',
     label: 'Technology',
     short: 'Enterprise IT integration, advanced systems and AI for institutions and businesses.',
     headline: 'Systems That Institutions Can Run On',
@@ -195,6 +205,7 @@ const SECTORS = [
   {
     slug: 'trading',
     name: 'Trading & Commodities',
+    ar: 'التجارة والسلع',
     label: 'Trading',
     short: 'Edible oils, sugar, wheat, coffee and sulphur — bought abroad and shipped by sea, land and air.',
     headline: 'Global Supply, Commercially Answered',
@@ -269,6 +280,7 @@ const SECTORS = [
   {
     slug: 'supply-distribution',
     name: 'Supply & Distribution',
+    ar: 'التوريد والتوزيع',
     label: 'Supply & Distribution',
     short: 'Fresh produce, rice and dry goods, imported and delivered to the businesses that sell and serve them.',
     headline: 'Connecting Supply With Demand',
@@ -344,6 +356,7 @@ const SECTORS = [
   {
     slug: 'consumer-services',
     name: 'Consumer & Lifestyle Services',
+    ar: 'الخدمات الاستهلاكية ونمط الحياة',
     label: 'Consumer Services',
     short: 'Garment care for households, judged on doing the same thing well every time.',
     headline: 'Everyday Services. Better Experiences.',
@@ -405,6 +418,7 @@ const SECTORS = [
   {
     slug: 'food-beverage',
     name: 'Food & Beverage',
+    ar: 'الأغذية والمشروبات',
     label: 'Food & Beverage',
     short: 'A café, and the discipline of opening it every morning.',
     headline: 'Where the Group Meets Its Customers',

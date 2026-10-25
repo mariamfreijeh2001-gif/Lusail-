@@ -17,96 +17,125 @@
      the script is running and can put it back. */
   document.documentElement.classList.add('js');
 
-  /* The bar is solid on every page; the sectors panel below still wants a
-     handle on it, for the strip of header between the caret and the panel. */
+  /* ---------- the bar ------------------------------------------------------
+     Transparent over the top of the page; a few pixels of scroll fill it in,
+     the way TIBECO's does, so the words stay legible over any photograph. */
+
   var head = $('.site-head');
+  if (head) {
+    var onHeadScroll = function () { head.classList.toggle('scrolled', window.scrollY > 50); };
+    addEventListener('scroll', onHeadScroll, { passive: true });
+    onHeadScroll();
+  }
 
-  /* ---------- the sectors panel -------------------------------------------
-     Opens on hover with a pointer, on click or Enter without one, and closes
-     on Escape or on a click outside. */
+  /* ---------- the drawers ---------------------------------------------------
+     "Sectors" slides in from the left, "Corporate" from the right, over a
+     dimmed page. Escape, the close button, the scrim or a link closes them,
+     and focus returns to the control that opened them. The two controls are
+     links to /sectors/ and /about/, so without script they still go
+     somewhere. */
 
-  var navwrap = $('#navwrap'), secBtn = $('#secBtn');
-  if (navwrap && secBtn) {
-    var shut;
-    var setSec = function (open) {
-      clearTimeout(shut);
-      navwrap.classList.toggle('open', open);
-      secBtn.setAttribute('aria-expanded', String(open));
-    };
-    /* The panel hangs below the bar, so the pointer has to cross a strip of
-       header to reach it. Closing on the first mouseleave would shut the menu
-       on the way down, so leaving starts a short grace period instead and
-       coming back cancels it. */
-    var leave = function () {
-      clearTimeout(shut);
-      shut = setTimeout(function () { setSec(false); }, 260);
-    };
-
-    secBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      setSec(secBtn.getAttribute('aria-expanded') !== 'true');
-    });
-    if (matchMedia('(hover: hover)').matches) {
-      navwrap.addEventListener('mouseenter', function () { setSec(true); });
-      navwrap.addEventListener('mouseleave', leave);
-      /* the strip of bar between the button and the panel counts as being on
-         the way there, not as having left */
-      if (head) {
-        head.addEventListener('mouseleave', leave);
-        head.addEventListener('mouseenter', function () { clearTimeout(shut); });
+  var scrim = $('#scrim');
+  var drawers = [['#drawerSecBtn', '#drawerSec'], ['#drawerCorpBtn', '#drawerCorp']]
+    .map(function (p) { return { btn: $(p[0]), box: $(p[1]) }; })
+    .filter(function (d) { return d.btn && d.box; });
+  if (scrim && drawers.length) {
+    var behind = [$('#main'), $('.site-foot'), $('#qf')];
+    var openD = null;
+    var setDrawer = function (d, open) {
+      drawers.forEach(function (x) {
+        var on = open && x === d;
+        x.box.classList.toggle('open', on);
+        x.box.setAttribute('aria-hidden', String(!on));
+        x.btn.setAttribute('aria-expanded', String(on));
+      });
+      scrim.classList.toggle('open', open);
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      behind.forEach(function (el) { if (el) el.inert = open; });
+      openD = open ? d : null;
+      if (open) {
+        var first = d.box.querySelector('a,button');
+        if (first) first.focus();
       }
-    }
-    navwrap.addEventListener('focusout', function (e) {
-      if (!navwrap.contains(e.relatedTarget)) setSec(false);
+    };
+    drawers.forEach(function (d) {
+      d.box.setAttribute('aria-hidden', 'true');
+      d.btn.addEventListener('click', function (e) { e.preventDefault(); setDrawer(d, openD !== d); });
+      d.box.addEventListener('click', function (e) {
+        if (e.target.closest('[data-close]')) { setDrawer(d, false); d.btn.focus(); }
+        else if (e.target.closest('a')) setDrawer(d, false);
+      });
+      /* the cycle stays inside the open drawer */
+      d.box.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        var stops = $$('a[href],button:not([disabled])', d.box).filter(function (el) { return el.offsetWidth || el.offsetHeight; });
+        if (stops.length < 2) return;
+        var first = stops[0], last = stops[stops.length - 1];
+        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+      });
     });
-    document.addEventListener('click', function (e) {
-      if (!navwrap.contains(e.target)) setSec(false);
-    });
+    scrim.addEventListener('click', function () { if (openD) setDrawer(openD, false); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && navwrap.classList.contains('open')) { setSec(false); secBtn.focus(); }
+      if (e.key === 'Escape' && openD) { var b = openD.btn; setDrawer(openD, false); b.focus(); }
     });
   }
 
-  /* ---------- the small-screen menu ---------------------------------------- */
+  /* ---------- the opening slideshow -----------------------------------------
+     Six photographs behind the Group's name, one every five seconds; the
+     dots say which, and pick one. Under reduced motion the first simply
+     stays. */
 
-  var burger = $('#burger'), menu = $('#menu');
-  if (burger && menu) {
-    var behind = [$('#main'), $('.site-foot')];
-    var setMenu = function (open) {
-      menu.classList.toggle('open', open);
-      burger.setAttribute('aria-expanded', String(open));
-      document.documentElement.style.overflow = open ? 'hidden' : '';
-      /* The page behind a full-screen menu is off the screen and invisible,
-         and tabbing past the last link used to walk straight into it. */
-      behind.forEach(function (el) { if (el) el.inert = open; });
-      /* Focus stays on the button that opened it. That button is the one that
-         closes it again, it is inside the cycle below, and Escape returns
-         here anyway — so the first Tab goes into the menu and nothing has to
-         be moved about while the panel is still fading in. */
+  var hero = $('#hero');
+  if (hero) {
+    var slides = $$('.hero-slide', hero), dots = $$('.hero-dot', hero);
+    var cur = 0, timer;
+    var show = function (i) {
+      cur = (i + slides.length) % slides.length;
+      slides.forEach(function (el, k) { el.classList.toggle('on', k === cur); });
+      dots.forEach(function (el, k) { el.classList.toggle('on', k === cur); el.setAttribute('aria-pressed', String(k === cur)); });
     };
-    /* `inert` does the work where it is supported; this keeps the cycle
-       closed where it is not, and keeps the burger in it either way, since
-       it is the control that closes the thing. */
-    var trap = function (e) {
-      if (e.key !== 'Tab' || !menu.classList.contains('open')) return;
-      var stops = [burger].concat($$('a[href],summary,button:not([disabled])', menu))
-        .filter(function (el) { return el.offsetWidth || el.offsetHeight; });
-      if (stops.length < 2) return;
-      var first = stops[0], last = stops[stops.length - 1];
-      if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-      else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+    var start = function () {
+      if (still.matches || slides.length < 2) return;
+      clearInterval(timer);
+      timer = setInterval(function () { show(cur + 1); }, 5000);
     };
-    document.addEventListener('keydown', trap);
-    burger.addEventListener('click', function () {
-      setMenu(burger.getAttribute('aria-expanded') !== 'true');
-    });
-    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); }
-    });
-    addEventListener('resize', function () {
-      if (innerWidth > 1080 && menu.classList.contains('open')) setMenu(false);
-    });
+    dots.forEach(function (d, k) { d.addEventListener('click', function () { show(k); start(); }); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) clearInterval(timer); else start(); });
+    show(0);
+    start();
+  }
+
+  /* ---------- the sticky tabs on a sector page ----------------------------
+     The tab of the section on screen is filled in gold. Driven from scroll
+     position, so it is right however you arrived. */
+
+  var stabs = $('#stabs');
+  if (stabs) {
+    var tabs = $$('a[href^="#"]', stabs).map(function (a) {
+      return { a: a, sec: document.getElementById(a.getAttribute('href').slice(1)) };
+    }).filter(function (t) { return t.sec; });
+    var line = function () { return (head ? head.offsetHeight : 0) + stabs.offsetHeight + 24; };
+    var markedTab = null;
+    var pickTab = function () {
+      var best = tabs[0], top = -Infinity, l = line();
+      tabs.forEach(function (t) {
+        var y = t.sec.getBoundingClientRect().top - l;
+        if (y <= 0 && y > top) { top = y; best = t; }
+      });
+      if (best === markedTab) return;
+      markedTab = best;
+      tabs.forEach(function (t) { t.a.classList.toggle('on', t === best); });
+    };
+    if (tabs.length) {
+      var tTick = false;
+      addEventListener('scroll', function () {
+        if (tTick) return;
+        tTick = true;
+        requestAnimationFrame(function () { pickTab(); tTick = false; });
+      }, { passive: true });
+      pickTab();
+    }
   }
 
   /* ---------- the values ---------------------------------------------------
@@ -585,10 +614,10 @@
     if (qcat && pills.some(function (x) { return x.getAttribute('data-cat') === qcat; })) pick(qcat);
   }
 
-  /* ---------- the corner form ----------------------------------------------
+  /* ---------- the corner form, and the way back up ---------------------------
      A button in the corner of every page opens a small panel. Escape, the
      close button or a click outside it closes it, and focus goes back to the
-     button. On a phone it rises from the bottom as a sheet. */
+     button. Above it, once the page has moved, a button back to the top. */
   var qf = $('#qf');
   if (qf) {
     var qBtn = $('#qfBtn'), qPanel = $('#qfPanel');
@@ -619,6 +648,15 @@
         own.forEach(function (f) { io.observe(f); });
       }
     }
+
+    var top = document.createElement('button');
+    top.type = 'button'; top.className = 'totop'; top.setAttribute('aria-label', 'Back to top');
+    top.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: still.matches ? 'auto' : 'smooth' }); });
+    qf.insertBefore(top, qf.firstChild);
+    var onTop = function () { top.classList.toggle('on', window.scrollY > 400); };
+    addEventListener('scroll', onTop, { passive: true });
+    onTop();
   }
 
   /* ---------- the globe --------------------------------------------------- */

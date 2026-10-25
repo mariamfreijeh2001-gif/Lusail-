@@ -22,10 +22,11 @@
    redirects the URLs those pages used to have.
 
    DESIGN
-   Drawn to TIBECO Group's site as the reference (docs/tibeco-reference-study.md),
-   with sectors where TIBECO has platforms: a solid white bar, a photograph
-   under it with the title over a dark wash, Inter set bold for headings, and
-   rounded cards; the reading sits on white and warm off-white in turn.
+   Drawn to TIBECO Group's site, from that site's own source
+   (docs/tibeco-reference-study.md), with sectors where TIBECO has platforms:
+   dark grounds, Playfair Display and Raleway, a fixed bar with "Sectors" and
+   "Corporate" as drawers, a slideshow behind the Group's name, image tiles,
+   Arabic sub-labels under the headings, and a one-line footer.
    ========================================================================== */
 
 const fs = require('fs');
@@ -177,10 +178,11 @@ const SOCIAL = () => [
    layout is built around, so the design survives a rebrand. Filenames come
    from SITE.brand. Both bars are carbon, so both take the reversed lockup. */
 const B = SITE.brand;
-/* The bar is white now, so it takes the full-colour lockup; the footer stays
-   navy and keeps the reversed one. */
-const LOGO = `<img src="/assets/logo/${B.logoOnLight}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
-const LOGO_DARK = `<img src="/assets/logo/${B.logoOnDark}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
+/* Every ground is dark, so every lockup is the reversed one; the bar on a
+   phone carries the mark alone. */
+const LOGO = `<img src="/assets/logo/${B.logoOnDark}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
+const LOGO_DARK = LOGO;
+const MARK = `<img class="brand-mark" src="/assets/logo/${B.markOnDark}" alt="" width="120" height="142">`;
 
 /* Icons, drawn here rather than pulled from a set, so they share the site's
    geometry: 24x24, hairline strokes, square caps, mitre joins, no rounding.
@@ -323,7 +325,7 @@ function head({ title, desc, url, image, schema, noindex }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
-<meta name="theme-color" content="#0B1A3A">
+<meta name="theme-color" content="#0f1319">
 ${noindex ? '<meta name="robots" content="noindex">\n' : `<link rel="canonical" href="${SITE.domain}${url}">`}
 
 <meta property="og:type" content="website">
@@ -340,7 +342,8 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 <link rel="icon" href="/assets/logo/${B.faviconIco}" sizes="any">
 <link rel="apple-touch-icon" href="/assets/logo/${B.appleTouch}">
 
-<link rel="preload" href="/assets/font/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/font/playfair-display-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/font/raleway-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css?v=${ASSET_V.css}">
 ${TURNSTILE ? `<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>\n` : ''}${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
 </head>
@@ -349,19 +352,10 @@ ${TURNSTILE ? `<script src="https://challenges.cloudflare.com/turnstile/v0/api.j
 `;
 }
 
-/* The bar: the mark, five words and one action. It is solid and white on
-   every page, the way TIBECO's is, so the photograph on each page sits
-   under it rather than behind it. "Sectors" is a word and a caret: the word
-   goes to the sectors page, the caret opens the panel of seven. */
-const NAV = [
-  ['Home', '/'],
-  ['About Us', '/about/'],
-  ['Sectors', '/sectors/'],
-  ['Work With Us', '/partnerships/'],
-  ['Supplier Portal', '/supplier-portal/']
-];
-
-/* A mark per sector, drawn from the set already in ICON_PATHS. */
+/* The bar is TIBECO's: "Sectors" at the left and "Corporate" at the right,
+   each opening a drawer, and the mark in the middle. The two controls are
+   links — to the sectors page and to the Group — so without script they
+   still go somewhere; the script turns them into the drawers. */
 const SECTOR_ICON = {
   'investments': 'target',
   'energy-industrial': 'spark',
@@ -372,64 +366,50 @@ const SECTOR_ICON = {
   'food-beverage': 'cup'
 };
 
-function sectorsPanel() {
-  return `      <div class="secmenu" id="secmenu">
-        <div class="secmenu-cols">
-${SECTORS.map((s, i) => `          <a class="secmenu-item" href="${secHref(s)}">
-            <span class="secmenu-top">${icon(SECTOR_ICON[s.slug] || 'markets')}<span class="secmenu-n">${num(i)}</span></span>
-            <span class="secmenu-name">${esc(s.name)}</span>
-            <span class="secmenu-line">${esc(s.short)}</span>
-          </a>`).join('\n')}
-          <a class="secmenu-item secmenu-all" href="/sectors/">
-            <span class="secmenu-name">All sectors <span aria-hidden="true">&#8594;</span></span>
-            <span class="secmenu-line">${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies, one way of working.</span>
-          </a>
-        </div>
-      </div>`;
-}
+const CORPORATE = [
+  ['Home', '/'],
+  ['About Us', '/about/'],
+  ['Work With Us', '/partnerships/'],
+  ['Supplier Portal', '/supplier-portal/'],
+  ['Contact', '/contact/']
+];
 
-/* Callers that still pass a second argument are harmless: the bar no longer
-   floats over a photograph anywhere, so there is nothing for it to change. */
+const X_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
+
 function header(current) {
-  const link = ([label, href]) => {
-    const here = href === current ? ' aria-current="page"' : '';
-    /* a sector page is "under" Sectors, so the word carries the mark */
-    const onSector = current && current.startsWith('/sectors/') ? ' aria-current="true"' : '';
-    /* Sectors is a link to the sectors page and a panel listing them, which
-       are two things, so they are two controls: clicking the word goes to
-       the page, and the caret beside it opens the panel. One element cannot
-       do both — a click would have to either navigate or not. */
-    return label === 'Sectors'
-      ? `      <div class="navwrap" id="navwrap">
-        <a class="nav-link nav-sec" href="${href}"${here || onSector}>Sectors</a>
-        <button class="nav-caret" type="button" id="secBtn" aria-expanded="false" aria-controls="secmenu" aria-label="Show the sectors">${CARET}</button>
-${sectorsPanel()}
-      </div>`
-      : `      <a class="nav-link" href="${href}"${here}>${esc(label)}</a>`;
-  };
-
+  const cur = href => href === current ? ' aria-current="page"' : '';
+  const social = SOCIAL();
   return `<header class="site-head" id="top">
-  <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}</a>
-  <nav class="nav" aria-label="Main">
-${NAV.map(link).join('\n')}
-  </nav>
-  <a class="head-cta" href="/contact/">Contact us</a>
-  <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu">
-    ${BURGER}
-  </button>
+  <a class="hb hb-l" href="/sectors/" id="drawerSecBtn" aria-expanded="false" aria-controls="drawerSec">${BURGER}<span>Sectors</span></a>
+  <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}${MARK}</a>
+  <a class="hb hb-r" href="/about/" id="drawerCorpBtn" aria-expanded="false" aria-controls="drawerCorp"><span>Corporate</span>${BURGER}</a>
 </header>
-<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
-  <a href="/"${current === '/' ? ' aria-current="page"' : ''}>Home</a>
-  <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
-  <details class="menu-grp"${current && current.startsWith('/sectors/') ? ' open' : ''}>
-    <summary>Sectors</summary>
-    <a class="sub" href="/sectors/"${current === '/sectors/' ? ' aria-current="page"' : ''}>All sectors</a>
-${SECTORS.map(x => `    <a class="sub" href="${secHref(x)}"${current === secHref(x) ? ' aria-current="page"' : ''}>${esc(x.name)}</a>`).join('\n')}
-  </details>
-  <a href="/partnerships/"${current === '/partnerships/' ? ' aria-current="page"' : ''}>Work with us</a>
-  <a href="/supplier-portal/"${current === '/supplier-portal/' ? ' aria-current="page"' : ''}>Supplier Portal</a>
-  <a class="btn btn-light" href="/contact/">Contact us</a>
-</div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer drawer-l" id="drawerSec" aria-label="Sectors">
+  <button class="dr-close" type="button" data-close>${X_ICON} Sectors</button>
+  <nav class="dr-nav" aria-label="Sectors">
+${SECTORS.map(s => `    <a class="dr-item" href="${secHref(s)}"${cur(secHref(s))}>
+      ${icon(SECTOR_ICON[s.slug] || 'markets')}
+      <span class="dr-name">${esc(s.name)}</span>
+      <span class="dr-sub" lang="ar">${esc(s.ar || '')}</span>
+    </a>`).join('\n')}
+    <a class="dr-item dr-all" href="/sectors/"${cur('/sectors/')}>
+      <span class="dr-name">All sectors <span aria-hidden="true">&#8594;</span></span>
+      <span class="dr-sub">${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies</span>
+    </a>
+  </nav>
+</aside>
+<aside class="drawer drawer-r" id="drawerCorp" aria-label="Corporate">
+  <button class="dr-close" type="button" data-close>Corporate ${X_ICON}</button>
+  <nav class="dr-nav" aria-label="Corporate">
+${CORPORATE.map(([label, href]) => `    <a class="dr-item" href="${href}"${cur(href)}><span class="dr-name">${esc(label)}</span></a>`).join('\n')}
+  </nav>
+  <div class="dr-foot">
+    <p>${esc(SITE.blurb)} ${esc(SITE.supporting)}</p>
+    <a class="btn btn-gold" href="/contact/">Contact us</a>
+${social.map(([label, href]) => `    <a class="dr-link" href="${href}" target="_blank" rel="noopener">Connect on ${esc(label)}</a>`).join('\n')}
+  </div>
+</aside>
 <main id="main">
 `;
 }
@@ -570,34 +550,21 @@ function quickForm() {
 </div>`;
 }
 
-function footer(opts = {}) {
-  const social = SOCIAL();
+function footer() {
   return `</main>
 <footer class="site-foot">
-  <div class="wrap">
-    <div class="foot">
-      <div class="foot-id">
-        <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_DARK}</a>
-        <p>${esc(SITE.tagline)}<br>${esc(SITE.blurb)}</p>
-      </div>
-      <div class="foot-go">
-        <nav class="foot-nav" aria-label="Footer">
-          <a href="/about/">About us</a>
-          <a href="/partnerships/">Work with us</a>
-          <a href="/supplier-portal/">Supplier Portal</a>
-          <a href="/contact/">Contact</a>
-        </nav>
-        <p class="foot-reach">
-          <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
-          <a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a>
-${social.map(([label, href]) => `          <a href="${href}">${esc(label)}</a>`).join('\n')}
-        </p>
-      </div>
-    </div>
-    <p class="foot-legal">© ${esc(SITE.name)}. All Rights Reserved. · ${esc(SITE.contact.location)}</p>
+  <div class="wrap foot">
+    <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_DARK}</a>
+    <p class="foot-links">
+      <span>© ${esc(SITE.name)} | All Rights Reserved ${new Date().getFullYear()}</span>
+      <a href="/about/">About Us</a>
+      <a href="/partnerships/">Work With Us</a>
+      <a href="/supplier-portal/">Supplier Portal</a>
+      <a href="/contact/">Contact Us</a>
+    </p>
   </div>
 </footer>
-${opts.noQuick ? '' : quickForm()}
+${quickForm()}
 <script src="/assets/js/site.js?v=${ASSET_V.js}" defer></script>
 </body>
 </html>
@@ -643,13 +610,50 @@ const EYEBROW = {
   routesTitle: 'Two ways in'
 };
 
+/* The Arabic that sits under a section heading, by the heading's id — the
+   way TIBECO's site puts its Arabic sub-label under each English title. A
+   heading with no entry here simply has none. */
+const AR = {
+  coTitle: 'شركات المجموعة', whyTitle: 'لماذا لوسيل كورب', wwdTitle: 'كيف نعمل',
+  valTitle: 'قيمنا', vcTitle: 'كيف نخلق القيمة', prodTitle: 'ما نقدمه',
+  svcTitle: 'الخدمات', othTitle: 'استكشف المزيد', srcTitle: 'مصادر التوريد',
+  pwTitle: 'الشراكات', pillarTitle: 'كيف بُنيت', stepTitle: 'كيف تعمل',
+  howTitle: 'آلية العمل', growTitle: 'ما نتطلع إليه', spHowTitle: 'كيف تعمل البوابة',
+  catTitle: 'ما نقوم بشرائه', oppTitle: 'الفرص المتاحة', routesTitle: 'طريقتان للتواصل',
+  secTitle: 'قطاعاتنا', areaTitle: 'مجالات العمل', portalTitle: 'بوابة الموردين',
+  othSecTitle: 'القطاعات الأخرى'
+};
+
 function head2(id, html, aside) {
   return `<div class="head2 rise">
       <div class="head2-t">
-${EYEBROW[id] ? `        <p class="eyebrow">${esc(EYEBROW[id])}</p>\n` : ''}        <h2 id="${id}">${html}</h2>
+        <h2 id="${id}">${html}</h2>
+${AR[id] ? `        <p class="ar" lang="ar">${AR[id]}</p>\n` : ''}        <span class="rule" aria-hidden="true"></span>
       </div>
 ${aside ? `      <p>${esc(aside)}</p>` : ''}
     </div>`;
+}
+
+/* A tile: a photograph with the name along its foot, TIBECO's grid cell. */
+function tile(href, img, name, sub, ext) {
+  return `      <li><a class="tile" ${href}>
+        ${pic(img, '(max-width:560px) 100vw, (max-width:1000px) 50vw, 25vw', 'alt="" loading="lazy"')}
+${ext ? `        <span class="tile-mark" aria-hidden="true">&#8599;</span>\n` : ''}        <span class="tile-b">
+          <span class="tile-n">${esc(name)}${ext ? '<span class="vh"> — opens tibecogroup.com in a new tab</span>' : ''}</span>
+${sub ? `          <span class="tile-s"${sub.ar ? ' lang="ar"' : ''}>${esc(sub.ar || sub)}</span>\n` : ''}        </span>
+      </a></li>`;
+}
+
+function sectorTiles(except) {
+  return `<ul class="tiles">
+${SECTORS.filter(s => s.slug !== except).map(s => tile(`href="${secHref(s)}"`, s.hero, s.name, { ar: s.ar })).join('\n')}
+    </ul>`;
+}
+
+function companyTiles() {
+  return `<ul class="tiles tiles-5">
+${ALL_COMPANIES.map(c => tile(coLink(c), c.hero, c.name, c.role, !!c.site)).join('\n')}
+    </ul>`;
 }
 
 /* The card. Every company listing on the site is made of these. */
@@ -700,6 +704,10 @@ function ctaBand() {
 `;
 }
 
+/* The photographs behind the Group's name on the home page, in the order
+   they turn: the Group, then one for each of the fields it works in. */
+const HERO_SLIDES = ['hero-doha', 'hero-sector-investments', 'hero-sector-trading', 'hero-sector-supply-distribution', 'hero-sector-technology', 'hero-sector-energy-industrial'];
+
 /* ---------- the sectors, wherever they are listed -------------------------- */
 
 /* The seven sectors as a row of tabs under the home title — the way TIBECO
@@ -743,10 +751,10 @@ ${list.map(s => {
 
 /* The Supplier Portal, on the home page: TIBECO's site gives its portal a
    place on the front, and so does this one. */
-function portalBand() {
+function portalBand(id) {
   const nCats = SUPPLY.length;
   const nBuyers = new Set(SUPPLY.flatMap(c => c.buyers)).size;
-  return `<section class="section portal" aria-labelledby="portalTitle">
+  return `<section class="section portal"${id ? ` id="${id}"` : ''} aria-labelledby="portalTitle">
   <div class="wrap portal-in rise">
     <div class="portal-say">
       <p class="eyebrow">Supplier Portal</p>
@@ -874,98 +882,110 @@ function pageHome() {
     })
   })
     + header('/')
-    + `<section class="hero">
-  ${pic('hero-doha', '100vw', 'class="hero-bg" alt="" fetchpriority="high"')}
-  <div class="wrap hero-in">
-    <div class="hero-say">
-      <p class="hero-eyebrow">${esc(SITE.descriptor)}</p>
-      <h1>Building Businesses. Creating <em>Value</em>.</h1>
-      <p class="hero-lede">${esc(SITE.fields)}</p>
-      <div class="hero-cta">
-        <a class="btn btn-gold" href="/sectors/">Explore our sectors</a>
-        <a class="btn btn-ghost" href="/about/">About the Group</a>
-      </div>
+    + `<section class="hero" id="hero" aria-label="${esc(SITE.name)}">
+${HERO_SLIDES.map((name, i) => pic(name, '100vw', `class="hero-slide${i === 0 ? ' on' : ''}" alt=""${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'}`)).map(x => '  ' + x).join('\n')}
+  <div class="hero-veil" aria-hidden="true"></div>
+  <div class="hero-ring" aria-hidden="true"></div>
+  <div class="hero-say">
+    <h1>${esc(SITE.name)}</h1>
+    <p class="hero-fields">${esc(SITE.fields)}</p>
+    <p class="hero-eyebrow">${esc(SITE.descriptor)}</p>
+    <div class="hero-cta">
+      <a class="btn" href="#about">Learn more</a>
+      <a class="btn" href="#sectors">Our sectors</a>
     </div>
   </div>
-  <div class="wrap hero-strip">
-    ${sectorStrip()}
+  <div class="hero-dots">
+${HERO_SLIDES.map((n, i) => `    <button class="hero-dot${i === 0 ? ' on' : ''}" type="button" aria-label="Photograph ${i + 1} of ${HERO_SLIDES.length}" aria-pressed="${i === 0}"></button>`).join('\n')}
   </div>
 </section>
 
-<section class="section intro" aria-labelledby="introTitle">
-  <div class="wrap">
-    <div class="intro-top rise">
-      <div class="intro-head">
-        <p class="eyebrow">Who we are</p>
-        <h2 id="introTitle">Capital, commerce and <span class="soft">the means to deliver.</span></h2>
+<section class="section corp" id="about" aria-labelledby="corpTitle">
+  <div class="wrap corp-in">
+    <div class="rise">
+      <h2 id="corpTitle">Corporate Statement</h2>
+      <p class="ar" lang="ar">البيان المؤسسي</p>
+      <figure class="corp-pic">
+        ${pic('about-platform', '(max-width:900px) 100vw, 50vw', 'alt="" loading="lazy"')}
+      </figure>
+      <p class="say">${esc(SITE.name)} is a diversified corporate group based in the State of Qatar. It brings together businesses that invest, trade, supply and serve: energy, technology and institutional supply through TIBECO Group, commodity trading with international freight through Lusail Commercial, food import and distribution through ROMA Commercial, and a laundry and a café that serve households directly.</p>
+      <p class="say">The companies are run as parts of one group. Sourcing, logistics and commercial relationships built in one are open to the others, under one direction and one standard of governance.</p>
+      <a class="btn btn-gold" href="/about/">Discover ${esc(SITE.name)}</a>
+    </div>
+    <div class="corp-side rise d1">
+      <div>
+        <h2>Why ${esc(SITE.name)}</h2>
+        <p class="ar" lang="ar">لماذا لوسيل كورب</p>
+${WHY.map(w => `        <p class="say"><strong>${esc(w.t)}.</strong> ${esc(w.d)}</p>`).join('\n')}
       </div>
-      <div class="intro-note">
-        <div>
-          <p>Lusail Corp brings together businesses that invest, trade, supply and serve &mdash; energy, technology and institutional supply through TIBECO Group, and commodity trading with international freight through Lusail Commercial.</p>
-          <p>Alongside them the Group imports and distributes food across Qatar, and runs a laundry and a caf&eacute;. Sourcing, logistics and commercial relationships built in one company are open to the others.</p>
+      <div>
+        <h3>Institutional Strength</h3>
+        <p class="ar" lang="ar">القوة المؤسسية والحوكمة</p>
+        <div class="corp-box">
+          <p>Each company keeps its own identity, customers and commercial focus. The Group sets the commercial priorities with it and holds it to them, and puts in the processes and systems a company needs before it needs them.</p>
+          <p>Growth is selective by design: fewer, larger commitments, chosen for whether they will still make sense in a decade, and partnerships meant to last longer than a single transaction.</p>
         </div>
       </div>
     </div>
-    <div class="stats rise" id="stats">
-      <dl>
-${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">${esc(v)}</dd></div>`).join('\n')}
-      </dl>
+  </div>
+</section>
+
+<section class="section deep" id="sectors" aria-labelledby="secTitle">
+  <div class="wrap">
+    <div class="tiles-head rise">
+      <h2 id="secTitle" class="caps">Core Business Sectors</h2>
+      <p class="ar" lang="ar">القطاعات الرئيسية للمجموعة</p>
+      <p>${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies. Each sector serves a market the Group can see from Qatar, and each has a page of its own.</p>
     </div>
+    ${sectorTiles()}
   </div>
 </section>
 
-<section class="section" aria-labelledby="coTitle">
+<section class="section" id="companies" aria-labelledby="coTitle">
   <div class="wrap">
-    ${head2('coTitle', 'Our <span class="soft">businesses</span>', 'Each runs in its own market with its own customers.')}
-    ${companyLadder()}
-  </div>
-</section>
-
-<section class="section sectors stone" aria-labelledby="secTitle">
-  <div class="wrap">
-    <div class="head2 rise">
-      <div class="head2-t">
-        <p class="eyebrow">Our sectors</p>
-        <h2 id="secTitle">Diversified <span class="soft">by design</span></h2>
-      </div>
-      <p>${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies. Each one serves a market we can see from Qatar, and each has a page of its own.</p>
+    <div class="tiles-head rise">
+      <h2 id="coTitle" class="caps">Group Companies</h2>
+      <p class="ar" lang="ar">شركات المجموعة</p>
+      <p>Each runs in its own market with its own customers. TIBECO Group, the largest, has a website of its own.</p>
     </div>
-    ${sectorCards()}
-    <p class="after rise"><a class="btn btn-dark" href="/sectors/">All sectors <span aria-hidden="true">&#8594;</span></a></p>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="whyTitle">
-  <div class="wrap">
-    ${head2('whyTitle', 'What makes it a <span class="soft">group</span>', 'The businesses we own are varied. The way they are run is not.')}
-    ${bento()}
+    ${companyTiles()}
   </div>
 </section>
 
 <section class="section src" aria-labelledby="srcTitle">
-  <div class="wrap src-grid">
-    <div class="src-side">
-      <p class="eyebrow">Global reach</p>
-      <h2 id="srcTitle">Where we <span class="soft">source</span> from</h2>
-      <p class="src-lede">The origin is chosen per product &mdash; by season, quality, availability and the terms of the transaction.</p>
-      ${reachList()}
-    </div>
-    <div class="src-map">
-      ${reachGlobe()}
-    </div>
-  </div>
-</section>
-
-<section class="section" aria-labelledby="wwdTitle">
   <div class="wrap">
-    ${head2('wwdTitle', 'Building <span class="soft">More</span> Than a Portfolio', 'We are an active owner. Each company is run independently, but none of them is run alone.')}
-    ${whatWeDo()}
+    <div class="src-head rise">
+      <span class="ar" lang="ar">الحضور العالمي</span>
+      <h2 id="srcTitle">Global Presence</h2>
+      <span class="rule c" aria-hidden="true"></span>
+    </div>
+    <div class="src-grid">
+      <div class="src-side">
+        <p class="src-lede">Where the Group sources from, through Lusail Commercial and ROMA Commercial. The origin is chosen per product &mdash; by season, quality, availability and the terms of the transaction.</p>
+        ${reachList()}
+      </div>
+      <div class="src-map">
+        ${reachGlobe()}
+      </div>
+    </div>
+    <div class="src-foot rise">
+      <p>${esc(SITE.name)} maintains a presence across regional and international markets through its companies' commercial networks, sourcing relationships across six regions, and partnerships chosen to last.</p>
+      <div class="stats" id="stats">
+        <dl>
+${stats.map(([k, v]) => `          <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">${esc(v)}</dd></div>`).join('\n')}
+        </dl>
+      </div>
+    </div>
   </div>
 </section>
 
 `
     + portalBand()
     + ctaBand()
+    + footer();
+}
+
+/* ---------- about
     + footer();
 }
 
@@ -1059,6 +1079,12 @@ ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
   </div>
 </section>
 
+<section class="section" aria-labelledby="wwdTitle">
+  <div class="wrap">
+    ${head2('wwdTitle', 'Building More Than a Portfolio', 'We are an active owner. Each company is run independently, but none of them is run alone.')}
+    ${whatWeDo()}
+  </div>
+</section>
 
 `
     + ctaBand()
@@ -1381,16 +1407,19 @@ function pageSectorsIndex() {
       lede: 'The Group operates across investment, energy and technology, commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
       photo: 'hero-sectors'
     })
-    + `<section class="section" aria-labelledby="secAllTitle">
+    + `<section class="section deep" aria-labelledby="secAllTitle">
   <div class="wrap">
-    <h2 id="secAllTitle" class="sr-only">The sectors</h2>
-    ${sectorCards()}
+    <div class="tiles-head rise">
+      <h2 id="secAllTitle" class="caps">Core Business Sectors</h2>
+      <p class="ar" lang="ar">القطاعات الرئيسية للمجموعة</p>
+    </div>
+    ${sectorTiles()}
   </div>
 </section>
 
-<section class="section stone" aria-labelledby="whyTitle">
+<section class="section" aria-labelledby="whyTitle">
   <div class="wrap">
-    ${head2('whyTitle', 'What makes it a <span class="soft">group</span>', 'The businesses we own are varied. The way they are run is not.')}
+    ${head2('whyTitle', 'What makes it a group', 'The businesses we own are varied. The way they are run is not.')}
     ${bento()}
   </div>
 </section>
@@ -1400,21 +1429,19 @@ function pageSectorsIndex() {
     + footer();
 }
 
-/* One sector. Built the way TIBECO builds a platform page: the opening with
-   the sector's name, the argument for it, the business areas worked in it,
-   and the companies that work there — then the other sectors, and the ask.
-   The business areas are not written here: each is a product or service of
-   a company in the sector (areasOf, in data/site.js), so a sector page can
-   never claim an area no company offers. */
+/* One sector, built the way TIBECO builds a platform page: a full-screen
+   opening with the pill label and the name; sticky tabs; the overview beside
+   its facts; the business areas as cards, each naming the company behind it;
+   the companies; a closing statement; the Supplier Portal; the other sectors.
+   The business areas are not written here: each is a product or service of a
+   company in the sector (areasOf, in data/site.js). */
 function pageSector(s) {
   const i = SECTORS.indexOf(s);
   const areas = areasOf(s);
-  /* the sector's own entries carry no sector name of their own; the flat
-     list's copies do, and the cards need it */
   const cos = s.companies.map(c => ALL_COMPANIES.find(x => x.slug === c.slug) || c);
-  const own = s.companies.filter(c => !c.sectorSlug || c.sectorSlug === s.slug);
   const names = s.companies.map(c => c.name);
   const through = names.length === 1 ? names[0] : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+  const buys = cos.some(c => SUPPLY.some(x => x.buyers.includes(c.slug)));
   const areaCard = (a, k) => {
     const c = a.company;
     return `      <article class="area rise d${k % 4}">
@@ -1436,34 +1463,44 @@ ${a.img ? `        <span class="area-pic">${pic(a.img, '(max-width:700px) 100vw,
     })
   })
     + header('/sectors/')
-    + pageHead({
-      eyebrow: `Our Sectors · ${num(i)}`, eyebrowHref: '/sectors/',
-      h1: s.name,
-      lede: s.intro,
-      photo: s.hero,
-      action: { href: '#areas', label: 'Business areas' },
-      action2: { href: own[0] && !own[0].site ? `/contact/?company=${own[0].slug}` : '/contact/', label: 'Talk to us' }
-    })
-    + `<section class="section stone sec-over" aria-labelledby="secOverTitle">
-  <div class="wrap sec-over-in">
+    + `<section class="phero">
+  ${pic(s.hero, '100vw', 'class="phero-bg" alt="" fetchpriority="high"')}
+  <div class="phero-say">
+    <span class="pill">${icon(SECTOR_ICON[s.slug] || 'markets')}${esc(SITE.name)} &ndash; Sector ${num(i)}</span>
+    <h1>${esc(s.name)}</h1>
+    <p class="ar" lang="ar">${esc(s.ar || '')}</p>
+    <p class="phero-sub">${esc(s.headline)}</p>
+  </div>
+</section>
+
+<nav class="stabs" id="stabs" aria-label="On this page">
+  <a href="#overview" class="on">Overview</a>
+  <a href="#areas">Business areas</a>
+  <a href="#companies">Companies</a>
+${buys ? '  <a href="#portal">Supplier Portal</a>\n' : ''}  <a href="#sectors">Other sectors</a>
+</nav>
+
+<section class="section stone" id="overview" aria-labelledby="secOverTitle">
+  <div class="wrap grid3">
     <div class="rise">
-      <p class="eyebrow">The sector</p>
-      <h2 id="secOverTitle">${esc(s.headline)}</h2>
-      <dl class="sec-facts">
-        <div><dt>Companies</dt><dd>${s.companies.length}</dd></div>
-        <div><dt>Business areas</dt><dd>${areas.length}</dd></div>
-        <div><dt>Through</dt><dd>${esc(through)}</dd></div>
-      </dl>
+      <h2 id="secOverTitle">Overview</h2>
+      <p class="ar" lang="ar">نظرة عامة</p>
+      <span class="rule" aria-hidden="true"></span>
+      <p class="eyebrow">${esc(s.intro)}</p>
     </div>
-    <div class="sec-over-text rise d1">
-${s.body.map(p => `      <p>${esc(p)}</p>`).join('\n')}
-    </div>
+    <p class="rise d1">${esc(s.body[0])}</p>
+    <p class="rise d2">${esc(s.body[1])}</p>
   </div>
 </section>
 
 <section class="section" id="areas" aria-labelledby="areaTitle">
   <div class="wrap">
-    ${head2('areaTitle', 'Business <span class="soft">areas</span>', `${cap(plural(areas.length, 'area', 'areas'))} the Group works in here, through ${esc(through)}.`)}
+    <div class="chead rise">
+      <h2 id="areaTitle">Business Areas</h2>
+      <span class="ar" lang="ar">مجالات العمل</span>
+      <span class="rule c" aria-hidden="true"></span>
+      <p>${cap(plural(areas.length, 'area', 'areas'))} the Group works in here, through ${esc(through)}.</p>
+    </div>
     <div class="areas">
 ${areas.map(areaCard).join('\n')}
     </div>
@@ -1472,20 +1509,25 @@ ${areas.map(areaCard).join('\n')}
 
 <section class="section stone" id="companies" aria-labelledby="coTitle">
   <div class="wrap">
-    ${head2('coTitle', 'Companies in <span class="soft">this sector</span>', s.companies.length === 1 ? 'One company carries the Group here today.' : 'Each runs in its own market with its own customers.')}
+    ${head2('coTitle', 'Companies in this sector', s.companies.length === 1 ? 'One company carries the Group here today.' : 'Each runs in its own market with its own customers.')}
     ${companyRail(cos)}
   </div>
 </section>
 
-<section class="section" aria-labelledby="othTitle">
+<section class="closing">
   <div class="wrap">
-    ${head2('othTitle', 'The other <span class="soft">sectors</span>', '')}
-    ${sectorCards(s.slug)}
+    <p>${esc(s.body[2])}</p>
+  </div>
+</section>
+
+${buys ? portalBand('portal') : ''}<section class="section" id="sectors" aria-labelledby="othSecTitle">
+  <div class="wrap">
+    ${head2('othSecTitle', 'The other sectors', '')}
+    ${sectorTiles(s.slug)}
   </div>
 </section>
 
 `
-    + ctaBand()
     + footer();
 }
 
@@ -2005,7 +2047,7 @@ function pageContact() {
 </section>
 
 `
-    + footer({ noQuick: true });
+    + footer();
 }
 
 function page404() {

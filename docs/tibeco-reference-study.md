@@ -3,149 +3,91 @@
 Management asked for the Lusail Corp site to be designed like TIBECO Group's
 (<https://www.tibecogroup.com/>), and for TIBECO's **platforms** to become
 Lusail's **sectors**. This note records what was studied, how the two sites
-map onto each other, what was built, and what still has to be checked against
-the live reference.
+map onto each other, what was built, and what still needs the Group's eye.
 
-## What could and could not be studied
+## What was studied
 
-The reference site could **not be loaded** from the environment this work was
-done in: its network policy refuses `tibecogroup.com`, and the web archive with
-it. What follows about TIBECO's site therefore comes from three sources:
+The reference's own source, the `tibeco-9a2c97f1` repository on the Group's
+GitHub (a React site built with Tailwind; the live site is deployed from it).
+Every component, page and design token below was read from that source, not
+inferred.
 
-1. **The search index.** The site's title is "TIBECO GROUP — Commerce" and its
-   description "Elite International Business Group. Commerce, Investment &
-   Services across global markets." — a group that puts its three platforms in
-   front, with Commerce first, and describes itself in one line over the title.
-2. **This repository's own history.** TIBECO is a Lusail Corp company, and the
-   Supplier Portal here was carried over from TIBECO's (paths, the portal strip,
-   the register page with its progress rail and documents, the "no page per
-   event" rule). The earlier sessions that did this recorded what they saw:
-   the site is set in **Inter**, its bar is **solid**, each platform has its
-   own page, its business areas are listed with a large photograph, and it
-   states ISO 9001 / 14001 / 45001, ICC Qatar membership and a presence across
-   the Gulf, Europe, North Africa and Asia.
-3. **TIBECO's content as the Group holds it** (`data/site.js`): three
-   platforms — Commerce, Investments, Services — and five business areas:
-   Energy & Industrial Materials; Technology & Advanced Systems; Industrial,
-   Institutional & Commercial Equipment; Strategic Commodities & Food Security;
-   Project-Based Commercial Supply.
+### TIBECO's site, as its source describes it
 
-Everything visual below is an inference from that, built so that it can be
-corrected quickly once the live site can be compared (see the checklist).
+| | TIBECO Group |
+|---|---|
+| **Grounds** | Dark throughout: page `hsl(220 20% 10%)`, card `hsl(220 18% 14%)`, "mannai-dark" band `hsl(220 25% 8%)`, secondary `hsl(220 15% 20%)`, border `hsl(220 15% 22%)`. Type near-white; muted copy `hsl(215 20% 65%)`. |
+| **Accent** | One amber gold, `hsl(38 90% 55%)`, for labels, rules, pins, the primary button. |
+| **Type** | Playfair Display (400–700) for every heading; Raleway (300–700) for everything else. Labels uppercase, tracked `.2em`–`.3em`. |
+| **Shapes** | `--radius: 0.25rem`; cards `rounded-lg` (8px) with a hairline border that turns `accent/40` on hover. No shadows on cards. |
+| **Bar** | Fixed, transparent; `bg-mannai-dark/95` + blur + shadow after 50px of scroll. Left: "☰ Platforms". Centre: the logo (280×80; the monogram alone under 640px). Right: "Corporate ☰". |
+| **Menus** | Two drawers over a dimmed page. Left (Platforms): the three platforms, each expanding to its five areas, with icon, uppercase name and Arabic. Right (Corporate): Home, Who We Are, Careers, Supplier Portal, Contact; a profile-PDF button; LinkedIn. |
+| **Home** | Preloader (three bouncing dots, 1.8s) → full-screen hero: six photographs crossfading every 5s, `mannai-dark/60` veil, a faint 500px circle, centred "TIBECO GROUP" / "Commerce \| Investment \| Services" / "ELITE INTERNATIONAL BUSINESS GROUP" in gold, two joined buttons ("Learn More" \| "Our Platforms"), slide dots → **Corporate Statement** (image, two paragraphs, "DISCOVER TIBECO") beside **Why TIBECO GROUP** and an **Institutional Strength** box → **Core Business Platforms**: each platform a header row (icon, uppercase name, Arabic, hairline, one line) over a 4-column grid of 4:3 image tiles, the name revealed on hover → **Global Presence**: centred heading with Arabic above and a gold rule, a Mercator map with pulsing pins and dashed gold lines, a paragraph and two figures → Partners marquee → Certificates marquee. |
+| **Platform page** | PlatformHero (full-screen centred, with a pill badge "TIBECO – Commerce Platform"; or left-aligned 80vh, split, compact 60vh) → sticky tabs (gold fill on the active one) → sections alternating card and page grounds: a 3-column "Strategic Positioning" (heading + rule + gold label, two paragraphs), icon-card grids, a numbered timeline, bullet lists, a two-card "Platform Integration", a centred **closing statement**, the **Supplier Portal band**. |
+| **Who We Are** | 60vh photograph, "TIBECO GROUP" and the section tabs in the hero; Chairman's message, Who We Are, Vision, Market Positioning, Strategic Philosophy, Credentials — each a heading, Arabic, a 64px gold rule, and columns of small muted paragraphs; photographic dividers between. |
+| **Footer** | One line: the logo at the left; © · Privacy Policy · Terms · Supplier Portal · Contact Us at the right. |
+| **Corner** | A 40px square mail button opening a small contact card; a back-to-top button above it after 400px. |
+| **Supplier Portal** | A portal strip under the bar (Supplier Portal · بوابة الموردين · Opportunities · How it works · Requirements · Register); the home with "Supply the Group. Bid in one place.", a "Closing soon" card, how it works as four numbered cards, categories, the opportunities table, requirements and principles, fraud notice and support. Already carried over to this site in an earlier pass. |
+| **Arabic** | Every section heading carries an Arabic sub-label in the accent; platforms and areas carry Arabic names. |
 
 ## How TIBECO's structure maps onto Lusail Corp
 
 | TIBECO Group | Lusail Corp | Where |
 |---|---|---|
-| "Elite International Business Group" over the title | "Diversified Qatari Business Group" | `SITE.descriptor` |
-| "Commerce, Investment & Services across global markets" | "Investment, Trade, Supply & Services across Qatar and international markets." | `SITE.fields` |
-| **Three platforms** — Commerce, Investments, Services | **Seven sectors** — Investments & Strategic Services, Trading & Commodities, Supply & Distribution, Energy & Industrial, Technology & Advanced Systems, Consumer & Lifestyle Services, Food & Beverage | `SECTORS` |
-| A page per platform | A page per sector, `/sectors/<slug>/` | `pageSector()` |
-| Business areas on a platform page | Business areas on a sector page — each one a product or service of a company in the sector, tagged with `in: [...]` | `areasOf()` |
-| Companies / brands under a platform | Companies in the sector (TIBECO itself is one, linked to its own site) | `sector.companies` |
-| About / the Group | About Us | `/about/` |
-| Supplier Portal (portal · opportunities · register) | Supplier Portal, same three routes, plus a band on the home page | `/supplier-portal/` |
-| Contact | Contact (the one button on the bar) | `/contact/` |
-| Credentials: ISO 9001 · 14001 · 45001 · ICC Qatar | Not claimed for the Group — TIBECO holds them, Lusail Corp does not (see "What to confirm") | — |
+| "ELITE INTERNATIONAL BUSINESS GROUP" | "DIVERSIFIED QATARI BUSINESS GROUP" | `SITE.descriptor` |
+| "Commerce \| Investment \| Services" | "Investment \| Trade \| Supply \| Services" | `SITE.fields` |
+| **Three platforms** — Commerce, Investments, Services | **Seven sectors** | `SECTORS` |
+| "☰ Platforms" drawer: platforms → areas | "☰ Sectors" drawer: the seven sectors, with icon, name and Arabic | `header()` |
+| "Corporate ☰" drawer: Home, Who We Are, Careers, Supplier Portal, Contact, profile PDF, LinkedIn | "Corporate ☰" drawer: Home, About Us, Work With Us, Supplier Portal, Contact, the Contact button, LinkedIn when set | `CORPORATE` |
+| Core Business Platforms: header row + 4-column image tiles per platform | Core Business Sectors: seven image tiles; Group Companies: five tiles | `sectorTiles()`, `companyTiles()` |
+| A page per platform (× 5 areas = 15 pages) | A page per sector (7), each listing its business areas | `pageSector()` |
+| Business areas on a platform page | Business areas on a sector page — each a product or service of a company in the sector, tagged with `in: [...]` | `areasOf()` |
+| Corporate Statement / Why TIBECO / Institutional Strength | The same three blocks, from the Group's own copy | `pageHome()` |
+| Global Presence map + 2 figures | The sourcing globe + the Group's 4 figures (counted from the content) | `reachGlobe()`, `FIGURES` |
+| Certificates and Partners marquees | Left out — the Group has none to show yet | — |
+| Preloader | Left out — an artificial 1.8s delay | — |
+| Who We Are with tabs | About Us (the Group, vision and mission, values, value creation, how we work) | `pageAbout()` |
+| Careers | Left out — no careers page by the Group's earlier decision | — |
 
-Seven top-level items would crowd a bar, so **Sectors** is one word on the bar
-with a panel of seven under it, a strip of seven under the home title, and a
-grid of seven cards on the home page and the sectors index. Three of the seven
-sectors are worked only through TIBECO Group today; their pages say so
+Seven top-level sectors do not fit a bar, which is also why TIBECO puts its
+platforms behind a drawer: the structure carries over unchanged. Three of the
+seven sectors are worked only through TIBECO Group today; their pages say so
 ("through TIBECO Group") and link to tibecogroup.com.
+
+## What was kept Lusail's
+
+- **The gold** is the logo's `#D3A750`, not TIBECO's amber `hsl(38 90% 55%)`.
+  On these grounds it reads at 9:1, so it is text as well as mark. One token.
+- **The globe** stays in place of TIBECO's flat map: it already shows the
+  Group's sourcing as gold arcs into Doha, in the same language.
+- **The content** is the Group's own throughout; nothing of TIBECO's copy
+  was carried over.
 
 ## The new site, page by page
 
 ```
 /                          Home
 /about/                    The Group
-/sectors/                  The seven sectors, as cards
-/sectors/<slug>/           One sector — NEW
+/sectors/                  The seven sectors, as tiles
+/sectors/<slug>/           One sector — the platform page, re-cast
 /companies/<slug>/         One company (TIBECO opens tibecogroup.com instead)
 /partnerships/             Work With Us
 /supplier-portal/          The Supplier Portal, /opportunities/, /register/, /code/
 /contact/                  Channels and the enquiry form
 ```
 
-**Home.** Solid white bar. A photograph with the descriptor over the title
-("Building Businesses. Creating Value."), the fields line, two buttons, and
-the **seven sectors as a strip** along the foot of the photograph. Then: who
-we are, with the four figures counted from the content; the five businesses;
-the **seven sectors as cards** (the first wide); what makes it a group; where
-we source from (the globe); how we work; the **Supplier Portal band**; the ask.
-
-**A sector page** — the platform page, re-cast. The sector's name and line over
-its photograph, with "Business areas" and "Talk to us". The sector's argument
-(its headline and three paragraphs) beside three facts: companies, business
-areas, and through whom. The **business areas** as a grid of cards — a
-photograph, the name, a line, and "through <company>" — drawn from the
-companies' own product lists, so a sector can never claim an area no company
-offers. The companies in the sector as cards. The other six sectors. The ask.
-
-**The sectors index.** The seven cards and "What makes it a group".
-
-**Company pages, About, Work With Us, the Portal, Contact** keep their content
-and order; they take the solid bar, the shorter opening, the type and the card
-shapes.
-
-## The design language adopted
-
-| | First design | Now (TIBECO reference) | Set in |
-|---|---|---|---|
-| Bar | Navy, transparent over the home photograph | **Solid white**, hairline under it, navy words, gold "Contact us" button | `.site-head` |
-| Headings | Newsreader, a light serif | **Inter, bold, tight** | `--display`, `h1, h2` |
-| Running text | Inter | Inter | `--body` |
-| Openings | Full-screen photograph behind a floating bar | Photograph **under** the bar, 58 % of the screen | `.pagehead`, `.hero` |
-| Components | Hairline rules, no boxes | **Rounded cards** (14 px), soft shadow when lifted, round arrow buttons | `--radius`, `--shadow`, `.seccard`, `.area`, `.cocard` |
-| Buttons | Square | Rounded (8 px); gold on photographs | `.btn`, `.btn-gold` |
-| Colour | Navy, gold, warm greys | Unchanged — the brand stays Lusail's | `:root` |
-| Sectors | An accordion of seven strips; one long index page | A strip, a grid of cards, a page each | `sectorStrip()`, `sectorCards()`, `pageSector()` |
-
-## What to check against the live tibecogroup.com
-
-Open the reference beside the new site and compare these; each names where to
-change it here.
-
-- [ ] **Bar.** Is TIBECO's bar white or dark? Does it carry a button? →
-      `.site-head`, `.head-cta` in `assets/css/site.css`.
-- [ ] **Hero.** Full-screen or shorter? Centred or left? Is there a strip of
-      platforms under the title, or are they the first section below? →
-      `.hero`, `.secstrip`; `pageHome()` in `build/render.js`.
-- [ ] **The descriptor.** Where "Elite International Business Group" sits and
-      how it is set (eyebrow over the title, or a line under it) → `.hero-eyebrow`.
-- [ ] **Platform page.** Order of blocks: overview, business areas, brands,
-      credentials, contact? Business areas as cards, a list, or a list beside
-      one large photograph? → `pageSector()`, `.areas`.
-- [ ] **Cards.** Corner radius, border or shadow, hover behaviour → `--radius`,
-      `--shadow`, `.seccard`, `.area`.
-- [ ] **Type.** Heading weight and tracking (700 and −0.025 em here) → `h1, h2`,
-      `--t-display`, `--t-h1`.
-- [ ] **Colour.** TIBECO's blue is `#3b82c4` in the Group's own record of it;
-      Lusail stays navy and gold. If management wants the *palette* to follow
-      TIBECO too, that is `--ink`, `--gold`, `--gold-text` in `:root`.
-- [ ] **Counters.** Does TIBECO show figures (years, countries, projects)? The
-      Group's four are counted from the content (`FIGURES`).
-- [ ] **Credentials band.** TIBECO shows its ISO and ICC credentials; Lusail
-      Corp has none to show as a Group. Leave out, or add the Group's own once
-      confirmed.
-- [ ] **Footer.** Columns and contents → `footer()`.
-- [ ] **The Supplier Portal** was already carried over from TIBECO's; check it
-      still matches after the restyle.
-
-To do the comparison from a build session, add `www.tibecogroup.com` to the
-environment's allowed domains (Network access, in the environment settings),
-then ask for a second pass.
-
 ## What to confirm with the Group
 
-- **The descriptor line** "Diversified Qatari Business Group" and the fields
-  line under the title — written for this redesign, not from the Group's own
-  words.
-- **Business-area tags.** Which sector pages each TIBECO and Lusail Commercial
-  product appears on (`in: [...]` in `data/site.js`) is a reading of the
-  products, not a statement from the companies. Freight appears on both
-  Trading and Supply & Distribution; TIBECO's Equipment on Energy and Supply.
-- **Three sectors through TIBECO alone.** Investments, Energy & Industrial and
-  Technology have no Lusail company of their own; their pages say "through
-  TIBECO Group". If that reads as too thin, either fold them into fewer
-  sectors or add the companies that belong there.
+- **The Arabic sub-labels** under section headings and sector names were
+  written for this redesign (`AR` in `build/render.js`, `ar` in
+  `data/site.js`). A native reader should check them before launch; they can
+  be removed by emptying `AR` and the `ar` fields.
+- **The descriptor line** and the fields line under the Group's name.
+- **Business-area tags.** Which sector pages each TIBECO and Lusail
+  Commercial product appears on (`in: [...]`) is a reading of the products,
+  not a statement from the companies.
+- **Three sectors through TIBECO alone.** Investments, Energy & Industrial
+  and Technology have no Lusail company of their own. Either fold them into
+  fewer sectors or add the companies that belong there.
+- **The gold.** If management wants the palette to follow TIBECO exactly, set
+  `--gold` to `#f4a825`.
