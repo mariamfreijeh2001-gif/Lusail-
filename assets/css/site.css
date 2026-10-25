@@ -20,31 +20,41 @@ white is the air. Gold is never small text on paper — it reads at about
    --gold-text,
 a deepened gold that holds 5.8:1.
 
-   TYPE: Playfair Display for every heading and large numeral, Raleway for
-   everything else — the two faces TIBECO Group's site is set in. Both served
-   from this origin. SIL Open Font License; see site-assets/font/.
-
-   GROUNDS: TIBECO's. Dark throughout — the page, a card a shade lighter, a
-   deep band darker — with near-white type and Lusail's own gold as the one
-   accent. The tokens are in :root below; the grammar that uses them (the
-   fixed bar, the drawers, the slideshow, the tiles, the section heads) is
-   the block headed THE TIBECO GRAMMAR, near the end.
+   TYPE: Newsreader (light serif) for page titles,
+section headings,
+card
+   titles and the large numerals; Inter for everything else,
+labels and
+   eyebrows included. Both are served from this origin rather than from
+   Google,
+which saves a DNS lookup,
+a TLS handshake and a render-blocking
+   stylesheet. SIL Open Font License; see site-assets/font/.
    ========================================================================== */
 
-/* The two faces TIBECO Group's site is set in: Playfair Display for every
-   heading and large numeral, Raleway for everything else. Each in its latin
-   cut, served from this origin. The Arabic sub-labels fall back to the
-   system's Arabic face, as they do on TIBECO's site. */
+/* The latin cut of each,
+which is all an English-only site needs. Inter is
+   the text face — the one TIBECO's site is set in,
+and its ampersand is a
+   plain one,
+where Archivo's read like a backwards E in every "&" name the
+   footer lists. */
 @font-face{
-  font-family:"Playfair Display";
-  src:url("/assets/font/playfair-display-latin.woff2") format("woff2");
+  font-family:"Inter";
+  src:url("/assets/font/inter-latin.woff2") format("woff2");
   font-weight:400 700;font-style:normal;font-display:swap;
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 @font-face{
-  font-family:"Raleway";
-  src:url("/assets/font/raleway-latin.woff2") format("woff2");
-  font-weight:300 700;font-style:normal;font-display:swap;
+  font-family:"Newsreader";
+  src:url("/assets/font/newsreader-latin.woff2") format("woff2");
+  font-weight:300 400;font-style:normal;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:"Newsreader";
+  src:url("/assets/font/newsreader-italic-latin.woff2") format("woff2");
+  font-weight:300;font-style:italic;font-display:swap;
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
@@ -52,39 +62,38 @@ a deepened gold that holds 5.8:1.
   /* Carbon, and the two greys under it. --ink sets headings and every dark
      ground; --ink-2 is body copy; --ink-3 is the greyed word inside a
      heading, which is the system's one flourish. */
-  /* TIBECO's grounds, as hsl(220 20% 10%) and its neighbours resolve:
-     the page, a card a shade lighter, a raised panel lighter again, and the
-     deep band darker than the page. Type is near-white; secondary copy the
-     slate that TIBECO uses (hsl 215 20% 65%). */
-  --bg:#141821;             /* the page */
-  --paper:#1d212a;          /* a card, and the alternate section ground */
-  --panel:#2b303b;          /* a raised panel, a secondary button */
-  --deep:#0f1319;           /* the deep band: the bar once scrolled, the drawers, the footer */
-  --fg:#f8fafc;             /* headings and body on the dark grounds */
-  --ink-2:#a3adbf;          /* secondary copy — TIBECO's muted foreground, lifted a step for AA on the card ground */
-  --ink-3:#7b8597;          /* the greyed word inside a heading; 24px and up only */
-  --label:#a3adbf;          /* labels and eyebrows */
-  --ink-inv-2:#a3adbf;      /* secondary copy on the deep band — the same slate */
-  --white:var(--bg);        /* legacy name: the page ground */
-  --warm:var(--fg);         /* legacy name: type on a dark ground */
-  /* --ink was the navy that set headings AND every dark ground. The grounds
-     now read --deep and the type --fg; the name stays for the few places
-     that still mean "the darkest thing here". */
-  --ink:var(--deep);
-  --line:#2f3540;           /* hairlines — TIBECO's border, hsl(220 15% 22%) */
-  --line-2:#3b4250;
+  --ink:#0B1A3A;
+  /* The design drew these three a good deal paler: #868585 body copy, #c0bfbd
+     for the greyed word in a heading, #c2bebe for the numerals. Measured
+     against the grounds they actually sit on they came out at 3.15, 1.69 and
+     1.58 to 1 — body copy that fails WCAG AA everywhere it appears, and a
+     greyed heading word barely separable from the paper. These are the
+     palest each can be and still clear AA (4.5 for copy, 3 for large text).
+     --ink-3 and --num are a shade darker again than that floor: at the bare
+     minimum they measured 3.00 on the panel ground, which is the threshold
+     exactly and leaves nothing for a later change to spend. They clear 3.16
+     on the darkest ground they sit on now. */
+  --ink-2:#474d63;          /* secondary copy: the system's ink-muted */
+  --ink-3:#7a7f90;          /* the greyed word in a heading; 24px and up only */
+  --label:#474d63;          /* labels and eyebrows on paper */
+  --ink-inv-2:#b6bcd0;      /* secondary copy on a navy band */
 
-  /* The gold is Lusail's own, from the logo: on these grounds it reads at
-     9:1, so it is text as well as mark. TIBECO's is a warmer amber
-     (hsl 38 90% 55%); the brand keeps its own. */
-  --gold:#D3A750;
-  --gold-text:#D3A750;
+  /* Grounds. Sections alternate white and paper; panels sit a shade darker
+     again, outlined rather than shadowed. */
+  --white:#ffffff;
+  --paper:#f8f7f6;
+  --panel:#eceae8;
+  --line:#dedcd9;
+  --warm:#f7f4f1;           /* type on a dark ground */
 
-  --display:"Playfair Display","Iowan Old Style",Georgia,serif;
-  --body:"Raleway","Segoe UI",system-ui,-apple-system,sans-serif;
-  --ui:"Raleway","Segoe UI",system-ui,-apple-system,sans-serif;
+  --gold:#D3A750;           /* the brand gold: rules, dashes, markers — a mark, not text on paper */
+  --gold-text:#7d5a1d;      /* gold that has to be read on a light ground: 5.8:1 */
+
+  --display:"Newsreader","Iowan Old Style",Georgia,serif;
+  --body:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --ui:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
   /* labels: the text face, uppercase and tracked, rather than a third one */
-  --mono:"Raleway","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
 
   /* The design is drawn at 1440 with a 1210 measure. Every size below is the
      drawn value, floored so it still reads on a phone. */
@@ -103,13 +112,6 @@ a deepened gold that holds 5.8:1.
   --t-xs:.8125rem;                             /* 13px */
   --t-xxs:.75rem;                              /* 12px, the map's pin names */
 
-  /* the shapes: cards and buttons are softly rounded, and a lifted card
-     carries one soft shadow — the corporate grammar TIBECO's site uses,
-     in place of the hairline rules the first design drew */
-  --radius:8px;             /* a card: TIBECO's rounded-lg */
-  --radius-s:4px;           /* a button, a tile: TIBECO's --radius */
-  --shadow:0 20px 50px rgba(0,0,0,.35);
-
   --head-h:104px;
   /* the drawn frame is 1440 with 115 gutters, which leaves the 1210 measure
      every section is set to; --wrap is the frame, padding included */
@@ -126,8 +128,9 @@ a deepened gold that holds 5.8:1.
      coherent with the home page instead of stranding them on the old one. */
   --gold-deep:var(--gold-text);
   --stone:var(--panel);
+  --line-2:#c9c6c2;
 
-  color-scheme:dark;
+  color-scheme:light;
 }
 
 *{box-sizing:border-box}
@@ -143,7 +146,7 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 }
 
 body{
-  margin:0;background:var(--white);color:var(--fg);
+  margin:0;background:var(--white);color:var(--ink);
   font-family:var(--body);font-size:var(--t-body);line-height:1.6;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
   text-rendering:optimizeLegibility;font-kerning:normal;
@@ -159,10 +162,10 @@ h2,
 h3,
 h4{margin:0;font-weight:600;line-height:1.2;text-wrap:balance}
 h1,
-h2{font-family:var(--display);font-weight:700;letter-spacing:-.005em}
-h3{font-family:var(--display);font-weight:600;letter-spacing:0}
+h2{font-family:var(--display);font-weight:400;letter-spacing:-.012em}
+h3{font-family:var(--body);letter-spacing:-.005em}
 
-:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
 
 /* The one flourish: a heading greys out a word to name its own subject. */
 .soft{color:var(--ink-3)}
@@ -213,22 +216,19 @@ not rounded,
 and set in the UI face rather than the body one. */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.6em;
-  font:700 .75rem/1.6 var(--ui);letter-spacing:.14em;text-transform:uppercase;
-  padding:14px 30px;border-radius:var(--radius-s);
+  font:600 var(--t-sm)/1.5 var(--ui);letter-spacing:.02em;padding:14px 26px;border-radius:2px;
   text-decoration:none;border:1px solid transparent;cursor:pointer;
   transition:background .2s,color .2s,border-color .2s,transform .2s;
 }
 .btn:active{transform:translateY(1px)}
-/* the gold action, on any ground */
-.btn-gold,
-.btn-dark{background:var(--gold);border-color:var(--gold);color:var(--deep)}
-.btn-gold:hover,
-.btn-dark:hover{background:#e0b863;border-color:#e0b863;color:var(--deep)}
-/* the quiet action: a raised panel, gold on hover */
-.btn-light{background:rgba(43,48,59,.85);border-color:var(--line-2);color:var(--fg);backdrop-filter:blur(6px)}
-.btn-light:hover{background:var(--gold);border-color:var(--gold);color:var(--deep)}
-.btn-ghost{background:transparent;border-color:var(--line-2);color:var(--fg)}
-.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+/* on a photograph */
+.btn-light{background:#fff;border-color:#fff;color:var(--ink)}
+.btn-light:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.btn-ghost{background:transparent;border-color:rgba(255,255,255,.65);color:#fff}
+.btn-ghost:hover{background:#fff;border-color:#fff;color:var(--ink)}
+/* on paper */
+.btn-dark{background:var(--ink);color:var(--warm)}
+.btn-dark:hover{background:var(--gold);color:var(--ink)}
 
 .section{padding-block:var(--band)}
 .section.stone{background:var(--paper)}
@@ -273,7 +273,7 @@ and the same size
   color:rgba(255,255,255,.92);
 }
 .pagehead h1{
-  font-size:var(--t-display);line-height:1.05;font-weight:700;letter-spacing:-.03em;
+  font-size:var(--t-display);line-height:1.05;font-weight:300;letter-spacing:-.018em;
   color:#fff;max-width:16ch;
 }
 /* 500,
@@ -320,7 +320,7 @@ not a second heading. */
 }
 .vm:hover::before{width:100%}
 .vm-label{display:inline-flex;font:600 .75rem/1.2 var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--label)}
-.vm h3{font:700 clamp(1.625rem,2.4vw,2.25rem)/1.15 var(--display);letter-spacing:-.012em;color:var(--fg);max-width:22ch}
+.vm h3{font:300 clamp(1.625rem,2.4vw,2.25rem)/1.15 var(--display);letter-spacing:-.012em;color:var(--ink);max-width:22ch}
 .vm p{font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2);max-width:46ch}
 @media (max-width:820px){ .vm-grid{grid-template-columns:1fr} }
 
@@ -353,8 +353,8 @@ and the section is about half as
   transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
 }
 .valcard:hover::before{transform:scaleX(1)}
-.valcard-n{font:700 1.75rem/1 var(--display);color:var(--gold-text);letter-spacing:-.01em}
-.valcard h3{font:600 1.5rem/1.2 var(--display);color:var(--fg);margin-top:6px}
+.valcard-n{font:300 1.75rem/1 var(--display);color:var(--gold-text);letter-spacing:-.01em}
+.valcard h3{font:400 1.5rem/1.2 var(--display);color:var(--ink);margin-top:6px}
 .valcard p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-2)}
 
 @media (max-width:900px){ .vals{grid-template-columns:repeat(2,minmax(0,1fr))} }
@@ -391,8 +391,8 @@ is untouched. */
 }
 .vc:hover{border-color:var(--ink-3);transform:translateY(-3px)}
 .vc .ico{width:22px;height:22px;color:var(--ink-2);margin-bottom:2px;transition:color .3s}
-.vc:hover .ico{color:var(--fg)}
-.vc h3{font:600 1.375rem/1.22 var(--display);color:var(--fg)}
+.vc:hover .ico{color:var(--ink)}
+.vc h3{font:400 1.375rem/1.22 var(--display);color:var(--ink)}
 .vc p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){
   .vcreate{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -427,7 +427,7 @@ a gold one drawn
   transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
 }
 .pline:hover::before{transform:scaleX(1)}
-.pline h3{font:600 1.375rem/1.22 var(--display);color:var(--fg)}
+.pline h3{font:400 1.375rem/1.22 var(--display);color:var(--ink)}
 .pline p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){ .plines{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:560px){ .plines{grid-template-columns:minmax(0,1fr)} }
@@ -481,8 +481,8 @@ the name and a line. */
 .prod-pic{grid-row:1 / span 4;display:block;overflow:hidden;background:var(--panel);aspect-ratio:1}
 .prod img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
 .prod:hover img{transform:scale(1.06)}
-.prod-n{grid-column:2;font:700 1.125rem/1 var(--display);color:var(--co-text,var(--gold-text))}
-.prod h3{grid-column:2;font:600 1.25rem/1.2 var(--display);color:var(--fg);margin:0}
+.prod-n{grid-column:2;font:300 1.125rem/1 var(--display);color:var(--co-text,var(--gold-text))}
+.prod h3{grid-column:2;font:400 1.25rem/1.2 var(--display);color:var(--ink);margin:0}
 .prod p{grid-column:2;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2)}
 .prod-from{grid-column:2}
 @media (max-width:860px){ .prodgrid{grid-template-columns:1fr} }
@@ -501,7 +501,7 @@ the name and a line. */
   font:500 var(--t-sm)/1.4 var(--body);color:var(--ink-2);
   transition:border-color .2s,color .2s;
 }
-.tags li:hover{border-color:var(--ink-3);color:var(--fg)}
+.tags li:hover{border-color:var(--ink-3);color:var(--ink)}
 
 /* ==========================================================================
    The portfolio — filter chips over the cards
@@ -520,7 +520,7 @@ the name and a line. */
 .channels dt{color:var(--ink-3)}
 .channels dd{margin:0;font-size:var(--t-lede)}
 .channels a{text-decoration:none;border-bottom:1px solid var(--line-2)}
-.channels a:hover{border-color:var(--fg)}
+.channels a:hover{border-color:var(--ink)}
 
 form{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;align-content:start}
 .field{display:grid;gap:8px}
@@ -529,13 +529,13 @@ label{font-size:var(--t-sm);color:var(--ink-2)}
 input,
 select,
 textarea{
-  font:inherit;color:var(--fg);background:var(--paper);
+  font:inherit;color:var(--ink);background:var(--paper);
   border:1px solid var(--line-2);border-radius:2px;padding:.9em .95em;width:100%;
   transition:border-color .2s;
 }
 input:focus,
 select:focus,
-textarea:focus{outline:none;border-color:var(--fg)}
+textarea:focus{outline:none;border-color:var(--ink)}
 /* The darkened border cannot carry focus on its own: it is also what an
    invalid field wears,
 so "you are here" and "this is wrong" looked the same,
@@ -543,7 +543,7 @@ and 28 of the 59 tab stops on this page had no focus mark at all. */
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible{
-  outline:2px solid var(--gold);outline-offset:2px;
+  outline:2px solid var(--ink);outline-offset:2px;
 }
 input[aria-invalid="true"],
 select[aria-invalid="true"],
@@ -576,6 +576,59 @@ so the picture runs the whole screen and the
    over the whole frame.
    ========================================================================== */
 
+.hero{
+  position:relative;overflow:hidden;isolation:isolate;
+  display:grid;align-content:end;
+  background:var(--ink);
+  min-height:min(900px,100vh);
+  padding-block:calc(var(--head-h) + 40px) clamp(48px,7.5vw,108px);
+}
+@supports (height:100svh){ .hero{min-height:min(900px,100svh)} }
+
+.hero-bg{
+  position:absolute;inset:0;z-index:-2;
+  width:100%;height:100%;object-fit:cover;object-position:50% 38%;
+}
+/* One wash,
+weighted to the floor where the words are,
+plus a light veil at
+   the very top so the navigation holds over a bright sky. */
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  /* Set from the rendered pixels, like the page heroes: the sky behind the
+     towers is bright enough that the statement measured 2.3:1 against it. */
+  background:
+    linear-gradient(180deg, rgba(6,15,36,.52) 0%, rgba(6,15,36,.12) 22%, rgba(6,15,36,0) 42%),
+    linear-gradient(0deg, rgba(6,15,36,.9) 0%, rgba(6,15,36,.72) 24%, rgba(6,15,36,.32) 48%, rgba(6,15,36,.04) 68%, rgba(6,15,36,0) 78%);
+}
+
+.hero > .wrap{
+  position:relative;z-index:1;width:100%;
+  display:grid;justify-items:start;align-content:end;gap:32px;
+}
+.hero-say{flex:1 1 420px;max-width:686px;min-width:0}
+.hero h1{
+  font-size:clamp(2.75rem,5.4vw,4.75rem);line-height:1.02;color:#fff;
+  font-weight:300;letter-spacing:-.022em;text-wrap:balance;
+}
+/* the one italic word,
+in gold: the hero's single flourish */
+.hero h1 em{font-style:italic;font-weight:300;color:var(--gold);letter-spacing:-.01em}
+.hero-lede{
+  margin-top:clamp(18px,2vw,26px);max-width:54ch;
+  font-size:var(--t-lg);line-height:1.55;font-weight:400;color:rgba(255,255,255,.9);
+}
+.hero-cta{display:flex;flex-wrap:wrap;gap:20px;flex:none}
+
+@media (max-width:900px){
+  .hero > .wrap{display:grid;justify-items:start}
+  .hero-cta{margin-top:8px}
+}
+@media (max-width:560px){
+  .hero-cta{width:100%;gap:10px}
+  .hero-cta .btn{width:100%;justify-content:center}
+}
+
 /* ==========================================================================
    Components introduced with the real content
    ========================================================================== */
@@ -587,7 +640,230 @@ so the picture runs the whole screen and the
   font-size:var(--t-sm);color:var(--ink-2);border-radius:2px;
   transition:border-color .2s,color .2s;
 }
-.tags li:hover{border-color:var(--gold);color:var(--fg)}
+.tags li:hover{border-color:var(--gold);color:var(--ink)}
+
+/* ==========================================================================
+   The bar — the mark on the left,
+the links through the middle,
+one action
+   on the right. Over the home photograph it starts transparent and fills as
+   the page moves; everywhere else it is carbon from the first pixel.
+   ========================================================================== */
+
+.site-head{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;gap:clamp(14px,2.4vw,40px);
+  height:var(--head-h);padding-inline:var(--gutter);
+  background:var(--ink);
+  transition:background .3s ease,backdrop-filter .3s ease;
+}
+.site-head .brand{display:flex;align-items:center;flex:none;text-decoration:none}
+.site-head .brand img{height:46px;width:auto}
+
+/* Set in sentence case at reading size with room around each item,
+rather
+   than small uppercase packed together: a navigation is a list of words
+   people read,
+not a row of labels. */
+.nav{display:flex;align-items:center;gap:clamp(4px,1.6vw,26px);margin-inline:auto}
+.nav-link,
+.nav-caret{
+  display:flex;align-items:center;gap:2px;height:44px;padding-inline:10px;
+  font:500 var(--t-sm)/1.4 var(--body);letter-spacing:.012em;
+  color:var(--warm);text-decoration:none;
+  background:none;border:0;cursor:pointer;
+  transition:color .2s;
+}
+.nav-link:hover,
+.nav-caret:hover,
+.nav-caret[aria-expanded="true"],
+.navwrap.open .nav-sec{color:var(--gold)}
+/* the page you are on is named in gold */
+.nav-link[aria-current="page"],
+.nav-link[aria-current="true"]{color:var(--gold)}
+.nav-caret svg{width:22px;height:22px;flex:none;fill:currentColor;transition:transform .25s}
+.nav-caret[aria-expanded="true"] svg{transform:rotate(180deg)}
+/* the caret is its own control,
+so it carries its own hit area and sits
+   tight against the word it belongs to */
+.nav-sec{padding-right:2px}
+.nav-caret{padding-inline:4px;min-width:26px;justify-content:center}
+
+/* the one action on the bar,
+in the brand's own gold */
+.head-cta{
+  flex:none;background:var(--gold);border:1px solid var(--gold);color:var(--ink);
+  font:600 var(--t-xs)/1.6 var(--ui);letter-spacing:.11em;text-transform:uppercase;
+  padding:12px 24px;text-align:center;text-decoration:none;white-space:nowrap;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.head-cta:hover,
+.head-cta:focus-visible{background:#c2963f;border-color:#c2963f}
+
+/* ---- the sectors panel --------------------------------------------------
+   A white sheet the width of the measure,
+not a dropdown hanging off the
+   button. The whole portfolio is four sectors and five listings,
+so it all
+   fits,
+and a visitor reaches the business they came for in one move. */
+.navwrap{position:static;display:flex;align-items:center}
+.secmenu{
+  /* the measure, not the frame: it lines up with the content below it */
+  position:absolute;top:100%;left:50%;transform:translate(-50%,-8px);
+  width:min(1210px, calc(100vw - 2 * var(--gutter)));
+  background:#fff;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .22s,transform .22s,visibility .22s;
+  z-index:61;border:1px solid var(--line);border-top:0;
+}
+.navwrap.open .secmenu{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0)}
+/* The pointer has to cross the bottom of the bar to reach the panel. This
+   strip belongs to the panel,
+so that journey never counts as leaving. */
+.secmenu::before{
+  content:"";position:absolute;left:0;right:0;top:-40px;height:40px;
+}
+
+.secmenu-eyebrow{
+  display:block;margin:0;padding:15px 26px;border-bottom:1px solid #e9e9e9;
+  font:500 var(--t-micro)/1.43 var(--ui);text-transform:uppercase;letter-spacing:.06em;
+  color:#6f6f6f;text-decoration:none;transition:color .2s;
+}
+.secmenu-eyebrow:hover{color:var(--ink)}
+.secmenu-eyebrow span{display:inline-block;transition:transform .2s}
+.secmenu-eyebrow:hover span{transform:translateX(4px)}
+.secmenu-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.secmenu-col{
+  display:grid;align-content:start;gap:9px;
+  padding:27px 24px 30px;
+}
+.secmenu-col + .secmenu-col{border-inline-start:1px solid #e9e9e9}
+
+/* WCAG 2.2 asks for a 24px target. These were the text's own 20px,
+so each
+   one now carries a little height of its own. */
+.secmenu-head{
+  display:flex;align-items:center;gap:7px;text-decoration:none;
+  margin-bottom:2px;padding-block:4px;min-height:24px;
+}
+.secmenu-head .ico{width:18px;height:18px;flex:none;color:var(--ink)}
+.secmenu-head span{font:600 var(--t-body)/1.25 var(--ui);color:var(--ink)}
+.secmenu-head:hover span{color:#030C2B}
+
+.secmenu a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* the panel is a pointer affordance; below the breakpoint the whole bar
+   collapses into the drawer instead */
+@media (max-width:1080px){ .secmenu{display:none} }
+
+/* ---- the small-screen panel --------------------------------------------- */
+.burger{
+  display:none;flex:none;background:none;border:0;cursor:pointer;padding:10px;
+  color:var(--warm);
+}
+.burger svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+
+.menu{
+  position:fixed;inset:var(--head-h) 0 0;z-index:59;background:var(--ink);
+  padding:10px var(--gutter) 40px;overflow-y:auto;overscroll-behavior:contain;
+  display:grid;align-content:start;gap:2px;
+  opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .25s,transform .25s,visibility .25s;
+}
+.menu.open{opacity:1;visibility:visible;transform:none}
+
+.menu a{
+  padding:16px 2px;text-decoration:none;color:var(--warm);
+  font:500 var(--t-body)/1.4 var(--ui);text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.menu a.sub{
+  text-transform:none;font-family:var(--body);font-size:var(--t-sm);
+  color:var(--ink-2);padding-left:18px;
+}
+.menu .btn{margin-top:22px}
+
+@media (max-width:1080px){
+  .nav,
+.head-cta{display:none}
+  .burger{display:block;margin-inline-start:auto}
+  .site-head{justify-content:space-between}
+}
+@media (max-width:560px){
+  .site-head .brand img{height:38px}
+}
+@media (prefers-reduced-motion:reduce){
+  .secmenu,
+.menu,
+.nav-caret svg{transition:none}
+}
+
+/* ---- over the photograph ------------------------------------------------ */
+
+.site-head.over{
+  position:fixed;inset-inline:0;top:0;background:transparent;
+}
+.site-head.over.scrolled{
+  background:rgba(11,26,58,.92);backdrop-filter:blur(10px);
+}
+
+/* ==========================================================================
+   Footer — the mark and what the Group is,
+then the two lists that answer
+   "which business?" and "how do I reach you?"
+   ========================================================================== */
+
+/* Compact: the seven sectors run in two columns rather than one long one,
+and the legal line sits on a rule rather than under a gap. */
+.site-foot{background:var(--ink);color:var(--warm);padding-block:44px 22px}
+.foot-go{display:grid;gap:18px;justify-items:end;align-content:start}
+.foot-nav{display:flex;flex-wrap:wrap;gap:6px 26px}
+.foot-nav a{
+  display:inline-flex;align-items:center;min-height:44px;
+  font:500 var(--t-sm)/1.4 var(--ui);color:rgba(255,255,255,.78);text-decoration:none;
+  transition:color .2s;
+}
+.foot-nav a:hover,.foot-nav a:focus-visible{color:#fff}
+.foot-reach{display:flex;flex-wrap:wrap;gap:6px 26px;justify-content:flex-end}
+.foot-reach a{
+  display:inline-flex;align-items:center;min-height:44px;
+  font:400 var(--t-sm)/1.4 var(--ui);color:rgba(255,255,255,.55);text-decoration:none;
+  transition:color .2s;
+}
+.foot-reach a:hover,.foot-reach a:focus-visible{color:#fff}
+.foot{
+  display:grid;grid-template-columns:minmax(0,320px) minmax(0,auto);
+  gap:clamp(32px,6vw,96px);justify-content:space-between;align-items:start;
+}
+.foot-id{display:grid;gap:14px;align-content:start}
+.foot-id img{height:38px;width:auto}
+.foot-id p{font:400 var(--t-micro)/1.6 var(--body);color:var(--ink-inv-2);max-width:32ch}
+
+.foot-legal{
+  margin-top:clamp(28px,3.4vw,40px);padding-top:16px;border-top:1px solid rgba(255,255,255,.1);
+  font:400 var(--t-xxs)/1.67 var(--ui);color:rgba(255,255,255,.5);
+}
+
+@media (max-width:860px){
+  .foot{grid-template-columns:1fr;gap:40px}
+}
+
+/* On a phone the footer was 695px — most of a screen of furniture under
+   every page,
+on top of the closing band above it. The two link columns sit
+   side by side instead of stacking,
+the sentence under the mark goes (the
+   page above it has just said as much),
+and everything draws in. */
+@media (max-width:700px){
+  .site-foot{padding-block:30px 22px}
+  .foot{gap:24px}
+  .foot-id{gap:14px}
+  .foot-id img{height:32px}
+  .foot-id p{display:none}
+  .foot-legal{margin-top:20px}
+}
 
 /* ==========================================================================
    A section head used across the home page: the statement on the left with
@@ -651,7 +927,7 @@ as a description list requires; the grid draws the <dd> above it. */
 /* Tabular figures: every digit the same width,
 so counting up changes the
    glyphs without changing the measure and relaying out the row 56 times. */
-.stats dd{margin:0;font:700 clamp(2.5rem,4.2vw,4rem)/1 var(--display);color:var(--fg);letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums}
+.stats dd{margin:0;font:300 clamp(2.5rem,4.2vw,4rem)/1 var(--display);color:var(--ink);letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums}
 .stats dd::before{content:"";display:block;width:28px;height:2px;background:var(--gold);margin-bottom:16px}
 
 @media (max-width:860px){
@@ -662,69 +938,128 @@ so counting up changes the
 }
 
 /* ==========================================================================
-   The sectors as cards — on the home page, on the sectors index and at the
-   foot of each sector page. A photograph, the number and the mark, the
-   name, its line, and how many companies work in it. Each is a way into
-   the sector's own page, as each of TIBECO's platform cards is.
+   Diversified by Design — the sectors as an accordion
+   One sector stands open with its line and a way in; the rest are narrow
+   strips with their names set upright. Pointing at a strip,
+or tabbing to
+   it,
+opens it — and it stays open when the pointer leaves,
+so the row never
+   collapses into seven equal slivers. Without script the first is open and
+   every strip is still a plain link to its sector.
    ========================================================================== */
 
-.sectors{padding-block:var(--band)}
-.seccards{
-  list-style:none;margin:clamp(30px,4vw,54px) 0 0;padding:0;
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.8vw,24px);
+.sectors{padding-block:clamp(40px,5vw,56px)}
+.sectors .wrap{display:grid;gap:clamp(24px,3vw,32px);justify-items:center}
+.sec-intro{max-width:746px;text-align:center;display:grid;gap:10px;justify-items:center}
+.sec-intro h2{font-size:var(--t-h1);line-height:1.33}
+.sec-intro p{font-size:var(--t-lg);line-height:1.39;font-weight:500;color:var(--ink-2)}
+
+/* The accordion runs wider than the page column — nearly the full screen,
+up to 1680px — and tall,
+so the open sector reads as a feature rather
+   than a card. --acc-pad is the inset from the screen edge. */
+.acc{
+  --acc-pad:clamp(16px,2.4vw,40px);
+  display:flex;gap:8px;
+  justify-self:stretch;
+  width:min(1680px,calc(100vw - 2 * var(--acc-pad)));
+  margin-inline:calc(50% - min(840px,50vw - var(--acc-pad)));
+  height:clamp(400px,calc(100svh - 384px),720px);
 }
-.seccard{
-  display:grid;grid-template-rows:auto 1fr;height:100%;
-  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
-  text-decoration:none;color:inherit;
-  transition:transform .3s,box-shadow .3s,border-color .3s;
+.acc-item{
+  position:relative;overflow:hidden;isolation:isolate;flex:1 1 0;min-width:0;
+  background:var(--ink);text-decoration:none;color:#fff;
+  transition:flex-grow .7s cubic-bezier(.65,0,.35,1);
 }
-.seccard:hover,
-.seccard:focus-visible{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
-.seccard:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.seccard-shot{display:block;overflow:hidden;background:var(--panel)}
-.seccard-shot img{
-  display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
-  transition:transform .6s cubic-bezier(.2,.7,.2,1);
+/* about half the row,
+as the reference draws it */
+.acc-item.is-open{flex-grow:6}
+.acc-bg{
+  position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;
+  opacity:.62;transition:opacity .6s,transform 1.2s cubic-bezier(.2,.7,.2,1);
 }
-.seccard:hover .seccard-shot img{transform:scale(1.05)}
-.seccard-body{display:grid;gap:10px;align-content:start;padding:clamp(18px,2vw,26px)}
-.seccard-top{display:flex;justify-content:space-between;align-items:center}
-.seccard-n{font:600 .75rem/1 var(--ui);letter-spacing:.14em;color:var(--gold-text)}
-.seccard-top .ico{width:24px;height:24px;color:var(--fg)}
-.seccard-name{font:600 clamp(1.125rem,1.4vw,1.375rem)/1.2 var(--ui);letter-spacing:-.015em;color:var(--fg)}
-.seccard-say{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
-.seccard-foot{
-  display:flex;justify-content:space-between;align-items:center;gap:12px;
-  margin-top:auto;padding-top:14px;border-top:1px solid var(--line);
-  font:600 var(--t-xs)/1.3 var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--label);
+.acc-item.is-open .acc-bg{opacity:.95}
+.acc-item:hover .acc-bg{transform:scale(1.05)}
+.acc-item::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to top,rgba(6,15,36,.88) 0%,rgba(6,15,36,.45) 50%,rgba(6,15,36,.2) 100%);
+  transition:background .6s;
 }
-.seccard-go{
-  display:inline-grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;
-  border:1px solid var(--line-2);color:var(--fg);font-size:1rem;
-  transition:background .25s,color .25s,border-color .25s,transform .25s;
+.acc-item.is-open::after{
+  background:
+    linear-gradient(90deg,rgba(6,15,36,.88) 0%,rgba(6,15,36,.62) 40%,rgba(6,15,36,.08) 78%),
+    linear-gradient(0deg,rgba(6,15,36,.55) 0%,rgba(6,15,36,0) 50%);
 }
-.seccard:hover .seccard-go{background:var(--gold);border-color:var(--gold);transform:translateX(3px)}
-.sectors .after{text-align:center}
-/* all seven: four across, the first wide, so three rows fill without a gap */
-.seccards-all{grid-template-columns:repeat(4,minmax(0,1fr))}
-.seccards-all > li:first-child{grid-column:span 2}
-.seccards-all > li:first-child .seccard-shot img{aspect-ratio:auto;height:100%;min-height:220px}
-.seccards-all > li:first-child .seccard{grid-template-rows:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.seccards-all > li:first-child .seccard-name{font-size:clamp(1.25rem,1.8vw,1.625rem)}
-@media (max-width:1100px){
-  .seccards,
-  .seccards-all{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .seccards-all > li:first-child .seccard{grid-template-columns:1fr;grid-template-rows:auto 1fr}
-  .seccards-all > li:first-child .seccard-shot img{aspect-ratio:16/9;height:auto;min-height:0}
+.acc-item:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* a closed strip: its number at the top,
+its name upright,
+read bottom-up */
+.acc-num{
+  position:absolute;top:30px;left:50%;transform:translateX(-50%);
+  font:400 1.0625rem/1 var(--display);letter-spacing:.1em;color:var(--gold);
+  transition:opacity .3s;
 }
-@media (max-width:700px){ .seccards,.seccards-all{grid-template-columns:1fr} .seccards-all > li:first-child{grid-column:auto} }
+.acc-tab{
+  position:absolute;left:50%;bottom:40px;transform:translateX(-50%) rotate(180deg);
+  writing-mode:vertical-rl;white-space:nowrap;
+  font:700 clamp(.875rem,1.05vw,1.0625rem)/1 var(--ui);letter-spacing:.12em;text-transform:uppercase;
+  text-shadow:0 1px 12px rgba(6,15,36,.5);
+  transition:opacity .3s;
+}
+.acc-item.is-open .acc-num,
+.acc-item.is-open .acc-tab{opacity:0}
+
+/* The open sector's text keeps one fixed width,
+so nothing re-wraps while
+   the panel grows; the panel clips it until there is room,
+then it fades
+   in once the panel has opened. */
+.acc-body{
+  position:absolute;left:clamp(28px,3.6vw,64px);bottom:clamp(32px,4vw,64px);
+  width:34rem;max-width:calc(100vw - 2 * var(--acc-pad) - 120px);
+  display:grid;gap:16px;justify-items:start;
+  opacity:0;transform:translateY(16px);pointer-events:none;
+  transition:opacity .3s,transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.acc-item.is-open .acc-body{opacity:1;transform:none;transition-delay:.35s}
+.acc-n{font:400 1.0625rem/1.2 var(--display);letter-spacing:.1em;color:var(--gold)}
+.acc-body h3{font:300 clamp(2.25rem,3.6vw,3.625rem)/1.04 var(--display);letter-spacing:-.02em}
+.acc-say{font:400 clamp(1.0625rem,1.3vw,1.25rem)/1.55 var(--body);color:#fff;max-width:32ch}
+.acc-go{
+  margin-top:10px;display:inline-flex;align-items:center;gap:14px;
+  font:700 var(--t-sm)/1 var(--ui);letter-spacing:.12em;text-transform:uppercase;
+}
+.acc-arrow{
+  display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.8);font-size:1.125rem;
+  transition:transform .3s,background .3s,border-color .3s,color .3s;
+}
+.acc-item:hover .acc-arrow{transform:translateX(5px);background:var(--gold);border-color:var(--gold);color:var(--ink)}
+
+/* Below this seven upright strips are too thin to hold a name,
+so the
+   sectors stack: each a band with its name,
+the open one tall with its line. */
+@media (max-width:860px){
+  .acc{flex-direction:column;height:auto;gap:6px;width:auto;margin-inline:0}
+  .acc-item,.acc-item.is-open{flex:none;height:78px;transition:height .5s cubic-bezier(.4,0,.2,1)}
+  .acc-item.is-open{height:340px}
+  .acc-num{top:50%;left:20px;transform:translateY(-50%)}
+  .acc-tab{
+    writing-mode:horizontal-tb;transform:translateY(-50%);
+    left:60px;top:50%;bottom:auto;
+  }
+  .acc-item::after,.acc-item.is-open::after{background:linear-gradient(to top,rgba(6,15,36,.92),rgba(6,15,36,.35))}
+  .acc-body{left:20px;bottom:24px;width:auto;max-width:none;right:20px}
+  .acc-body h3{font-size:2rem}
+}
 @media (prefers-reduced-motion:reduce){
-  .seccard,
-  .seccard-shot img,
-  .seccard-go{transition:none}
-  .seccard:hover{transform:none}
-  .seccard:hover .seccard-shot img{transform:none}
+  .acc-item,
+.acc-bg,
+.acc-body,
+.acc-arrow{transition:none}
 }
 
 /* ==========================================================================
@@ -757,10 +1092,10 @@ and a hairline between each. Pointing at a
 }
 .why-item:hover::before{transform:scaleY(1)}
 .why-n{
-  font:700 clamp(2rem,3vw,2.875rem)/1 var(--display);letter-spacing:-.02em;
+  font:300 clamp(2rem,3vw,2.875rem)/1 var(--display);letter-spacing:-.02em;
   color:var(--gold-text);font-variant-numeric:tabular-nums;
 }
-.why-item h3{font:600 clamp(1.25rem,1.7vw,1.5rem)/1.2 var(--display);color:var(--fg);margin:0 0 6px}
+.why-item h3{font:400 clamp(1.25rem,1.7vw,1.5rem)/1.2 var(--display);color:var(--ink);margin:0 0 6px}
 .why-item p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-2);max-width:56ch}
 
 @media (max-width:900px){
@@ -803,7 +1138,7 @@ each with its count */
   padding:12px 0 13px;border-top:1px solid rgba(255,255,255,.12);
   display:grid;gap:3px;cursor:default;transition:opacity .25s;
 }
-.reg h3{font:600 1.125rem/1.3 var(--display);color:#fff;transition:color .25s}
+.reg h3{font:400 1.125rem/1.3 var(--display);color:#fff;transition:color .25s}
 .reg-n{display:block;margin-top:3px;font:600 .625rem/1.2 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .reg p{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-inv-2)}
 .reg > li.on h3{color:var(--gold)}
@@ -857,7 +1192,7 @@ and is about a third of the height.
    ========================================================================== */
 
 .next{padding-block:clamp(44px,5vw,72px)}
-.next-card{border-radius:var(--radius);overflow:hidden;
+.next-card{
   position:relative;overflow:hidden;
   background:var(--ink);color:#fff;
   padding:clamp(30px,3.4vw,44px) clamp(24px,3.2vw,48px);
@@ -872,7 +1207,7 @@ so the strip is not a plain slab */
   width:230px;height:auto;opacity:.07;pointer-events:none;
 }
 .next-say{display:grid;gap:10px;max-width:60ch}
-.next-card h2{font:700 clamp(1.625rem,2.4vw,2.25rem)/1.15 var(--display);color:#fff;max-width:24ch}
+.next-card h2{font:300 clamp(1.625rem,2.4vw,2.25rem)/1.15 var(--display);color:#fff;max-width:24ch}
 .next-say p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-inv-2)}
 .next-act{display:flex;gap:12px;flex-wrap:wrap;position:relative}
 
@@ -939,7 +1274,7 @@ a 1fr track would stretch the card across the
 
 .cocard-body{display:grid;gap:5px;align-content:start;padding:clamp(16px,1.8vw,22px)}
 .cocard-sector{color:var(--gold-deep)}
-.cocard-name{font-family:var(--display);font-weight:600;font-size:1.25rem;line-height:1.2;letter-spacing:-.015em;color:var(--fg)}
+.cocard-name{font-family:var(--display);font-weight:400;font-size:1.375rem;line-height:1.2;color:var(--ink)}
 .cocard-role{color:var(--ink-3);font-size:var(--t-micro);line-height:1.5}
 
 @media (prefers-reduced-motion:reduce){
@@ -957,73 +1292,223 @@ so a role that
 .cocard-body{grid-template-rows:auto auto 1fr}
 .cocard-role{align-self:start}
 
+/* ---- the bar over the home photograph -----------------------------------
+   Transparent to start,
+filling on hover,
+on focus,
+and once the page has
+   scrolled far enough that the picture is no longer behind it. */
+
+.site-head.over{
+  position:fixed;inset-inline:0;top:0;background:transparent;
+}
+.site-head.over:hover,
+.site-head.over:focus-within,
+.site-head.over.scrolled{
+  background:rgba(11,26,58,.92);backdrop-filter:blur(10px);
+}
+@media (prefers-reduced-motion:reduce){ .site-head.over{transition:none} }
+
 /* ==========================================================================
-   One sector — built the way TIBECO builds a platform page
-   The argument beside its facts; the business areas as a grid of cards,
-   each naming the company behind it; then the companies, and the rest.
+   The sectors index — built to the Figma (node 200:360)
+
+   One grid holds the whole page: a 330px index at the left that sticks while
+   you scroll,
+and a 746px column at the right carrying the four sectors in
+   turn. Each sector is a heading,
+its line,
+its argument,
+the businesses
+   inside it and a photograph — the reading leads and the picture follows,
+because a sector is an argument about a market rather than a picture of
+   one. The index marks whichever sector is on screen,
+so the page always
+   says where you are and what else there is.
    ========================================================================== */
 
-.sec-over-in{
-  display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);
-  gap:clamp(32px,5vw,96px);align-items:start;
+.secidx{
+  display:grid;align-items:start;
+  /* 360 + 105 + 746 = the 1211 measure the whole site is set to. The
+     Figma draws the index at 330, which fits its longest sector name with
+     four pixels to spare and none at all once the marker arrow has a
+     column of its own; 360 gives every name a line to itself. */
+  grid-template-columns:[rail] 360px [main] minmax(0,746px) [end];
+  justify-content:center;
+  column-gap:105px;
+  /* the same gutter every other section keeps, so the page does not run to
+     the edges once the two columns stop fitting the measure */
+  padding-inline:var(--gutter);
 }
-.sec-over h2{font-size:var(--t-h1);line-height:1.1;margin-top:14px;max-width:16ch}
-.sec-facts{margin:clamp(24px,3vw,36px) 0 0;display:grid;border-top:1px solid var(--line-2)}
-.sec-facts > div{
-  display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr);gap:16px;
-  padding:14px 0;border-bottom:1px solid var(--line-2);
-}
-.sec-facts dt{font:600 .6875rem/1.6 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label)}
-.sec-facts dd{margin:0;font:500 var(--t-body)/1.5 var(--body);color:var(--fg)}
-.sec-over-text{display:grid;gap:1.1em;padding-top:6px;font:400 var(--t-lg)/1.6 var(--body);color:var(--ink-2)}
-@media (max-width:900px){ .sec-over-in{grid-template-columns:1fr} }
 
-/* ---- the business areas -------------------------------------------------- */
-.areas{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:clamp(14px,1.8vw,22px);margin-top:clamp(30px,4vw,54px);
-}
-.area{
-  position:relative;display:grid;gap:10px;align-content:start;
-  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(16px,1.8vw,22px);
-  transition:box-shadow .3s,transform .3s,border-color .3s;
-}
-.area:hover{box-shadow:var(--shadow);transform:translateY(-3px);border-color:transparent}
-.area-pic{display:block;overflow:hidden;border-radius:var(--radius-s);background:var(--panel);margin-bottom:6px}
-.area-pic img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
-.area-mark{
-  display:grid;place-items:center;width:56px;height:56px;border-radius:var(--radius-s);
-  background:var(--paper);color:var(--fg);margin-bottom:6px;
-}
-.area-mark .ico{width:26px;height:26px}
-.area-n{font:600 .75rem/1 var(--ui);letter-spacing:.14em;color:var(--gold-text)}
-.area h3{font:600 1.0625rem/1.3 var(--ui);letter-spacing:-.01em;color:var(--fg)}
-.area p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
-.area-by{
-  margin-top:auto;padding-top:12px;border-top:1px solid var(--line);
-  font:600 var(--t-xs)/1.4 var(--ui);color:var(--fg);text-decoration:none;
-}
-.area-by:hover{color:var(--gold-text)}
-@media (max-width:1100px){ .areas{grid-template-columns:repeat(3,minmax(0,1fr))} }
-@media (max-width:800px){ .areas{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:520px){ .areas{grid-template-columns:1fr} }
-@media (prefers-reduced-motion:reduce){ .area{transition:none} .area:hover{transform:none} }
+/* ---- the index ---------------------------------------------------------- */
 
-/* ---- the Supplier Portal on the home page --------------------------------- */
-.portal{background:var(--ink);color:#fff}
-.portal-in{
-  display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
-  gap:clamp(28px,5vw,80px);align-items:center;
+/* A list,
+not a table of contents in a box. The entries are quiet until the
+   reading reaches them; the one you are in goes to full carbon and puts a
+   marker in the margin. The cells,
+the dividers and the filled row were all
+   drawing attention to the index rather than to what it points at. */
+.secrail{
+  grid-column:rail;grid-row:1 / span 99;
+  position:sticky;top:calc(var(--head-h) + 40px);
+  margin-top:clamp(44px,5.4vw,84px);
+  z-index:2;
 }
-.portal .eyebrow{color:var(--gold)}
-.portal h2{font-size:var(--t-h1);line-height:1.1;color:#fff;max-width:18ch}
-.portal-say p:not(.eyebrow){margin-top:18px;font:400 var(--t-lg)/1.6 var(--body);color:var(--ink-inv-2);max-width:60ch}
-.portal-act{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end}
-@media (max-width:860px){
-  .portal-in{grid-template-columns:1fr}
-  .portal-act{justify-content:flex-start}
+.secrail ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.secrail a{
+  position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);
+  align-items:center;gap:10px;min-height:44px;padding:8px 10px 8px 26px;
+  font:500 var(--t-lede)/1.4 var(--body);color:var(--on-2);text-decoration:none;
+  transition:color .25s;
 }
-@media (max-width:560px){ .portal-act .btn{width:100%} }
+.secrail-n{font-variant-numeric:tabular-nums;transition:color .25s}
+/* the marker sits in the margin,
+so nothing moves when it appears */
+.secrail-go{
+  position:absolute;left:2px;top:50%;translate:-5px -50%;
+  opacity:0;color:var(--on);transition:opacity .25s,translate .25s;
+}
+.secrail a[aria-current="location"]{color:var(--on);font-weight:600}
+.secrail a[aria-current="location"] .secrail-go{opacity:1;translate:0 -50%}
+/* After the mark,
+not before it: an attribute selector and :hover weigh the
+   same,
+so source order decided which won,
+and pointing at the sector you
+   were already reading did nothing at all. */
+.secrail a:hover,
+.secrail a:focus-visible{color:var(--on)}
+.secrail a:hover .secrail-go,
+.secrail a:focus-visible .secrail-go{opacity:.45;translate:0 -50%}
+@media (prefers-reduced-motion:reduce){
+  .secrail a,
+.secrail-n,
+.secrail-go{transition:none}
+}
+
+/* ---- the other sectors,
+at the foot of a sector page --------------------
+   Three cards in a row. This had been carrying the class the sectors index
+   uses for its rail-and-reading layout{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(12px,1.6vw,20px);margin-top:clamp(26px,3.4vw,44px);
+}
+
+/* ---- one sector --------------------------------------------------------- */
+
+/* Each sector is as tall as its reading. Holding every sector to a full
+   screen left most of each one empty on a laptop — 2,
+800px of page for four
+   short blocks — so the page read as gaps rather than as a portfolio. */
+.secblk{
+  grid-column:main;
+  min-height:0;
+  display:grid;align-content:center;
+  padding-block:clamp(44px,5.4vw,84px);
+  scroll-margin-top:calc(var(--head-h) + 24px);
+}
+/* The ground belongs to the whole index,
+not to each block,
+so moving from
+   one sector to the next washes the colour across rather than cutting to it.
+   The scroll-spy sets data-tone; without script the page keeps the first.
+
+   The four come off the logo — gold #D3A750 and navy #030C2B — as two tints
+   and the navy itself. Text moves with the ground: on the tints the body grey
+   steps darker,
+and on the navy the whole set inverts. Measured,
+all of them:
+   body copy 4.96 to 12.96 against its ground where 4.5 is wanted. */
+.secidx{
+  --ground:#ffffff; --on:var(--ink); --on-2:#6c6b6b; --rule:var(--line);
+  --tile:#ffffff;
+  background:var(--ground);color:var(--on);
+  transition:background .6s ease,color .6s ease;
+}
+.secidx[data-tone="1"]{--ground:#f7f0e2;--on:var(--ink);--on-2:#5a5856;--rule:#e4d9c2;--tile:#fffaf0}
+.secidx[data-tone="2"]{--ground:#e8ecf4;--on:var(--ink);--on-2:#5a5856;--rule:#d2d8e6;--tile:#f6f8fc}
+.secidx[data-tone="3"]{--ground:#030C2B;--on:#ffffff;--on-2:#cfd4e0;--rule:#1e2749;--tile:rgba(255,255,255,.06)}
+@media (prefers-reduced-motion:reduce){ .secidx{transition:none} }
+.secblk-col{display:grid;gap:20px;justify-items:start}
+.secblk h2{
+  font:300 var(--t-h1)/1.1 var(--display);
+  letter-spacing:-.012em;color:var(--on);
+}
+.secblk h2 a{text-decoration:none;color:inherit;transition:color .2s}
+.secblk h2 a:hover{color:var(--on-2)}
+.secblk-lede{
+  font:300 italic var(--t-lg)/1.5 var(--display);color:var(--on);max-width:42rem;
+}
+.secblk-say{font:400 var(--t-body)/1.62 var(--body);color:var(--on-2)}
+.secblk-count{
+  font:500 var(--t-body)/1.4 var(--body);color:var(--on);margin-top:20px;
+}
+
+/* ---- the businesses inside the sector ------------------------------------
+   Names side by side. Each tile had been a photograph,
+a name and a sentence
+   stacked down the column,
+which repeated what the sector paragraph above it
+   had just said and cost most of the height. A logo goes in each of these
+   when there are logos to put in them. */
+
+.cotiles{display:flex;flex-wrap:wrap;gap:12px;margin-top:2px}
+.cotile{
+  display:inline-flex;align-items:center;min-height:56px;padding:14px 22px;
+  background:var(--tile);border:1px solid var(--rule);
+  font:500 var(--t-lede)/1.3 var(--body);color:var(--on);text-decoration:none;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.cotile:hover,
+.cotile:focus-visible{
+  border-color:var(--on);transform:translateY(-2px);
+  
+}
+@media (prefers-reduced-motion:reduce){
+  .cotile{transition:none}
+  .cotile:hover,
+.cotile:focus-visible{transform:none}
+}
+
+@media (max-width:1180px){
+  .secidx{column-gap:clamp(32px,5vw,105px);grid-template-columns:[rail] 300px [main] minmax(0,1fr) [end]}
+  .secrail a{font-size:var(--t-body);min-height:62px}
+}
+
+/* Below the two-column width the index becomes a strip above the reading,
+still sticky and still marking where you are,
+scrolled sideways rather
+   than stacked — four tall rows would push the first sector off screen. */
+@media (max-width:900px){
+  .secidx{display:block}
+  .secrail{
+    position:sticky;top:var(--head-h);margin:0 calc(var(--gutter) * -1);
+    /* the strip carries its own ground, since the index itself no longer has
+       a box and the reading scrolls underneath it */
+    background:var(--ground);border-bottom:1px solid var(--rule);
+  }
+  .secrail ol{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+  .secrail ol::-webkit-scrollbar{display:none}
+  /* each entry keeps its own width and the strip scrolls; without this
+     flex squeezes all four to fit and clips the names instead */
+  .secrail li{flex:none}
+  .secrail li + li{border-left:1px solid var(--rule)}
+  .secrail a{min-height:52px;padding:8px 16px;white-space:nowrap;font-size:var(--t-sm)}
+  .secrail a[aria-current="location"]{background:var(--tile)}
+  /* the strip runs past the right edge; fade it so that is visible rather
+     than looking like the list simply stops at four-and-a-bit */
+  .secrail{
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 34px),transparent 100%);
+    mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 34px),transparent 100%);
+  }
+  .secrail-go{display:none}
+  /* the strip is pinned under the bar too, so a jump has to clear both */
+  .secblk{padding-block:clamp(34px,7vw,56px);scroll-margin-top:calc(var(--head-h) + 76px)}
+  
+  
+  
+  
+}
 
 /* ---- the platform section on About,
 and the map on Contact -------------- */
@@ -1058,7 +1543,7 @@ and a click goes there.
 }
 .lad{
   position:relative;overflow:hidden;isolation:isolate;
-  aspect-ratio:3/4;min-height:300px;border-radius:var(--radius);
+  aspect-ratio:3/4;min-height:300px;
   background:var(--ink);text-decoration:none;
   display:grid;align-content:end;padding:clamp(20px,2.2vw,28px);
 }
@@ -1076,11 +1561,11 @@ and a click goes there.
 
 .lad .n{
   position:absolute;top:clamp(18px,2vw,24px);left:clamp(20px,2.2vw,28px);
-  font:600 var(--t-sm)/1.2 var(--display);letter-spacing:.1em;color:var(--gold);
+  font:400 var(--t-sm)/1.2 var(--display);letter-spacing:.1em;color:var(--gold);
 }
 .lad-b{display:grid;gap:8px;min-width:0}
 .lad-sec{font:600 .6875rem/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);overflow-wrap:anywhere}
-.lad h3{font:600 clamp(1.25rem,1.7vw,1.625rem)/1.15 var(--display);color:#fff;overflow-wrap:anywhere}
+.lad h3{font:400 clamp(1.25rem,1.7vw,1.625rem)/1.15 var(--display);color:#fff;overflow-wrap:anywhere}
 .lad-arrow{display:inline-block;color:var(--gold);transition:transform .3s}
 .lad:hover .lad-arrow,
 .lad:focus-visible .lad-arrow{transform:translateX(5px)}
@@ -1094,7 +1579,7 @@ with the four after it in a
   .lad{aspect-ratio:4/3;min-height:0}
   .lad-lead{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
 }
-.lad-lead h3{font:700 clamp(2rem,3.2vw,3rem)/1.05 var(--display);letter-spacing:-.018em}
+.lad-lead h3{font:300 clamp(2rem,3.2vw,3rem)/1.05 var(--display);letter-spacing:-.018em}
 .lad-lead .lad-sec{font-size:var(--t-micro)}
 .lad-role{font:400 var(--t-lg)/1.4 var(--body);color:rgba(255,255,255,.85)}
 .lad-lead .lad-bg{opacity:.9}
@@ -1121,8 +1606,8 @@ with the four after it in a
 /* a gold rule draws across the top of the one under the pointer */
 .wwd-card::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
 .wwd-card:hover::before{transform:scaleX(1)}
-.wwd-n{font:700 clamp(2rem,3vw,2.75rem)/1 var(--display);color:var(--gold-text);letter-spacing:-.02em}
-.wwd-card h3{font:600 1.5rem/1.2 var(--display);color:var(--fg);margin-top:8px}
+.wwd-n{font:300 clamp(2rem,3vw,2.75rem)/1 var(--display);color:var(--gold-text);letter-spacing:-.02em}
+.wwd-card h3{font:400 1.5rem/1.2 var(--display);color:var(--ink);margin-top:8px}
 .wwd-card p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){ .wwd{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:520px){ .wwd{grid-template-columns:1fr} }
@@ -1145,7 +1630,7 @@ so "Sourced from
 }
 .prod-from a:hover,
 .prod-from a:focus-visible{
-  border-color:var(--fg);color:var(--fg);background:var(--white);
+  border-color:var(--ink);color:var(--ink);background:var(--white);
 }
 
 /* ---- the named services on a company with no product list --------------- */
@@ -1159,8 +1644,8 @@ so "Sourced from
   border-bottom:1px solid var(--line);
 }
 .svc + .svc{padding-inline-start:clamp(20px,2.4vw,30px);border-inline-start:1px solid var(--line)}
-.svc-n{font:700 1.75rem/1 var(--display);color:var(--gold-text)}
-.svc h3{font:600 1.375rem/1.22 var(--display);color:var(--fg)}
+.svc-n{font:300 1.75rem/1 var(--display);color:var(--gold-text)}
+.svc h3{font:400 1.375rem/1.22 var(--display);color:var(--ink)}
 .svc p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){
   .svcs{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1190,12 +1675,26 @@ and these were the ones that fell between the two. The
   .burger{width:44px}
   a.pagehead-eyebrow{display:inline-flex;align-items:center;min-height:44px}
   .prod-from a{min-height:44px;font-size:var(--t-micro)}
+  .secrail a{min-height:48px}
+  .cotile{min-height:52px}
   .foot-legal{font-size:var(--t-xs)}
   /* the address and the number are the point of this page */
   .channels a{display:inline-flex;align-items:center;min-height:44px}
+  /* a sector heading is a link, and 22px is under the floor WCAG sets */
+  .secblk h2 a{display:inline-flex;align-items:center;min-height:44px}
   .foot-legal{font-size:var(--t-micro)}
 
+  /* A whole screen of photograph before the statement is a lot of scrolling
+     to reach the point. The hero gives back about a fifth of the screen, so
+     the statement lands sooner and the band under it shows it continues. */
+  .hero{min-height:78svh;padding-block:calc(var(--head-h) + 24px) 36px}
+  .pagehead{height:auto;min-height:52svh;padding-block:clamp(40px,12vw,56px) clamp(32px,9vw,44px)}
 
+  /* The four figures wrapped one, two, one and centred themselves, which read
+     as a mistake rather than a row. Two by two, aligned with everything else. */
+  .stats{padding:20px 18px}
+  .stats dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 16px}
+  .stats dl > div{justify-items:start;text-align:start}
 }
 
 /* ---- where a company buys from ------------------------------------------
@@ -1221,7 +1720,7 @@ which is the same register the home page prints. */
 .srcreg:hover::before{transform:scaleX(1)}
 .srcreg h3{font:600 .75rem/1.4 var(--mono);color:var(--label);text-transform:uppercase;letter-spacing:.14em}
 .srcreg ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 10px}
-.srcreg li{font:400 var(--t-body)/1.5 var(--body);color:var(--fg)}
+.srcreg li{font:400 var(--t-body)/1.5 var(--body);color:var(--ink)}
 /* no separator between them: a pseudo-element divider wraps onto the start
    of the next line,
 so a region read "· Turkmenistan". The gap is enough. */
@@ -1229,7 +1728,7 @@ so a region read "· Turkmenistan". The gap is enough. */
 .srcmore{margin-top:clamp(18px,2.2vw,26px)}
 .srcmore a{
   display:inline-flex;align-items:center;gap:7px;min-height:44px;
-  font:500 var(--t-micro)/1.4 var(--ui);color:var(--fg);
+  font:500 var(--t-micro)/1.4 var(--ui);color:var(--ink);
   text-underline-offset:4px;text-decoration-thickness:1px;
 }
 .srcmore a span{display:inline-block;transition:transform .25s}
@@ -1262,9 +1761,9 @@ so a company's
 .co .tags li{border-color:color-mix(in srgb,var(--co) 45%,transparent)}
 
 .co-btn{background:var(--co);border-color:var(--co);color:var(--co-on)}
-.co-btn:hover{background:var(--ink);border-color:var(--fg);color:#fff}
+.co-btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
 .co-btn-line{background:transparent;border-color:currentColor;color:inherit}
-.co-btn-line:hover{background:var(--paper);border-color:#fff;color:var(--fg)}
+.co-btn-line:hover{background:#fff;border-color:#fff;color:var(--ink)}
 
 /* ---- the opening --------------------------------------------------------- */
 
@@ -1273,7 +1772,7 @@ so a company's
   height:calc(100svh - var(--head-h));min-height:560px;max-height:820px;
 }
 .co-hero h1{
-  font:700 clamp(2.75rem,5.4vw,4.75rem)/1 var(--display);letter-spacing:-.022em;
+  font:300 clamp(2.75rem,5.4vw,4.75rem)/1 var(--display);letter-spacing:-.022em;
   margin:18px 0 0;max-width:14ch;
 }
 .co-hero-line{margin-top:18px;max-width:36ch;font:400 clamp(1.125rem,1.6vw,1.375rem)/1.45 var(--body)}
@@ -1307,14 +1806,14 @@ the name over it */
 the photograph beside it */
 .co-split .co-hero{
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:1fr auto;
-  background:var(--paper);color:var(--fg);
+  background:var(--co-tint);color:var(--ink);
 }
 .co-split .co-hero-img{grid-column:2;grid-row:1;width:100%;height:100%;object-fit:cover}
 .co-split .co-hero-in{grid-column:1;grid-row:1;align-self:center;padding-block:clamp(56px,7vw,96px)}
 .co-split .co-hero-wrap{max-width:none;padding-inline:var(--gutter) clamp(24px,4vw,72px)}
 .co-split .co-hero .co-eyebrow{color:var(--co-text)}
 .co-split .co-hero-line{color:var(--ink-2)}
-.co-split .co-btn-line:hover{background:var(--ink);border-color:var(--fg);color:#fff}
+.co-split .co-btn-line:hover{background:var(--ink);border-color:var(--ink);color:#fff}
 .co-split .co-facts{grid-column:1 / -1;grid-row:2;background:var(--ink);color:#fff}
 .co-split .co-facts dt{color:var(--co)}
 
@@ -1337,7 +1836,7 @@ the photograph framed beside the name */
 /* ---- the statement and the story ---------------------------------------- */
 
 .co-statement{
-  font:700 clamp(1.625rem,2.8vw,2.375rem)/1.2 var(--display);letter-spacing:-.012em;
+  font:300 clamp(1.625rem,2.8vw,2.375rem)/1.2 var(--display);letter-spacing:-.012em;
   max-width:30ch;margin:16px 0 clamp(28px,4vw,48px);
 }
 .co-story{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(32px,5vw,80px);align-items:stretch}
@@ -1348,7 +1847,7 @@ the photograph framed beside the name */
 .co-story-text{display:grid;gap:1em;align-content:center;color:var(--ink-2);font-size:1rem;line-height:1.65;max-width:60ch}
 .co-story-text .tags{margin-top:.6em}
 
-.co-offer{background:var(--paper)}
+.co-offer{background:var(--co-tint)}
 
 /* ---- the closing ask,
 in the company's colour ---------------------------- */
@@ -1357,11 +1856,11 @@ in the company's colour ---------------------------- */
 .co-ask-in{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:28px clamp(32px,5vw,80px)}
 .co-ask .eyebrow{color:var(--ink-inv-2)}
 .co-ask .eyebrow::before{background:var(--co)}
-.co-ask h2{font:700 clamp(1.75rem,3.2vw,2.75rem)/1.12 var(--display);margin-top:14px;max-width:22ch}
+.co-ask h2{font:300 clamp(1.75rem,3.2vw,2.75rem)/1.12 var(--display);margin-top:14px;max-width:22ch}
 .co-ask p:not(.eyebrow){margin-top:12px;max-width:46ch;opacity:.86}
 .co-ask-cta{display:grid;gap:14px;justify-items:start}
 .co-ask .co-btn{background:var(--co);border-color:var(--co);color:var(--co-on)}
-.co-ask .co-btn:hover{background:var(--paper);border-color:#fff;color:var(--fg)}
+.co-ask .co-btn:hover{background:#fff;border-color:#fff;color:var(--ink)}
 .co-ask-mail{color:inherit;font:500 var(--t-sm)/1.4 var(--ui);text-underline-offset:4px}
 .co-dark .co-ask{background:#1d1410;color:#f6eee6}
 .co-dark .co-ask .eyebrow::before{background:var(--co)}
@@ -1404,20 +1903,20 @@ in the company's colour ---------------------------- */
 .pillar-pic{display:block;overflow:hidden;aspect-ratio:16/9;margin-bottom:8px}
 .pillar-pic img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
 .pillar:hover .pillar-pic img{transform:scale(1.05)}
-.pillar-n{font:700 2rem/1 var(--display);color:var(--co)}
-.pillar h3{font:600 clamp(1.375rem,1.9vw,1.75rem)/1.2 var(--display);margin:0}
+.pillar-n{font:300 2rem/1 var(--display);color:var(--co)}
+.pillar h3{font:400 clamp(1.375rem,1.9vw,1.75rem)/1.2 var(--display);margin:0}
 .pillar p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-inv-2);max-width:40ch}
 
 /* a light,
 airy company keeps its pillars on white */
-.co-cavallo-laundry .co-pillars{background:var(--paper);color:var(--fg)}
+.co-cavallo-laundry .co-pillars{background:#fff;color:var(--ink)}
 .co-cavallo-laundry .co-pillars .head2 h2,
-.co-cavallo-laundry .co-pillars h3{color:var(--fg)}
+.co-cavallo-laundry .co-pillars h3{color:var(--ink)}
 .co-cavallo-laundry .co-pillars .eyebrow{color:var(--co-text)}
 .co-cavallo-laundry .pillar{border-top-color:var(--line-2)}
 .co-cavallo-laundry .pillar p{color:var(--ink-2)}
 .co-cavallo-laundry .pillar-n{color:var(--co-text)}
-.co-cavallo-laundry .co-about{background:var(--paper)}
+.co-cavallo-laundry .co-about{background:var(--co-tint)}
 
 /* ---- steps: a flow,
 left to right,
@@ -1428,20 +1927,20 @@ in the company's colour ---- */
 }
 .step{
   position:relative;display:grid;gap:10px;align-content:start;
-  padding:clamp(22px,2.6vw,32px) clamp(20px,2.2vw,28px);background:var(--paper);border-top:3px solid var(--co);
+  padding:clamp(22px,2.6vw,32px) clamp(20px,2.2vw,28px);background:var(--co-tint);border-top:3px solid var(--co);
 }
 .step + .step::before{
   content:"\2192";position:absolute;left:calc(-1 * clamp(10px,1.2vw,18px));top:50%;transform:translate(-50%,-50%);
-  font:700 1.5rem/1 var(--display);color:var(--co-text);
+  font:300 1.5rem/1 var(--display);color:var(--co-text);
 }
-.step-n{font:700 1.75rem/1 var(--display);color:var(--co-text)}
-.step h3{font:600 1.5rem/1.2 var(--display);color:var(--fg);margin:0}
+.step-n{font:300 1.75rem/1 var(--display);color:var(--co-text)}
+.step h3{font:400 1.5rem/1.2 var(--display);color:var(--ink);margin:0}
 .step p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
 
 /* ---- the quote: the company in one of its own sentences ---- */
 .co-quote{padding-block:clamp(40px,5vw,72px);background:var(--ink)}
 .co-quote blockquote{margin:0 auto;max-width:40ch;text-align:center}
-.co-quote p{font:700 clamp(1.5rem,2.8vw,2.375rem)/1.3 var(--display);color:#fff;text-wrap:balance}
+.co-quote p{font:300 italic clamp(1.5rem,2.8vw,2.375rem)/1.3 var(--display);color:#fff;text-wrap:balance}
 .co-quote p::before{content:"";display:block;width:48px;height:2px;background:var(--co);margin:0 auto 24px}
 .co-dark .co-quote{background:#2a1d16}
 .co-dark .co-quote p{color:#f6eee6}
@@ -1480,8 +1979,9 @@ labels become labels
 
 /* company cards: a rule above,
 not a box */
-.cocard{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.cocard:hover{transform:translateY(-3px);border-color:transparent;box-shadow:var(--shadow)}
+.cocard{background:none;border:0;border-top:1px solid var(--line-2);border-radius:0}
+.cocard:hover{transform:none;border-top-color:var(--gold)}
+.cocard-body{padding-inline:0}
 .cocard-sector{font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-text)}
 
 /* the five ways the Group creates value,
@@ -1492,7 +1992,12 @@ five to the row */
   .vcreate:has(> .vc:nth-child(5):last-child) > .vc:nth-child(5){grid-column:auto}
 }
 
-
+/* the sectors index: the count as a label,
+the companies as a ruled list */
+.secblk-count{font:600 .75rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--on-2)}
+.cotile{border:0;border-top:1px solid var(--rule);background:none;padding:14px 0;min-width:200px;border-radius:0}
+.cotile:hover,
+.cotile:focus-visible{border-top-color:var(--on);transform:none;background:none}
 
 /* ROMA's steps: ruled like the pillars,
 the arrows kept */
@@ -1571,23 +2076,31 @@ the sectors strip fits more tabs */
   .ladder{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lad{aspect-ratio:1}
   .lad-lead{grid-column:1 / -1;aspect-ratio:16/10}
+  .secrail a{padding:8px 12px;font-size:var(--t-xs)}
 }
 
 /* ==========================================================================
-   The openings sit under the solid bar: tall enough to carry a title and a
-   photograph, short enough that the page itself starts on the first screen.
+   Every page opens full-screen,
+as the home page does: the photograph fills
+   the window and the bar sits over it,
+filling in once the page scrolls.
+   The split and dark company openings keep their solid bar (white type over
+   a pale panel would not read),
+and fill the rest of the screen beneath it.
    ========================================================================== */
 .pagehead{
-  height:auto;min-height:clamp(420px,58svh,640px);max-height:none;
-  padding-block:clamp(56px,7vw,96px) clamp(44px,5vw,72px);
+  height:100svh;min-height:560px;max-height:none;
+  padding-block:calc(var(--head-h) + 48px) clamp(56px,8vw,112px);
 }
-.co-hero{height:auto;min-height:min(640px,calc(100svh - var(--head-h)));max-height:none}
-.co-full .co-hero-in{padding-top:clamp(64px,8vw,120px)}
+.co-hero{height:calc(100svh - var(--head-h));max-height:none;min-height:560px}
+.co-full .co-hero{height:100svh;min-height:600px}
+.co-full .co-hero-in{padding-top:calc(var(--head-h) + 48px)}
 @media (max-width:700px){
-  .pagehead{min-height:0;padding-block:44px 40px}
+  .pagehead{height:auto;min-height:82svh;padding-block:calc(var(--head-h) + 32px) 40px}
 }
 @media (max-width:860px){
-  .co-hero{min-height:0}
+  .co-hero{height:auto;min-height:0}
+  .co-full .co-hero{height:auto;min-height:82svh}
 }
 
 /* ==========================================================================
@@ -1621,15 +2134,15 @@ html:not(.js) .tline::after{transform:scaleX(1)}
 .tl-node{
   position:relative;z-index:1;display:grid;place-items:center;width:54px;height:54px;
   background:var(--ink);border:1.5px solid var(--gold);color:var(--gold);
-  font:700 1.375rem/1 var(--display);margin-bottom:10px;
+  font:300 1.375rem/1 var(--display);margin-bottom:10px;
   transition:background .3s,color .3s;
 }
-.tl-step:hover .tl-node{background:var(--gold);color:var(--fg)}
-.tl-step h3{font:600 clamp(1.25rem,1.6vw,1.5rem)/1.2 var(--display);color:#fff;margin:0}
+.tl-step:hover .tl-node{background:var(--gold);color:var(--ink)}
+.tl-step h3{font:400 clamp(1.25rem,1.6vw,1.5rem)/1.2 var(--display);color:#fff;margin:0}
 .tl-step p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-inv-2);max-width:34ch}
 .how .after{margin-top:clamp(36px,4vw,52px)}
-.tl-cta{--co:var(--gold);--co-on:var(--deep)}
-.tl-cta:hover{background:var(--paper);border-color:#fff;color:var(--fg)}
+.tl-cta{--co:var(--gold);--co-on:var(--ink)}
+.tl-cta:hover{background:#fff;border-color:#fff;color:var(--ink)}
 @media (max-width:900px){
   .tline{grid-template-columns:1fr;gap:28px;padding-left:78px}
   .tline::before,
@@ -1654,7 +2167,7 @@ in its own colour */
 .co-figs dl > div{display:grid;gap:8px;padding:6px clamp(16px,2.2vw,32px)}
 .co-figs dl > div:first-child{padding-inline-start:0}
 .co-figs dl > div + div{border-inline-start:1px solid var(--line-2)}
-.co-figs dd{grid-row:1;margin:0;font:700 clamp(2.75rem,4.4vw,4rem)/1 var(--display);letter-spacing:-.02em;color:var(--co-text);font-variant-numeric:lining-nums}
+.co-figs dd{grid-row:1;margin:0;font:300 clamp(2.75rem,4.4vw,4rem)/1 var(--display);letter-spacing:-.02em;color:var(--co-text);font-variant-numeric:lining-nums}
 .co-figs dt{grid-row:2;font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--label)}
 .co-figs dd::before{content:"";display:block;width:28px;height:2px;background:var(--co);margin-bottom:16px}
 @media (max-width:860px){
@@ -1687,6 +2200,20 @@ a cleaner hover */
 .pillar-pic{position:relative}
 .pillar-pic::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;background:var(--co)}
 
+/* ---- the sectors menu,
+compact: a panel under the word,
+not a page-wide sheet ---- */
+.secmenu{width:min(720px,calc(100vw - 2 * var(--gutter)))}
+.secmenu-eyebrow{padding:11px 20px;font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;color:var(--gold-text)}
+.secmenu-cols{grid-template-columns:repeat(3,minmax(0,1fr))}
+.secmenu-col{gap:2px;padding:14px 18px 16px;border-top:1px solid #efefef}
+.secmenu-col + .secmenu-col{border-inline-start:0}
+.secmenu-col:nth-child(3n+2),
+.secmenu-col:nth-child(3n+3){border-inline-start:1px solid #efefef}
+.secmenu-head{gap:8px;margin:0;padding-block:2px}
+.secmenu-head .ico{width:15px;height:15px;color:var(--gold-text)}
+.secmenu-head span{font:600 var(--t-micro)/1.3 var(--ui)}
+
 /* ==========================================================================
    Work With Us — what comes next,
 as a grid of eight
@@ -1718,14 +2245,14 @@ so the grid ends in an
 .dir:hover{background:var(--paper)}
 .dir-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .dir-top .ico{width:26px;height:26px;color:var(--gold-text)}
-.dir-n{font:700 1.25rem/1 var(--display);color:var(--ink-3)}
-.dir h3{font:600 clamp(1.1875rem,1.5vw,1.375rem)/1.22 var(--display);color:var(--fg);margin:0}
+.dir-n{font:300 1.25rem/1 var(--display);color:var(--ink-3)}
+.dir h3{font:400 clamp(1.1875rem,1.5vw,1.375rem)/1.22 var(--display);color:var(--ink);margin:0}
 .dir p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
 
 /* the eighth cell: the ask */
 .dir-ask{background:var(--ink);align-content:space-between}
 .dir-ask:hover{background:#13264f}
-.dir .dir-ask-q{font:700 clamp(1.5rem,2.2vw,2rem)/1.15 var(--display);color:#fff}
+.dir .dir-ask-q{font:300 clamp(1.5rem,2.2vw,2rem)/1.15 var(--display);color:#fff}
 .dir-ask-go{
   justify-self:start;display:inline-flex;align-items:center;gap:10px;
   font:600 var(--t-sm)/1.3 var(--ui);color:var(--gold);text-decoration:none;
@@ -1744,358 +2271,52 @@ one large photograph
    on the right that crossfades to the area pointed at. On navy{background:var(--ink);color:#fff}
 
 /* ==========================================================================
-   THE TIBECO GRAMMAR — the bar, the drawers, the opening, the tiles, the
-   section heads, the sticky tabs, the footer. Written to the reference's own
-   source (tibeco-9a2c97f1): a fixed bar that is transparent over the page
-   and fills in once it scrolls, "Sectors" at the left and "Corporate" at the
-   right as drawers, the mark in the middle; a full-screen slideshow that
-   opens on the Group's name; headings in Playfair with an Arabic sub-label
-   in gold; image tiles with the name along the foot; a one-line footer.
-   ========================================================================== */
-
-/* ---- the bar ---- */
-.site-head{
-  position:fixed;inset-inline:0;top:0;z-index:60;
-  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-  height:var(--head-h);padding-inline:clamp(12px,2vw,24px);
-  background:transparent;
-  transition:background .3s ease,box-shadow .3s ease,backdrop-filter .3s ease;
-}
-.site-head.scrolled,
-html:has(.drawer.open) .site-head{
-  background:rgba(15,19,25,.95);backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(0,0,0,.35);
-}
-.site-head .brand{display:flex;align-items:center;justify-content:center;text-decoration:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
-.site-head .brand img{height:64px;width:auto}
-.site-head .brand .brand-mark{display:none;height:44px}
-.hb{
-  display:inline-flex;align-items:center;gap:8px;justify-self:start;
-  background:none;border:0;padding:10px 6px;cursor:pointer;text-decoration:none;
-  font:600 .8125rem/1.2 var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--fg);
-  transition:color .2s;
-}
-.hb-r{justify-self:end}
-.hb:hover,
-.hb:focus-visible,
-.hb[aria-expanded="true"]{color:var(--gold)}
-.hb svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;flex:none}
-
-/* ---- the drawers ---- */
-.scrim{
-  position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);
-  opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;
-}
-.scrim.open{opacity:1;visibility:visible}
-.drawer{
-  position:fixed;top:0;bottom:0;z-index:71;width:min(85vw,320px);
-  display:flex;flex-direction:column;gap:24px;
-  background:var(--deep);padding:28px 24px 32px;overflow-y:auto;overscroll-behavior:contain;
-  box-shadow:0 0 60px rgba(0,0,0,.5);
-  visibility:hidden;transition:transform .4s cubic-bezier(.4,0,.2,1),visibility .4s;
-}
-.drawer-l{left:0;transform:translateX(-100%)}
-.drawer-r{right:0;transform:translateX(100%)}
-.drawer.open{transform:none;visibility:visible}
-.dr-close{
-  display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
-  background:none;border:0;padding:6px 0;cursor:pointer;
-  font:600 .8125rem/1.2 var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
-}
-.drawer-r .dr-close{align-self:flex-end;color:var(--fg)}
-.drawer-r .dr-close:hover{color:var(--gold)}
-.dr-close svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
-.dr-nav{display:grid;gap:4px;align-content:start}
-.dr-item{
-  display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center;
-  padding:12px;border-radius:var(--radius-s);text-decoration:none;color:var(--fg);
-  transition:background .2s,color .2s;
-}
-.dr-item:hover,
-.dr-item:focus-visible,
-.dr-item[aria-current="page"]{background:var(--panel);color:var(--gold)}
-.dr-item[aria-current="page"]{background:rgba(211,167,80,.15)}
-.dr-item .ico{width:16px;height:16px;color:var(--gold);grid-row:1 / span 2}
-.dr-name{font:700 .8125rem/1.3 var(--ui);letter-spacing:.08em;text-transform:uppercase}
-.dr-sub{font:400 .6875rem/1.4 var(--body);color:var(--ink-2);margin-top:2px}
-.dr-item:hover .dr-sub{color:var(--ink-2)}
-.dr-all{margin-top:8px;border-top:1px solid var(--line);border-radius:0;padding-top:16px}
-.dr-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:24px;display:grid;gap:14px}
-.dr-foot p{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
-.dr-foot .btn{justify-self:start;padding:11px 18px;font-size:.6875rem}
-.dr-link{display:inline-flex;align-items:center;gap:8px;font:600 .8125rem/1.3 var(--ui);letter-spacing:.08em;text-transform:uppercase;color:var(--fg);text-decoration:none}
-.dr-link:hover{color:var(--gold)}
-
-/* ---- the opening: a slideshow behind the Group's name ---- */
-.hero{
-  position:relative;isolation:isolate;overflow:hidden;
-  display:grid;place-items:center;text-align:center;
-  height:100svh;min-height:600px;background:var(--deep);
-}
-.hero-slide{
-  position:absolute;inset:0;z-index:-3;width:100%;height:100%;object-fit:cover;
-  opacity:0;transform:scale(1.08);
-  transition:opacity 1.2s ease-in-out,transform 1.2s ease-in-out;
-}
-.hero-slide.on{opacity:1;transform:scale(1)}
-.hero-veil{position:absolute;inset:0;z-index:-2;background:rgba(15,19,25,.6)}
-.hero-ring{
-  position:absolute;left:50%;top:50%;z-index:-1;width:500px;height:500px;max-width:90vw;max-height:90vw;
-  transform:translate(-50%,-50%);border-radius:50%;
-  border:1px solid rgba(248,250,252,.1);background:rgba(248,250,252,.05);
-}
-.hero-say{position:relative;z-index:1;padding-inline:16px;display:grid;justify-items:center}
-.hero h1{
-  font:700 clamp(2rem,5vw,3.75rem)/1.1 var(--display);letter-spacing:-.01em;text-transform:uppercase;color:var(--fg);
-}
-.hero-fields{margin-top:12px;font:400 clamp(.9375rem,1.4vw,1.25rem)/1.4 var(--body);color:var(--ink-2)}
-.hero-eyebrow{margin-top:8px;font:500 .8125rem/1.4 var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
-.hero-cta{margin-top:clamp(32px,4vw,40px);display:flex;justify-content:center}
-.hero-cta .btn{
-  border-radius:0;border:0;background:rgba(43,48,59,.8);backdrop-filter:blur(6px);color:var(--fg);
-  padding:16px 40px;font-size:.8125rem;
-}
-.hero-cta .btn + .btn{border-inline-start:1px solid rgba(248,250,252,.2)}
-.hero-cta .btn:hover{background:var(--gold);color:var(--deep)}
-.hero-dots{position:absolute;bottom:32px;left:50%;z-index:1;transform:translateX(-50%);display:flex;gap:8px}
-.hero-dot{width:6px;height:6px;border-radius:999px;border:0;padding:0;cursor:pointer;background:rgba(248,250,252,.3);transition:width .3s,background .3s}
-.hero-dot.on{width:32px;background:var(--gold)}
-.hero-dot:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-@media (prefers-reduced-motion:reduce){ .hero-slide{transition:none} }
-
-/* ---- an Arabic sub-label, a gold rule ---- */
-.ar{font:400 .8125rem/1.5 var(--body);color:var(--gold);letter-spacing:.02em}
-.rule{display:block;width:64px;height:1px;background:var(--gold);margin-top:16px}
-.rule.c{margin-inline:auto}
-.soft{color:inherit}
-/* eyebrows read as TIBECO's platform labels: gold, tracked, no dash */
-.eyebrow,
-.pagehead-eyebrow{letter-spacing:.3em!important;color:var(--gold);gap:0}
-.eyebrow::before,
-.pagehead-eyebrow::before{display:none}
-
-/* ---- the section head: the title, its Arabic, the rule, the line beside ---- */
-.head2{align-items:end}
-.head2-t{gap:6px}
-.head2 .eyebrow{margin-bottom:6px}
-.head2 h2{font:700 clamp(1.625rem,3vw,2.5rem)/1.15 var(--display);color:var(--fg)}
-.head2 > p{font:400 .9375rem/1.65 var(--body);color:var(--ink-2);padding-bottom:4px}
-.caps{text-transform:uppercase;letter-spacing:.08em}
-
-/* ---- grounds ---- */
-body{background:var(--bg);color:var(--fg)}
-.section.stone{background:var(--paper)}
-.section.deep{background:var(--deep)}
-.section + .section,
-.section + .next{border-top:1px solid var(--line)}
-
-/* ---- the corporate statement beside why the Group ---- */
-.corp{background:var(--paper)}
-.corp-in{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(32px,4vw,48px)}
-.corp h2{font:700 clamp(1.5rem,2.8vw,2.25rem)/1.2 var(--display);color:var(--fg)}
-.corp h3{font:700 1.5rem/1.2 var(--display);color:var(--fg)}
-.corp .ar{margin-top:8px;text-transform:none;letter-spacing:.1em}
-.corp-pic{display:block;margin:24px 0 0;overflow:hidden;border-radius:var(--radius-s)}
-.corp-pic img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
-.corp p.say{margin-top:20px;font:400 .9375rem/1.7 var(--body);color:var(--ink-2)}
-.corp p.say strong{color:var(--fg);font-weight:600}
-.corp .btn{margin-top:24px}
-.corp-side{display:grid;gap:32px;align-content:start}
-.corp-box{margin-top:16px;border:1px solid var(--line);background:rgba(43,48,59,.5);border-radius:var(--radius-s);padding:18px}
-.corp-box p{font:400 .9375rem/1.7 var(--body);color:var(--ink-2)}
-.corp-box p + p{margin-top:12px}
-@media (max-width:900px){ .corp-in{grid-template-columns:1fr} }
-
-/* ---- the tiles: a photograph with the name along its foot ---- */
-.tiles-head{display:grid;gap:8px;margin-bottom:clamp(32px,4vw,56px)}
-.tiles-head h2{font:700 clamp(1.5rem,2.8vw,2.25rem)/1.2 var(--display);color:var(--fg)}
-.tiles-head > p:not(.ar){font:400 .9375rem/1.65 var(--body);color:var(--ink-2);max-width:60ch}
-.tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
-.tiles-5{grid-template-columns:repeat(5,minmax(0,1fr))}
-.tile{
-  position:relative;display:block;overflow:hidden;isolation:isolate;aspect-ratio:4/3;
-  background:var(--panel);text-decoration:none;color:var(--fg);
-}
-.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .5s ease}
-.tile:hover img,
-.tile:focus-visible img{transform:scale(1.1)}
-.tile::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(15,19,25,.85) 0%,rgba(15,19,25,.2) 55%,transparent 100%)}
-.tile-b{position:absolute;inset-inline:0;bottom:0;display:grid;gap:3px;padding:clamp(12px,1.4vw,18px)}
-.tile-n{font:700 .8125rem/1.3 var(--ui);letter-spacing:.08em;text-transform:uppercase}
-.tile-s{font:400 .6875rem/1.4 var(--body);color:var(--ink-2)}
-.tile-mark{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(15,19,25,.6);color:var(--gold);font-size:.875rem}
-.tile:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
-@media (max-width:1000px){ .tiles,.tiles-5{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:560px){ .tiles,.tiles-5{grid-template-columns:1fr} .tile{aspect-ratio:16/9} }
-@media (prefers-reduced-motion:reduce){ .tile img{transition:none} }
-
-/* ---- global presence ---- */
-.src{background:var(--deep)}
-.src-head{text-align:center;margin-bottom:clamp(32px,4vw,56px)}
-.src-head .ar{display:block;letter-spacing:.3em;text-transform:uppercase;margin-bottom:12px}
-.src-head h2{font:700 clamp(1.75rem,3.4vw,3rem)/1.15 var(--display);color:var(--fg)}
-.src-foot{
-  margin-top:clamp(32px,4vw,56px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px;
-  border-top:1px solid var(--line);padding-top:clamp(28px,3vw,40px);
-}
-.src-foot > p{max-width:60ch;font:400 .9375rem/1.7 var(--body);color:var(--ink-2)}
-.src .stats{border:0}
-.src .stats dl{display:flex;gap:clamp(28px,4vw,56px);flex-wrap:wrap}
-.src .stats dl > div{padding:0;border:0;text-align:center;gap:4px}
-.src .stats dd{font:700 clamp(1.75rem,2.8vw,2.5rem)/1 var(--display);color:var(--gold)}
-.src .stats dd::before{display:none}
-.src .stats dt{font:500 .6875rem/1.4 var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2)}
-.src .reg h3{font:600 1rem/1.3 var(--display)}
-
-/* ---- the Supplier Portal band and the closing band ---- */
-.portal{background:var(--paper);border-top:1px solid var(--line)}
-.portal h2{font:700 clamp(1.5rem,2.8vw,2.25rem)/1.2 var(--display)}
-.next{background:var(--bg)}
-.next-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
-.next-card .watermark{opacity:.06}
-.next-card h2{font:700 clamp(1.5rem,2.4vw,2rem)/1.2 var(--display)}
-
-/* ---- every other opening sits under the fixed bar ---- */
-.pagehead{
-  min-height:clamp(420px,60svh,640px);
-  padding-block:calc(var(--head-h) + 40px) clamp(48px,6vw,80px);
-  align-content:end;
-}
-.pagehead::before{
-  background:linear-gradient(to top,rgba(15,19,25,.96) 0%,rgba(15,19,25,.6) 50%,rgba(15,19,25,.15) 100%);
-}
-.pagehead h1{font:700 var(--t-display)/1.08 var(--display);letter-spacing:-.005em}
-.pagehead-eyebrow{font-size:.75rem}
-.co-hero-in,
-.co-full .co-hero-in,
-.co-split .co-hero-in,
-.co-dark .co-hero-in{padding-top:calc(var(--head-h) + 40px)}
-.co-split .co-hero{background:var(--paper);color:var(--fg)}
-.co-split .co-hero .co-eyebrow{color:var(--co)}
-.co-split .co-hero-line{color:var(--ink-2)}
-.co-dark .co-hero{background:var(--deep)}
-.co-hero h1,
-.co-hero .co-hero-line{letter-spacing:0}
-.co-hero h1{font-family:var(--display);font-weight:700}
-
-/* ---- the sector page: the platform page, re-cast ---- */
-.phero{
-  position:relative;isolation:isolate;overflow:hidden;
-  display:grid;place-items:center;text-align:center;
-  height:100svh;min-height:600px;background:var(--deep);padding:calc(var(--head-h) + 24px) 24px 80px;
-}
-.phero-bg{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover}
-.phero::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(15,19,25,.7)}
-.phero-say{display:grid;justify-items:center;gap:0}
-.pill{
-  display:inline-flex;align-items:center;gap:8px;margin-bottom:24px;
-  border:1px solid rgba(211,167,80,.3);border-radius:999px;padding:8px 20px;
-  font:600 .625rem/1.4 var(--ui);letter-spacing:.3em;text-transform:uppercase;color:var(--gold);
-}
-.pill .ico{width:14px;height:14px;color:var(--gold)}
-.phero h1{font:700 clamp(2.25rem,6vw,4.5rem)/1.08 var(--display);color:var(--fg);max-width:18ch;text-wrap:balance}
-.phero-sub{margin-top:24px;max-width:42rem;font:400 clamp(1rem,1.4vw,1.125rem)/1.6 var(--body);color:var(--ink-2)}
-.phero .ar{margin-top:10px;font-size:1rem}
-
-.stabs{
-  position:sticky;top:var(--head-h);z-index:30;display:flex;overflow-x:auto;scrollbar-width:none;
-  border-bottom:1px solid var(--line);background:var(--deep);
-}
-.stabs::-webkit-scrollbar{display:none}
-.stabs a{
-  flex:1 1 auto;min-width:max-content;padding:16px;text-align:center;text-decoration:none;
-  font:600 .625rem/1.4 var(--ui);letter-spacing:.2em;text-transform:uppercase;color:rgba(248,250,252,.7);
-  transition:background .2s,color .2s;
-}
-.stabs a:hover{background:var(--panel);color:var(--fg)}
-.stabs a.on{background:var(--gold);color:var(--deep)}
-.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(28px,4vw,48px)}
-.grid3 h2{font:700 clamp(1.5rem,2.8vw,1.875rem)/1.2 var(--display);color:var(--fg)}
-.grid3 p{font:400 .9375rem/1.7 var(--body);color:var(--ink-2)}
-.grid3 .eyebrow{margin-top:16px;font-size:.75rem}
-@media (max-width:900px){ .grid3{grid-template-columns:1fr} }
-.chead{text-align:center;margin-bottom:clamp(32px,4vw,64px)}
-.chead h2{font:700 clamp(1.5rem,2.8vw,1.875rem)/1.2 var(--display);color:var(--fg)}
-.chead > p:not(.ar){margin:24px auto 0;max-width:48rem;font:400 .9375rem/1.7 var(--body);color:var(--ink-2)}
-.chead .ar{display:block;margin-top:8px}
-.closing{border-top:1px solid var(--line);background:var(--paper);padding-block:clamp(56px,7vw,80px);text-align:center}
-.closing p{max-width:56rem;margin-inline:auto;font:400 .9375rem/1.75 var(--body);color:var(--ink-2)}
-
-/* the area cards and the company cards: TIBECO's icon cards */
-.areas{margin-top:0}
-.area,
-.cocard,
-.seccard{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
-.area:hover,
-.cocard:hover,
-.seccard:hover,
-.seccard:focus-visible{transform:none;box-shadow:none;border-color:rgba(211,167,80,.4)}
-.area h3{font:600 1.0625rem/1.3 var(--display)}
-.area-mark{background:rgba(211,167,80,.1);color:var(--gold)}
-.area-by{border-top-color:var(--line);color:var(--gold)}
-.area-by:hover{color:var(--fg)}
-.seccard-name{font:600 1.125rem/1.3 var(--display)}
-.seccard-go{border-color:var(--line-2)}
-.cocard-name{font:600 1.125rem/1.3 var(--display)}
-.cocard-shot{background:var(--panel)}
-
-/* ---- the footer: one line ---- */
-.site-foot{border-top:1px solid var(--line);background:var(--deep);padding-block:24px}
-.foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px}
-.foot .brand{display:flex;align-items:center;text-decoration:none}
-.foot .brand img{height:56px;width:auto}
-.foot-links{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 24px;font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
-.foot-links a{color:var(--ink-2);text-decoration:none;transition:color .2s;display:inline-flex;align-items:center;min-height:32px}
-.foot-links a:hover,
-.foot-links a:focus-visible{color:var(--gold)}
-@media (max-width:700px){
-  .foot{flex-direction:column;align-items:center;text-align:center}
-  .foot-links{justify-content:center}
-}
-
-/* ---- the corner: the mail button and the way back up ---- */
-.qf-btn{
-  width:40px;height:40px;border-radius:var(--radius-s);background:var(--panel);color:var(--fg);
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
-}
-.qf-btn:hover{background:var(--gold);color:var(--deep);transform:none}
-.qf-btn svg{width:16px;height:16px}
-.totop{
-  display:grid;place-items:center;width:40px;height:40px;margin-bottom:12px;border:0;border-radius:var(--radius-s);
-  background:var(--panel);color:var(--fg);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4);
-  opacity:0;transform:scale(.6);pointer-events:none;transition:opacity .25s,transform .25s,background .2s,color .2s;
-}
-.totop.on{opacity:1;transform:none;pointer-events:auto}
-.totop:hover{background:var(--gold);color:var(--deep)}
-.totop svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.qf.open .totop{opacity:0;pointer-events:none}
-
-/* ---- small screens ---- */
-@media (max-width:700px){
-  :root{--head-h:76px}
-  .site-head .brand img{display:none}
-  .site-head .brand img.brand-mark{display:block}
-  .hb span{display:none}
-  .hb{padding:12px}
-  .hero{min-height:0}
-  .hero-ring{width:320px;height:320px}
-  .hero-cta{flex-direction:column;width:100%;max-width:320px}
-  .hero-cta .btn{width:100%;padding:14px 24px}
-  .hero-cta .btn + .btn{border-inline-start:0;border-top:1px solid rgba(248,250,252,.2)}
-  .phero{min-height:0;height:auto;padding-bottom:56px}
-  .src-foot{flex-direction:column;align-items:flex-start}
-}
-
-/* ==========================================================================
    PHONES — the last word. Everything below is scoped to small screens and
    sits at the end of the file on purpose: rules added later for wide screens
    had been overriding the phone layout (the footer columns ran into each
    other). Nothing may be appended after this block without a media query.
    ========================================================================== */
 
-
+/* the menu: groups that fold */
+.menu-grp{border-bottom:1px solid rgba(255,255,255,.08)}
+.menu-grp > summary{
+  list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
+  padding:16px 2px;color:var(--warm);font:500 var(--t-body)/1.4 var(--ui);text-transform:uppercase;
+}
+.menu-grp > summary::-webkit-details-marker{display:none}
+.menu-grp > summary::after{
+  content:"";width:9px;height:9px;border-right:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);
+  transform:rotate(45deg) translateY(-3px);transition:transform .25s;
+}
+.menu-grp[open] > summary::after{transform:rotate(-135deg) translateY(-1px)}
+.menu-grp > summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.menu-grp .sub{display:block;border-bottom:0;padding:11px 2px 11px 16px}
+.menu-grp[open]{padding-bottom:10px}
+.menu a.sub{color:rgba(247,244,241,.78)}
+.menu a.sub[aria-current="page"]{color:var(--gold)}
+.menu a[aria-current="page"]{color:var(--gold)}
 
 /* the phone sector tiles: hidden on wider screens */
+.secgrid{display:none}
+
 @media (max-width:860px){
+  /* sectors: the accordion gives way to tiles,
+two to a row,
+the first wide */
+  .acc{display:none}
+  .secgrid{list-style:none;margin:0;padding:0;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .secgrid li:first-child{grid-column:1 / -1}
+  .secgrid-a{position:relative;display:grid;align-content:end;aspect-ratio:1;overflow:hidden;isolation:isolate;
+    padding:14px;text-decoration:none;color:#fff;background:var(--ink)}
+  .secgrid li:first-child .secgrid-a{aspect-ratio:16/9}
+  .secgrid-a img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover}
+  .secgrid-a::after{content:"";position:absolute;inset:0;z-index:-1;
+    background:linear-gradient(to top,rgba(6,15,36,.92) 0%,rgba(6,15,36,.35) 60%,rgba(6,15,36,.1) 100%)}
+  .secgrid-n{font:400 .9375rem/1 var(--display);color:var(--gold);letter-spacing:.08em;margin-bottom:6px}
+  .secgrid-t{font:400 1.0625rem/1.2 var(--display);overflow-wrap:anywhere}
+  .secgrid li:first-child .secgrid-t{font-size:1.5rem}
+  .sec-intro{text-align:left;justify-items:start}
+
   /* the four figures: a clean two by two */
   .stats dl{grid-template-columns:repeat(2,minmax(0,1fr))}
   .stats dl > div,
@@ -2141,7 +2362,13 @@ one under the other */
 .co-hero-cta .btn{width:100%}
   .co-hero-cta{flex-direction:column}
 }
-
+@media (max-width:1080px){
+  /* the menu's own button keeps its dark label on white */
+  .menu a.btn-light{color:var(--ink);border-bottom:0;justify-content:center;font-weight:600}
+  /* with the menu open the bar is solid,
+even over a photograph */
+  html:has(.menu.open) .site-head.over{background:var(--ink)}
+}
 
 
 /* ==========================================================================
@@ -2160,14 +2387,14 @@ input[type="checkbox"]{width:auto;padding:0}
 .chk input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
 .chk span{
   display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 14px;
-  border:1px solid var(--line-2);background:var(--paper);color:var(--fg);font:500 var(--t-sm)/1.2 var(--ui);
+  border:1px solid var(--line-2);background:#fff;color:var(--ink);font:500 var(--t-sm)/1.2 var(--ui);
   transition:background .2s,border-color .2s,color .2s;
 }
 .chk span::before{content:"";width:14px;height:14px;border:1.5px solid var(--line-2);flex:none;transition:background .2s,border-color .2s}
-.chk:hover span{border-color:var(--fg)}
-.chk input:checked + span{background:var(--ink);border-color:var(--fg);color:#fff}
+.chk:hover span{border-color:var(--ink)}
+.chk input:checked + span{background:var(--ink);border-color:var(--ink);color:#fff}
 .chk input:checked + span::before{background:var(--gold);border-color:var(--gold);
-  box-shadow:inset 0 0 0 2px var(--gold)}
+  box-shadow:inset 0 0 0 2px var(--ink)}
 .chk input:focus-visible + span{outline:2px solid var(--gold);outline-offset:2px}
 .chk-all span{border-style:dashed;font-weight:600}
 
@@ -2177,10 +2404,10 @@ input[type="checkbox"]{width:auto;padding:0}
 .apply-side{display:grid;gap:18px;justify-items:start;position:sticky;top:calc(var(--head-h) + 32px)}
 .apply-side h2{font-size:var(--t-h1);line-height:1.1}
 .apply-points{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:10px;border-top:1px solid var(--line-2);padding-top:18px;width:100%}
-.apply-points li{display:flex;gap:12px;align-items:baseline;font:500 var(--t-sm)/1.45 var(--ui);color:var(--fg)}
+.apply-points li{display:flex;gap:12px;align-items:baseline;font:500 var(--t-sm)/1.45 var(--ui);color:var(--ink)}
 .apply-points li::before{content:"";width:14px;height:2px;background:var(--gold);flex:none;transform:translateY(-4px)}
 .apply-alt{font-size:var(--t-sm);color:var(--ink-2)}
-.apply-alt a{color:var(--fg);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
+.apply-alt a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
 
 /* ---- the corner form ---- */
 .qf{position:fixed;right:clamp(14px,2vw,28px);bottom:clamp(14px,2vw,28px);z-index:70}
@@ -2196,14 +2423,14 @@ input[type="checkbox"]{width:auto;padding:0}
 .qf.qf-away:not(.open) .qf-btn{opacity:0;pointer-events:none;transform:translateY(12px)}
 .qf-panel{
   position:absolute;right:0;bottom:0;width:min(380px,calc(100vw - 28px));max-height:calc(100svh - 40px);overflow:auto;
-  background:var(--paper);border-top:3px solid var(--gold);box-shadow:0 24px 60px rgba(6,15,36,.3);
+  background:#fff;border-top:3px solid var(--gold);box-shadow:0 24px 60px rgba(6,15,36,.3);
   padding:22px 22px 20px;
 }
 .qf-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
-.qf-head h2{font:600 1.5rem/1.15 var(--display);margin:10px 0 6px}
+.qf-head h2{font:400 1.5rem/1.15 var(--display);margin:10px 0 6px}
 .qf-lede{font-size:var(--t-sm);color:var(--ink-2)}
-.qf-close{flex:none;width:36px;height:36px;border:1px solid var(--line-2);background:var(--paper);color:var(--fg);font-size:1.375rem;line-height:1;cursor:pointer}
-.qf-close:hover{border-color:var(--fg)}
+.qf-close{flex:none;width:36px;height:36px;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-size:1.375rem;line-height:1;cursor:pointer}
+.qf-close:hover{border-color:var(--ink)}
 .qf-form{grid-template-columns:1fr;gap:12px}
 .qf-form label{font-size:var(--t-xs)}
 .qf-form input,
@@ -2243,7 +2470,7 @@ a thank-you panel.
 .lform select,
 .lform textarea{
   background:transparent;border:0;border-bottom:1px solid var(--line-2);border-radius:0;
-  padding:.55em 0 .7em;font:400 var(--t-body)/1.4 var(--body);color:var(--fg);
+  padding:.55em 0 .7em;font:400 var(--t-body)/1.4 var(--body);color:var(--ink);
   transition:border-color .25s,box-shadow .25s;
 }
 .lform input::placeholder,
@@ -2272,10 +2499,10 @@ a thank-you panel.
 .fstep{
   grid-column:1/-1;display:flex;align-items:baseline;gap:14px;margin:10px 0 -6px;
   padding-top:22px;border-top:1px solid var(--line);
-  font:600 1.25rem/1.2 var(--display);color:var(--fg);
+  font:400 1.25rem/1.2 var(--display);color:var(--ink);
 }
 .fstep:first-of-type{padding-top:0;border-top:0;margin-top:0}
-.fstep span{font:700 1.0625rem/1 var(--display);color:var(--gold-text);letter-spacing:.06em}
+.fstep span{font:300 1.0625rem/1 var(--display);color:var(--gold-text);letter-spacing:.06em}
 
 /* the end of a form: the button with its arrow,
 and a quiet note */
@@ -2291,9 +2518,9 @@ and a quiet note */
 .fdone-ic{width:52px;height:52px;border-radius:50%;background:var(--ink);position:relative}
 .fdone-ic::after{content:"";position:absolute;left:19px;top:14px;width:12px;height:21px;
   border-right:2.5px solid var(--gold);border-bottom:2.5px solid var(--gold);transform:rotate(45deg)}
-.fdone h3{font:600 1.75rem/1.15 var(--display);color:var(--fg);margin:6px 0 0}
+.fdone h3{font:400 1.75rem/1.15 var(--display);color:var(--ink);margin:6px 0 0}
 .fdone p{color:var(--ink-2);max-width:42ch}
-.fdone-again{margin-top:8px;background:none;border:0;padding:6px 0;font:600 var(--t-sm)/1.3 var(--ui);color:var(--fg);
+.fdone-again{margin-top:8px;background:none;border:0;padding:6px 0;font:600 var(--t-sm)/1.3 var(--ui);color:var(--ink);
   text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:5px;cursor:pointer}
 
 /* the application card and the corner form,
@@ -2320,7 +2547,7 @@ a compact panel */
 .qf-btn:focus-visible .qf-tip{opacity:1;transform:translate(0,-50%)}
 .qf-panel{width:min(320px,calc(100vw - 28px));padding:18px 18px 16px}
 .qf-head{margin-bottom:8px}
-.qf-head h2{font:600 1.375rem/1.2 var(--display);margin:0 0 4px}
+.qf-head h2{font:400 1.375rem/1.2 var(--display);margin:0 0 4px}
 .qf-form{gap:14px}
 .qf-form textarea{min-height:72px}
 .qf-form .fnote{display:none}
@@ -2334,7 +2561,7 @@ a compact panel */
 }
 
 /* Contact and Work With Us share one form card. */
-.fcard{background:var(--paper);padding:clamp(26px,3.4vw,48px);border:0;border-top:3px solid var(--gold);box-shadow:0 24px 60px rgba(6,15,36,.08)}
+.fcard{background:#fff;padding:clamp(26px,3.4vw,48px);border:0;border-top:3px solid var(--gold);box-shadow:0 24px 60px rgba(6,15,36,.08)}
 .fcard input:not([type="checkbox"]),
 .fcard select,
 .fcard textarea{background:transparent}
@@ -2350,7 +2577,7 @@ so every narrow-screen rule here carries
    its own media query. Same system as the rest: hairlines,
 a gold rule that
    draws across on hover,
-Inter for the names. */
+Newsreader for the names{background:var(--ink);color:#fff;padding-block:clamp(22px,2.6vw,34px);border-top:1px solid rgba(255,255,255,.12)}
 .sp-soon-none{border:0;padding:0;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-inv-2);grid-column:1/-1}
 
 /* what we buy: a card per category,
@@ -2378,7 +2605,7 @@ and the row grows with it. */
 }
 .catrow > summary::-webkit-details-marker{display:none}
 .catrow > summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.catrow-n{grid-column:1;font:700 1.25rem/1 var(--display);color:var(--gold-text)}
+.catrow-n{grid-column:1;font:300 1.25rem/1 var(--display);color:var(--gold-text)}
 .catrow-plus{grid-column:2;grid-row:1;position:relative;width:14px;height:14px;justify-self:end;align-self:start;margin-top:2px}
 .catrow-plus::before,
 .catrow-plus::after{content:"";position:absolute;background:var(--gold-text);transition:transform .25s}
@@ -2386,19 +2613,19 @@ and the row grows with it. */
 .catrow-plus::after{left:6px;top:0;width:2px;height:14px}
 .catrow[open] .catrow-plus::after{transform:rotate(90deg)}
 .catrow-main{grid-column:1/-1;display:grid;gap:6px;margin-top:6px}
-.catrow-name{font:600 var(--t-lg)/1.3 var(--display);color:var(--fg)}
+.catrow-name{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink)}
 .catrow-sample{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
 .catrow-who{grid-column:1/-1;font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-3);margin-top:4px}
 .catrow-count{grid-column:1/-1;font:500 var(--t-sm)/1.45 var(--ui);color:var(--ink-3)}
 .catrow-count a{position:relative;z-index:1;color:var(--gold-text);text-decoration:none;border-bottom:1px solid var(--gold);display:inline-flex;align-items:center;min-height:32px}
-.catrow-count a:hover{color:var(--fg)}
+.catrow-count a:hover{color:var(--ink)}
 .catrow-body{display:grid;gap:12px;padding:0 0 clamp(18px,2vw,24px);border-top:1px solid var(--line);padding-top:14px}
 .catrow-items{list-style:none;margin:0;padding:0;display:grid;gap:7px}
-.catrow-items li{position:relative;padding-left:18px;font:400 var(--t-sm)/1.45 var(--body);color:var(--fg)}
+.catrow-items li{position:relative;padding-left:18px;font:400 var(--t-sm)/1.45 var(--body);color:var(--ink)}
 .catrow-items li::before{content:"";position:absolute;left:0;top:.72em;width:10px;height:1.5px;background:var(--gold)}
-.catrow-buyers{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font:500 var(--t-sm)/1.4 var(--ui);color:var(--fg)}
+.catrow-buyers{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
 .catrow-buyers > span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-.catrow-buyers a{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line-2)}
+.catrow-buyers a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-2)}
 .catrow-buyers a:hover{border-color:var(--gold)}
 /* open,
 a card takes two columns and shows its lines to the right of the
@@ -2425,12 +2652,12 @@ not here. */
 .opp-filter{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:clamp(24px,3vw,40px)}
 .opp-filter[hidden]{display:none}
 .opp-l{display:inline;margin-right:6px;font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-.opp-pill{font:500 var(--t-sm)/1 var(--ui);color:var(--fg);background:transparent;border:1px solid var(--line-2);padding:11px 14px;cursor:pointer;min-height:40px;transition:border-color .2s,background .2s}
-.opp-pill:hover{border-color:var(--fg)}
-.opp-pill.on{background:var(--ink);border-color:var(--fg);color:#fff}
+.opp-pill{font:500 var(--t-sm)/1 var(--ui);color:var(--ink);background:transparent;border:1px solid var(--line-2);padding:11px 14px;cursor:pointer;min-height:40px;transition:border-color .2s,background .2s}
+.opp-pill:hover{border-color:var(--ink)}
+.opp-pill.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .opp-pill:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .opp-sel{display:none;flex:1 1 100%}
-.opp-sel select{width:100%;font:500 var(--t-sm)/1.3 var(--ui);color:var(--fg);background:var(--paper);border:1px solid var(--line-2);padding:12px 36px 12px 12px;min-height:44px;
+.opp-sel select{width:100%;font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);background:#fff;border:1px solid var(--line-2);padding:12px 36px 12px 12px;min-height:44px;
   appearance:none;-webkit-appearance:none;cursor:pointer;
   background-image:linear-gradient(45deg,transparent 50%,var(--gold-text) 50%),linear-gradient(135deg,var(--gold-text) 50%,transparent 50%);
   background-position:calc(100% - 16px) 55%,calc(100% - 11px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
@@ -2444,7 +2671,7 @@ not here. */
 .opp-head{padding-block:14px;border-bottom:1px solid var(--line-2);font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .opp{position:relative;padding-block:16px;border-bottom:1px solid var(--line);transition:background .25s}
 .opp::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.opp:hover{background:var(--paper)}
+.opp:hover{background:#fff}
 .opp:hover::before{transform:scaleX(1)}
 .opp[hidden]{display:none}
 .opp p{margin:0}
@@ -2452,13 +2679,13 @@ not here. */
 .opp-ref{position:relative;z-index:1;font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.06em;color:var(--gold-text);text-decoration:none;white-space:nowrap}
 .opp-ref:hover{text-decoration:underline;text-underline-offset:3px}
 .opp-type span{display:inline-block;font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
-.opp-title{font:600 var(--t-lg)/1.3 var(--display);margin:0}
-.opp-title a{color:var(--fg);text-decoration:none}
+.opp-title{font:400 var(--t-lg)/1.3 var(--display);margin:0}
+.opp-title a{color:var(--ink);text-decoration:none}
 .opp-title a::after{content:"";position:absolute;inset:0}
 .opp:hover .opp-title a{text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:1.5px;text-underline-offset:4px}
-.opp-who a{position:relative;z-index:1;font:500 var(--t-sm)/1.4 var(--ui);color:var(--fg);text-decoration:none}
+.opp-who a{position:relative;z-index:1;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink);text-decoration:none}
 .opp-who a:hover{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
-.opp-when{font:500 var(--t-sm)/1.4 var(--ui);color:var(--fg)}
+.opp-when{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
 .opp-in{font:400 var(--t-sm)/1.4 var(--body);color:var(--ink-3);white-space:nowrap}
 .opp-in:not(:empty)::before{content:" · "}
 .badge{display:inline-block;font:600 var(--t-xxs)/1 var(--ui);letter-spacing:.1em;text-transform:uppercase;padding:7px 9px 6px;border:1px solid currentColor;white-space:nowrap}
@@ -2470,19 +2697,19 @@ closing soon filled */
 .opps .badge-soon{padding:5px 8px 4px;line-height:1}
 .badge-open{color:var(--gold-text);border-color:var(--gold)}
 .badge-invite{color:var(--ink-3)}
-.badge-soon{color:var(--fg);border-color:var(--gold);background:var(--gold)}
+.badge-soon{color:var(--ink);border-color:var(--gold);background:var(--gold)}
 .badge-closed{color:#A3341A}
 .opp-act{justify-self:end}
 .opp-go{
   position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;
-  font:600 var(--t-sm)/1.2 var(--ui);color:var(--fg);text-decoration:none;white-space:nowrap;
-  border:1px solid var(--fg);background:transparent;transition:background .25s,color .25s;
+  font:600 var(--t-sm)/1.2 var(--ui);color:var(--ink);text-decoration:none;white-space:nowrap;
+  border:1px solid var(--ink);background:transparent;transition:background .25s,color .25s;
 }
 .opp-go span{transition:transform .25s}
 .opp-go:hover{background:var(--ink);color:#fff}
 .opp-go:hover span{transform:translateX(4px)}
 .opp-go:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.opp-none{margin-top:clamp(20px,2.6vw,32px);font:600 var(--t-lede)/1.6 var(--display);color:var(--ink-2);max-width:60ch}
+.opp-none{margin-top:clamp(20px,2.6vw,32px);font:400 var(--t-lede)/1.6 var(--display);color:var(--ink-2);max-width:60ch}
 .opp-none[hidden]{display:none}
 
 /* requirements beside principles */
@@ -2490,18 +2717,18 @@ closing soon filled */
 .sp-two h2{font-size:var(--t-h1);line-height:1.1;margin-top:14px}
 .sp-lede{font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2);margin-top:14px;max-width:46ch}
 .reqs{list-style:none;margin:clamp(20px,2.4vw,28px) 0 0;padding:0;display:grid;border-top:1px solid var(--line-2)}
-.reqs li{position:relative;padding:14px 0 14px 28px;border-bottom:1px solid var(--line);font:400 var(--t-sm)/1.5 var(--body);color:var(--fg)}
+.reqs li{position:relative;padding:14px 0 14px 28px;border-bottom:1px solid var(--line);font:400 var(--t-sm)/1.5 var(--body);color:var(--ink)}
 .reqs li::before{content:"";position:absolute;left:0;top:24px;width:14px;height:2px;background:var(--gold)}
 .terms{margin:clamp(20px,2.4vw,28px) 0 0;display:grid;border-top:1px solid var(--line-2)}
 .terms > div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
 .terms dt{font:500 var(--t-sm)/1.55 var(--ui);color:var(--ink-2)}
-.terms dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--fg)}
+.terms dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink)}
 
 /* the code of conduct: eight points in two columns */
 .conduct{list-style:none;margin:clamp(28px,3.4vw,44px) 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(32px,5vw,88px);border-top:1px solid var(--line-2)}
 .conduct li{display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 12px;padding:20px 0;border-bottom:1px solid var(--line)}
-.conduct-n{grid-row:1/3;font:700 1.5rem/1.1 var(--display);color:var(--gold-text)}
-.conduct h3{font:600 var(--t-lg)/1.3 var(--display);color:var(--fg);margin:0}
+.conduct-n{grid-row:1/3;font:300 1.5rem/1.1 var(--display);color:var(--gold-text)}
+.conduct h3{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink);margin:0}
 .conduct p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
 
 /* the code,
@@ -2509,27 +2736,27 @@ the fraud warning and support: three ruled columns */
 .sp-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3vw,48px)}
 .sp-notes > div{border-top:1px solid var(--line-2);padding-top:18px}
 .sp-notes > div > p:not(.eyebrow){font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);margin-top:12px}
-.sp-notes a{color:var(--fg);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
+.sp-notes a{color:var(--ink);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
 .sp-notes .channels{margin-top:12px;gap:10px}
 
 /* the registration: the same card as Contact,
 plus the two new field types */
 .fhelp{font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-3)}
 .agree-wrap{gap:4px}
-.lform label.agree{display:flex;gap:12px;align-items:flex-start;cursor:pointer;font:400 var(--t-sm)/1.5 var(--body);letter-spacing:0;text-transform:none;color:var(--fg)}
-.lform .agree input[type="checkbox"]{width:18px;height:18px;flex:none;margin:3px 0 0;padding:0;accent-color:var(--fg);cursor:pointer;background:transparent}
+.lform label.agree{display:flex;gap:12px;align-items:flex-start;cursor:pointer;font:400 var(--t-sm)/1.5 var(--body);letter-spacing:0;text-transform:none;color:var(--ink)}
+.lform .agree input[type="checkbox"]{width:18px;height:18px;flex:none;margin:3px 0 0;padding:0;accent-color:var(--ink);cursor:pointer;background:transparent}
 .lform .agree input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .agree-wrap .field-err{margin-left:30px}
 .co-ask-btns{display:flex;flex-wrap:wrap;gap:12px}
 
 /* Work With Us: the two ways in */
 .route2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,28px);margin-top:clamp(28px,3.4vw,44px)}
-.route{position:relative;display:grid;gap:12px;align-content:start;padding:clamp(24px,2.8vw,36px);background:var(--paper);border-top:3px solid var(--line-2);text-decoration:none;color:inherit;transition:border-color .3s,transform .3s;box-shadow:0 24px 60px rgba(6,15,36,.06)}
+.route{position:relative;display:grid;gap:12px;align-content:start;padding:clamp(24px,2.8vw,36px);background:#fff;border-top:3px solid var(--line-2);text-decoration:none;color:inherit;transition:border-color .3s,transform .3s;box-shadow:0 24px 60px rgba(6,15,36,.06)}
 .route:hover{border-top-color:var(--gold);transform:translateY(-3px)}
-.route-n{font:700 1.25rem/1 var(--display);color:var(--ink-3)}
-.route h3{font:600 clamp(1.375rem,2vw,1.75rem)/1.2 var(--display);color:var(--fg);margin:0}
+.route-n{font:300 1.25rem/1 var(--display);color:var(--ink-3)}
+.route h3{font:400 clamp(1.375rem,2vw,1.75rem)/1.2 var(--display);color:var(--ink);margin:0}
 .route p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
-.route-go{margin-top:8px;font:600 var(--t-sm)/1.3 var(--ui);color:var(--fg);display:inline-flex;gap:8px;align-items:center;min-height:44px}
+.route-go{margin-top:8px;font:600 var(--t-sm)/1.3 var(--ui);color:var(--ink);display:inline-flex;gap:8px;align-items:center;min-height:44px}
 .route-go span{color:var(--gold-text);transition:transform .25s}
 .route:hover .route-go span{transform:translateX(4px)}
 
@@ -2543,7 +2770,7 @@ plus the two new field types */
 .opp-hero .badge-invite{color:var(--ink-inv-2)}
 .opp-hero .badge-soon{background:transparent;color:var(--gold)}
 .opp-hero .badge-closed{color:#f0a08c}
-.opp-hero h1{font:700 clamp(2rem,3.6vw,3.25rem)/1.08 var(--display);color:#fff;max-width:20ch}
+.opp-hero h1{font:300 clamp(2rem,3.6vw,3.25rem)/1.08 var(--display);color:#fff;max-width:20ch}
 .opp-brief{font:400 var(--t-lede)/1.5 var(--body);color:#fff;margin-top:14px;max-width:60ch}
 /* once the script finds the event has closed,
 the form steps aside for the note it writes */
@@ -2604,7 +2831,7 @@ the issuing company and the buyer chips */
 
 /* the registration{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
 /* the checklist in the form's side column */
-.apply-h{font:600 var(--t-lg)/1.3 var(--display);color:var(--fg);margin-top:18px;padding-top:18px;border-top:1px solid var(--line-2);width:100%}
+.apply-h{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink);margin-top:18px;padding-top:18px;border-top:1px solid var(--line-2);width:100%}
 /* no dead ground under the folded row */
 #register{padding-bottom:clamp(28px,3vw,40px)}
 #register + .section{padding-top:clamp(36px,4vw,56px)}
@@ -2636,25 +2863,25 @@ and the document rows ----------------------------- */
   padding:12px 0;border-bottom:1px solid var(--line);
 }
 .fdoc-say{display:grid;gap:2px;min-width:0}
-.fdoc-name{font:500 var(--t-body)/1.4 var(--body);color:var(--fg)}
+.fdoc-name{font:500 var(--t-body)/1.4 var(--body);color:var(--ink)}
 .fdoc-hint{font:400 var(--t-sm)/1.45 var(--body);color:var(--ink-3)}
 .fdoc-ctl{display:flex;align-items:center;gap:12px;min-width:0}
 .fdoc-file{font:400 var(--t-sm)/1.4 var(--body);color:var(--ink-3);max-width:34ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fdoc.has-file .fdoc-file{color:var(--fg);font-weight:500}
+.fdoc.has-file .fdoc-file{color:var(--ink);font-weight:500}
 .fdoc-btn{
   position:relative;display:inline-flex;align-items:center;justify-content:center;
   min-height:44px;padding:0 18px;border:1px solid var(--line-2);cursor:pointer;
-  font:500 var(--t-sm)/1.3 var(--ui);color:var(--fg);background:var(--white);
+  font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);background:var(--white);
   transition:border-color .2s,background .2s;
 }
-.fdoc-btn:hover{border-color:var(--fg)}
+.fdoc-btn:hover{border-color:var(--ink)}
 .fdoc-btn input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
-.fdoc-btn:focus-within{outline:2px solid var(--gold);outline-offset:2px}
+.fdoc-btn:focus-within{outline:2px solid var(--ink);outline-offset:2px}
 .fdoc-x{
   width:44px;height:44px;border:1px solid var(--line-2);background:none;cursor:pointer;
   font-size:1.2rem;line-height:1;color:var(--ink-2);transition:color .2s,border-color .2s;
 }
-.fdoc-x:hover{color:var(--fg);border-color:var(--fg)}
+.fdoc-x:hover{color:var(--ink);border-color:var(--ink)}
 .fdoc .field-err:empty{display:none}
 .fdoc .field-err{grid-column:1/-1}
 @media (max-width:560px){
@@ -2669,7 +2896,7 @@ and the document rows ----------------------------- */
   padding:12px 0;border-bottom:1px solid var(--line);
 }
 .regprog-n{font:500 var(--t-xs)/1.4 var(--mono);color:var(--ink-3)}
-.regprog-t{font:500 var(--t-body)/1.4 var(--body);color:var(--fg)}
+.regprog-t{font:500 var(--t-body)/1.4 var(--body);color:var(--ink)}
 .regprog-s{grid-column:2;font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-3)}
 .regprog li.is-going .regprog-s{color:var(--gold-deep)}
 .regprog li.is-done .regprog-n,
@@ -2685,7 +2912,7 @@ and the document rows ----------------------------- */
 .opp-req summary{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   min-height:44px;padding:0 16px;cursor:pointer;list-style:none;
-  font:500 var(--t-sm)/1.3 var(--ui);color:var(--fg);
+  font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);
 }
 .opp-req summary::-webkit-details-marker{display:none}
 .opp-req summary::after{content:"+";font-size:1.1rem;color:var(--ink-3)}
@@ -2697,11 +2924,11 @@ and the document rows ----------------------------- */
   padding:8px 0;border-bottom:1px solid var(--line);
 }
 .opp-req-rows dt{font:500 var(--t-xs)/1.5 var(--mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
-.opp-req-rows dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--fg)}
+.opp-req-rows dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink)}
 .opp-req-note{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3)}
 .opp-req-clar{display:grid;gap:8px}
 .opp-req-clar p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
-.opp-req-clar strong{color:var(--fg);font-weight:500}
+.opp-req-clar strong{color:var(--ink);font-weight:500}
 .opp-req-clar em{color:var(--ink-3);font-style:normal}
 @media (max-width:700px){ .opp-req-rows > div{grid-template-columns:1fr;gap:2px} }
 
@@ -2713,11 +2940,7 @@ and the document rows ----------------------------- */
 .opp-all{margin-top:22px}
 .opp-all a{
   display:inline-flex;align-items:center;gap:8px;min-height:44px;
-  font:500 var(--t-sm)/1.3 var(--ui);color:var(--fg);text-underline-offset:4px;
+  font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);text-underline-offset:4px;
 }
 .opp-brief-line{display:block;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-3);margin-top:2px}
 
-/* The portal sub-pages open on a dark band, drawn in the block above; under
-   the fixed bar it needs the bar's height before its crumb. Appended after
-   it, so it wins. */
-.opp-hero{padding-top:calc(var(--head-h) + 32px)}

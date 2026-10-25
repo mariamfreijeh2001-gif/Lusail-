@@ -18,19 +18,11 @@ sectors and five companies today, and a company can sit in more than one
 sector — Lusail Commercial appears under both Trading and Supply &
 Distribution, and TIBECO Group under five.
 
-The structure and the design follow **TIBECO Group's own site**
-(tibecogroup.com) as the reference the Group's management chose, with one
-substitution: where TIBECO's first tier is its three *platforms* (Commerce,
-Investments, Services), Lusail Corp's is its *sectors*. Each sector has a page
-of its own, as each TIBECO platform does, listing the business areas worked in
-it and the companies that work there. The study behind this is in
-[docs/tibeco-reference-study.md](docs/tibeco-reference-study.md).
-
 | URL | |
 |---|---|
 | `/` | Home |
-| `/sectors/` | Every sector, as cards |
-| `/sectors/<slug>/` | One sector: its argument, the business areas worked in it, the companies that work there |
+| `/sectors/` | Every sector, each with the businesses inside it |
+| `/sectors/#sec-<slug>` | One sector — a block on the index, not a page of its own |
 | `/companies/<slug>/` | One company. TIBECO has no page here: every link to it opens tibecogroup.com in a new tab |
 | `/about/` | The Group: what it is and what it believes |
 | `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
@@ -40,21 +32,16 @@ it and the companies that work there. The study behind this is in
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
-There is **no portfolio index and no careers page**. A company is reached from
-its sector's page, from the home page or from the sectors panel in the bar;
-TIBECO — the one company with a website of its own — is linked straight there,
-in a new tab. Suppliers register once on the Supplier Portal; every other
-enquiry goes through the contact form, which routes on the "area of interest"
-field. The old `/companies/`, `/portfolio/` and `/careers/` URLs redirect, and
-so do guessed ones like `/vendors/`, `/tenders/` and `/procurement/`. The
-earlier `/sectors/#sec-<slug>` anchors are now the sector pages themselves.
-
-A sector page's **business areas** are not written separately: each is a
-product or service of a company in the sector. A product carries `in: [...]`,
-the sectors it belongs on (TIBECO's Energy & Industrial Materials sits on the
-Energy and Investments pages; Lusail Commercial's freight lines on Trading and
-Supply & Distribution); a product without `in` belongs to its company's
-primary sector only. `areasOf(sector)` in `data/site.js` gathers them.
+There is **no portfolio index, no careers page, and no page per sector** —
+each sector is a block on /sectors/ with an anchor, which is what the menus,
+the footer and the old per-sector URLs (by redirect) all point at. The menus
+name no companies either: a company is reached from its sector's block or
+from the home page, and TIBECO — the one company with a website of its own —
+is linked straight there, in a new tab. Suppliers register once on the Supplier
+Portal; every other enquiry goes through the contact form, which routes on
+the "area of interest" field. The old `/companies/`, `/portfolio/` and
+`/careers/` URLs redirect, and so do guessed ones like `/vendors/`,
+`/tenders/` and `/procurement/`.
 
 Adding a company to a sector means adding one object to that sector's
 `companies` array. The sectors menu, the sectors index, the sector page, the
@@ -193,61 +180,43 @@ See [TODO.md](TODO.md) for the full list.
 
 ## Design
 
-Redrawn to **TIBECO Group's site as the reference**, from that site's own
-source (the `tibeco-9a2c97f1` repository), in Lusail's own gold: dark grounds
-throughout (TIBECO's `hsl(220 20% 10%)` page, a card a shade lighter, a deep
-band darker), **Playfair Display** for headings and **Raleway** for text, a
-fixed bar that is transparent over the page and fills in once it scrolls —
-"Sectors" at the left and "Corporate" at the right opening drawers, the mark
-in the middle — a full-screen slideshow that opens on the Group's name,
-Arabic sub-labels under section headings, image tiles with the name along
-the foot, cards with a hairline border that turns gold under the pointer, and
-a one-line footer. The tokens are at the top of `assets/css/site.css`;
-changing the brand is changing those.
-[docs/tibeco-reference-study.md](docs/tibeco-reference-study.md) maps the
-reference onto this site, component by component.
+Built to the **Lusail Corp design system** (Claude Design): editorial and
+architectural — navy type on a near-white ground, fine rules instead of boxes
+and shadows, a light serif for the voice and a grotesque for the work, and the
+logo's gold spent in small amounts. Navy carries the hero overlays, the dark
+bands (sourcing, the closing card, company asks and quotes) and the footer.
+The tokens are at the top of `assets/css/site.css`; changing the brand is
+changing those.
 
 | | |
 |---|---|
-| `--bg` / `--paper` / `--panel` | `#141821` / `#1d212a` / `#2b303b` the page, a card, a raised panel |
-| `--deep` | `#0f1319` the deep band: the scrolled bar, the drawers, the footer, the sectors grid |
-| `--fg` / `--ink-2` / `--ink-3` | `#f8fafc` / `#a3adbf` / `#7b8597` type, secondary copy, the greyed word |
-| `--line` / `--line-2` | `#2f3540` / `#3b4250` hairlines |
-| `--gold` | `#D3A750` the logo gold — on these grounds it reads at 9:1, so it is text as well as mark |
-| `--radius` / `--radius-s` | `8px` / `4px` a card; a button or tile |
+| `--ink` | `#0B1A3A` navy — headings and every dark ground (a lighter tint of the logo's `#030C2B`, which reads as black on screen) |
+| `--ink-2` | `#474d63` secondary copy |
+| `--ink-3` | `#7a7f90` the greyed word inside a heading (24px and up only) |
+| `--paper` / `--panel` | `#f8f7f6` / `#eceae8` alternating grounds |
+| `--line` / `--line-2` | `#dedcd9` / `#c9c6c2` hairlines |
+| `--gold` | `#D3A750` the logo gold: rules, dashes, markers, buttons on navy |
+| `--gold-text` | `#7d5a1d` gold when it has to be read on a light ground |
 
-Type is **Playfair Display** for page titles, section headings, card names and
-the large numerals, and **Raleway** for everything else — the two faces
-TIBECO's site is set in. Both are served from this origin, from
-`site-assets/font/`, under the SIL Open Font License (see its `NOTICE.md`).
-Every size is one of the `--t-*` tokens; headings grow with the viewport and
-running text does not.
+Type is **Newsreader** (a light serif) for page titles, section headings, card
+titles and the large numerals, and **Archivo** for everything else, labels and
+buttons included. Both are served from this origin, from `site-assets/font/`,
+under the SIL Open Font License (see its `NOTICE.md`). Every size is one of the
+`--t-*` tokens; headings grow with the viewport and running text does not.
 
-Labels are uppercase, tracked wide (`.3em`) and gold, as TIBECO's platform
-labels are; a section heading carries its **Arabic sub-label** in gold under
-it (`AR` in `build/render.js`, `ar` on each sector) and a 64px gold rule.
-Cards are dark with a hairline border that turns gold under the pointer.
+Components use **rules, not boxes**: a hairline above each item and a gold rule
+that draws across it on hover. Eyebrows above headings are uppercase, tracked
+and led by a gold dash. **Every section fits one screen** at 1440×900.
 
 ### The pages
 
-- **The bar is fixed and transparent** over the top of every page, filling
-  in to the deep ground once the page scrolls; every opening starts under it.
-- **Home** — TIBECO's home, re-cast: a full-screen **slideshow** of six
-  photographs behind the Group's name, "Investment | Trade | Supply |
-  Services" and the descriptor in gold, with two joined buttons; the
-  **Corporate Statement** beside **Why Lusail Corp** and an "Institutional
-  Strength" box; **Core Business Sectors** as seven image tiles on the deep
-  ground; **Group Companies** as five tiles; **Global Presence** — the
-  sourcing **globe** with the regions beside it and the Group's four figures
-  (counted from the content) under it; the Supplier Portal band; the ask.
-- **Sector pages** (`/sectors/<slug>/`) — TIBECO's platform page: a
-  full-screen opening with the pill label ("Lusail Corp – Sector 02"), the
-  name, its Arabic and its line; **sticky tabs** that follow the reading;
-  the overview beside its intro; the **business areas** as cards, each
-  naming the company behind it; the companies; a closing statement; the
-  Supplier Portal band where the sector's companies buy; the other six
-  sectors as tiles. The index (`/sectors/`) is the seven tiles and "What
-  makes it a group".
+- **Every page opens full-screen** with its photograph, the bar transparent
+  over it until the page scrolls. ROMA, Cavallo and Nero open on a colour
+  panel beside the photograph instead, with a solid bar.
+- **Home** — the statement and the Group's four figures (counted from the
+  content), the sectors as a large accordion (one open panel, the rest upright
+  strips), the businesses with TIBECO as the lead card, "What makes it a
+  group", the sourcing **globe**, and how the Group works.
 - **The globe** — land points sampled from Natural Earth at build time
   (`build/worldmap.js` → `/assets/img/globe.json`), drawn and turned in a
   canvas, with a gold arc from every source country to Doha. Pointing at a
@@ -306,20 +275,12 @@ Cards are dark with a hairline border that turns gold under the pointer.
 
 ### Interactive parts
 
-- **The bar and the drawers** — "Sectors" slides a drawer in from the left
-  (the seven, each with its mark and its Arabic, and the way to all of them)
-  and "Corporate" one from the right (Home, About, Work With Us, Supplier
-  Portal, Contact, and the Contact button), over a dimmed page. Escape, the
-  close button, the scrim or a link closes them and focus returns to the
-  control. The two controls are links to `/sectors/` and `/about/`, so
-  without script they still go somewhere. On a phone the bar shows the mark
-  alone and the two burger icons.
-- **The slideshow** turns every five seconds; the dots pick a photograph.
-  Under reduced motion the first simply stays.
-- **The sticky tabs** on a sector page fill the tab of the section on screen
-  in gold, from scroll position.
-- **Back to top** appears in the corner above the mail button once the page
-  has moved.
+- **The bar** — *Sectors* is a link and a caret: the caret opens a compact
+  panel of sectors and their companies (also on hover; Escape or a click
+  outside closes it). Below 1080px the bar becomes a full-screen menu with
+  Sectors and Companies folded into groups that open on a tap.
+- **The sector accordion** opens the strip pointed at, tabbed to or tapped,
+  and keeps the last one open. On a phone it is replaced by photograph tiles.
 - **The TIBECO showcase** brings forward the photograph of the area pointed
   at, focused or tapped.
 - **The figures** are written into the HTML and count up once in view.
@@ -410,9 +371,9 @@ just sent focus to.
 
 Checked at 390 x 844 in a real mobile viewport over CDP: no page scrolls
 sideways, and targets are at least 44px where a thumb uses them. On a phone
-the bar is the mark and two burgers, the drawers take 85% of the width, the
-tiles run one to a row, the hero buttons stack, the figures and company facts
-are two-by-two, buttons run the full width, and the footer is just the mark, the line about the Group and
+the menu folds Sectors and Companies into groups, the sector accordion becomes
+photograph tiles, the figures and company facts are two-by-two, buttons run
+the full width, and the footer is just the mark, the line about the Group and
 how to reach it (sectors and companies are in the menu).
 
 ## Contact form

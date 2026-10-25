@@ -18,124 +18,102 @@
   document.documentElement.classList.add('js');
 
   /* ---------- the bar ------------------------------------------------------
-     Transparent over the top of the page; a few pixels of scroll fill it in,
-     the way TIBECO's does, so the words stay legible over any photograph. */
+     Over the home photograph it starts transparent; a few pixels of scroll
+     fills it in so the links stay legible against whatever is behind them. */
 
   var head = $('.site-head');
   if (head) {
-    var onHeadScroll = function () { head.classList.toggle('scrolled', window.scrollY > 50); };
+    var onHeadScroll = function () { head.classList.toggle('scrolled', window.scrollY > 8); };
     addEventListener('scroll', onHeadScroll, { passive: true });
     onHeadScroll();
   }
 
-  /* ---------- the drawers ---------------------------------------------------
-     "Sectors" slides in from the left, "Corporate" from the right, over a
-     dimmed page. Escape, the close button, the scrim or a link closes them,
-     and focus returns to the control that opened them. The two controls are
-     links to /sectors/ and /about/, so without script they still go
-     somewhere. */
+  /* ---------- the sectors panel -------------------------------------------
+     Opens on hover with a pointer, on click or Enter without one, and closes
+     on Escape or on a click outside. */
 
-  var scrim = $('#scrim');
-  var drawers = [['#drawerSecBtn', '#drawerSec'], ['#drawerCorpBtn', '#drawerCorp']]
-    .map(function (p) { return { btn: $(p[0]), box: $(p[1]) }; })
-    .filter(function (d) { return d.btn && d.box; });
-  if (scrim && drawers.length) {
-    var behind = [$('#main'), $('.site-foot'), $('#qf')];
-    var openD = null;
-    var setDrawer = function (d, open) {
-      drawers.forEach(function (x) {
-        var on = open && x === d;
-        x.box.classList.toggle('open', on);
-        x.box.setAttribute('aria-hidden', String(!on));
-        x.btn.setAttribute('aria-expanded', String(on));
-      });
-      scrim.classList.toggle('open', open);
-      document.documentElement.style.overflow = open ? 'hidden' : '';
-      behind.forEach(function (el) { if (el) el.inert = open; });
-      openD = open ? d : null;
-      if (open) {
-        var first = d.box.querySelector('a,button');
-        if (first) first.focus();
+  var navwrap = $('#navwrap'), secBtn = $('#secBtn');
+  if (navwrap && secBtn) {
+    var shut;
+    var setSec = function (open) {
+      clearTimeout(shut);
+      navwrap.classList.toggle('open', open);
+      secBtn.setAttribute('aria-expanded', String(open));
+    };
+    /* The panel hangs below the bar, so the pointer has to cross a strip of
+       header to reach it. Closing on the first mouseleave would shut the menu
+       on the way down, so leaving starts a short grace period instead and
+       coming back cancels it. */
+    var leave = function () {
+      clearTimeout(shut);
+      shut = setTimeout(function () { setSec(false); }, 260);
+    };
+
+    secBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      setSec(secBtn.getAttribute('aria-expanded') !== 'true');
+    });
+    if (matchMedia('(hover: hover)').matches) {
+      navwrap.addEventListener('mouseenter', function () { setSec(true); });
+      navwrap.addEventListener('mouseleave', leave);
+      /* the strip of bar between the button and the panel counts as being on
+         the way there, not as having left */
+      if (head) {
+        head.addEventListener('mouseleave', leave);
+        head.addEventListener('mouseenter', function () { clearTimeout(shut); });
       }
-    };
-    drawers.forEach(function (d) {
-      d.box.setAttribute('aria-hidden', 'true');
-      d.btn.addEventListener('click', function (e) { e.preventDefault(); setDrawer(d, openD !== d); });
-      d.box.addEventListener('click', function (e) {
-        if (e.target.closest('[data-close]')) { setDrawer(d, false); d.btn.focus(); }
-        else if (e.target.closest('a')) setDrawer(d, false);
-      });
-      /* the cycle stays inside the open drawer */
-      d.box.addEventListener('keydown', function (e) {
-        if (e.key !== 'Tab') return;
-        var stops = $$('a[href],button:not([disabled])', d.box).filter(function (el) { return el.offsetWidth || el.offsetHeight; });
-        if (stops.length < 2) return;
-        var first = stops[0], last = stops[stops.length - 1];
-        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
-      });
-    });
-    scrim.addEventListener('click', function () { if (openD) setDrawer(openD, false); });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && openD) { var b = openD.btn; setDrawer(openD, false); b.focus(); }
-    });
-  }
-
-  /* ---------- the opening slideshow -----------------------------------------
-     Six photographs behind the Group's name, one every five seconds; the
-     dots say which, and pick one. Under reduced motion the first simply
-     stays. */
-
-  var hero = $('#hero');
-  if (hero) {
-    var slides = $$('.hero-slide', hero), dots = $$('.hero-dot', hero);
-    var cur = 0, timer;
-    var show = function (i) {
-      cur = (i + slides.length) % slides.length;
-      slides.forEach(function (el, k) { el.classList.toggle('on', k === cur); });
-      dots.forEach(function (el, k) { el.classList.toggle('on', k === cur); el.setAttribute('aria-pressed', String(k === cur)); });
-    };
-    var start = function () {
-      if (still.matches || slides.length < 2) return;
-      clearInterval(timer);
-      timer = setInterval(function () { show(cur + 1); }, 5000);
-    };
-    dots.forEach(function (d, k) { d.addEventListener('click', function () { show(k); start(); }); });
-    document.addEventListener('visibilitychange', function () { if (document.hidden) clearInterval(timer); else start(); });
-    show(0);
-    start();
-  }
-
-  /* ---------- the sticky tabs on a sector page ----------------------------
-     The tab of the section on screen is filled in gold. Driven from scroll
-     position, so it is right however you arrived. */
-
-  var stabs = $('#stabs');
-  if (stabs) {
-    var tabs = $$('a[href^="#"]', stabs).map(function (a) {
-      return { a: a, sec: document.getElementById(a.getAttribute('href').slice(1)) };
-    }).filter(function (t) { return t.sec; });
-    var line = function () { return (head ? head.offsetHeight : 0) + stabs.offsetHeight + 24; };
-    var markedTab = null;
-    var pickTab = function () {
-      var best = tabs[0], top = -Infinity, l = line();
-      tabs.forEach(function (t) {
-        var y = t.sec.getBoundingClientRect().top - l;
-        if (y <= 0 && y > top) { top = y; best = t; }
-      });
-      if (best === markedTab) return;
-      markedTab = best;
-      tabs.forEach(function (t) { t.a.classList.toggle('on', t === best); });
-    };
-    if (tabs.length) {
-      var tTick = false;
-      addEventListener('scroll', function () {
-        if (tTick) return;
-        tTick = true;
-        requestAnimationFrame(function () { pickTab(); tTick = false; });
-      }, { passive: true });
-      pickTab();
     }
+    navwrap.addEventListener('focusout', function (e) {
+      if (!navwrap.contains(e.relatedTarget)) setSec(false);
+    });
+    document.addEventListener('click', function (e) {
+      if (!navwrap.contains(e.target)) setSec(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && navwrap.classList.contains('open')) { setSec(false); secBtn.focus(); }
+    });
+  }
+
+  /* ---------- the small-screen menu ---------------------------------------- */
+
+  var burger = $('#burger'), menu = $('#menu');
+  if (burger && menu) {
+    var behind = [$('#main'), $('.site-foot')];
+    var setMenu = function (open) {
+      menu.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      /* The page behind a full-screen menu is off the screen and invisible,
+         and tabbing past the last link used to walk straight into it. */
+      behind.forEach(function (el) { if (el) el.inert = open; });
+      /* Focus stays on the button that opened it. That button is the one that
+         closes it again, it is inside the cycle below, and Escape returns
+         here anyway — so the first Tab goes into the menu and nothing has to
+         be moved about while the panel is still fading in. */
+    };
+    /* `inert` does the work where it is supported; this keeps the cycle
+       closed where it is not, and keeps the burger in it either way, since
+       it is the control that closes the thing. */
+    var trap = function (e) {
+      if (e.key !== 'Tab' || !menu.classList.contains('open')) return;
+      var stops = [burger].concat($$('a[href],summary,button:not([disabled])', menu))
+        .filter(function (el) { return el.offsetWidth || el.offsetHeight; });
+      if (stops.length < 2) return;
+      var first = stops[0], last = stops[stops.length - 1];
+      if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+      else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+    };
+    document.addEventListener('keydown', trap);
+    burger.addEventListener('click', function () {
+      setMenu(burger.getAttribute('aria-expanded') !== 'true');
+    });
+    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); }
+    });
+    addEventListener('resize', function () {
+      if (innerWidth > 1080 && menu.classList.contains('open')) setMenu(false);
+    });
   }
 
   /* ---------- the values ---------------------------------------------------
@@ -614,10 +592,10 @@
     if (qcat && pills.some(function (x) { return x.getAttribute('data-cat') === qcat; })) pick(qcat);
   }
 
-  /* ---------- the corner form, and the way back up ---------------------------
+  /* ---------- the corner form ----------------------------------------------
      A button in the corner of every page opens a small panel. Escape, the
      close button or a click outside it closes it, and focus goes back to the
-     button. Above it, once the page has moved, a button back to the top. */
+     button. On a phone it rises from the bottom as a sheet. */
   var qf = $('#qf');
   if (qf) {
     var qBtn = $('#qfBtn'), qPanel = $('#qfPanel');
@@ -648,15 +626,103 @@
         own.forEach(function (f) { io.observe(f); });
       }
     }
+  }
 
-    var top = document.createElement('button');
-    top.type = 'button'; top.className = 'totop'; top.setAttribute('aria-label', 'Back to top');
-    top.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
-    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: still.matches ? 'auto' : 'smooth' }); });
-    qf.insertBefore(top, qf.firstChild);
-    var onTop = function () { top.classList.toggle('on', window.scrollY > 400); };
-    addEventListener('scroll', onTop, { passive: true });
-    onTop();
+  /* ---- the sectors index tracks the reading -----------------------------
+     The index at the left of /sectors/ marks whichever sector is on screen.
+     The mark is driven from scroll position rather than from clicks, so it
+     is right however you arrived — a link from elsewhere, the back button,
+     or simply scrolling. Without script every entry stays a plain jump link
+     and the first keeps the mark the HTML gave it, which is still true.
+
+     The sector whose top has most recently passed the line is the one you
+     are reading, and it keeps the mark until the next one arrives — however
+     long it takes to read. Before any has passed, the first sector holds it.
+     The line sits below whatever is pinned at the top of the window, which
+     is the bar on a wide screen and the bar plus the index on a narrow one,
+     where the index lies on its side as a strip. Measuring it rather than
+     assuming it keeps the mark honest at both shapes. */
+  var rail = document.querySelector('.secrail');
+  var idx = document.querySelector('.secidx');
+  if (rail) {
+    var entries = [];
+    [].forEach.call(rail.querySelectorAll('a[href^="#"]'), function (a) {
+      var sec = document.getElementById(a.getAttribute('href').slice(1));
+      if (sec) entries.push({ a: a, sec: sec });
+    });
+    var strip = rail.querySelector('ol');
+
+    var bar = parseInt(getComputedStyle(document.documentElement)
+      .getPropertyValue('--head-h'), 10) || 104;
+    var sideways = false, line = bar + 40;
+    var remeasure = function () {
+      sideways = getComputedStyle(strip).display === 'flex';
+      line = bar + (sideways ? rail.offsetHeight : 0) + 40;
+    };
+
+    /* On a narrow screen the marked sector can be off the end of the strip.
+       Nudge the strip itself — never the page, which is already where the
+       reader put it. */
+    var reveal = function (a) {
+      if (!sideways || strip.scrollWidth <= strip.clientWidth) return;
+      var l = a.offsetLeft, r = l + a.offsetWidth;
+      if (l < strip.scrollLeft) strip.scrollLeft = l;
+      else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth;
+    };
+
+    var marked = null;
+    var pick = function () {
+      var best = entries[0], top = -Infinity;
+      entries.forEach(function (e) {
+        var y = e.sec.getBoundingClientRect().top - line;
+        if (y <= 0 && y > top) { top = y; best = e; }
+      });
+      if (best === marked) return;
+      marked = best;
+      entries.forEach(function (e) {
+        if (e === best) e.a.setAttribute('aria-current', 'location');
+        else e.a.removeAttribute('aria-current');
+      });
+      /* The ground belongs to the whole index rather than to each block, so
+         moving between sectors washes the colour across instead of cutting to
+         it. Without this the page keeps the first tone, which is a real page. */
+      if (idx && best.sec.dataset.tone) idx.setAttribute('data-tone', best.sec.dataset.tone);
+      reveal(best.a);
+    };
+
+    if (entries.length) {
+      var tick = false;
+      var onScroll = function () {
+        if (tick) return;
+        tick = true;
+        requestAnimationFrame(function () { pick(); tick = false; });
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', function () { remeasure(); marked = null; onScroll(); });
+      remeasure();
+      pick();
+    }
+  }
+
+  /* ---------- the sector accordion ---------------------------------------- */
+
+  /* Pointing at a strip, or tabbing to it, opens it; the last one opened stays
+     open, so moving the pointer away never leaves seven equal slivers. A tap
+     on a closed strip opens it rather than leaving the page, and a tap on the
+     open one follows its link. */
+  var acc = $('#acc');
+  if (acc) {
+    var items = $$('.acc-item', acc);
+    var open = function (it) {
+      items.forEach(function (x) { x.classList.toggle('is-open', x === it); });
+    };
+    items.forEach(function (it) {
+      it.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') open(it); });
+      it.addEventListener('focus', function () { open(it); });
+      it.addEventListener('click', function (e) {
+        if (!it.classList.contains('is-open')) { e.preventDefault(); open(it); }
+      });
+    });
   }
 
   /* ---------- the globe --------------------------------------------------- */
