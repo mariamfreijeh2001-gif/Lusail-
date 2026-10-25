@@ -1,12 +1,20 @@
 /* ==========================================================================
    Lusail Corp — all site content.
 
-   STRUCTURE: two tiers, sector -> companies. A sector is a heading, not a
-   page: it groups the portfolio and filters it. Every sector's story is told
-   on the pages of the companies that work in it.
+   STRUCTURE: two tiers, sector -> companies, built the way TIBECO Group's
+   site is built around its three platforms (Commerce, Investments,
+   Services) — except that the Group's first tier is its SECTORS. A sector
+   is a page of its own: its argument, the business areas worked in it, and
+   the companies that work there. A company is the second tier.
 
-       /companies/                 every company, filterable by sector
+       /sectors/                   every sector, as a grid
+       /sectors/<slug>/            one sector: overview, business areas, companies
        /companies/<slug>/          one company
+
+   BUSINESS AREAS. A sector page lists the business areas worked in it. They
+   are not written twice: each one is a product or service of a company in
+   the sector. A product carries `in: [...]`, the sectors it belongs on; a
+   product without `in` belongs to its company's primary sector only.
 
    WRITING
    Plain sentences, concrete nouns, no filler. Say what a business does, what
@@ -29,6 +37,12 @@ const SITE = {
   tagline: 'Building Businesses. Creating Value.',
   supporting: 'One Group. Multiple Businesses. Shared Ambition.',
   blurb: 'A diversified corporate group based in the State of Qatar.',
+  /* The line over the home page title — what kind of group this is, said
+     once, the way TIBECO's site opens on "Elite International Business
+     Group". And the line under it: what the Group does, in the fields it
+     works in. */
+  descriptor: 'Diversified Qatari Business Group',
+  fields: 'Investment, Trade, Supply & Services across Qatar and international markets.',
   domain: 'https://www.lusailcorp.com',
 
   /* The logo is an asset, not a design ingredient. Nothing in the layout is
@@ -66,6 +80,7 @@ const SECTORS = [
   {
     slug: 'investments',
     name: 'Investments & Strategic Services',
+    label: 'Investments',
     short: 'Capital, commerce and services across energy, technology and industrial development.',
     headline: 'Capital With a Long Horizon',
     intro: 'The Group’s investment platform originates, manages and deploys positions where it can also bring commerce and services.',
@@ -109,15 +124,15 @@ const SECTORS = [
         ],
         productsTitle: 'Business <span class="soft">platforms</span>',
         products: [
-          { t: 'Energy & Industrial Materials', img: 'prod-energy-materials',
+          { t: 'Energy & Industrial Materials', img: 'prod-energy-materials', in: ['energy-industrial', 'investments'],
             d: 'Materials and supply for energy and industrial operators, and investment in the projects behind them.' },
-          { t: 'Technology & Advanced Systems', img: 'prod-technology-systems',
+          { t: 'Technology & Advanced Systems', img: 'prod-technology-systems', in: ['technology', 'investments'],
             d: 'Enterprise IT integration, advanced systems and AI, delivered with established global technology partners.' },
-          { t: 'Industrial, Institutional & Commercial Equipment', img: 'prod-equipment',
+          { t: 'Industrial, Institutional & Commercial Equipment', img: 'prod-equipment', in: ['energy-industrial', 'supply-distribution'],
             d: 'Equipment sourced and supplied for industrial sites, institutions and commercial operations.' },
-          { t: 'Strategic Commodities & Food Security', img: 'prod-food-security',
+          { t: 'Strategic Commodities & Food Security', img: 'prod-food-security', in: ['trading', 'supply-distribution'],
             d: 'Long-term supply of essential commodities for programmes where continuity matters more than price on the day.' },
-          { t: 'Project-Based Commercial Supply', img: 'prod-project-supply',
+          { t: 'Project-Based Commercial Supply', img: 'prod-project-supply', in: ['investments', 'supply-distribution'],
             d: 'Supply organised around a project’s schedule and specification, from tender to final delivery.' }
         ],
         activities: ['Institutional Supply', 'Strategic Investment', 'Energy', 'Technology & AI', 'Enterprise IT Integration', 'Project Coordination', 'Food Security', 'Government Programmes'],
@@ -148,6 +163,7 @@ const SECTORS = [
   {
     slug: 'energy-industrial',
     name: 'Energy & Industrial',
+    label: 'Energy & Industrial',
     short: 'Materials, equipment and investment for energy operators and industrial sites.',
     headline: 'Supplying the Industries That Run the Economy',
     intro: 'Energy and industry need suppliers who can commit to volume, specification and schedule for years at a time.',
@@ -163,6 +179,7 @@ const SECTORS = [
   {
     slug: 'technology',
     name: 'Technology & Advanced Systems',
+    label: 'Technology',
     short: 'Enterprise IT integration, advanced systems and AI for institutions and businesses.',
     headline: 'Systems That Institutions Can Run On',
     intro: 'Technology is both a business the Group runs and something every other part of the Group relies on.',
@@ -178,6 +195,7 @@ const SECTORS = [
   {
     slug: 'trading',
     name: 'Trading & Commodities',
+    label: 'Trading',
     short: 'Edible oils, sugar, wheat, coffee and sulphur — bought abroad and shipped by sea, land and air.',
     headline: 'Global Supply, Commercially Answered',
     intro: 'The Group buys commodities internationally and carries them, which is one business rather than two.',
@@ -212,18 +230,18 @@ const SECTORS = [
           { k: 'Transport', v: 'Sea, land, air and multimodal' }
         ],
         products: [
-          { t: 'Ocean Freight', img: 'prod-ocean-freight',
+          { t: 'Ocean Freight', img: 'prod-ocean-freight', in: ['trading', 'supply-distribution'],
             d: 'Full and part container loads, bulk, breakbulk and project cargo between Qatar and international ports.' },
-          { t: 'Vessel Chartering', img: 'prod-vessel-chartering',
+          { t: 'Vessel Chartering', img: 'prod-vessel-chartering', in: ['trading', 'supply-distribution'],
             d: 'Marine capacity arranged with shipping partners for bulk commodities and large-volume shipments.' },
-          { t: 'Land Freight', img: 'prod-land-freight',
+          { t: 'Land Freight', img: 'prod-land-freight', in: ['trading', 'supply-distribution'],
             d: 'Heavy trucks, flatbed and low-bed trailers and container movement within Qatar and across regional borders.' },
-          { t: 'Air Freight', img: 'prod-air-freight',
+          { t: 'Air Freight', img: 'prod-air-freight', in: ['trading', 'supply-distribution'],
             d: 'For urgent, high-value or time-sensitive cargo between Qatar and major international markets.' },
           { t: 'Food & Agricultural Commodities', img: 'prod-food-commodities',
             origins: ['Ukraine', 'Kazakhstan', 'India', 'Indonesia', 'Brazil', 'Colombia', 'Ethiopia', 'Uganda'],
             d: 'Edible oils, sugar, wheat and grains, and coffee, sourced by specification, origin and season.' },
-          { t: 'Industrial Commodities', img: 'prod-industrial-commodities',
+          { t: 'Industrial Commodities', img: 'prod-industrial-commodities', in: ['trading', 'energy-industrial'],
             origins: ['Qatar', 'UAE', 'Turkmenistan', 'Kazakhstan'],
             d: 'Granular solid sulphur in bulk for industrial and commercial use, with the shipping arranged alongside.' }
         ],
@@ -251,6 +269,7 @@ const SECTORS = [
   {
     slug: 'supply-distribution',
     name: 'Supply & Distribution',
+    label: 'Supply & Distribution',
     short: 'Fresh produce, rice and dry goods, imported and delivered to the businesses that sell and serve them.',
     headline: 'Connecting Supply With Demand',
     intro: 'Distribution is the link between a producer abroad and a kitchen, a shelf or a warehouse in Qatar.',
@@ -325,6 +344,7 @@ const SECTORS = [
   {
     slug: 'consumer-services',
     name: 'Consumer & Lifestyle Services',
+    label: 'Consumer Services',
     short: 'Garment care for households, judged on doing the same thing well every time.',
     headline: 'Everyday Services. Better Experiences.',
     intro: 'A service business is judged on whether it does the same thing well every time.',
@@ -385,6 +405,7 @@ const SECTORS = [
   {
     slug: 'food-beverage',
     name: 'Food & Beverage',
+    label: 'Food & Beverage',
     short: 'A café, and the discipline of opening it every morning.',
     headline: 'Where the Group Meets Its Customers',
     intro: 'Hospitality is where the Group meets its customers face to face.',
@@ -536,6 +557,24 @@ const FIGURES = [
    trading businesses follow, since they carry the Group outside Qatar.
    Anything not named here keeps its sector order, behind them. */
 const COMPANY_ORDER = ['tibeco-group', 'lusail-commercial', 'roma-commercial'];
+
+/* The business areas worked in a sector: every product or service of a
+   company in it that is tagged for it (`in`), or — for a product with no
+   tag — that belongs to a company whose primary sector this is. Each area
+   remembers the company behind it, so the page can say "through ROMA". */
+const areasOf = sector => {
+  const seen = new Set(), out = [];
+  sector.companies.forEach(c => {
+    (c.products || c.services || []).forEach(p => {
+      /* a company's own entry carries no sectorSlug; a cross-listed copy does */
+      const where = p.in || [c.sectorSlug || sector.slug];
+      if (!where.includes(sector.slug) || seen.has(p.t)) return;
+      seen.add(p.t);
+      out.push(Object.assign({}, p, { company: c }));
+    });
+  });
+  return out;
+};
 
 /* Flat list of every company, each carrying a back-reference to the sector it
    is defined in. A company appears here exactly once, however many sectors it
@@ -935,7 +974,7 @@ const FORMS = {
 };
 
 module.exports = {
-  SITE, SECTORS, ALL_COMPANIES, REACH, REACH_POINTS, HUB, WHY,
+  SITE, SECTORS, ALL_COMPANIES, areasOf, REACH, REACH_POINTS, HUB, WHY,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
   PARTNER_TYPES, FORMS, FORM_LISTS,
   SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT

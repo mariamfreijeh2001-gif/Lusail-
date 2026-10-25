@@ -6,8 +6,9 @@
 
    PAGES
      /                     home
-     /sectors/             every sector, each with the businesses in it
-     /sectors/<slug>/      one sector
+     /sectors/             every sector, as cards
+     /sectors/<slug>/      one sector: its argument, business areas, companies
+     /supplier-portal/     the Supplier Portal, /opportunities/, /register/, /code/
      /companies/<slug>/    one company
      /about/               the Group: what it is and what it believes
      /partnerships/        Work With Us: who the Group wants to hear from
@@ -21,8 +22,10 @@
    redirects the URLs those pages used to have.
 
    DESIGN
-   Built to the Figma. Every page opens on a photograph with its title over a
-   dark wash; the reading below sits on white and warm off-white in turn.
+   Drawn to TIBECO Group's site as the reference (docs/tibeco-reference-study.md),
+   with sectors where TIBECO has platforms: a solid white bar, a photograph
+   under it with the title over a dark wash, Inter set bold for headings, and
+   rounded cards; the reading sits on white and warm off-white in turn.
    ========================================================================== */
 
 const fs = require('fs');
@@ -39,7 +42,7 @@ const ASSET_V = {
   js: require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, '..', 'assets/js/site.js'))).digest('hex').slice(0, 10)
 };
 const {
-  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES, FORMS, FORM_LISTS,
+  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES, areasOf, FORMS, FORM_LISTS,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
   PARTNER_TYPES, SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 } = require('../data/site.js');
@@ -159,8 +162,8 @@ const coLink = c => c.site
   ? `href="${c.site}" target="_blank" rel="noopener"`
   : `href="/companies/${c.slug}/"`;
 
-/* A sector's one address is its block on the index. */
-const secHref = s => `/sectors/#sec-${typeof s === 'string' ? s : s.slug}`;
+/* A sector has a page of its own, as each of TIBECO's platforms does. */
+const secHref = s => `/sectors/${typeof s === 'string' ? s : s.slug}/`;
 
 /* A social link is only rendered once it points somewhere. While the handles
    are unset the link simply is not there, rather than a link to '#'. */
@@ -174,7 +177,10 @@ const SOCIAL = () => [
    layout is built around, so the design survives a rebrand. Filenames come
    from SITE.brand. Both bars are carbon, so both take the reversed lockup. */
 const B = SITE.brand;
-const LOGO = `<img src="/assets/logo/${B.logoOnDark}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
+/* The bar is white now, so it takes the full-colour lockup; the footer stays
+   navy and keeps the reversed one. */
+const LOGO = `<img src="/assets/logo/${B.logoOnLight}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
+const LOGO_DARK = `<img src="/assets/logo/${B.logoOnDark}" alt="" width="${B.logoWidth}" height="${B.logoHeight}">`;
 
 /* Icons, drawn here rather than pulled from a set, so they share the site's
    geometry: 24x24, hairline strokes, square caps, mitre joins, no rounding.
@@ -335,7 +341,6 @@ ${image ? `<meta property="og:image" content="${SITE.domain}/assets/img/${image}
 <link rel="apple-touch-icon" href="/assets/logo/${B.appleTouch}">
 
 <link rel="preload" href="/assets/font/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/font/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css?v=${ASSET_V.css}">
 ${TURNSTILE ? `<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>\n` : ''}${schema ? `\n<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n</script>` : ''}
 </head>
@@ -344,16 +349,16 @@ ${TURNSTILE ? `<script src="https://challenges.cloudflare.com/turnstile/v0/api.j
 `;
 }
 
-/* The bar carries four links and one action. "Sectors" opens a panel across
-   the measure rather than going anywhere itself: the whole portfolio is four
-   sectors and five listings, so it fits, and a visitor gets to the business
-   they came for in one move. */
+/* The bar: the mark, five words and one action. It is solid and white on
+   every page, the way TIBECO's is, so the photograph on each page sits
+   under it rather than behind it. "Sectors" is a word and a caret: the word
+   goes to the sectors page, the caret opens the panel of seven. */
 const NAV = [
   ['Home', '/'],
-  ['Sectors', '/sectors/'],
   ['About Us', '/about/'],
+  ['Sectors', '/sectors/'],
   ['Work With Us', '/partnerships/'],
-  ['Suppliers', '/supplier-portal/']
+  ['Supplier Portal', '/supplier-portal/']
 ];
 
 /* A mark per sector, drawn from the set already in ICON_PATHS. */
@@ -369,25 +374,26 @@ const SECTOR_ICON = {
 
 function sectorsPanel() {
   return `      <div class="secmenu" id="secmenu">
-        <a class="secmenu-eyebrow" href="/sectors/">Our sectors <span aria-hidden="true">&#8594;</span></a>
         <div class="secmenu-cols">
-${SECTORS.map(s => `          <div class="secmenu-col">
-            <a class="secmenu-head" href="${secHref(s)}">
-              ${icon(SECTOR_ICON[s.slug] || 'markets')}
-              <span>${esc(s.name)}</span>
-            </a>
-          </div>`).join('\n')}
+${SECTORS.map((s, i) => `          <a class="secmenu-item" href="${secHref(s)}">
+            <span class="secmenu-top">${icon(SECTOR_ICON[s.slug] || 'markets')}<span class="secmenu-n">${num(i)}</span></span>
+            <span class="secmenu-name">${esc(s.name)}</span>
+            <span class="secmenu-line">${esc(s.short)}</span>
+          </a>`).join('\n')}
+          <a class="secmenu-item secmenu-all" href="/sectors/">
+            <span class="secmenu-name">All sectors <span aria-hidden="true">&#8594;</span></span>
+            <span class="secmenu-line">${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies, one way of working.</span>
+          </a>
         </div>
       </div>`;
 }
 
-/* overHero: the home page opens on a photograph that runs under the bar, so
-   the bar starts transparent over it and fills as the page moves. Every other
-   page puts its photograph below a solid bar, as they are drawn. */
-function header(current, overHero) {
+/* Callers that still pass a second argument are harmless: the bar no longer
+   floats over a photograph anywhere, so there is nothing for it to change. */
+function header(current) {
   const link = ([label, href]) => {
     const here = href === current ? ' aria-current="page"' : '';
-    /* a sector page is "under" Sectors, so the button carries the mark */
+    /* a sector page is "under" Sectors, so the word carries the mark */
     const onSector = current && current.startsWith('/sectors/') ? ' aria-current="true"' : '';
     /* Sectors is a link to the sectors page and a panel listing them, which
        are two things, so they are two controls: clicking the word goes to
@@ -402,7 +408,7 @@ ${sectorsPanel()}
       : `      <a class="nav-link" href="${href}"${here}>${esc(label)}</a>`;
   };
 
-  return `<header class="site-head${overHero ? ' over' : ''}" id="top">
+  return `<header class="site-head" id="top">
   <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}</a>
   <nav class="nav" aria-label="Main">
 ${NAV.map(link).join('\n')}
@@ -414,15 +420,14 @@ ${NAV.map(link).join('\n')}
 </header>
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
   <a href="/"${current === '/' ? ' aria-current="page"' : ''}>Home</a>
-  <details class="menu-grp">
+  <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
+  <details class="menu-grp"${current && current.startsWith('/sectors/') ? ' open' : ''}>
     <summary>Sectors</summary>
     <a class="sub" href="/sectors/"${current === '/sectors/' ? ' aria-current="page"' : ''}>All sectors</a>
-${SECTORS.map(x => `    <a class="sub" href="${secHref(x)}">${esc(x.name)}</a>`).join('\n')}
+${SECTORS.map(x => `    <a class="sub" href="${secHref(x)}"${current === secHref(x) ? ' aria-current="page"' : ''}>${esc(x.name)}</a>`).join('\n')}
   </details>
-
-  <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
   <a href="/partnerships/"${current === '/partnerships/' ? ' aria-current="page"' : ''}>Work with us</a>
-  <a href="/supplier-portal/"${current === '/supplier-portal/' ? ' aria-current="page"' : ''}>Suppliers</a>
+  <a href="/supplier-portal/"${current === '/supplier-portal/' ? ' aria-current="page"' : ''}>Supplier Portal</a>
   <a class="btn btn-light" href="/contact/">Contact us</a>
 </div>
 <main id="main">
@@ -572,7 +577,7 @@ function footer(opts = {}) {
   <div class="wrap">
     <div class="foot">
       <div class="foot-id">
-        <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO}</a>
+        <a class="brand" href="/" aria-label="${esc(SITE.name)} — home">${LOGO_DARK}</a>
         <p>${esc(SITE.tagline)}<br>${esc(SITE.blurb)}</p>
       </div>
       <div class="foot-go">
@@ -695,6 +700,69 @@ function ctaBand() {
 `;
 }
 
+/* ---------- the sectors, wherever they are listed -------------------------- */
+
+/* The seven sectors as a row of tabs under the home title — the way TIBECO
+   puts its platforms in front of everything else. Each is a link to its
+   page; on a phone the row scrolls sideways. */
+function sectorStrip() {
+  return `<nav class="secstrip" aria-label="Our sectors">
+${SECTORS.map((s, i) => `      <a class="secstrip-a" href="${secHref(s)}">
+        ${icon(SECTOR_ICON[s.slug] || 'markets')}
+        <span class="secstrip-n" aria-hidden="true">${num(i)}</span>
+        <span class="secstrip-t">${esc(s.label || s.name)}</span>
+      </a>`).join('\n')}
+    </nav>`;
+}
+
+/* The seven sectors as cards: a photograph, the number and the mark, the
+   name, its line and how many companies work in it. One component for the
+   home page, the sectors index and the foot of a sector page, so they
+   cannot disagree. */
+function sectorCards(current) {
+  const list = current ? SECTORS.filter(s => s.slug !== current) : SECTORS;
+  /* all seven: four across with the first card wide, so the rows fill;
+     the six others on a sector page: three across */
+  return `<ul class="seccards${current ? '' : ' seccards-all'}">
+${list.map(s => {
+    const i = SECTORS.indexOf(s);
+    const n = s.companies.length;
+    const through = n === 1 && s.companies[0].site ? `through ${s.companies[0].name}` : plural(n, 'company', 'companies');
+    return `      <li class="rise d${i % 4}"><a class="seccard" href="${secHref(s)}">
+        <span class="seccard-shot">${pic(s.hero, '(max-width:700px) 100vw, (max-width:1100px) 50vw, 33vw', 'alt="" loading="lazy"')}</span>
+        <span class="seccard-body">
+          <span class="seccard-top"><span class="seccard-n">${num(i)}</span>${icon(SECTOR_ICON[s.slug] || 'markets')}</span>
+          <span class="seccard-name">${esc(s.name)}</span>
+          <span class="seccard-say">${esc(s.short)}</span>
+          <span class="seccard-foot"><span>${esc(through)}</span><span class="seccard-go" aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a></li>`;
+  }).join('\n')}
+    </ul>`;
+}
+
+/* The Supplier Portal, on the home page: TIBECO's site gives its portal a
+   place on the front, and so does this one. */
+function portalBand() {
+  const nCats = SUPPLY.length;
+  const nBuyers = new Set(SUPPLY.flatMap(c => c.buyers)).size;
+  return `<section class="section portal" aria-labelledby="portalTitle">
+  <div class="wrap portal-in rise">
+    <div class="portal-say">
+      <p class="eyebrow">Supplier Portal</p>
+      <h2 id="portalTitle">Supply the Group. Register once.</h2>
+      <p>One free registration covers the Group’s ${count(nBuyers)} buying companies across ${count(nCats)} categories — sulphur and sugar to fresh produce, equipment, technology and freight. ${OPEN.length ? `${cap(count(OPEN.length))} sourcing ${OPEN.length === 1 ? 'event is' : 'events are'} open now.` : 'Register and you are invited the moment an event opens in your categories.'}</p>
+    </div>
+    <div class="portal-act">
+      <a class="btn btn-light" href="/supplier-portal/register/">Register as a supplier</a>
+      <a class="btn btn-ghost" href="/supplier-portal/">How the portal works</a>
+    </div>
+  </div>
+</section>
+
+`;
+}
+
 /* ---------- the globe --------------------------------------------------- */
 
 /* Where the Group sources from, as the Earth itself: a globe of land dots,
@@ -805,18 +873,22 @@ function pageHome() {
       publisher: { '@id': ORG_ID }
     })
   })
-    + header('/', true)
+    + header('/')
     + `<section class="hero">
   ${pic('hero-doha', '100vw', 'class="hero-bg" alt="" fetchpriority="high"')}
-  <div class="wrap">
+  <div class="wrap hero-in">
     <div class="hero-say">
+      <p class="hero-eyebrow">${esc(SITE.descriptor)}</p>
       <h1>Building Businesses. Creating <em>Value</em>.</h1>
-      <p class="hero-lede">A Qatar-based group across investment, energy and technology, commodity trading and freight, food distribution and consumer services.</p>
+      <p class="hero-lede">${esc(SITE.fields)}</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="/sectors/">Explore our sectors</a>
+        <a class="btn btn-ghost" href="/about/">About the Group</a>
+      </div>
     </div>
-    <div class="hero-cta">
-      <a class="btn btn-light" href="/sectors/">Explore our sectors</a>
-      <a class="btn btn-ghost" href="/about/">Discover Lusail Corp</a>
-    </div>
+  </div>
+  <div class="wrap hero-strip">
+    ${sectorStrip()}
   </div>
 </section>
 
@@ -824,7 +896,7 @@ function pageHome() {
   <div class="wrap">
     <div class="intro-top rise">
       <div class="intro-head">
-        <p class="eyebrow">Lusail Corp &middot; Doha, Qatar</p>
+        <p class="eyebrow">Who we are</p>
         <h2 id="introTitle">Capital, commerce and <span class="soft">the means to deliver.</span></h2>
       </div>
       <div class="intro-note">
@@ -851,31 +923,15 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
 
 <section class="section sectors stone" aria-labelledby="secTitle">
   <div class="wrap">
-    <div class="sec-intro rise">
-      <p class="eyebrow">Our sectors</p>
-      <h2 id="secTitle">Diversified by Design</h2>
-      <p>${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies. Each one serves a market we can see from Qatar.</p>
+    <div class="head2 rise">
+      <div class="head2-t">
+        <p class="eyebrow">Our sectors</p>
+        <h2 id="secTitle">Diversified <span class="soft">by design</span></h2>
+      </div>
+      <p>${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies. Each one serves a market we can see from Qatar, and each has a page of its own.</p>
     </div>
-    <div class="acc" id="acc">
-${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="${secHref(sec)}">
-        ${pic(sec.hero, '(max-width:860px) 100vw, 46vw', 'class="acc-bg" alt="" loading="lazy"')}
-        <span class="acc-num" aria-hidden="true">${num(i)}</span>
-        <span class="acc-tab" aria-hidden="true">${esc(sec.name)}</span>
-        <div class="acc-body">
-          <span class="acc-n">${num(i)}</span>
-          <h3>${esc(sec.name)}</h3>
-          <span class="acc-say">${esc(sec.short)}</span>
-          <span class="acc-go">Learn more <span class="acc-arrow" aria-hidden="true">&#8594;</span></span>
-        </div>
-      </a>`).join('\n')}
-    </div>
-    <ul class="secgrid">
-${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="${secHref(sec)}">
-        ${pic(sec.hero, '(max-width:560px) 50vw, 33vw', 'alt="" loading="lazy"')}
-        <span class="secgrid-n">${num(i)}</span>
-        <span class="secgrid-t">${esc(sec.name)}</span>
-      </a></li>`).join('\n')}
-    </ul>
+    ${sectorCards()}
+    <p class="after rise"><a class="btn btn-dark" href="/sectors/">All sectors <span aria-hidden="true">&#8594;</span></a></p>
   </div>
 </section>
 
@@ -908,6 +964,7 @@ ${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="${secHref(sec)}"
 </section>
 
 `
+    + portalBand()
     + ctaBand()
     + footer();
 }
@@ -937,7 +994,7 @@ function pageAbout() {
     schema: graph({ '@type': 'AboutPage', url: abs('/about/'), name: 'About ' + SITE.name,
       mainEntity: { '@id': ORG_ID } }, crumbs([{ name: 'About Us' }]))
   })
-    + header('/about/', true)
+    + header('/about/')
     + pageHead({
       eyebrow: 'About Us',
       h1: 'Building a Group for the Future.',
@@ -1178,12 +1235,11 @@ ${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}
     url: `/companies/${c.slug}/`, image: c.hero,
     schema: graph(companySchema(c), crumbs([
       { name: 'Our Sectors', url: '/sectors/' },
-      /* the sector's one address is its block on the index */
-      { name: c.sectorName, url: '/sectors/#sec-' + c.sectorSlug },
+      { name: c.sectorName, url: secHref(c.sectorSlug) },
       { name: c.name }
     ]))
   })
-    + header('/sectors/', (c.look || 'full') === 'full')
+    + header('/sectors/')
     + `<div class="co co-${look} co-${c.slug}" style="${vars}">
 
 <section class="co-hero">
@@ -1303,12 +1359,9 @@ ${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(
 
 /* ---------- the sectors ---------------------------------------------------- */
 
-/* Built to the Figma (node 200:360). A numbered index of the four sectors
-   stands at the left and stays there while the page moves, marking whichever
-   sector you are reading; the sector itself runs down the right as a heading,
-   its line, its argument, the businesses inside it and a photograph. Four is
-   few enough to show the whole list at once, so the index answers "where am I
-   and what else is there" without anybody having to scroll to find out. */
+/* The index: the seven sectors as cards, each a way into its own page. The
+   earlier index put every sector's whole reading on one long page; now the
+   reading lives on the sector's page, as TIBECO keeps each platform's. */
 function pageSectorsIndex() {
   return head({
     title: `Our Sectors · ${SITE.name}`,
@@ -1317,44 +1370,119 @@ function pageSectorsIndex() {
     schema: graph(crumbs([{ name: 'Our Sectors' }]), {
       '@type': 'ItemList', name: 'Lusail Corp sectors',
       itemListElement: SECTORS.map((s, i) => ({
-        '@type': 'ListItem', position: i + 1, name: s.name, url: abs('/sectors/' + s.slug + '/')
+        '@type': 'ListItem', position: i + 1, name: s.name, url: abs(secHref(s))
       }))
     })
   })
-    + header('/sectors/', true)
+    + header('/sectors/')
     + pageHead({
       eyebrow: 'Our Sectors',
       h1: `${cap(count(SECTORS.length))} sectors. One way of working.`,
       lede: 'The Group operates across investment, energy and technology, commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
-      /* the Group, not one of its sectors — the trading photograph is the
-         first band on this same page, and a page should not open on it */
       photo: 'hero-sectors'
     })
-    + `<div class="secidx">
-  <nav class="secrail" aria-label="The sectors on this page">
-    <ol>
-${SECTORS.map((s, i) => `      <li><a href="#sec-${s.slug}"${i === 0 ? ' aria-current="location"' : ''}>
-        <span class="secrail-n">${i + 1}.</span>
-        <span class="secrail-t">${esc(s.name)}</span>
-        <span class="secrail-go" aria-hidden="true">&#8627;</span>
-      </a></li>`).join('\n')}
-    </ol>
-  </nav>
+    + `<section class="section" aria-labelledby="secAllTitle">
+  <div class="wrap">
+    <h2 id="secAllTitle" class="sr-only">The sectors</h2>
+    ${sectorCards()}
+  </div>
+</section>
 
-${SECTORS.map((s, i) => `  <section class="secblk" data-tone="${i % 4}" id="sec-${s.slug}" aria-labelledby="h-${s.slug}">
-    <div class="secblk-col rise">
-      <h2 id="h-${s.slug}">${esc(s.name)}</h2>
-      <p class="secblk-lede">${esc(s.intro)}</p>
-${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join(String.fromCharCode(10))}
+<section class="section stone" aria-labelledby="whyTitle">
+  <div class="wrap">
+    ${head2('whyTitle', 'What makes it a <span class="soft">group</span>', 'The businesses we own are varied. The way they are run is not.')}
+    ${bento()}
+  </div>
+</section>
 
-      <h3 class="secblk-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</h3>
-      <div class="cotiles">
-${s.companies.map(c => `        <a class="cotile" ${coLink(c)}>${s.companies.length === 1 && c.site ? 'through ' : ''}${esc(c.name)}${coMark(c)}</a>`).join(String.fromCharCode(10))}
-      </div>
+`
+    + ctaBand()
+    + footer();
+}
 
+/* One sector. Built the way TIBECO builds a platform page: the opening with
+   the sector's name, the argument for it, the business areas worked in it,
+   and the companies that work there — then the other sectors, and the ask.
+   The business areas are not written here: each is a product or service of
+   a company in the sector (areasOf, in data/site.js), so a sector page can
+   never claim an area no company offers. */
+function pageSector(s) {
+  const i = SECTORS.indexOf(s);
+  const areas = areasOf(s);
+  /* the sector's own entries carry no sector name of their own; the flat
+     list's copies do, and the cards need it */
+  const cos = s.companies.map(c => ALL_COMPANIES.find(x => x.slug === c.slug) || c);
+  const own = s.companies.filter(c => !c.sectorSlug || c.sectorSlug === s.slug);
+  const names = s.companies.map(c => c.name);
+  const through = names.length === 1 ? names[0] : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+  const areaCard = (a, k) => {
+    const c = a.company;
+    return `      <article class="area rise d${k % 4}">
+${a.img ? `        <span class="area-pic">${pic(a.img, '(max-width:700px) 100vw, (max-width:1100px) 50vw, 25vw', `alt="${esc(a.t)}" loading="lazy"`)}</span>\n`
+    : `        <span class="area-mark">${icon(SECTOR_ICON[s.slug] || 'markets')}</span>\n`}        <span class="area-n">${num(k)}</span>
+        <h3>${esc(a.t)}</h3>
+        <p>${esc(a.d)}</p>
+        <a class="area-by" ${coLink(c)}>through ${esc(c.name)}${coMark(c)}</a>
+      </article>`;
+  };
+
+  return head({
+    title: `${s.name} · Our Sectors · ${SITE.name}`,
+    desc: s.short,
+    url: secHref(s), image: s.hero,
+    schema: graph(crumbs([{ name: 'Our Sectors', url: '/sectors/' }, { name: s.name }]), {
+      '@type': 'ItemList', name: `${s.name} — companies`,
+      itemListElement: s.companies.map((c, k) => ({ '@type': 'ListItem', position: k + 1, name: c.name, url: c.site || abs(coHref(c)) }))
+    })
+  })
+    + header('/sectors/')
+    + pageHead({
+      eyebrow: `Our Sectors · ${num(i)}`, eyebrowHref: '/sectors/',
+      h1: s.name,
+      lede: s.intro,
+      photo: s.hero,
+      action: { href: '#areas', label: 'Business areas' },
+      action2: { href: own[0] && !own[0].site ? `/contact/?company=${own[0].slug}` : '/contact/', label: 'Talk to us' }
+    })
+    + `<section class="section stone sec-over" aria-labelledby="secOverTitle">
+  <div class="wrap sec-over-in">
+    <div class="rise">
+      <p class="eyebrow">The sector</p>
+      <h2 id="secOverTitle">${esc(s.headline)}</h2>
+      <dl class="sec-facts">
+        <div><dt>Companies</dt><dd>${s.companies.length}</dd></div>
+        <div><dt>Business areas</dt><dd>${areas.length}</dd></div>
+        <div><dt>Through</dt><dd>${esc(through)}</dd></div>
+      </dl>
     </div>
-  </section>`).join(String.fromCharCode(10) + String.fromCharCode(10))}
-</div>
+    <div class="sec-over-text rise d1">
+${s.body.map(p => `      <p>${esc(p)}</p>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="areas" aria-labelledby="areaTitle">
+  <div class="wrap">
+    ${head2('areaTitle', 'Business <span class="soft">areas</span>', `${cap(plural(areas.length, 'area', 'areas'))} the Group works in here, through ${esc(through)}.`)}
+    <div class="areas">
+${areas.map(areaCard).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="section stone" id="companies" aria-labelledby="coTitle">
+  <div class="wrap">
+    ${head2('coTitle', 'Companies in <span class="soft">this sector</span>', s.companies.length === 1 ? 'One company carries the Group here today.' : 'Each runs in its own market with its own customers.')}
+    ${companyRail(cos)}
+  </div>
+</section>
+
+<section class="section" aria-labelledby="othTitle">
+  <div class="wrap">
+    ${head2('othTitle', 'The other <span class="soft">sectors</span>', '')}
+    ${sectorCards(s.slug)}
+  </div>
+</section>
 
 `
     + ctaBand()
@@ -1368,7 +1496,7 @@ function pagePartnerships() {
     url: '/partnerships/', image: 'hero-partnerships',
     schema: graph(crumbs([{ name: 'Work With Us' }]))
   })
-    + header('/partnerships/', true)
+    + header('/partnerships/')
     + pageHead({
       eyebrow: 'Work With Us',
       h1: 'Most of what we do starts with someone else.',
@@ -1571,7 +1699,7 @@ function pageSuppliers() {
     /* the solid bar, not the over-the-photograph one: the portal strip sits
        first in the flow here, and a bar drawn over the page prints on top of
        it instead of above it */
-    + header('/supplier-portal/', false)
+    + header('/supplier-portal/')
     + pageHead({
       eyebrow: 'Supplier Portal',
       h1: 'Supply the Group. Register once.',
@@ -1708,7 +1836,7 @@ function pageCode() {
     url: '/supplier-portal/code/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal', url: '/supplier-portal/' }, { name: 'Supplier Code of Conduct' }]))
   })
-    + header('/supplier-portal/', false)
+    + header('/supplier-portal/')
     + `<section class="opp-hero">
   <div class="wrap">
     <p class="crumbs"><a href="/supplier-portal/">Supplier Portal</a><span aria-hidden="true">/</span><span>Code of Conduct</span></p>
@@ -1746,7 +1874,7 @@ function pageOpportunities() {
       itemListElement: OPEN.map((o, i) => ({ '@type': 'ListItem', position: i + 1, name: `${o.ref} — ${o.title}`, url: abs('/supplier-portal/opportunities/') }))
     })
   })
-    + header('/supplier-portal/', false)
+    + header('/supplier-portal/')
     + `<section class="opp-hero">
   <div class="wrap">
     <p class="crumbs"><a href="/supplier-portal/">Supplier Portal</a><span aria-hidden="true">/</span><span>Opportunities</span></p>
@@ -1805,7 +1933,7 @@ function pageRegister() {
     url: '/supplier-portal/register/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal', url: '/supplier-portal/' }, { name: 'Register' }]))
   })
-    + header('/supplier-portal/', false)
+    + header('/supplier-portal/')
     + `<section class="opp-hero">
   <div class="wrap">
     <p class="crumbs"><a href="/supplier-portal/">Supplier Portal</a><span aria-hidden="true">/</span><span>Register</span></p>
@@ -1853,7 +1981,7 @@ function pageContact() {
       name: 'Contact ' + SITE.name, mainEntity: { '@id': ORG_ID } },
       crumbs([{ name: 'Contact' }]))
   })
-    + header('/contact/', true)
+    + header('/contact/')
     + pageHead({
       eyebrow: 'Contact',
       h1: 'Let’s connect.',
@@ -2011,9 +2139,9 @@ function build() {
   // sectors is still written exactly once. A company with a site of its own
   // is linked there instead and gets no page here.
   ALL_COMPANIES.filter(c => !c.site).forEach(c => write(`companies/${c.slug}/index.html`, pageCompany(c)));
-  // the sectors live on one page; each block carries the anchor the old
-  // per-sector pages answered to
+  // the sectors: the index, then a page for each
   write('sectors/index.html', pageSectorsIndex());
+  SECTORS.forEach(s => write(`sectors/${s.slug}/index.html`, pageSector(s)));
   write('partnerships/index.html', pagePartnerships());
   write('supplier-portal/index.html', pageSuppliers());
   write('supplier-portal/opportunities/index.html', pageOpportunities());
@@ -2057,7 +2185,7 @@ function build() {
   console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
   const urls = ['/', '/about/', ...ALL_COMPANIES.filter(c => !c.site).map(c => `/companies/${c.slug}/`),
-    '/sectors/', '/partnerships/',
+    '/sectors/', ...SECTORS.map(secHref), '/partnerships/',
     '/supplier-portal/', '/supplier-portal/opportunities/', '/supplier-portal/register/', '/supplier-portal/code/', '/contact/'];
   const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(OUT, 'robots.txt'),

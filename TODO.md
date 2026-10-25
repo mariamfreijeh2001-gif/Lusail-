@@ -7,6 +7,20 @@ Everything still outstanding on the site, and where each one lives. Items under
 
 ## Needs you
 
+### 0. Check the redesign against tibecogroup.com *— blocking*
+
+The site was redrawn with **TIBECO Group's website as the design reference**,
+as management asked, with sectors in the place of TIBECO's platforms. The
+reference itself could not be opened from the build environment: its network
+policy blocks `tibecogroup.com` (and the web archive), so the visual grammar
+was built from what this repository already documented about the site, its
+search-index description and the Supplier Portal work carried over from it.
+[docs/tibeco-reference-study.md](docs/tibeco-reference-study.md) lists, item by
+item, what to compare against the live site — the bar, the hero, the cards,
+the colours, the platform page layout — and where each is set here. Either
+allow the domain in the environment's network settings and ask for a second
+pass, or walk through the checklist with the site open.
+
 ### 0. Product origins are indicative — confirm them before launch *— blocking*
 
 Every product on the Lusail Commercial and ROMA pages now shows **"Sourced

@@ -245,62 +245,62 @@
     },
     {
       "source": "/sectors/coffee/",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/coffee",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/food/",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/food",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/sectors/food-beverage/",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/distribution/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/distribution",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/logistics/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/logistics",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/shipping/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
       "source": "/sectors/shipping",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/sectors/supply-distribution/",
       "permanent": true
     },
     {
@@ -571,76 +571,6 @@
     {
       "source": "/suppliers/opportunities",
       "destination": "/supplier-portal/#opportunities",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/investments/",
-      "destination": "/sectors/#sec-investments",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/investments",
-      "destination": "/sectors/#sec-investments",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/trading/",
-      "destination": "/sectors/#sec-trading",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/trading",
-      "destination": "/sectors/#sec-trading",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/supply-distribution/",
-      "destination": "/sectors/#sec-supply-distribution",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/supply-distribution",
-      "destination": "/sectors/#sec-supply-distribution",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/energy-industrial/",
-      "destination": "/sectors/#sec-energy-industrial",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/energy-industrial",
-      "destination": "/sectors/#sec-energy-industrial",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/technology/",
-      "destination": "/sectors/#sec-technology",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/technology",
-      "destination": "/sectors/#sec-technology",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/consumer-services/",
-      "destination": "/sectors/#sec-consumer-services",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/consumer-services",
-      "destination": "/sectors/#sec-consumer-services",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/food-beverage/",
-      "destination": "/sectors/#sec-food-beverage",
-      "permanent": true
-    },
-    {
-      "source": "/sectors/food-beverage",
-      "destination": "/sectors/#sec-food-beverage",
       "permanent": true
     },
     {
