@@ -18,6 +18,16 @@ Group's own sourcing events, **not from anything you have confirmed.** Go
 through `lines`, `facts` and `SERVICE_FAQ` in [data/site.js](data/site.js)
 and correct anything you would not want a buyer to hold you to.
 
+Six photographs were only 640px wide and have been resampled to 1280px
+(**air freight, land freight, fresh fruits, fresh vegetables, dry foods,
+food security**) and the laundry one to 1104px. They no longer pixelate,
+but a resample cannot add detail: these seven, and the fresh-fruits
+supermarket shot in particular, are the ones to replace first when the
+Group has photographs of its own. Three files in `site-assets/img/` hold
+the same port scene (`hero-lusail-commercial`, `hero-sector-supply-
+distribution`, `panel-ocean-freight`) and `lifestyle-wide` duplicates
+`hero-sector-consumer-services`; only one of each is used.
+
 Four services — **sulphur, sugar, edible oils and energy and industrial
 materials** — carry AI-generated photographs (made on 5 November 2026 in the
 Figma file "Lusail Corp — service photographs", because the stock held
