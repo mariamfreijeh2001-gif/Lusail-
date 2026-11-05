@@ -3104,3 +3104,198 @@ and the document rows ----------------------------- */
   .sub-facts > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
   .co-about .co-story:has(.sub-index){grid-template-columns:1fr}
 }
+
+/* ==========================================================================
+   HOME PAGE — the design pass
+   Appended after the phone block on purpose, so every narrow-screen rule
+   here carries its own media query. Every home section wears .hs; the hero
+   wears .hs-hero, the ledger section .hs-led and the companies .hs-cos.
+   Nothing here reaches another page.
+   ========================================================================== */
+
+/* ---- rhythm: the home sections sit a little closer than the token ------ */
+.section.hs{padding-block:clamp(44px,5.2vw,68px)}
+.section.hs.intro .wrap{gap:clamp(32px,4.2vw,56px)}
+.section.hs.hs-led{padding-bottom:clamp(36px,4vw,52px)}
+.section.hs.sectors{padding-block:clamp(40px,4.6vw,60px)}
+.section.hs.tight{padding-block:clamp(40px,4.6vw,60px)}
+.hs .head2 > p{max-width:380px}
+
+/* ---- the hero: a label, the statement set larger, the seven areas across
+   its foot, and a scroll cue. The wash is lighter at the top — the bar
+   carries itself — and holds where the words are. ------------------------ */
+.hs-hero{padding-block:calc(var(--head-h) + 32px) clamp(24px,3vw,40px)}
+.hs-hero::before{
+  background:
+    linear-gradient(180deg, rgba(6,15,36,.38) 0%, rgba(6,15,36,.08) 18%, rgba(6,15,36,0) 34%),
+    linear-gradient(0deg, rgba(6,15,36,.94) 0%, rgba(6,15,36,.82) 22%, rgba(6,15,36,.5) 46%, rgba(6,15,36,.14) 66%, rgba(6,15,36,0) 80%);
+}
+.hs-hero > .wrap{gap:clamp(22px,2.4vw,32px)}
+.hs-hero .hero-say{max-width:800px}
+.hero-kicker{
+  display:flex;align-items:center;gap:12px;margin-bottom:clamp(18px,2vw,28px);
+  font:600 .75rem/1.4 var(--ui);letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.88);
+}
+.hero-kicker::before{content:"";width:24px;height:2px;background:var(--gold);flex:none}
+.hero-kicker b{font-weight:600;color:#fff}
+.hs-hero h1{font-size:clamp(2.875rem,5.9vw,5.375rem);line-height:.98;letter-spacing:-.028em}
+.hs-hero .hero-lede{margin-top:clamp(18px,2.2vw,30px);max-width:50ch;color:rgba(255,255,255,.86)}
+.hs-hero .hero-cta{width:100%;align-items:center;gap:16px}
+/* the cue: a word and a gold thread that keeps drawing down */
+.hero-scroll{
+  margin-inline-start:auto;display:inline-flex;align-items:center;gap:14px;min-height:44px;
+  color:rgba(255,255,255,.7);text-decoration:none;font:500 .6875rem/1 var(--ui);letter-spacing:.2em;text-transform:uppercase;
+  transition:color .2s;
+}
+.hero-scroll:hover{color:#fff}
+.hero-scroll:focus-visible{outline-color:var(--gold)}
+.hero-scroll-line{display:block;width:1px;height:40px;background:rgba(255,255,255,.3);position:relative;overflow:hidden}
+.hero-scroll-line::after{content:"";position:absolute;inset:0;background:var(--gold);transform-origin:top;animation:hs-thread 2.2s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes hs-thread{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+/* the areas: seven columns over one rule, each a number and a name */
+.hero-areas{width:100%;border-top:1px solid rgba(255,255,255,.24);padding-top:18px;margin-top:clamp(6px,1.2vw,14px)}
+.hero-areas ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));column-gap:clamp(14px,1.6vw,24px)}
+.hero-areas a{
+  display:grid;gap:7px;align-content:start;min-height:44px;padding-block:4px;
+  color:rgba(255,255,255,.82);text-decoration:none;
+  font:500 var(--t-xs)/1.35 var(--ui);letter-spacing:.04em;text-transform:uppercase;
+  transition:color .2s;
+}
+.hero-area-n{font:400 .8125rem/1 var(--display);letter-spacing:.1em;color:var(--gold)}
+.hero-areas a:hover{color:#fff}
+.hero-areas a:focus-visible{outline-color:var(--gold)}
+@media (max-width:1080px){ .hero-areas{display:none} }
+@media (max-width:900px){ .hero-scroll{display:none} }
+@media (max-width:560px){
+  .hs-hero h1{font-size:clamp(2.5rem,12vw,2.875rem)}
+  .hero-kicker{margin-bottom:16px;font-size:.6875rem;letter-spacing:.16em}
+  .hero-kicker::before{width:18px}
+  /* on a phone the label is the name alone; the line beneath says the rest */
+  .hero-kicker-more{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-scroll-line::after{animation:none;transform:none}
+}
+
+/* ---- the ledger: a row is the area's photograph, its number and mark, its
+   name and line, and every service as a link. The area signs its row with
+   its own colour on the photograph's foot and on its mark; the page's gold
+   rule still draws across the row under the pointer. ---------------------- */
+.hs-led .ledger{margin-top:clamp(24px,3vw,40px);border-top:1px solid var(--ink)}
+.hs-led .led{
+  grid-template-columns:150px minmax(0,4fr) minmax(0,6fr);
+  gap:clamp(18px,2.6vw,40px);padding:clamp(16px,2vw,22px) 0;align-items:start;
+}
+.led-pic{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--panel);outline:0}
+.led-pic img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.led:hover .led-pic img{transform:scale(1.05)}
+.led-pic::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:3px;background:var(--co,var(--gold))}
+.hs-led .led-head{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-content:start;padding-top:2px}
+.hs-led .led-n{
+  grid-row:auto;display:inline-flex;align-items:center;gap:12px;
+  font:400 .9375rem/1 var(--display);letter-spacing:.1em;color:var(--gold-text);
+}
+.hs-led .led-n .ico{width:18px;height:18px;color:var(--co-text,var(--ink-2));stroke-width:1.5}
+.hs-led .led-head h3{font:300 clamp(1.5rem,2vw,1.875rem)/1.12 var(--display);letter-spacing:-.014em}
+.hs-led .led-head h3 a:hover{color:var(--co-text,var(--gold-text))}
+.hs-led .led-head p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2);max-width:40ch}
+.hs-led .led-list{gap:8px;padding-top:4px}
+.hs-led .led-list a{
+  min-height:40px;padding:8px 12px 8px 14px;gap:10px;background:var(--white);
+  font:500 var(--t-micro)/1.3 var(--ui);border-color:var(--line-2);
+}
+.led-arr{font-size:.95em;line-height:1;color:var(--gold-text);transition:transform .25s,color .2s}
+.hs-led .led-list a:hover,
+.hs-led .led-list a:focus-visible{background:var(--ink);border-color:var(--ink);color:#fff}
+.hs-led .led-list a:hover .led-arr,
+.hs-led .led-list a:focus-visible .led-arr{color:var(--gold);transform:translateX(3px)}
+@media (max-width:1100px){
+  .hs-led .led{grid-template-columns:120px minmax(0,5fr) minmax(0,6fr)}
+}
+@media (max-width:860px){
+  .hs-led .led{grid-template-columns:84px minmax(0,1fr);gap:14px 16px;padding:18px 0}
+  .led-pic{aspect-ratio:1}
+  .led-pic::after{width:28px}
+  .hs-led .led-head{gap:6px;padding-top:0}
+  .hs-led .led-head h3{font-size:1.375rem}
+  .hs-led .led-head p{max-width:none}
+  .hs-led .led-list{grid-column:1 / -1;gap:6px;padding-top:0}
+  .hs-led .led-list a{min-height:36px;padding:6px 10px 6px 12px;font-size:var(--t-xs);gap:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  .led-pic img,.led-arr{transition:none}
+  .led:hover .led-pic img{transform:none}
+}
+
+/* ---- how we work: the same system as the four figures — one ruled band,
+   a hairline between the columns, a gold dash, the numeral, the name ------ */
+.hs .wwd{gap:0;margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+.hs .wwd-card{border-top:0;padding:clamp(24px,2.6vw,34px) clamp(16px,2vw,28px) clamp(26px,2.8vw,36px);gap:6px}
+.hs .wwd-card + .wwd-card{border-inline-start:1px solid var(--line-2)}
+.hs .wwd-card:first-child{padding-inline-start:0}
+.hs .wwd-n{font:300 clamp(2.5rem,4.2vw,4rem)/1 var(--display);color:var(--ink);letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums}
+.hs .wwd-n::before{content:"";display:block;width:28px;height:2px;background:var(--gold);margin-bottom:16px}
+.hs .wwd-card h3{margin-top:12px;font:400 clamp(1.25rem,1.7vw,1.5rem)/1.2 var(--display)}
+.hs .wwd-card p{max-width:30ch}
+@media (max-width:900px){
+  .hs .wwd{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hs .wwd-card,
+  .hs .wwd-card + .wwd-card,
+  .hs .wwd-card:first-child{padding:20px 0 22px;border-inline-start:0}
+  .hs .wwd-card:nth-child(even){padding-inline-start:20px;border-inline-start:1px solid var(--line-2)}
+  .hs .wwd-card:nth-child(n+3){border-top:1px solid var(--line-2)}
+  .hs .wwd-card p{max-width:none}
+}
+
+/* ---- the companies: the strip set larger, each company numbered, and the
+   gold rule drawing across the one under the pointer. Still a marquee:
+   paused under the pointer and standing still under reduced motion. ------- */
+.hs-cos .cos{margin-top:clamp(28px,3.2vw,44px);border-top:1px solid var(--ink);border-bottom:1px solid var(--line-2)}
+.hs-cos .cos-item > a,
+.hs-cos .cos-item > span{
+  position:relative;grid-template-columns:auto minmax(0,1fr);column-gap:16px;row-gap:6px;align-items:start;
+  padding:clamp(26px,3vw,40px) clamp(32px,4vw,64px) clamp(26px,3vw,40px) clamp(24px,3vw,44px);
+}
+.cos-n{grid-row:1 / span 2;padding-top:.35em;font:400 .875rem/1 var(--display);letter-spacing:.1em;color:var(--gold-text)}
+.hs-cos .cos-name{font-size:clamp(1.5rem,2.3vw,2.25rem);font-weight:300;letter-spacing:-.014em}
+.hs-cos .cos-role{color:var(--ink-2)}
+.hs-cos .cos-item > a::before{
+  content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.hs-cos .cos-item > a:hover::before{transform:scaleX(1)}
+@media (max-width:860px){
+  .hs-cos .cos-item > a,
+  .hs-cos .cos-item > span{padding:20px 28px 20px 20px}
+  .hs-cos .cos-name{font-size:1.5rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .hs-cos .cos-item > a::before{transition:none}
+  /* standing still, the strip wraps inside the page's gutters */
+  .hs-cos .cos-track{padding-inline:var(--gutter)}
+  .hs-cos .cos-item > a,
+  .hs-cos .cos-item > span{padding-inline:0 clamp(28px,4vw,56px)}
+}
+
+/* ---- the footer's service areas, and the quotation page's steps ----
+   Appended after the phone block, with their own media queries. */
+.foot{grid-template-columns:minmax(0,240px) minmax(0,1fr) auto;align-items:start}
+.foot-svc{display:grid;gap:6px;align-content:start}
+.foot-h{font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.foot-svc a{font:400 var(--t-sm)/1.5 var(--body);color:rgba(255,255,255,.78);text-decoration:none;min-height:24px;display:inline-block}
+.foot-svc a:hover,.foot-svc a:focus-visible{color:#fff;text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+@media (max-width:860px){
+  .foot{grid-template-columns:1fr}
+  .foot-svc{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .foot-svc .foot-h{grid-column:1 / -1}
+}
+@media (max-width:560px){ .foot-svc{grid-template-columns:1fr} }
+
+.qsteps{list-style:none;margin:28px 0 0;padding:0;display:grid;border-top:1px solid var(--line-2)}
+.qsteps li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.qsteps li > span{font:300 1.125rem/1.5 var(--display);letter-spacing:.08em;color:var(--gold-text)}
+.qsteps h3{font:400 1.1875rem/1.3 var(--display);color:var(--ink);margin:0 0 4px}
+.qsteps p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);margin:0;max-width:52ch}
+
+/* four buying steps in one row on a wide screen */
+@media (min-width:901px){ .steps.steps-4{grid-template-columns:repeat(4,minmax(0,1fr))} }

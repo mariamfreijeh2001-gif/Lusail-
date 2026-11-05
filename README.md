@@ -40,6 +40,7 @@ never has to know.
 | `/supplier-portal/` | The Supplier Portal: what the Group buys, the next events, how it works, requirements |
 | `/supplier-portal/opportunities/` | Every open sourcing event, filterable; each one's action leads to the registration |
 | `/supplier-portal/register/` | The registration — progress rail, documents, a draft that stays in the browser |
+| `/quote/` | Request a quotation: the service, the quantity or scope, destination, timing and specification, routed to the desk of the service's area |
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
@@ -54,6 +55,13 @@ interest" field: the visitor picks a service area, and `desk` on that area
 names the company whose mailbox it reaches. The old `/sectors/`,
 `/companies/`, `/portfolio/` and `/careers/` URLs redirect, and so do
 guessed ones like `/vendors/`, `/tenders/` and `/procurement/`.
+
+A buyer's path is: find the service (the bar's panel, the home ledger, the
+services index, or a search engine landing on the section), read it in
+full, then **Request a quotation** — the form at `/quote/` arrives with the
+service chosen and asks for what an offer needs. Each area page also says
+**how buying works** in four steps (`buying` in data/site.js) and ends in
+the other areas; the footer lists every area on every page.
 
 Adding a service to an area means adding one object to that area's
 `services` array (and a line to `build/imageroles.js` for its photograph).

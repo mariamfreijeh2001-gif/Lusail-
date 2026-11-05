@@ -26,7 +26,7 @@ module.exports = {
   'hero-sector-energy-industrial': ['hero'],
   'hero-sector-technology': ['hero'],
   'hero-sector-trading': ['hero'],
-  'hero-sector-supply-distribution': ['hero'],
+  'hero-roma-commercial': ['hero'],   // food supply & distribution: the warehouse
   'hero-sector-consumer-services': ['hero'],
   'hero-sector-food-beverage': ['hero'],
   'hero-lusail-commercial': ['hero'],                           // freight & logistics

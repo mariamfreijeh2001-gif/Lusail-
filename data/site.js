@@ -312,7 +312,7 @@ const AREAS = [
     short: 'Fresh produce, rice, grains and dry goods, imported and delivered to the businesses that sell and serve them in Qatar.',
     headline: 'From Global Farms to Qatar’s Market',
     intro: 'Distribution is the link between a producer abroad and a kitchen, a shelf or a warehouse in Qatar.',
-    hero: 'hero-sector-supply-distribution',
+    hero: 'hero-roma-commercial',
     accent: '#3f7d3a', accentText: '#2f6a2b', tint: '#edf4e8',
     icon: 'supply', desk: 'roma-commercial',
     body: [
