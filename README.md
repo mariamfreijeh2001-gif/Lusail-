@@ -252,9 +252,9 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   over it until the page scrolls.
 - **Home** — the statement with a rail of the seven areas across the foot
   of the photograph, the Group's four figures (counted from the content),
-  **What we provide** — seven area tiles, the first and last wide, each
-  with the area's photograph, its line and every service in it as a ruled
-  row linking to its section — "What makes it a group", the sourcing
+  **What we provide** — the seven areas as equal cards (photograph, number,
+  name, line, and the way to the page; the services themselves are on the
+  page) — "What makes it a group", the sourcing
   **globe**, how the Group works, and the one **strip of companies**,
   scrolling across the foot of the page (paused under the pointer;
   standing still under reduced motion).
@@ -266,8 +266,9 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 - **Area pages** are landing pages of their own: the area's photograph
   behind the title, its facts strip, its statement with a jump list of its
   services beside the argument, its figures, then **one section per
-  service** — the photograph beside the story, the facts, what is supplied
-  line by line, how it works where that helps, the questions, and the ask
+  service** — a narrow column with the photograph and the facts beside the
+  story, what is supplied line by line, how it works where that helps, the
+  questions, and the ask
   (an enquiry pre-addressed to the area with the service named, and "Supply
   this to the Group" where a portal category matches) — then where the area
   sources from, grouped by the Group's regions, and the other areas. The

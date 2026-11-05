@@ -822,28 +822,19 @@ ${WHY.map((x, i) => `        <li class="why-item rise d${Math.min(i, 3)}">
    whole offer is on screen at once, and it is the first thing after the
    introduction because it is what a visitor came to find. */
 function servicesLedger() {
-  /* Seven tiles, the first one wide: the area's own photograph, its number
-     and how many services it holds, its name, its line, and every service
-     as a ruled row with an arrow. The tile wears the area's colour as --co,
-     which only the photograph's rule and the hover use. */
-  const tile = (a, i) => {
-    const list = svcsIn(a);
-    return `      <article class="atile${i === 0 ? ' atile-lead' : i === AREAS.length - 1 && AREAS.length % 3 === 1 ? ' atile-lead atile-last' : ''} rise d${Math.min(i, 3)}" style="--co:${a.accent};--co-text:${a.accentText || a.accent}">
-        <a class="atile-pic" href="${areaHref(a)}" tabindex="-1" aria-hidden="true">
-          ${pic(a.hero, i === 0 ? '(max-width:860px) 100vw, 46vw' : '(max-width:860px) 100vw, 30vw', 'alt="" loading="lazy"')}
-        </a>
-        <div class="atile-body">
-          <p class="atile-n"><span>${num(i)}</span>${esc(plural(list.length, 'service', 'services'))}</p>
-          <h3><a href="${areaHref(a)}">${esc(a.name)}</a></h3>
-          <p class="atile-say">${esc(a.short)}</p>
-          <ul class="atile-list">
-${list.map(x => `            <li><a href="${svcHref(x)}">${esc(x.name)}<span class="atile-arr" aria-hidden="true">&#8594;</span></a></li>`).join('\n')}
-          </ul>
-        </div>
-      </article>`;
-  };
-  return `<div class="areas">
-${AREAS.map(tile).join('\n')}
+  /* The seven areas as equal cards: a modest photograph, the number, the
+     name, its line, and the way to its page. The services themselves are
+     on the page, not here. */
+  return `<div class="sgrid">
+${AREAS.map((a, i) => `      <a class="scard rise d${i % 4}" href="${areaHref(a)}" style="--co:${a.accent};--co-text:${a.accentText || a.accent}">
+        <span class="scard-pic">${pic(a.hero, '(max-width:560px) 100vw, (max-width:1080px) 46vw, 290px', 'alt="" loading="lazy"')}</span>
+        <span class="scard-body">
+          <span class="scard-n">${num(i)} <em>${esc(plural(svcsIn(a).length, 'service', 'services'))}</em></span>
+          <span class="scard-name">${esc(a.name)}</span>
+          <span class="scard-say">${esc(a.short)}</span>
+          <span class="scard-go">Learn more <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>`).join('\n')}
     </div>`;
 }
 
@@ -1134,9 +1125,14 @@ function pageArea(a) {
       <p class="sub-role">${esc(s.headline)}</p>
     </div>
     <div class="sub-story">
-      <figure class="sub-pic rise">
-        ${pic(s.img, '(max-width:860px) 100vw, 46vw', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}
-      </figure>
+      <div class="sub-side rise">
+        <figure class="sub-pic">
+          ${pic(s.img, '(max-width:860px) 100vw, 320px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}
+        </figure>
+        <dl class="sub-facts">
+${s.facts.map(f => `          <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
+        </dl>
+      </div>
       <div class="sub-text rise d1">
         <p class="sub-intro">${esc(s.intro)}</p>
 ${s.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
@@ -1145,9 +1141,6 @@ ${s.activities.map(x => `          <li>${esc(x)}</li>`).join('\n')}
         </ul>` : ''}
       </div>
     </div>
-    <dl class="sub-facts rise">
-${s.facts.map(f => `      <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
-    </dl>
 ${s.lines && s.lines.length ? `    <h3 class="sub-h3 rise">What we supply</h3>
     <div class="svcs sub-lines">
 ${s.lines.map((l, j) => `      <div class="svc rise d${Math.min(j, 3)}">

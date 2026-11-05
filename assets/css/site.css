@@ -3661,3 +3661,79 @@ and the document rows ----------------------------- */
 .atile-last .atile-pic{order:2}
 @media (max-width:1080px){ .atile-last{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} }
 @media (max-width:860px){ .atile-last{grid-template-columns:1fr} .atile-last .atile-pic{order:0} }
+
+/* ==========================================================================
+   WHAT WE PROVIDE — seven equal cards; and the service chapters on an area
+   page made compact: a narrow column for the photograph and the facts, the
+   story beside it, tighter lines. Appended last, with their own queries.
+   ========================================================================== */
+.areas{display:none}
+.sgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,1.6vw,22px);margin-top:clamp(28px,3.4vw,44px)}
+.scard{
+  display:grid;grid-template-rows:auto 1fr;text-decoration:none;color:inherit;
+  background:var(--paper);border:1px solid var(--line);transition:border-color .25s,transform .25s;
+}
+.scard:hover,.scard:focus-visible{border-color:var(--co,var(--gold));transform:translateY(-3px)}
+.scard:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.scard-pic{display:block;position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel)}
+.scard-pic img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.scard:hover .scard-pic img{transform:scale(1.04)}
+.scard-pic::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:3px;background:var(--co,var(--gold))}
+.scard-body{display:grid;gap:8px;align-content:start;padding:18px 18px 20px}
+.scard-n{font:300 var(--t-num-s,1.0625rem)/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
+.scard-n em{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-style:normal;margin-left:8px}
+.scard-name{font:400 1.375rem/1.2 var(--display);color:var(--ink)}
+.scard-say{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
+.scard-go{margin-top:auto;padding-top:10px;font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.scard-go span{display:inline-block;color:var(--gold-text);transition:transform .25s}
+.scard:hover .scard-go span{transform:translateX(4px)}
+@media (max-width:1080px){ .sgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .sgrid{grid-template-columns:1fr;gap:14px} .scard:hover{transform:none} }
+@media (prefers-reduced-motion:reduce){ .scard,.scard-pic img,.scard-go span{transition:none} .scard:hover{transform:none} .scard:hover .scard-pic img{transform:none} }
+
+/* the chapters, compact */
+.sub{padding-block:clamp(36px,4.5vw,64px)}
+.sub-head{gap:6px}
+.sub-head h2{font-size:clamp(1.75rem,2.8vw,2.5rem)}
+.sub-story{grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(24px,3.4vw,52px);margin-top:clamp(20px,2.4vw,32px);align-items:start}
+.sub-flip .sub-story .sub-side{order:2}
+.sub-side{display:grid;gap:0;align-content:start}
+.sub-side .sub-pic{position:relative;min-height:0;height:auto;aspect-ratio:4/3;margin:0}
+.sub-side .sub-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sub-side .sub-facts{margin:0;display:grid;grid-template-columns:1fr;border:0;border-bottom:1px solid var(--line-2)}
+.sub-side .sub-facts > div{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr);column-gap:12px;align-items:baseline;padding:10px 0;border:0;border-top:1px solid var(--line)}
+.sub-side .sub-facts > div:first-child{border-top:0;padding-top:14px}
+.sub-side .sub-facts dt{font:600 var(--t-label,.6875rem)/1.5 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--co-text,var(--gold-text))}
+.sub-side .sub-facts dd{margin:0;font:400 var(--t-sm)/1.45 var(--body);color:var(--ink)}
+.sub-text{font-size:var(--t-sm);line-height:1.6;gap:.8em;max-width:66ch}
+.sub-intro{font-size:clamp(1.125rem,1.5vw,1.3125rem);line-height:1.35}
+.sub-h3{margin-top:clamp(24px,3vw,40px)}
+.sub .svcs{border-top:1px solid var(--line-2)}
+.sub .svc{gap:6px;padding:16px 18px 20px 0}
+.sub .svc + .svc{padding-inline-start:18px}
+.sub .svc-n{font-size:1.125rem}
+.sub .svc h4{font-size:1.125rem}
+.sub .svc p{font-size:var(--t-xs);line-height:1.55}
+.sub .steps{gap:clamp(14px,1.8vw,24px)}
+.sub .step{padding:14px 0 16px}
+.sub .step h4{font-size:1.125rem}
+.sub .step p{font-size:var(--t-xs)}
+.sub .faq-item summary{padding:13px 44px 13px 0;font-size:1rem}
+.sub .faq-item p{font-size:var(--t-sm);margin-bottom:14px}
+.sub-cta{margin-top:clamp(22px,2.6vw,32px)}
+.sub .btn{padding:12px 20px;font-size:var(--t-xs)}
+@media (max-width:860px){
+  .sub-story{grid-template-columns:1fr}
+  .sub-flip .sub-story .sub-side{order:0}
+  .sub-side{grid-template-columns:1fr}
+  .sub-side .sub-pic{aspect-ratio:3/2}
+  .sub .svc{padding-inline:0}
+  .sub .svc + .svc{padding-inline-start:0}
+}
+@media (min-width:561px) and (max-width:860px){
+  .sub-side{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+  .sub-side .sub-facts{border-bottom:0}
+}
+/* the flipped chapter keeps the narrow column narrow, on the right */
+.sub-flip .sub-story{grid-template-columns:minmax(0,1fr) minmax(0,320px)}
+@media (max-width:860px){ .sub-flip .sub-story{grid-template-columns:1fr} }
