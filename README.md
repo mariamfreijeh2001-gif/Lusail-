@@ -14,8 +14,10 @@ npm run import -- "path/to/photo.png" hero-tibeco-group   # bring in any photo, 
 ## Structure
 
 The site lists **what the Group provides**, not which company provides it.
-Two tiers: a **service area** holds any number of **services**. The Group
-runs seven areas and twenty-four services today — sulphur, coffee, sugar,
+Two tiers: a **service area** holds any number of **services**. An area has
+a page of its own; every service in it is written up in full as a section
+on that page, with its own anchor. The Group runs seven areas and
+twenty-four services today — sulphur, coffee, sugar,
 edible oils and wheat; fresh produce, rice and dry foods; ocean, land and air
 freight and chartering; energy and industrial materials, equipment, project
 supply and food security; enterprise IT and advanced systems; investment and
@@ -31,8 +33,8 @@ never has to know.
 |---|---|
 | `/` | Home: the services ledger, the areas, the globe, the one strip of companies |
 | `/services/` | Every area, each with the services inside it as cards |
-| `/services/#<area>` | One area — a block on the index, not a page of its own |
-| `/services/<slug>/` | One service: its story, what is supplied, where from, how it works, its questions, the ask |
+| `/services/<area>/` | One area: its story, then every service in it in full — the story, what is supplied, where from, how it works, its questions, the ask |
+| `/services/<area>/#<slug>` | One service — a section on its area's page, which is what every link to it points at |
 | `/about/` | The Group: what it is and what it believes |
 | `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
 | `/supplier-portal/` | The Supplier Portal: what the Group buys, the next events, how it works, requirements |
@@ -41,9 +43,10 @@ never has to know.
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
-There is **no company page, no careers page, and no page per area** — each
-area is a block on /services/ with an anchor, which is what the menus, the
-footer and the old per-sector URLs (by redirect) all point at. TIBECO — the
+There is **no company page, no careers page, and no page per service** —
+a service is a section on its area's page with an anchor, which is what the
+menus, the home page's ledger and the index cards all point at (and the
+old per-sector URLs, by redirect). TIBECO — the
 one company with a website of its own — is linked there from the companies
 strip, in a new tab. Suppliers register once on the Supplier Portal; every
 other enquiry goes through the contact form, which routes on the "area of
@@ -54,20 +57,21 @@ guessed ones like `/vendors/`, `/tenders/` and `/procurement/`.
 
 Adding a service to an area means adding one object to that area's
 `services` array (and a line to `build/imageroles.js` for its photograph).
-The services menu, the services index, the service page, the home page's
-ledger, the related-services row, the sitemap and the structured data all
-follow.
+The services menu, the services index, the area page, the home page's
+ledger, the sitemap and the structured data all follow.
 
 ### Search
 
-Each service page is built to be the page a search engine lands a buyer on:
-a title of the form *Sulphur — Granular solid sulphur, in bulk | Lusail Corp,
-Qatar*, the service's `short` as the description, a `Service` in JSON-LD with
-its provider, its lines as an offer catalogue and its activities as
-keywords, a `FAQPage` from `SERVICE_FAQ`, a `BreadcrumbList`, descriptive
-`alt` text on its photograph, and internal links to its area, its siblings
-and the sourcing register. The home page carries the whole offer catalogue
-on the `Organization`, and `/services/` an `ItemList` of every service.
+Each area page is built to be the page a search engine lands a buyer on: a
+title that names the area and every service in it (*Commodity Trading —
+Sulphur, Coffee, Sugar, Edible Oils, Wheat & Grains | Lusail Corp, Qatar*),
+a description to match, a `Service` in JSON-LD for the area whose offer
+catalogue holds every service as a `Service` of its own — with its lines,
+its activities as keywords and its section's anchor as its address — one
+`FAQPage` from every service's questions, a `BreadcrumbList`, an `h2` per
+service with its anchor, descriptive `alt` text, and internal links to the
+other areas and the sourcing register. The home page carries the areas as
+the `Organization`'s offer catalogue, and `/services/` an `ItemList`.
 
 ## Where things live
 
@@ -249,14 +253,15 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   canvas, with a gold arc from every source country to Doha. Pointing at a
   region in the list beside it lights its arcs; drag turns it. It only draws
   while on screen and holds still under reduced motion.
-- **Service pages** are landing pages of their own: the area's photograph
-  behind the title, the facts strip, the statement and the story beside the
-  service's own photograph, its figures, what is supplied line by line,
-  where it is sourced from (grouped by the Group's regions), how it works
-  where that helps, the questions, the ask (an enquiry pre-addressed to the
-  area, and "Supply this to the Group" where a portal category matches),
-  and the other services in the area. The structure is shared; the colour
-  is the area's own.
+- **Area pages** are landing pages of their own: the area's photograph
+  behind the title, its facts strip, its statement with a jump list of its
+  services beside the argument, its figures, then **one section per
+  service** — the photograph beside the story, the facts, what is supplied
+  line by line, how it works where that helps, the questions, and the ask
+  (an enquiry pre-addressed to the area with the service named, and "Supply
+  this to the Group" where a portal category matches) — then where the area
+  sources from, grouped by the Group's regions, and the other areas. The
+  structure is shared; the colour is the area's own.
 - **The services index** — a numbered rail of the areas at the left that
   marks the one being read, and each area as a block with its argument and
   its services as cards.
@@ -286,7 +291,7 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   every line and the buyers as links — one open at a time); how it works in
   four short steps; **the registration form, folded** behind a "Register as
   a supplier" row with an "Open the form" button, which the opening's
-  button, a service page's "Supply … to the Group" button and any link to `#register`
+  button, a service section's "Supply … to the Group" button and any link to `#register`
   unfold — the documents to have ready sit in the form's side column; the
   **terms in brief** (currency, payment, offer validity, registration
   validity, and the line that every event is an invitation to treat under
@@ -415,7 +420,7 @@ through Resend. The payload carries `area`, the dropdown value, so an enquiry
 can be routed to the right company; the function turns that code into the
 company's name and puts it in the subject line.
 
-Each service page's button links to `/contact/?area=<area>&about=<service>`,
+Each service section's button links to `/contact/?area=<area>&about=<service>`,
 which opens the form with that area already selected and the service named
 in the message; its second button, "Supply <service> to the Group", opens
 the Supplier Portal registration with that category ticked.
@@ -493,7 +498,7 @@ The field called `message` is the body of the email; every other field,
 long or short, is a row, so a registration's product list is never lost.
 
 A link can preselect: `/supplier-portal/register/?cat=<slug>` ticks a supply
-category (every service page's "Supply …" button links there), and
+category (every service section's "Supply …" button links there), and
 `/contact/?area=<slug>` picks the service area, which is routed to the right
 company's desk by `api/contact.js` without the visitor seeing it. A page can also
 hand a form a first draft (`data-prefill`), which is how an invite-only

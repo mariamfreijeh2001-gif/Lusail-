@@ -146,10 +146,11 @@ const count = n => WORDS[n] || String(n);
 const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
 const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
 
-/* Where a service and an area live. One helper each, so no link can
-   disagree. An area's one address is its block on the services index. */
-const svcHref = s => `/services/${s.slug}/`;
-const areaHref = a => `/services/#${typeof a === 'string' ? a : a.slug}`;
+/* Where an area and a service live. One helper each, so no link can
+   disagree. An area has a page; a service is a section on it, so its one
+   address is an anchor on that page. */
+const areaHref = a => `/services/${typeof a === 'string' ? a : a.slug}/`;
+const svcHref = s => `${areaHref(s.areaSlug)}#${s.slug}`;
 const areaOf = slug => AREAS.find(a => a.slug === slug);
 const svcsIn = a => ALL_SERVICES.filter(s => s.areaSlug === (typeof a === 'string' ? a : a.slug));
 
@@ -229,7 +230,8 @@ const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><p
 
 const ORG_ID = SITE.domain + '/#organization';
 const abs = p => SITE.domain + p;
-const svcId = s => abs(svcHref(s)) + '#service';
+const svcId = s => abs(areaHref(s.areaSlug)) + '#' + s.slug;
+const areaId = a => abs(areaHref(a)) + '#service';
 
 function orgSchema() {
   const social = SOCIAL().map(([, href]) => href);
@@ -257,7 +259,7 @@ function orgSchema() {
        organisation itself; each entry points at the service's own page */
     hasOfferCatalog: {
       '@type': 'OfferCatalog', name: SITE.name + ' services',
-      itemListElement: ALL_SERVICES.map(s => ({ '@type': 'Offer', itemOffered: { '@id': svcId(s) } }))
+      itemListElement: AREAS.map(a => ({ '@type': 'Offer', itemOffered: { '@id': areaId(a) } }))
     },
     subOrganization: COMPANIES.map(c => Object.assign({ '@type': 'Organization', name: c.name, description: c.short },
       c.site ? { url: c.site } : {}))
@@ -270,8 +272,8 @@ function orgSchema() {
 }
 
 /* One service, in schema.org's vocabulary: what it is, who provides it,
-   where, and the lines it is made of. The FAQ, where a service has one, is
-   published as a FAQPage so a search engine can show the questions. */
+   where, and the lines it is made of. Its address is its section on the
+   area's page. */
 function serviceSchema(s) {
   const svc = {
     '@type': 'Service',
@@ -296,11 +298,35 @@ function serviceSchema(s) {
   return svc;
 }
 
-function faqSchema(s) {
-  if (!s.faq || !s.faq.length) return null;
+/* An area: the Service a page is about, with every service in it as an
+   offer, each described in full. */
+function areaSchema(a) {
+  const list = svcsIn(a);
+  return {
+    '@type': 'Service',
+    '@id': areaId(a),
+    name: a.name,
+    description: a.short,
+    url: abs(areaHref(a)),
+    image: abs('/assets/img/' + a.hero + '.jpg'),
+    provider: { '@id': ORG_ID },
+    areaServed: { '@type': 'Country', name: 'Qatar' },
+    keywords: list.map(s => s.name).join(', '),
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog', name: a.name + ' — the services',
+      itemListElement: list.map(s => ({ '@type': 'Offer', itemOffered: serviceSchema(s) }))
+    }
+  };
+}
+
+/* The questions of every service on a page, as one FAQPage, so a search
+   engine can show them. */
+function faqSchema(list) {
+  const qs = list.flatMap(s => s.faq || []);
+  if (!qs.length) return null;
   return {
     '@type': 'FAQPage',
-    mainEntity: s.faq.map(f => ({
+    mainEntity: qs.map(f => ({
       '@type': 'Question', name: f.q,
       acceptedAnswer: { '@type': 'Answer', text: f.a }
     }))
@@ -675,6 +701,24 @@ ${list.map(svcCard).join('\n')}
     </div>`;
 }
 
+/* The same card for an area: its photograph, its name and its services. */
+function areaCard(a) {
+  return `      <a class="cocard" href="${areaHref(a)}">
+        <span class="cocard-shot">${pic(a.hero, '(max-width:700px) 72vw, 334px', `alt="${esc(a.name)}" loading="lazy"`)}</span>
+        <span class="cocard-body">
+          <span class="cocard-sector">${esc(plural(svcsIn(a).length, 'service', 'services'))}</span>
+          <span class="cocard-name">${esc(a.name)}</span>
+          <span class="cocard-role">${esc(svcsIn(a).map(s => s.name).join(' · '))}</span>
+        </span>
+      </a>`;
+}
+
+function areaRail(list) {
+  return `<div class="cogrid">
+${list.map(areaCard).join('\n')}
+    </div>`;
+}
+
 /* The closing band, on the foot of every page. It was a 573px photograph
    carrying a 798px panel with a heading, a paragraph, two buttons and a
    seven-item list — a whole section repeated under every page on the site,
@@ -873,7 +917,7 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
 
 <section class="section" aria-labelledby="ledTitle">
   <div class="wrap">
-    ${head2('ledTitle', 'What we <span class="soft">provide</span>', `${cap(count(ALL_SERVICES.length))} services in ${count(AREAS.length)} areas. Each has a page of its own.`)}
+    ${head2('ledTitle', 'What we <span class="soft">provide</span>', `${cap(count(ALL_SERVICES.length))} services in ${count(AREAS.length)} areas. Each area has a page that writes up every service in it.`)}
     ${servicesLedger()}
   </div>
 </section>
@@ -1044,139 +1088,131 @@ ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
     + footer();
 }
 
-/* ---------- one service --------------------------------------------------- */
+/* ---------- one service area ----------------------------------------------- */
 
-/* Each service page is a landing page of its own, and the page a search
-   engine should land a buyer on. The structure is shared — an opening, a
-   statement, the story, what is supplied, where from, how it works, the
-   questions, a closing ask — and each area brings its own colour. The title
-   carries the service and what it is; the description is the short line;
-   the markup carries a Service, a FAQPage and a BreadcrumbList. */
-function pageService(s) {
-  const area = areaOf(s.areaSlug);
-  const siblings = svcsIn(area).filter(x => x.slug !== s.slug);
+/* Each area is a landing page of its own, and the page a search engine
+   should land a buyer on. It opens on the area, then writes up every
+   service inside it in full — the story, what is supplied line by line,
+   where it is sourced from, how it works, the questions — one section per
+   service, each with an anchor so a link from anywhere lands on it. The
+   title names the area and its services; the markup carries a Service for
+   the area with every service as an offer, a FAQPage from all of their
+   questions, and a BreadcrumbList. */
+function pageArea(a) {
+  const list = svcsIn(a);
+  const others = AREAS.filter(x => x.slug !== a.slug);
   const vars = [
-    s.accent && '--co:' + s.accent,
-    s.accentText && '--co-text:' + s.accentText,
-    s.tint && '--co-tint:' + s.tint,
-    s.accentOn && '--co-on:' + s.accentOn
+    a.accent && '--co:' + a.accent,
+    a.accentText && '--co-text:' + a.accentText,
+    a.tint && '--co-tint:' + a.tint,
+    a.accentOn && '--co-on:' + a.accentOn
   ].filter(Boolean).join(';');
-  const askHref = `/contact/?area=${s.areaSlug}&about=${encodeURIComponent(s.name)}`;
+  const askHref = s => `/contact/?area=${a.slug}${s ? '&about=' + encodeURIComponent(s.name) : ''}`;
 
-  /* What is actually supplied: the specifications, the varieties, the
-     routes — the lines a buyer is looking for. */
-  const lines = s.lines && s.lines.length
-    ? `<section class="section co-offer" id="offer" aria-labelledby="linesTitle">
+  /* The area's figures, counted from its own content. */
+  const origins = [...new Set(list.flatMap(s => s.origins || []))];
+  const regionsOf = REACH.filter(reg => origins.some(o =>
+    reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(o))).length;
+  const figs = [
+    { k: 'Services', v: list.length },
+    { k: 'Lines supplied', v: list.reduce((n, s) => n + (s.lines || []).length, 0) },
+    origins.length && { k: 'Source countries', v: origins.length },
+    regionsOf && { k: 'Sourcing regions', v: regionsOf }
+  ].filter(Boolean);
+
+  /* One service, written up in full. */
+  const section = (s, i) => {
+    const supplyCat = s.supply && SUPPLY.find(x => x.slug === s.supply);
+    const srcLine = s.origins && s.origins.length
+      ? `          <p class="sub-from"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>\n`
+      : '';
+    return `<section class="sub${i % 2 ? ' sub-flip' : ''}" id="${s.slug}" aria-labelledby="h-${s.slug}">
   <div class="wrap">
-    ${head2('linesTitle', s.linesTitle || 'What we <span class="soft">supply</span>', `${esc(s.name)}, line by line.`)}
-    <div class="svcs">
-${s.lines.map((l, i) => `      <div class="svc rise d${Math.min(i, 3)}">
-        <span class="svc-n">${num(i)}</span>
-        <h3>${esc(l.t)}</h3>
+    <div class="sub-head rise">
+      <p class="eyebrow">${esc(a.name)} &middot; ${num(i)}</p>
+      <h2 id="h-${s.slug}">${esc(s.name)}</h2>
+      <p class="sub-role">${esc(s.headline)}</p>
+    </div>
+    <div class="sub-story">
+      <figure class="sub-pic rise">
+        ${pic(s.img, '(max-width:860px) 100vw, 46vw', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}
+      </figure>
+      <div class="sub-text rise d1">
+        <p class="sub-intro">${esc(s.intro)}</p>
+${s.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
+${srcLine}${s.activities && s.activities.length ? `        <ul class="tags">
+${s.activities.map(x => `          <li>${esc(x)}</li>`).join('\n')}
+        </ul>` : ''}
+      </div>
+    </div>
+    <dl class="sub-facts rise">
+${s.facts.map(f => `      <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
+    </dl>
+${s.lines && s.lines.length ? `    <h3 class="sub-h3 rise">What we supply</h3>
+    <div class="svcs sub-lines">
+${s.lines.map((l, j) => `      <div class="svc rise d${Math.min(j, 3)}">
+        <span class="svc-n">${num(j)}</span>
+        <h4>${esc(l.t)}</h4>
         <p>${esc(l.d)}</p>
       </div>`).join('\n')}
     </div>
-  </div>
-</section>
-
-`
-    : '';
-
-  /* A flow, left to right: how the work actually moves. */
-  const steps = s.steps && s.steps.length
-    ? `<section class="section co-steps" aria-labelledby="stepTitle">
-  <div class="wrap">
-    ${head2('stepTitle', s.stepsTitle || 'How it <span class="soft">works</span>', '')}
-    <ol class="steps">
-${s.steps.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
-        <span class="step-n">${num(i)}</span>
-        <h3>${esc(p.t)}</h3>
+` : ''}${s.steps && s.steps.length ? `    <h3 class="sub-h3 rise">${s.stepsTitle ? s.stepsTitle.replace(/<[^>]+>/g, '') : 'How it works'}</h3>
+    <ol class="steps sub-steps">
+${s.steps.map((p, j) => `      <li class="step rise d${Math.min(j, 3)}">
+        <span class="step-n">${num(j)}</span>
+        <h4>${esc(p.t)}</h4>
         <p>${esc(p.d)}</p>
       </li>`).join('\n')}
     </ol>
-  </div>
-</section>
-
-`
-    : '';
-
-  /* The questions a buyer asks before writing, answered on the page, and
-     published as a FAQPage so a search engine can show them. */
-  const faq = s.faq && s.faq.length
-    ? `<section class="section tight" aria-labelledby="faqTitle">
-  <div class="wrap">
-    ${head2('faqTitle', `${esc(s.name)}: <span class="soft">questions</span>`, '')}
+` : ''}${s.faq && s.faq.length ? `    <h3 class="sub-h3 rise">Questions about ${esc(s.name.toLowerCase())}</h3>
     <div class="faq rise">
-${s.faq.map(f => `      <details class="faq-item" name="faq">
+${s.faq.map(f => `      <details class="faq-item" name="faq-${s.slug}">
         <summary>${esc(f.q)}</summary>
         <p>${esc(f.a)}</p>
       </details>`).join('\n')}
     </div>
-  </div>
-</section>
-
-`
-    : '';
-
-  /* The service's figures: counted from its own content where they can be. */
-  const origins = s.origins || [];
-  const regionsOf = REACH.filter(reg => origins.some(o =>
-    reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(o))).length;
-  const figs = [
-    s.lines && s.lines.length && { k: 'Lines supplied', v: s.lines.length },
-    origins.length && { k: 'Source countries', v: origins.length },
-    regionsOf && { k: 'Sourcing regions', v: regionsOf },
-    { k: 'Services in this area', v: svcsIn(area).length }
-  ].filter(Boolean);
-  const figures = `<section class="co-figs" aria-label="${esc(s.name)} in figures">
-  <div class="wrap">
-    <dl>
-${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}</dt><dd>${esc(String(f.v))}</dd></div>`).join('\n')}
-    </dl>
+` : ''}    <p class="sub-cta rise">
+      <a class="btn co-btn" href="${askHref(s)}">${esc(s.cta)}</a>
+${supplyCat ? `      <a class="btn co-btn-line" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(s.name.toLowerCase())} to the Group</a>\n` : ''}    </p>
   </div>
 </section>
 
 `;
-
-  const sourcing = sourcingSection(s.name, origins);
-  const supplyCat = s.supply && SUPPLY.find(x => x.slug === s.supply);
+  };
 
   return head({
-    /* the title a search result shows: the service, what it is, and where
-       it is provided from */
-    title: `${s.name} — ${s.role} | ${SITE.name}, Qatar`,
-    desc: s.short,
-    url: svcHref(s), image: s.img,
-    schema: graph(serviceSchema(s), faqSchema(s), crumbs([
+    /* the title a search result shows: the area, and every service in it */
+    title: `${a.name} — ${list.map(s => s.name).join(', ')} | ${SITE.name}, Qatar`,
+    desc: `${a.short} ${list.map(s => s.name).join(', ')}: what Lusail Corp supplies, where from, and how.`.slice(0, 300),
+    url: areaHref(a), image: a.hero,
+    schema: graph(areaSchema(a), faqSchema(list), crumbs([
       { name: 'Services', url: '/services/' },
-      /* the area's one address is its block on the index */
-      { name: s.areaName, url: areaHref(area) },
-      { name: s.name }
+      { name: a.name }
     ]))
   })
     + header('/services/', true)
-    + `<div class="co co-full co-${s.slug}" style="${vars}">
+    + `<div class="co co-full co-${a.slug}" style="${vars}">
 
 <section class="co-hero">
-  ${pic(s.areaHero, '100vw', `class="co-hero-img" alt="" fetchpriority="high"`)}
+  ${pic(a.hero, '100vw', `class="co-hero-img" alt="" fetchpriority="high"`)}
   <div class="co-hero-in">
     <div class="wrap co-hero-wrap">
       <div class="co-hero-say">
-        <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span><a href="/services/">Services</a><span aria-hidden="true">/</span><a href="${areaHref(area)}">${esc(s.areaName)}</a><span aria-hidden="true">/</span><span>${esc(s.name)}</span></p>
-        <h1>${esc(s.name)}</h1>
-        <p class="co-hero-line">${esc(s.headline)}</p>
+        <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span><a href="/services/">Services</a><span aria-hidden="true">/</span><span>${esc(a.name)}</span></p>
+        <h1>${esc(a.name)}</h1>
+        <p class="co-hero-line">${esc(a.headline)}</p>
         <div class="co-hero-cta">
-          <a class="btn co-btn" href="${askHref}">${esc(s.cta)}</a>
-          <a class="btn co-btn-line" href="#offer">What we supply</a>
+          <a class="btn co-btn" href="${askHref()}">Enquire about ${esc(a.name.toLowerCase())}</a>
+          <a class="btn co-btn-line" href="#${list[0].slug}">What we provide</a>
         </div>
       </div>
     </div>
   </div>
-  <a class="co-scroll" href="#aboutTitle" aria-label="Scroll to read about ${esc(s.name)}"><span>Scroll</span></a>
+  <a class="co-scroll" href="#aboutTitle" aria-label="Scroll to read about ${esc(a.name)}"><span>Scroll</span></a>
   <div class="co-facts">
     <div class="wrap">
       <dl>
-${s.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
+${a.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
       </dl>
     </div>
   </div>
@@ -1184,33 +1220,42 @@ ${s.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`
 
 <section class="section co-about" aria-labelledby="aboutTitle">
   <div class="wrap">
-    <p class="eyebrow">${esc(s.name)} from Lusail Corp</p>
-    <h2 id="aboutTitle" class="co-statement rise">${esc(s.intro)}</h2>
+    <p class="eyebrow">${esc(a.name)} from Lusail Corp</p>
+    <h2 id="aboutTitle" class="co-statement rise">${esc(a.intro)}</h2>
     <div class="co-story">
-      <figure class="co-story-pic rise">
-        ${pic(s.img, '(max-width:860px) 100vw, 605px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}
-      </figure>
+      <nav class="sub-index rise" aria-label="The services on this page">
+        <p class="sub-index-h">${esc(cap(count(list.length)))} services in this area</p>
+        <ol>
+${list.map((s, i) => `          <li><a href="#${s.slug}"><span class="sub-index-n">${num(i)}</span><span>${esc(s.name)}</span><small>${esc(s.role)}</small></a></li>`).join('\n')}
+        </ol>
+      </nav>
       <div class="co-story-text rise d1">
-${s.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
-${s.activities && s.activities.length ? `        <ul class="tags">
-${s.activities.map(a => `          <li>${esc(a)}</li>`).join('\n')}
-        </ul>` : ''}
+${a.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
       </div>
     </div>
   </div>
 </section>
 
-${figures}${lines}${sourcing}${steps}${faq}<section class="co-ask">
+<section class="co-figs" aria-label="${esc(a.name)} in figures">
+  <div class="wrap">
+    <dl>
+${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}</dt><dd>${esc(String(f.v))}</dd></div>`).join('\n')}
+    </dl>
+  </div>
+</section>
+
+${list.map(section).join('')}${sourcingSection(a.name, origins)}<section class="co-ask">
   <div class="wrap co-ask-in">
     <div>
-      <p class="eyebrow">${esc(s.name)}</p>
-      <h2>${esc(s.cta)}.</h2>
-      <p>Tell us what you need and the message goes straight to the desk that handles ${esc(s.name.toLowerCase())}.</p>
+      <p class="eyebrow">${esc(a.name)}</p>
+      <h2>Enquire about ${esc(a.name.toLowerCase())}.</h2>
+      <p>Tell us what you need and the message goes straight to the desk that handles it.</p>
     </div>
     <div class="co-ask-cta">
       <div class="co-ask-btns">
-        <a class="btn co-btn" href="${askHref}">Send an enquiry</a>
-${supplyCat ? `        <a class="btn co-btn-line" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(s.name.toLowerCase())} to the Group</a>\n` : ''}      </div>
+        <a class="btn co-btn" href="${askHref()}">Send an enquiry</a>
+        <a class="btn co-btn-line" href="/supplier-portal/">Supply the Group</a>
+      </div>
       <a class="co-ask-mail" href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
     </div>
   </div>
@@ -1218,9 +1263,8 @@ ${supplyCat ? `        <a class="btn co-btn-line" href="/supplier-portal/registe
 
 <section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
-    ${head2('othTitle', `More in <span class="soft">${esc(s.areaName)}</span>`, '')}
-    ${serviceRail(siblings)}
-    <p class="srcmore"><a href="${areaHref(area)}">All ${esc(s.areaName.toLowerCase())} services <span aria-hidden="true">&#8594;</span></a></p>
+    ${head2('othTitle', 'The other <span class="soft">service areas</span>', '')}
+    ${areaRail(others)}
   </div>
 </section>
 
@@ -1229,8 +1273,9 @@ ${supplyCat ? `        <a class="btn co-btn-line" href="/supplier-portal/registe
     + footer();
 }
 
-/* Where a service is sourced from, grouped by the Group's sourcing regions.
-   A service with no origins gets no section at all. */
+/* Where an area is sourced from, gathered off every service in it and
+   grouped by the Group's sourcing regions. An area with no origins gets no
+   section at all. */
 function sourcingSection(name, used) {
   if (!used.length) return '';
 
@@ -1252,7 +1297,7 @@ function sourcingSection(name, used) {
   return `<section class="section tight" aria-labelledby="srcTitle">
   <div class="wrap">
     ${head2('srcTitle', 'Where we <span class="soft">source it</span>',
-      `${esc(name)} is sourced from ${plural(used.length, 'country', 'countries')} across ${plural(groups.length, 'region', 'regions')}. Which one is used depends on the season, the quality and the terms on the day.`)}
+      `${esc(name)} draws on ${plural(used.length, 'country', 'countries')} across ${plural(groups.length, 'region', 'regions')}. Which one is used depends on the product, the season, the quality and the terms on the day.`)}
     <div class="srcregs rise">
 ${groups.map(g => `      <div class="srcreg">
         <h3>${esc(g.t)}</h3>
@@ -1271,9 +1316,10 @@ ${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(
 /* ---------- the services index ------------------------------------------- */
 
 /* A numbered index of the areas stands at the left and stays there while
-   the page moves, marking whichever area you are reading; the area itself
-   runs down the right as a heading, its line, its argument and the services
-   inside it as cards. Every service on the site is on this one page. */
+   the page moves, marking whichever area you are reading; each area runs
+   down the right as a heading, its line, its argument, the services inside
+   it as cards (each a link to its section on the area's page) and the way
+   to the page itself. */
 function pageServicesIndex() {
   return head({
     title: `Our Services — Commodities, Freight, Food Supply, Energy, Technology | ${SITE.name}`,
@@ -1281,15 +1327,15 @@ function pageServicesIndex() {
     url: '/services/', image: 'hero-sectors',
     schema: graph(crumbs([{ name: 'Services' }]), {
       '@type': 'ItemList', name: 'Lusail Corp services',
-      itemListElement: ALL_SERVICES.map((s, i) => ({
-        '@type': 'ListItem', position: i + 1, name: s.name, url: abs(svcHref(s))
+      itemListElement: AREAS.map((a, i) => ({
+        '@type': 'ListItem', position: i + 1, name: a.name, url: abs(areaHref(a))
       }))
     })
   })
     + header('/services/', true)
     + pageHead({
       eyebrow: 'Our Services',
-      h1: `${cap(count(ALL_SERVICES.length))} services. One way of working.`,
+      h1: `${cap(count(AREAS.length))} service areas. One way of working.`,
       lede: 'Commodities bought abroad and carried by sea, land and air. Food imported and delivered across Qatar. Materials, equipment, technology and whole projects supplied to the industries and institutions that run the economy. Capital, and the everyday services households use every week.',
       photo: 'hero-sectors'
     })
@@ -1306,12 +1352,13 @@ ${AREAS.map((a, i) => `      <li><a href="#${a.slug}"${i === 0 ? ' aria-current=
 
 ${AREAS.map((a, i) => `  <section class="secblk" data-tone="${i % 4}" id="${a.slug}" aria-labelledby="h-${a.slug}">
     <div class="secblk-col rise">
-      <h2 id="h-${a.slug}">${esc(a.name)}</h2>
+      <h2 id="h-${a.slug}"><a href="${areaHref(a)}">${esc(a.name)}</a></h2>
       <p class="secblk-lede">${esc(a.intro)}</p>
-${a.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join(String.fromCharCode(10))}
+      <p class="secblk-say">${esc(a.body[0])}</p>
 
       <h3 class="secblk-count">${esc(plural(svcsIn(a).length, 'service', 'services'))} in this area</h3>
       ${serviceRail(svcsIn(a))}
+      <a class="btn co-btn secblk-go" href="${areaHref(a)}" style="--co:${a.accent};--co-on:${a.accentOn || '#fff'}">Read about ${esc(a.name.toLowerCase())} <span aria-hidden="true">&#8594;</span></a>
     </div>
   </section>`).join(String.fromCharCode(10) + String.fromCharCode(10))}
 </div>
@@ -1964,9 +2011,8 @@ function build() {
   console.log('pages');
   write('index.html', pageHome());
   write('about/index.html', pageAbout());
-  // one page per service, from the flat list
-  ALL_SERVICES.forEach(s => write(`services/${s.slug}/index.html`, pageService(s)));
-  // the areas live on one page; each block carries an anchor
+  // one page per area, with every service in it written up as a section
+  AREAS.forEach(a => write(`services/${a.slug}/index.html`, pageArea(a)));
   write('services/index.html', pageServicesIndex());
   write('partnerships/index.html', pagePartnerships());
   write('supplier-portal/index.html', pageSuppliers());
@@ -2010,7 +2056,7 @@ function build() {
   fs.writeFileSync(path.join(imgOut, 'globe.json'), globeJson);
   console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
-  const urls = ['/', '/about/', '/services/', ...ALL_SERVICES.map(svcHref),
+  const urls = ['/', '/about/', '/services/', ...AREAS.map(areaHref),
     '/partnerships/',
     '/supplier-portal/', '/supplier-portal/opportunities/', '/supplier-portal/register/', '/supplier-portal/code/', '/contact/'];
   const today = new Date().toISOString().slice(0, 10);

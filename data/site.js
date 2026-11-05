@@ -4,10 +4,12 @@
    STRUCTURE: two tiers, service area -> services. The site lists what the
    Group provides — sulphur, coffee, sugar, fresh produce, freight, laundry —
    rather than which company provides it. An area is a heading that groups
-   the services; every service has a page of its own.
+   the services; every area has a page of its own, and every service is
+   written up in full as a section on it.
 
        /services/                  every area, each with the services inside it
-       /services/<slug>/           one service
+       /services/<area>/           one area, with each of its services in full
+       /services/<area>/#<slug>    one service, on that page
 
    The companies that deliver the services are named in ONE place only: the
    "companies" section of the About page, drawn from COMPANIES below. No
@@ -96,7 +98,8 @@ const COMPANIES = [
 
    An area:
      slug, name, short, headline, intro, body   the area's own story
-     hero                                       behind every page title in it
+     facts                                      the strip under its page title
+     hero                                       behind its page title
      accent, accentText, tint, accentOn         the colour its pages carry
      icon                                       its mark in the menu
      desk                                       which desk an enquiry reaches
@@ -131,6 +134,12 @@ const AREAS = [
       'This is the part of the Group that works outside Qatar. We source granular sulphur, green coffee, sugar, edible oils and wheat from producers and suppliers across the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia.',
       'We also move them. Ocean, road and air freight, vessel chartering and heavy transport sit in the same business as the buying, so an enquiry about a commodity is answered with the origin, the specification and the route at the same time.',
       'Which origin is used is a commercial decision, not a standing arrangement: it depends on the product, the season, quality, availability and the terms on the day.'
+    ],
+    facts: [
+      { k: 'Products', v: 'Sulphur, coffee, sugar, edible oils, wheat' },
+      { k: 'Sourcing', v: 'Six regions, by season and terms' },
+      { k: 'Shipping', v: 'Sea, land and air, by the same desk' },
+      { k: 'Terms', v: 'FOB, CFR or delivered, by the cargo' }
     ],
     services: [
       {
@@ -299,6 +308,12 @@ const AREAS = [
       'Almost everything we distribute arrives by ship or by plane, so the work is in the chain rather than any single link: finding producers, getting the goods in, and putting them where the buyer needs them, in the condition the buyer expects.',
       'Fresh produce has a short commercial life and agricultural supply moves with the season, so this is a business of timing. Relationships across several growing regions matter more than a single cheap origin, because they are what let the supply shift when a season ends or availability tightens.',
       'We sell into the retail and food-service trade: supermarkets, hotels, restaurants, caterers and wholesalers.'
+    ],
+    facts: [
+      { k: 'Products', v: 'Fresh produce, rice, pulses, dry foods' },
+      { k: 'Market', v: 'Qatar' },
+      { k: 'Customers', v: 'Retail, hospitality, catering, wholesale' },
+      { k: 'Compliance', v: 'MoPH registration, Halal, Arabic labelling' }
     ],
     services: [
       {
@@ -478,6 +493,12 @@ const AREAS = [
       'Because the freight desk sits beside the trading desk, it handles the whole movement — booking, documents, customs, delivery — rather than one leg of it, and quotes a door-to-door price when that is what is wanted.',
       'The routes are the ones the Group’s own cargo travels: the Gulf, the Red Sea and Indian Ocean, the Black Sea and the Mediterranean, South-East Asia, and the Americas.'
     ],
+    facts: [
+      { k: 'Modes', v: 'Ocean, chartering, road, air' },
+      { k: 'Routes', v: 'Gulf, Indian Ocean, Black Sea, Asia, Americas' },
+      { k: 'Scope', v: 'Port to port or door to door' },
+      { k: 'Documents', v: 'B/L, customs, certificates, insurance' }
+    ],
     services: [
       {
         slug: 'ocean-freight',
@@ -611,6 +632,12 @@ const AREAS = [
       'We supply energy operators, industrial sites, government entities and major private-sector organisations with materials, equipment and whole project packages, sourced internationally and delivered against a tender, a contract or a programme.',
       'This is work where a missed delivery stops a plant, so what counts is reliability over the life of a contract: certified management systems, sourcing that can switch origin when it has to, and the ability to finance, supply and deliver as one counterpart.',
       'It draws on the rest of the Group — commodity trading for raw materials, freight for heavy and project cargo — rather than buying those in.'
+    ],
+    facts: [
+      { k: 'Supply', v: 'Materials, equipment, projects, food security' },
+      { k: 'Clients', v: 'Operators, institutions, programmes' },
+      { k: 'Basis', v: 'Tender, contract or framework' },
+      { k: 'Systems', v: 'ISO 9001, 14001 and 45001' }
     ],
     services: [
       {
@@ -746,6 +773,12 @@ const AREAS = [
       'Advanced technology and artificial intelligence are also an investment focus for the Group: we take positions in them, and use what we learn inside our own businesses.',
       'The work is delivered under the same certified management systems as the rest of the Group’s institutional supply.'
     ],
+    facts: [
+      { k: 'Scope', v: 'Infrastructure, software, security, AI' },
+      { k: 'Partners', v: 'Global technology platforms' },
+      { k: 'Clients', v: 'Government, institutions, enterprises' },
+      { k: 'Support', v: 'Managed, in Qatar' }
+    ],
     services: [
       {
         slug: 'enterprise-it',
@@ -822,6 +855,12 @@ const AREAS = [
       'Growth here is selective by design: fewer, larger positions, chosen for whether they will still make sense in a decade rather than this quarter.',
       'The same platform builds the Group’s joint ventures and long-term partnerships — with producers, operators and founders whose business fits where the Group is going.'
     ],
+    facts: [
+      { k: 'Focus', v: 'Energy, technology, industrial development' },
+      { k: 'Forms', v: 'Direct investment, joint ventures, partnerships' },
+      { k: 'Horizon', v: 'Long term' },
+      { k: 'Reach', v: 'Gulf, Europe, North Africa, Asia' }
+    ],
     services: [
       {
         slug: 'strategic-investment',
@@ -895,6 +934,12 @@ const AREAS = [
       'This is where the Group serves households rather than businesses. The work is ordinary and frequent, which is exactly why it is hard: a customer notices the one time it goes wrong far more than the fifty times it went right.',
       'So the standards that matter here are unglamorous ones — turnaround, careful handling, a result that does not vary, and a room people choose to come back to.',
       'It is also the part of the Group closest to the public, and the part that teaches us most about what customers in Qatar actually want.'
+    ],
+    facts: [
+      { k: 'Services', v: 'Laundry and garment care; a café' },
+      { k: 'For', v: 'Households and the public' },
+      { k: 'Market', v: 'Qatar' },
+      { k: 'Judged on', v: 'Turnaround, handling, consistency' }
     ],
     services: [
       {
