@@ -56,14 +56,13 @@ function recipients(form, body) {
   let to = [];
   if (form === 'supplier') to = envList('CONTACT_TO_SUPPLIERS').length ? envList('CONTACT_TO_SUPPLIERS') : deskOf('tibeco-group');
   else if (form === 'enquiry' || !form) {
-    const area = typeof body.area === 'string' ? body.area.trim() : '';
-    const hit = SERVICE_AREAS.find(a => a.slug === area);
-    if (hit) to = deskOf(hit.desk);
-  } else if (form === 'quote') {
-    /* a quotation is routed by the service it asks about, through its area */
+    /* routed by the service it concerns, through that service's area; a
+       supplier's message goes where registrations go */
     const svc = typeof body.service === 'string' ? body.service.trim() : '';
     const hit = ALL_SERVICES.find(s => s.slug === svc);
+    const topic = typeof body.topic === 'string' ? body.topic.trim() : '';
     if (hit) to = deskOf(hit.desk);
+    else if (topic === 'supplier') to = envList('CONTACT_TO_SUPPLIERS').length ? envList('CONTACT_TO_SUPPLIERS') : deskOf('tibeco-group');
   }
   if (!to.length) to = fallback;
   const cc = envList('CONTACT_CC').filter(a => !to.includes(a));
@@ -179,7 +178,8 @@ const OPTION_LABELS = {
   supplyCategories: Object.fromEntries(SUPPLY.map(x => [x.slug, x.name])),
   companyTypes: Object.fromEntries(FORM_LISTS.companyTypes),
   areas: AREAS,
-  services: Object.fromEntries(ALL_SERVICES.map(s => [s.slug, s.areaName + ' — ' + s.name])),
+  topics: Object.fromEntries(FORM_LISTS.topics),
+  servicesOpt: Object.fromEntries(ALL_SERVICES.map(s => [s.slug, s.areaName + ' — ' + s.name])),
   interests: Object.assign({ general: 'A general enquiry', partnership: 'Working with the Group' },
     Object.fromEntries(SERVICE_AREAS.map(x => [x.slug, x.name])))
 };

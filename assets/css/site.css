@@ -4211,3 +4211,57 @@ html:not(.js) .tpanel + .tpanel{margin-top:clamp(40px,5vw,72px);padding-top:clam
 .co-steps .steps{margin-top:clamp(20px,2.6vw,32px)}
 @media (max-width:560px){ .co-hero-lede{font-size:var(--t-body)} }
 @media (prefers-reduced-motion:reduce){ .tmore > summary::after{transition:none} }
+
+/* ==========================================================================
+   AREA PAGE — the industry pattern: a short overview with figures, the
+   services as a grid of cards, each opening its details below the grid,
+   then why us, how buying works and the ask. Appended last, own queries.
+   ========================================================================== */
+.tover2-in{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(28px,4vw,72px);align-items:start}
+.tover2-h{font:300 clamp(1.375rem,2vw,1.75rem)/1.35 var(--display);color:var(--ink);margin:10px 0 0;max-width:40ch}
+.tover2-serve{margin:16px 0 0;font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);max-width:60ch}
+.tover2-serve span{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3));margin-right:8px}
+.tover2-figs{margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-2)}
+.tover2-figs > div{display:grid;gap:6px;padding:16px clamp(12px,1.6vw,22px) 4px 0}
+.tover2-figs > div + div{padding-left:clamp(12px,1.6vw,22px);border-left:1px solid var(--line-2)}
+.tover2-figs dd{margin:0;font:300 clamp(1.875rem,2.6vw,2.5rem)/1 var(--display);color:var(--co-text,var(--gold-text));font-variant-numeric:lining-nums}
+.tover2-figs dt{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3))}
+@media (max-width:860px){ .tover2-in{grid-template-columns:1fr;gap:22px} }
+
+.tabs-sec{padding-top:clamp(36px,4.5vw,64px)}
+.svcgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,1.6vw,22px);margin-top:clamp(24px,3vw,40px)}
+.svccard{
+  display:grid;grid-template-rows:auto 1fr;text-decoration:none;color:inherit;
+  background:var(--paper);border:1px solid var(--line);transition:border-color .25s,transform .25s;
+}
+.svccard:hover,.svccard:focus-visible{border-color:var(--co,var(--gold));transform:translateY(-3px)}
+.svccard.on{border-color:var(--co,var(--gold));background:var(--co-tint,var(--panel));transform:none}
+.svccard:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.svccard-pic{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--panel)}
+.svccard-pic img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.svccard:hover .svccard-pic img{transform:scale(1.04)}
+.svccard-pic::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:3px;background:var(--co,var(--gold))}
+.svccard.on .svccard-pic::after{width:100%}
+.svccard-body{display:grid;gap:6px;align-content:start;padding:16px 16px 18px}
+.svccard-n{font:300 .9375rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
+.svccard-name{font:400 1.25rem/1.2 var(--display);color:var(--ink)}
+.svccard-role{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
+.svccard-go{margin-top:auto;padding-top:10px;font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.svccard-arr{display:inline-block;color:var(--gold-text);transition:transform .25s}
+.svccard.on .svccard-arr{transform:rotate(180deg)}
+.svccard-close{display:none}
+.svccard.on .svccard-open{display:none}
+.svccard.on .svccard-close{display:inline}
+.tabs-bar{display:none}
+.tpanels{padding-top:0}
+html.js .tpanels{margin-top:0}
+html.js .tpanels.open{margin-top:clamp(24px,3vw,40px);padding-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--ink)}
+.tpanel{scroll-margin-top:calc(var(--head-h) + 16px)}
+.tpanel-top{margin:0 0 18px}
+.tpanel-close{font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-decoration:none;display:inline-flex;align-items:center;gap:8px;min-height:24px}
+.tpanel-close:hover{color:var(--co-text,var(--gold-text))}
+.tpanel-close span{color:var(--gold-text)}
+html:not(.js) .tpanel-close{display:none}
+@media (max-width:1080px){ .svcgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .svcgrid{grid-template-columns:1fr;gap:14px} .svccard:hover{transform:none} }
+@media (prefers-reduced-motion:reduce){ .svccard,.svccard-pic img,.svccard-arr{transition:none} .svccard:hover{transform:none} .svccard:hover .svccard-pic img{transform:none} }

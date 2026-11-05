@@ -1665,6 +1665,15 @@ const CODE_OF_CONDUCT = [
 /* The lists a form field can be drawn from, as value -> label. Shared by the
    page that renders the form and the function that checks what arrives. */
 const FORM_LISTS = {
+  /* what a message to the Contact page is about */
+  topics: [
+    ['quote', 'Request a quotation'],
+    ['question', 'Ask about a service'],
+    ['supplier', 'Supply the Group'],
+    ['partnership', 'Propose a partnership or investment'],
+    ['careers', 'Ask about careers'],
+    ['other', 'Something else']
+  ],
   companyTypes: [
     ['manufacturer', 'Manufacturer or producer'],
     ['trader', 'Trader or distributor'],
@@ -1682,8 +1691,8 @@ const FORM_LISTS = {
    what arrives against the same list, so a field added here appears on the
    page, is validated, and is printed in the email — with nothing else to
    edit. `options` names a list the build fills in:
-     areas             every service area, plus the general desks (Contact)
-     services          every service, labelled with its area (the quotation)
+     topics            what a message is about (Contact)
+     servicesOpt       every service, labelled with its area, or none (Contact)
      supplyCategories  the SUPPLY categories above, as checkboxes
      companyTypes       the FORM_LISTS above
    `why` is what the visitor is told beside the field when it is missing.
@@ -1697,22 +1706,32 @@ const FORM_LISTS = {
 const FORMS = {
   /* The Contact page: any question, routed by "area" to the desk that can
      answer it. Same build, same look as the application. */
+  /* The Contact page: one form for everything. What it is about decides
+     the subject; the service it concerns decides the desk; a quotation adds
+     the quantity, destination and timing an offer needs. */
   enquiry: {
     subject: 'Website enquiry',
-    subjectFrom: 'area',
-    submit: 'Send enquiry',
-    ok: 'Message sent. We reply within two working days.',
+    subjectFrom: 'topic',
+    submit: 'Send',
+    ok: 'Message sent. The desk that handles it replies within two working days.',
     fields: [
+      { step: 'What it is about' },
+      { name: 'topic', label: 'I want to', type: 'select', options: 'topics', required: true, full: true,
+        why: 'Choose what your message is about.' },
+      { name: 'service', label: 'The service it concerns', type: 'select', options: 'servicesOpt', full: true },
+      { name: 'quantity', label: 'Quantity or scope', type: 'text', max: 160,
+        placeholder: 'For a quotation: 30,000 MT, four reefers a week, one container…' },
+      { name: 'destination', label: 'Destination, terms and timing', type: 'text', max: 200,
+        placeholder: 'For a quotation: CFR Hamad Port, December 2026' },
+      { name: 'message', label: 'Message', type: 'textarea', required: true, max: 5000, full: true, rows: 4,
+        placeholder: 'What you need, the specification, or your question.',
+        why: 'Write a line about what you need, so we can send it to the right desk.' },
       { step: 'About you' },
       { name: 'name', label: 'Full name', type: 'text', required: true, max: 120, auto: 'name',
         why: 'Tell us your name.' },
       { name: 'company', label: 'Company', type: 'text', max: 160, auto: 'organization' },
       { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
-      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' },
-      { step: 'Your message' },
-      { name: 'area', label: 'Area of interest', type: 'select', options: 'areas', full: true },
-      { name: 'message', label: 'Message', type: 'textarea', required: true, max: 5000, full: true,
-        why: 'Write a line about what you need, so we can send it to the right desk.' }
+      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' }
     ]
   },
 
@@ -1778,38 +1797,6 @@ const FORMS = {
       { name: 'agreeAccurate', type: 'agree', required: true, full: true, short: 'Details confirmed accurate',
         label: 'The information given here is complete and accurate.',
         why: 'The details have to be confirmed to register.' }
-    ]
-  },
-
-  /* Request a quotation: the form a buyer who has found a service wants —
-     what, how much, where to, when — routed to the desk of the service's
-     area. `services` is every service, labelled with its area. */
-  quote: {
-    subject: 'Quotation request',
-    subjectFrom: 'service',
-    submit: 'Request a quotation',
-    ok: 'Request received. The desk that handles it replies within two working days with an offer or the questions it needs answered first.',
-    fields: [
-      { step: 'What you need' },
-      { name: 'service', label: 'Service', type: 'select', options: 'services', required: true, full: true,
-        why: 'Choose the service you are asking about, so the request reaches the right desk.' },
-      { name: 'quantity', label: 'Quantity or scope', type: 'text', required: true, max: 160,
-        placeholder: 'For example: 30,000 MT, four reefers a week, one 40-ft container, a site of 200 beds',
-        why: 'Tell us how much, or the scope, so the offer can be priced.' },
-      { name: 'destination', label: 'Destination and delivery terms', type: 'text', max: 160,
-        placeholder: 'For example: CFR Hamad Port; DDP Ras Laffan; delivered to Doha' },
-      { name: 'timing', label: 'When you need it', type: 'text', max: 120,
-        placeholder: 'For example: December 2026; weekly from January; as soon as possible' },
-      { name: 'message', label: 'Specification and anything else', type: 'textarea', max: 5000, full: true, rows: 4,
-        placeholder: 'Grade, specification, packing, certificates required, payment terms you work on, or a reference to attach.' },
-      { step: 'About you' },
-      { name: 'name', label: 'Full name', type: 'text', required: true, max: 120, auto: 'name',
-        why: 'Tell us your name.' },
-      { name: 'company', label: 'Company', type: 'text', required: true, max: 160, auto: 'organization',
-        why: 'Tell us which company the quotation is for.' },
-      { name: 'country', label: 'Country', type: 'text', max: 80, auto: 'country-name' },
-      { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
-      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' }
     ]
   },
 

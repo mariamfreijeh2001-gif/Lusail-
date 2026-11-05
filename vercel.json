@@ -44,43 +44,73 @@
   ],
   "redirects": [
     {
+      "source": "/quote/",
+      "destination": "/contact/?topic=quote",
+      "permanent": true
+    },
+    {
+      "source": "/quote",
+      "destination": "/contact/?topic=quote",
+      "permanent": true
+    },
+    {
+      "source": "/partnerships/",
+      "destination": "/about/#work-with-us",
+      "permanent": true
+    },
+    {
+      "source": "/partnerships",
+      "destination": "/about/#work-with-us",
+      "permanent": true
+    },
+    {
+      "source": "/work-with-us/",
+      "destination": "/about/#work-with-us",
+      "permanent": true
+    },
+    {
+      "source": "/work-with-us",
+      "destination": "/about/#work-with-us",
+      "permanent": true
+    },
+    {
       "source": "/quotation/",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
       "source": "/quotation",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
       "source": "/rfq/",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
       "source": "/rfq",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
       "source": "/request-a-quote/",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
       "source": "/request-a-quote",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
       "source": "/get-a-quote/",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
       "source": "/get-a-quote",
-      "destination": "/quote/",
+      "destination": "/contact/?topic=quote",
       "permanent": true
     },
     {
@@ -555,12 +585,12 @@
     },
     {
       "source": "/partnership/",
-      "destination": "/partnerships/",
+      "destination": "/about/#work-with-us",
       "permanent": true
     },
     {
       "source": "/partnership",
-      "destination": "/partnerships/",
+      "destination": "/about/#work-with-us",
       "permanent": true
     },
     {

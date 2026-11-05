@@ -230,9 +230,11 @@
       }
       var pre = q.get('area');
       if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) areaSel.value = pre;
-      /* /quote/?service=<slug> picks the service the quotation is for */
+      /* /contact/?topic=quote&service=<slug> says what it is about and which service */
       var svcSel = form.querySelector('select[name="service"]'), svc = q.get('service');
       if (svc && svcSel && [].some.call(svcSel.options, function (o) { return o.value === svc; })) svcSel.value = svc;
+      var topSel = form.querySelector('select[name="topic"]'), top = q.get('topic');
+      if (top && topSel && [].some.call(topSel.options, function (o) { return o.value === top; })) topSel.value = top;
       var about = (q.get('about') || '').replace(/[<>]/g, '').trim().slice(0, 80);
       var msg = form.querySelector('textarea[name="message"]');
       if (about && msg && !msg.value) msg.value = 'About ' + about + ':\n';
@@ -993,7 +995,7 @@
      between tabs. Without script every panel is simply on the page. */
   var tabsBar = $('#tabsBar'), tpanels = $('#tpanels');
   if (tabsBar && tpanels) {
-    var tabs = $$('.tab', tabsBar), panels = $$('.tpanel', tpanels);
+    var tabs = $$('[role="tab"]', tabsBar), panels = $$('.tpanel', tpanels);
     var choose = function (slug, focus, scroll) {
       var hit = null;
       panels.forEach(function (p) { var on = p.id === slug; p.classList.toggle('on', on); if (on) hit = p; });
@@ -1003,14 +1005,16 @@
         t.classList.toggle('on', on);
         t.setAttribute('aria-selected', String(on));
         t.setAttribute('tabindex', on ? '0' : '-1');
-        if (on && tabsBar.querySelector('.tablist').scrollWidth > tabsBar.clientWidth) {
-          var strip = tabsBar.querySelector('.tablist'), l = t.offsetLeft, r = l + t.offsetWidth;
+        var strip = tabsBar.querySelector('.tablist');
+        if (on && strip && strip.scrollWidth > strip.clientWidth) {
+          var l = t.offsetLeft, r = l + t.offsetWidth;
           if (l < strip.scrollLeft) strip.scrollLeft = l;
           else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth;
         }
       });
+      tpanels.classList.add('open');
       if (scroll) {
-        var top = tabsBar.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104);
+        var top = hit.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) - 16;
         window.scrollTo({ top: top, behavior: still.matches ? 'auto' : 'smooth' });
       }
       if (focus) hit.focus({ preventScroll: true });
@@ -1030,17 +1034,34 @@
         tabs[j].focus();
       });
     });
+    var closeAll = function () {
+      panels.forEach(function (p) { p.classList.remove('on'); });
+      tabs.forEach(function (t) { t.classList.remove('on'); t.setAttribute('aria-selected', 'false'); });
+      tpanels.classList.remove('open');
+      if (history.replaceState) history.replaceState(null, '', location.pathname + '#services');
+      var top = tabsBar.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) - 24;
+      window.scrollTo({ top: top, behavior: still.matches ? 'auto' : 'smooth' });
+    };
     tpanels.addEventListener('click', function (e) {
+      var c = e.target.closest('a[data-close]');
+      if (c) { e.preventDefault(); closeAll(); return; }
       var a = e.target.closest('a[data-tab]');
       if (!a) return;
       e.preventDefault();
       go(a.getAttribute('data-tab'), true);
     });
+    /* a card that is already open closes again */
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function (e) {
+        if (t.classList.contains('on')) { e.preventDefault(); e.stopImmediatePropagation(); closeAll(); }
+      }, true);
+    });
     /* an address with a service's anchor opens that service and lands on it */
     var fromHash = function (scroll) {
       var slug = (location.hash || '').slice(1);
       if (slug && choose(slug, false, false) && scroll) {
-        var top = tabsBar.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104);
+        var hit = document.getElementById(slug);
+        var top = hit.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) - 16;
         window.scrollTo({ top: top, behavior: 'auto' });
       }
     };

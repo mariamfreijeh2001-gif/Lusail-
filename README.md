@@ -35,13 +35,11 @@ never has to know.
 | `/services/` | Every area, each with the services inside it as rows |
 | `/services/<area>/` | One area: the opening, its services as tabs (one in view at a time), how buying works, the ask |
 | `/services/<area>/#<slug>` | One service — a section on its area's page, which is what every link to it points at |
-| `/about/` | The Group: what it is and what it believes |
-| `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
+| `/about/` | The Group: what it is and what it believes, and **Work With Us** (`#work-with-us`): who it wants to hear from, how it works, the two ways in, what it is looking to do next |
 | `/supplier-portal/` | The Supplier Portal: what the Group buys, the next events, how it works, requirements |
 | `/supplier-portal/opportunities/` | Every open sourcing event, filterable; each one's action leads to the registration |
 | `/supplier-portal/register/` | The registration — progress rail, documents, a draft that stays in the browser |
-| `/quote/` | Request a quotation: the service, the quantity or scope, destination, timing and specification, routed to the desk of the service's area |
-| `/contact/` | Channels and the enquiry form |
+| `/contact/` | Channels and the one form: what it is about (a quotation, a question, supplying, a partnership, careers), the service it concerns, and for a quotation the quantity, destination and timing |
 | `/404.html` | Not found |
 
 There is **no company page, no careers page, and no page per service** —
@@ -58,8 +56,8 @@ guessed ones like `/vendors/`, `/tenders/` and `/procurement/`.
 
 A buyer's path is: find the service (the bar's panel, the home ledger, the
 services index, or a search engine landing on the section), read it in
-full, then **Request a quotation** — the form at `/quote/` arrives with the
-service chosen and asks for what an offer needs. Each area page also says
+full, then **Request a quotation** — the contact form arrives with
+"Request a quotation" and the service chosen and asks for what an offer needs. Each area page also says
 **how buying works** in four steps (`buying` in data/site.js) and ends in
 the other areas; the footer lists every area on every page.
 
@@ -333,8 +331,7 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   the chapter being read.
 - **The bar** — *Services* is a link and a caret: the caret opens a panel of
   the areas with every service under each (also on hover; Escape or a click
-  outside closes it). The bar's button is *Request a quotation*; Contact is
-  a plain link. Below 1080px the bar becomes a full-screen menu with the
+  outside closes it). The bar's button is *Contact us*. Below 1080px the bar becomes a full-screen menu with the
   areas folded into a group that opens on a tap.
 - **The figures** are written into the HTML and count up once in view.
 - **Arrival** — each band lifts in once as it scrolls into view. Hiding is
