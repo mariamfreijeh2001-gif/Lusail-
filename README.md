@@ -250,12 +250,14 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 
 - **Every page opens full-screen** with its photograph, the bar transparent
   over it until the page scrolls.
-- **Home** — the statement and the Group's four figures (counted from the
-  content), the **services ledger** (one row per area, every service as a
-  link), the areas as a large accordion (one open panel, the rest upright
-  strips), "What makes it a group", the sourcing **globe**, how the Group
-  works, and the one **strip of companies**, scrolling across the foot of
-  the page (paused under the pointer; standing still under reduced motion).
+- **Home** — the statement with a rail of the seven areas across the foot
+  of the photograph, the Group's four figures (counted from the content),
+  **What we provide** — seven area tiles, the first and last wide, each
+  with the area's photograph, its line and every service in it as a ruled
+  row linking to its section — "What makes it a group", the sourcing
+  **globe**, how the Group works, and the one **strip of companies**,
+  scrolling across the foot of the page (paused under the pointer;
+  standing still under reduced motion).
 - **The globe** — land points sampled from Natural Earth at build time
   (`build/worldmap.js` → `/assets/img/globe.json`), drawn and turned in a
   canvas, with a gold arc from every source country to Doha. Pointing at a
@@ -322,10 +324,9 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 
 - **The bar** — *Services* is a link and a caret: the caret opens a panel of
   the areas with every service under each (also on hover; Escape or a click
-  outside closes it). Below 1080px the bar becomes a full-screen menu with
-  the areas folded into a group that opens on a tap.
-- **The area accordion** opens the strip pointed at, tabbed to or tapped,
-  and keeps the last one open. On a phone it is replaced by photograph tiles.
+  outside closes it). The bar's button is *Request a quotation*; Contact is
+  a plain link. Below 1080px the bar becomes a full-screen menu with the
+  areas folded into a group that opens on a tap.
 - **The figures** are written into the HTML and count up once in view.
 - **Arrival** — each band lifts in once as it scrolls into view. Hiding is
   scoped to a `.js` class the script adds, so nothing is ever invisible if the

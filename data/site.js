@@ -130,7 +130,7 @@ const AREAS = [
     short: 'Sulphur, coffee, sugar, edible oils and wheat — bought abroad, by specification, and shipped by sea, land and air.',
     headline: 'Global Supply, Commercially Answered',
     intro: 'We buy commodities internationally and carry them, which is one service rather than two.',
-    hero: 'hero-sector-trading',
+    hero: 'hero-sector-food-beverage',
     accent: '#d3a750', accentText: '#7d5a1d', tint: '#f7efdf', accentOn: '#0b1a3a',
     icon: 'markets', desk: 'lusail-commercial',
     body: [
@@ -504,7 +504,7 @@ const AREAS = [
     short: 'Ocean, land and air freight, vessel chartering and heavy transport, between Qatar and the world.',
     headline: 'The Cargo Itself, Managed',
     intro: 'We move goods by sea, land and air, for our own trading and for customers who need the freight on its own.',
-    hero: 'hero-lusail-commercial',
+    hero: 'hero-sector-trading',
     accent: '#4a7fa8', accentText: '#2e5f86', tint: '#ecf2f7',
     icon: 'crate', desk: 'lusail-commercial',
     body: [
@@ -890,7 +890,7 @@ const AREAS = [
     short: 'Capital for energy, technology and industrial development, and joint ventures with partners who know their market.',
     headline: 'Capital With a Long Horizon',
     intro: 'We invest where we can also bring commerce and services, so a position is backed by the ability to supply and to deliver.',
-    hero: 'hero-sector-investments',
+    hero: 'hero-tibeco-group',
     accent: '#1f3b73', accentText: '#1f3b73', tint: '#e9edf5',
     icon: 'target', desk: 'tibeco-group',
     body: [

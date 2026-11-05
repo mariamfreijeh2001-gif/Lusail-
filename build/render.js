@@ -395,7 +395,8 @@ const NAV = [
   ['Services', '/services/'],
   ['About Us', '/about/'],
   ['Work With Us', '/partnerships/'],
-  ['Suppliers', '/supplier-portal/']
+  ['Suppliers', '/supplier-portal/'],
+  ['Contact', '/contact/']
 ];
 
 /* The services panel under the bar: every area as a column, and every
@@ -441,7 +442,7 @@ ${servicesPanel()}
   <nav class="nav" aria-label="Main">
 ${NAV.map(link).join('\n')}
   </nav>
-  <a class="head-cta" href="/contact/">Contact us</a>
+  <a class="head-cta" href="/quote/">Request a quotation</a>
   <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu">
     ${BURGER}
   </button>
@@ -457,8 +458,8 @@ ${AREAS.map(x => `    <a class="sub" href="${areaHref(x)}">${esc(x.name)}</a>`).
   <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
   <a href="/partnerships/"${current === '/partnerships/' ? ' aria-current="page"' : ''}>Work with us</a>
   <a href="/supplier-portal/"${current === '/supplier-portal/' ? ' aria-current="page"' : ''}>Suppliers</a>
-  <a href="/quote/"${current === '/quote/' ? ' aria-current="page"' : ''}>Request a quotation</a>
-  <a class="btn btn-light" href="/contact/">Contact us</a>
+  <a href="/contact/"${current === '/contact/' ? ' aria-current="page"' : ''}>Contact</a>
+  <a class="btn btn-light" href="/quote/">Request a quotation</a>
 </div>
 <main id="main">
 `;
@@ -821,25 +822,28 @@ ${WHY.map((x, i) => `        <li class="why-item rise d${Math.min(i, 3)}">
    whole offer is on screen at once, and it is the first thing after the
    introduction because it is what a visitor came to find. */
 function servicesLedger() {
-  /* Each row carries the area's own photograph (the one its page and the
-     accordion below already use, so nothing new is fetched), its number and
-     its mark, the name and its line, and every service as a link. The row
-     wears the area's colour as --co, which only the mark and the hover use:
-     the page stays navy and gold, the area signs its own row. */
-  return `<div class="ledger">
-${AREAS.map((a, i) => `      <div class="led rise d${Math.min(i, 3)}" style="--co:${a.accent};--co-text:${a.accentText || a.accent}">
-        <a class="led-pic" href="${areaHref(a)}" tabindex="-1" aria-hidden="true">
-          ${pic(a.hero, '(max-width:860px) 84px, 150px', 'alt="" loading="lazy"')}
+  /* Seven tiles, the first one wide: the area's own photograph, its number
+     and how many services it holds, its name, its line, and every service
+     as a ruled row with an arrow. The tile wears the area's colour as --co,
+     which only the photograph's rule and the hover use. */
+  const tile = (a, i) => {
+    const list = svcsIn(a);
+    return `      <article class="atile${i === 0 ? ' atile-lead' : i === AREAS.length - 1 && AREAS.length % 3 === 1 ? ' atile-lead atile-last' : ''} rise d${Math.min(i, 3)}" style="--co:${a.accent};--co-text:${a.accentText || a.accent}">
+        <a class="atile-pic" href="${areaHref(a)}" tabindex="-1" aria-hidden="true">
+          ${pic(a.hero, i === 0 ? '(max-width:860px) 100vw, 46vw' : '(max-width:860px) 100vw, 30vw', 'alt="" loading="lazy"')}
         </a>
-        <div class="led-head">
-          <span class="led-n" aria-hidden="true">${num(i)}${icon(a.icon || 'markets')}</span>
+        <div class="atile-body">
+          <p class="atile-n"><span>${num(i)}</span>${esc(plural(list.length, 'service', 'services'))}</p>
           <h3><a href="${areaHref(a)}">${esc(a.name)}</a></h3>
-          <p>${esc(a.short)}</p>
+          <p class="atile-say">${esc(a.short)}</p>
+          <ul class="atile-list">
+${list.map(x => `            <li><a href="${svcHref(x)}">${esc(x.name)}<span class="atile-arr" aria-hidden="true">&#8594;</span></a></li>`).join('\n')}
+          </ul>
         </div>
-        <ul class="led-list">
-${svcsIn(a).map(x => `          <li><a href="${svcHref(x)}">${esc(x.name)}<span class="led-arr" aria-hidden="true">&#8594;</span></a></li>`).join('\n')}
-        </ul>
-      </div>`).join('\n')}
+      </article>`;
+  };
+  return `<div class="areas">
+${AREAS.map(tile).join('\n')}
     </div>`;
 }
 
@@ -948,36 +952,6 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
   </div>
 </section>
 
-<section class="section hs sectors stone" aria-labelledby="secTitle">
-  <div class="wrap">
-    <div class="sec-intro rise">
-      <p class="eyebrow">Our service areas</p>
-      <h2 id="secTitle">Diversified by Design</h2>
-      <p>${cap(count(AREAS.length))} areas, ${count(ALL_SERVICES.length)} services. Each one serves a market we can see from Qatar.</p>
-    </div>
-    <div class="acc" id="acc">
-${AREAS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="${areaHref(sec)}">
-        ${pic(sec.hero, '(max-width:860px) 100vw, 46vw', 'class="acc-bg" alt="" loading="lazy"')}
-        <span class="acc-num" aria-hidden="true">${num(i)}</span>
-        <span class="acc-tab" aria-hidden="true">${esc(sec.name)}</span>
-        <div class="acc-body">
-          <span class="acc-n">${num(i)}</span>
-          <h3>${esc(sec.name)}</h3>
-          <span class="acc-say">${esc(sec.short)}</span>
-          <span class="acc-go">Learn more <span class="acc-arrow" aria-hidden="true">&#8594;</span></span>
-        </div>
-      </a>`).join('\n')}
-    </div>
-    <ul class="secgrid">
-${AREAS.map((sec, i) => `      <li><a class="secgrid-a" href="${areaHref(sec)}">
-        ${pic(sec.hero, '(max-width:560px) 50vw, 33vw', 'alt="" loading="lazy"')}
-        <span class="secgrid-n">${num(i)}</span>
-        <span class="secgrid-t">${esc(sec.name)}</span>
-      </a></li>`).join('\n')}
-    </ul>
-  </div>
-</section>
-
 <section class="section hs" aria-labelledby="whyTitle">
   <div class="wrap">
     ${head2('whyTitle', 'What makes it a <span class="soft">group</span>', 'The businesses we own are varied. The way they are run is not.')}
@@ -1061,7 +1035,7 @@ function pageAbout() {
       </div>
       <div>
         <p>This structure allows each business to keep its own identity, customers and commercial focus while benefiting from belonging to a diversified organisation.</p>
-        <p>As the Group develops, additional services and sectors will become part of what Lusail Corp provides.</p>
+        <p>As the Group develops, additional services and sectors will become part of what Lusail Corp provides. <a href="/#companies">The companies behind the services &#8594;</a></p>
       </div>
     </div>
     <figure class="bandshot rise">
@@ -1294,7 +1268,8 @@ ${a.buying.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
     <div class="co-ask-cta">
       <div class="co-ask-btns">
         <a class="btn co-btn" href="${a.quote ? '/quote/' : askHref()}">${a.quote ? 'Request a quotation' : 'Send an enquiry'}</a>
-        <a class="btn co-btn-line" href="${a.quote ? askHref() : '/supplier-portal/'}">${a.quote ? 'Ask a question' : 'Supply the Group'}</a>
+        <a class="btn co-btn-line" href="${askHref()}">Ask a question</a>
+        <a class="btn co-btn-line" href="/supplier-portal/register/">Become a supplier</a>
       </div>
       <a class="co-ask-mail" href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
     </div>
