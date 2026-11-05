@@ -394,8 +394,7 @@ const NAV = [
   ['Home', '/'],
   ['Services', '/services/'],
   ['About Us', '/about/'],
-  ['Suppliers', '/supplier-portal/'],
-  ['Contact', '/contact/']
+  ['Suppliers', '/supplier-portal/']
 ];
 
 /* The services panel under the bar: every area as a column, and every
@@ -456,7 +455,6 @@ ${AREAS.map(x => `    <a class="sub" href="${areaHref(x)}">${esc(x.name)}</a>`).
 
   <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
   <a href="/supplier-portal/"${current === '/supplier-portal/' ? ' aria-current="page"' : ''}>Suppliers</a>
-  <a href="/contact/"${current === '/contact/' ? ' aria-current="page"' : ''}>Contact</a>
   <a class="btn btn-light" href="/contact/">Contact us</a>
 </div>
 <main id="main">
