@@ -994,7 +994,7 @@
      sheet; the card of the sheet being read is marked. */
   var sheets = $$('#sheets .sheet');
   if (sheets.length) {
-    var cards = $$('#svcIndex .svccard');
+    var cards = $$('.co-hero-side a[href^="#"]');
     var headH = function () { return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104; };
     var jump = function (id, smooth) {
       var el = document.getElementById(id);
@@ -1026,7 +1026,7 @@
       });
       if (best === current) return;
       current = best;
-      cards.forEach(function (c) { c.classList.toggle('on', !!best && c.getAttribute('data-jump') === best.id); });
+      cards.forEach(function (c) { c.classList.toggle('on', !!best && (c.getAttribute('href') || '').slice(1) === best.id); });
     };
     var tick = false;
     addEventListener('scroll', function () {

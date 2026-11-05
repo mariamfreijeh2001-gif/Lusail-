@@ -4449,3 +4449,6 @@ html.js .sheet.in{opacity:1;transform:none}
   .whybuy-in{grid-template-columns:1fr;gap:28px}
   .tover2 .tover2-in{grid-template-columns:1fr}
 }
+
+/* the chapters follow the heading directly */
+html.js .tpanels{margin-top:clamp(20px,2.6vw,32px)}

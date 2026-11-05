@@ -1316,18 +1316,7 @@ ${a.customers.map(c => `          <li>${esc(c)}</li>`).join('\n')}
 
 <section class="section tabs-sec" id="services" aria-labelledby="svcListTitle">
   <div class="wrap">
-    ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with its specification, what we supply and the way to a quotation. Scroll, or choose one.`)}
-    <div class="svcgrid" id="svcIndex" aria-label="${esc(a.name)} services" style="--cols:${Math.min(n, 5)}">
-${list.map((s, i) => `      <a class="svccard rise d${i % 4}" id="tab-${s.slug}" href="#${s.slug}" data-jump="${s.slug}">
-        <span class="svccard-pic">${pic(s.img, '(max-width:560px) 100vw, (max-width:1080px) 46vw, 290px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}</span>
-        <span class="svccard-body">
-          <span class="svccard-n">${num(i)}</span>
-          <span class="svccard-name">${esc(s.name)}</span>
-          <span class="svccard-role">${esc(s.role)}</span>
-          <span class="svccard-go">Read <span class="svccard-arr" aria-hidden="true">&#8595;</span></span>
-        </span>
-      </a>`).join('\n')}
-    </div>
+    ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with its specification, what we supply and where it is sourced from.`)}
     <div class="tpanels sheets" id="sheets">
 ${list.map(panel).join('\n')}
     </div>
