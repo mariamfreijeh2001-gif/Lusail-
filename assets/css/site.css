@@ -4188,3 +4188,26 @@ html:not(.js) .tpanel + .tpanel{margin-top:clamp(40px,5vw,72px);padding-top:clam
   .tfrom{grid-column:1 / -1}
 }
 @media (prefers-reduced-motion:reduce){ .tab{transition:none} }
+
+/* ---- the area page, focused: hero, the services as tabs, how to buy ---- */
+.co-hero-lede{margin:14px 0 0;max-width:46ch;font:400 var(--t-lg)/1.5 var(--body);color:rgba(255,255,255,.88)}
+.co-hero-cta{margin-top:22px}
+.tabs-sec{padding-top:clamp(36px,4.5vw,56px)}
+.tabs-head h2{font:300 clamp(1.625rem,2.4vw,2.125rem)/1.15 var(--display);letter-spacing:-.014em;color:var(--ink);margin:10px 0 0}
+.tabs-bar{margin-top:clamp(18px,2.2vw,28px)}
+.tpanels{padding-top:clamp(24px,3vw,40px)}
+.tmain{gap:12px}
+.tmain h2{font-size:clamp(1.75rem,2.6vw,2.25rem)}
+.tmore{margin-top:4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tmore > summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:12px 0;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
+.tmore > summary::-webkit-details-marker{display:none}
+.tmore > summary::after{content:"+";font:300 1.375rem/1 var(--display);color:var(--gold-text);transition:transform .25s}
+.tmore[open] > summary::after{transform:rotate(45deg)}
+.tmore > summary:hover{color:var(--co-text,var(--gold-text))}
+.tmore > summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.tmore-in{display:grid;gap:.8em;padding:4px 0 18px;font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2)}
+.tmore-in .tfaq{margin-top:6px;border-top:1px solid var(--line-2)}
+.tact{margin-top:10px;border-top:0;padding-top:14px}
+.co-steps .steps{margin-top:clamp(20px,2.6vw,32px)}
+@media (max-width:560px){ .co-hero-lede{font-size:var(--t-body)} }
+@media (prefers-reduced-motion:reduce){ .tmore > summary::after{transition:none} }

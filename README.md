@@ -33,7 +33,7 @@ never has to know.
 |---|---|
 | `/` | Home: the services ledger, the areas, the globe, the one strip of companies |
 | `/services/` | Every area, each with the services inside it as rows |
-| `/services/<area>/` | One area: its story, then its services as tabs — one in view at a time, each laid out the same way — then how buying works, where it sources from, the ask |
+| `/services/<area>/` | One area: the opening, its services as tabs (one in view at a time), how buying works, the ask |
 | `/services/<area>/#<slug>` | One service — a section on its area's page, which is what every link to it points at |
 | `/about/` | The Group: what it is and what it believes |
 | `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
@@ -264,17 +264,18 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   canvas, with a gold arc from every source country to Doha. Pointing at a
   region in the list beside it lights its arcs; drag turns it. It only draws
   while on screen and holds still under reduced motion.
-- **Area pages** — the area's photograph behind the title and its facts
-  strip; the statement, the argument and who we serve; then **the services
-  as tabs** under a bar that sticks beneath the site bar: one service in
-  view at a time, each laid out the same way — photograph, key facts and
-  sourced-from at the left; name, statement, story, what we supply, how it
-  works where that helps, the questions and one action line at the right,
-  with previous/next links. A tab is an anchor link, so without script the
-  panels stand one under the other; with script the chosen service is
-  written to the address, and any link to a service's anchor opens its tab.
-  Then how buying works with the reasons, where the area sources from, the
-  closing band (quotation, question, supplier) and the other areas.
+- **Area pages** carry three things and nothing else. The opening: the
+  area's photograph, its name, its headline, its one-sentence statement, the
+  two buttons and the facts strip. **The services as tabs** under a bar
+  that sticks beneath the site bar: one service in view at a time, each
+  laid out the same way — photograph, four facts and sourced-from at the
+  left; name, statement, one paragraph, what we supply, one quiet line
+  that opens the rest of the story and the questions, and one action line
+  at the right, with previous/next. A tab is an anchor link, so without
+  script the panels stand one under the other; with script the chosen
+  service is written to the address, and any link to a service's anchor
+  opens its tab. Then **how buying works** in four steps, the closing band
+  (quotation, question, supplier) and the other areas.
 - **The services index** — a numbered rail of the areas at the left that
   marks the one being read, and each area as a block with its argument and
   its services as rows (number, name, role and line), each a link to its

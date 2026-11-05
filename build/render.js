@@ -1160,23 +1160,24 @@ ${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced fr
             <h2 id="h-${s.slug}">${esc(s.name)} <span class="trole">${esc(s.role)}</span></h2>
             <p class="tlead">${esc(s.intro)}</p>
             <div class="tbody">
-${s.body.map(p => `              <p>${esc(p)}</p>`).join('\n')}
+              <p>${esc(s.body[0])}</p>
             </div>
 ${s.lines && s.lines.length ? `            <h3 class="th3">What we supply</h3>
             <dl class="tlines">
 ${s.lines.map(l => `              <div><dt>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
             </dl>
-` : ''}${s.steps && s.steps.length ? `            <h3 class="th3">${esc((s.stepsTitle || 'How it works').replace(/<[^>]+>/g, ''))}</h3>
-            <ol class="tsteps">
-${s.steps.map((p, j) => `              <li><span>${num(j)}</span><div><strong>${esc(p.t)}</strong><p>${esc(p.d)}</p></div></li>`).join('\n')}
-            </ol>
-` : ''}${s.faq && s.faq.length ? `            <h3 class="th3">Questions</h3>
-            <div class="faq tfaq">
-${s.faq.map(f => `              <details class="faq-item" name="faq-${s.slug}">
-                <summary>${esc(f.q)}</summary>
-                <p>${esc(f.a)}</p>
-              </details>`).join('\n')}
-            </div>
+` : ''}${(s.body.length > 1 || (s.faq && s.faq.length)) ? `            <details class="tmore">
+              <summary><span>The full story${s.faq && s.faq.length ? ' and ' + plural(s.faq.length, 'question', 'questions') : ''}</span></summary>
+              <div class="tmore-in">
+${s.body.slice(1).map(p => `                <p>${esc(p)}</p>`).join('\n')}
+${s.faq && s.faq.length ? `                <div class="faq tfaq">
+${s.faq.map(f => `                  <details class="faq-item" name="faq-${s.slug}">
+                    <summary>${esc(f.q)}</summary>
+                    <p>${esc(f.a)}</p>
+                  </details>`).join('\n')}
+                </div>` : ''}
+              </div>
+            </details>
 ` : ''}            <div class="tact">
               <a class="btn co-btn" href="${a.quote ? '/quote/?service=' + s.slug : askHref(s)}">${a.quote ? 'Request a quotation for ' + esc(low(s)) : esc(s.cta)}</a>
               <a class="tact-link" href="${askHref(s)}">Ask a question</a>
@@ -1199,13 +1200,7 @@ ${a.buying.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
         <p>${esc(p.d)}</p>
       </li>`).join('\n')}
     </ol>
-${a.why && a.why.length ? `    <div class="bwhy rise">
-${a.why.map(w => `      <div class="bwhy-item">
-        <h3>${esc(w.t)}</h3>
-        <p>${esc(w.d)}</p>
-      </div>`).join('\n')}
-    </div>
-` : ''}  </div>
+  </div>
 </section>
 
 `
@@ -1244,6 +1239,7 @@ ${a.why.map(w => `      <div class="bwhy-item">
         <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span><a href="/services/">Services</a><span aria-hidden="true">/</span><span>${esc(a.name)}</span></p>
         <h1>${esc(a.name)}</h1>
         <p class="co-hero-line">${esc(a.headline)}</p>
+        <p class="co-hero-lede">${esc(a.intro)}</p>
         <div class="co-hero-cta">
           <a class="btn co-btn" href="${a.quote ? '/quote/' : askHref()}">${a.quote ? 'Request a quotation' : 'Enquire about ' + esc(low(a))}</a>
           <a class="btn co-btn-line" href="#services">See the ${esc(plural(n, 'service', 'services'))}</a>
@@ -1261,25 +1257,10 @@ ${a.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`
   </div>
 </section>
 
-<section class="section co-about tover" aria-labelledby="aboutTitle">
-  <div class="wrap tover-in">
-    <div class="rise">
-      <p class="eyebrow">${esc(a.name)} from Lusail Corp</p>
-      <h2 id="aboutTitle" class="co-statement">${esc(a.intro)}</h2>
-    </div>
-    <div class="tover-text rise d1">
-${a.body.map(p => `      <p>${esc(p)}</p>`).join('\n')}
-${a.customers && a.customers.length ? `      <p class="serve"><span>Who we serve</span></p>
-      <ul class="tags">
-${a.customers.map(c => `        <li>${esc(c)}</li>`).join('\n')}
-      </ul>` : ''}
-    </div>
-  </div>
-</section>
-
 <section class="section tabs-sec" id="services" aria-labelledby="svcListTitle">
-  <div class="wrap">
-    ${head2('svcListTitle', `Our ${esc(low(a))} <span class="soft">services</span>`, `${esc(cap(count(n)))} services. Choose one; each is laid out the same way.`)}
+  <div class="wrap tabs-head">
+    <p class="eyebrow">Our services</p>
+    <h2 id="svcListTitle">${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'} in ${esc(low(a))}. <span class="soft">Choose one.</span></h2>
   </div>
   <div class="tabs-bar" id="tabsBar">
     <div class="wrap">
@@ -1295,7 +1276,7 @@ ${list.map(panel).join('\n')}
   </div>
 </section>
 
-${process}${sourcingSection(a.name, origins)}<section class="co-ask">
+${process}<section class="co-ask">
   <div class="wrap co-ask-in">
     <div>
       <p class="eyebrow">${esc(a.name)}</p>
