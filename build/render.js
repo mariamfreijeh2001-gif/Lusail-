@@ -871,30 +871,6 @@ ${COMPANIES.map((c, i) => one(c, true, i)).join('\n')}
     </div>`;
 }
 
-/* Every service, as a row of cards that scrolls sideways: the photograph,
-   the area, the name and its line, each a link to its section. */
-function servicesRow() {
-  return `<div class="srow" id="srow">
-      <div class="srow-head">
-        <p class="srow-t">Every service, <span class="soft">${count(ALL_SERVICES.length)} of them</span></p>
-        <div class="srow-nav">
-          <button class="srow-btn" type="button" data-prev aria-label="Scroll back"><span aria-hidden="true">&#8592;</span></button>
-          <button class="srow-btn" type="button" data-next aria-label="Scroll forward"><span aria-hidden="true">&#8594;</span></button>
-        </div>
-      </div>
-      <ul class="srow-track" aria-label="Services">
-${ALL_SERVICES.map((x, i) => `        <li><a class="scard" href="${svcHref(x)}" style="--co:${x.accent};--co-text:${x.accentText || x.accent}">
-          <span class="scard-pic">${pic(x.img, '(max-width:560px) 72vw, 272px', `alt="${esc(x.name)} — ${esc(x.role)}" loading="lazy"`)}</span>
-          <span class="scard-body">
-            <span class="scard-n">${num(i)} <em>${esc(x.areaName)}</em></span>
-            <span class="scard-name">${esc(x.name)}</span>
-            <span class="scard-say">${esc(x.role)}</span>
-          </span>
-        </a></li>`).join('\n')}
-      </ul>
-    </div>`;
-}
-
 /* What the Group does with them: four plain cards, no interaction. */
 function whatWeDo() {
   return `<div class="wwd">
@@ -975,7 +951,6 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
   <div class="wrap">
     ${head2('ledTitle', 'What we <span class="soft">provide</span>', `${cap(count(ALL_SERVICES.length))} services in ${count(AREAS.length)} areas. Each area has a page that writes up every service in it.`)}
     ${servicesLedger()}
-    ${servicesRow()}
   </div>
 </section>
 

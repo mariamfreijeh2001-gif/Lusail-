@@ -971,28 +971,4 @@
       mark();
     }
   }
-
-  /* ---------- the services row on the home page --------------------------
-     A row of every service that scrolls sideways: by drag or swipe, by the
-     two arrows, or with the keyboard across the links. The arrows retire
-     at either end. */
-  var srow = $('#srow');
-  if (srow) {
-    var track = srow.querySelector('.srow-track');
-    var prev = srow.querySelector('[data-prev]'), next = srow.querySelector('[data-next]');
-    var stepBy = function () {
-      var card = track.querySelector('.scard');
-      return card ? card.getBoundingClientRect().width + 16 : 300;
-    };
-    var ends = function () {
-      var max = track.scrollWidth - track.clientWidth - 1;
-      if (prev) prev.disabled = track.scrollLeft <= 0;
-      if (next) next.disabled = track.scrollLeft >= max;
-    };
-    if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -stepBy() * 2, behavior: 'smooth' }); });
-    if (next) next.addEventListener('click', function () { track.scrollBy({ left: stepBy() * 2, behavior: 'smooth' }); });
-    track.addEventListener('scroll', ends, { passive: true });
-    addEventListener('resize', ends);
-    ends();
-  }
 })();
