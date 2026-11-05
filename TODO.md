@@ -99,7 +99,28 @@ Also decide:
   Cavallo Laundry are **not** on the portal, by the owner's decision: their
   pages carry no "Supply …" button and no category names them.
 
-### 0b. The credibility layer a counterpart checks for — needs you
+### 0b. The credibility layer a counterpart checks for — needs you *— the first thing to do*
+
+An independent structure review (5 November 2026) found the site's biggest
+gap is that trust is asserted, not proved. A bank, a mill or a ministry
+running checks will look for, and today cannot find:
+
+- **Named leadership** with roles, for the About page.
+- **The founding year** of the Group and the legal entity's name.
+- **The commercial registration number**, and the registered address with a
+  map, for About and Contact (today both say only "State of Qatar").
+- **Each ISO certificate**, with the certified entity and the certificate
+  number or a scan, behind the "certified management systems" line on About.
+- **A company-profile PDF** to download from About and Partners.
+- **A phone number a Gulf buyer will use** and a WhatsApp number; the
+  published number is a placeholder.
+- **Three or four news items a year** — a shipment, a contract, a new
+  origin — for a News page the site does not yet have; without items a News
+  page does harm, so it is not built.
+- **An Arabic version**: Qatar institutions expect it. The templates assume
+  one language only in their copy, not their structure.
+
+Send any of these and it lands in its place the same day.
 
 A buyer or bank verifying the Group will look for things the site cannot
 invent: a **street address** (footer and /contact/ say only "State of

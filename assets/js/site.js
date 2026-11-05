@@ -242,6 +242,30 @@
       if (cat) $$('input[type="checkbox"][name="categories"]', form).forEach(function (b) {
         if (b.value === cat) b.checked = true;
       });
+      /* a field shown only when another holds a value (the quotation's
+         quantity and destination), and a quotation offered only for the
+         services that take one */
+      var showWhen = $$('[data-show-when]', form);
+      var applyShow = function () {
+        showWhen.forEach(function (el) {
+          var ok = el.getAttribute('data-show-when').split(',').every(function (pair) {
+            var kv = pair.split('='), src = form.querySelector('[name="' + kv[0] + '"]');
+            return src && src.value === kv[1];
+          });
+          el.hidden = !ok;
+          $$('input,select,textarea', el).forEach(function (i) { i.disabled = !ok; });
+        });
+        if (svcSel && topSel) {
+          var quoting = topSel.value === 'quote';
+          [].forEach.call(svcSel.options, function (o) {
+            var no = quoting && o.getAttribute('data-quote') === '0';
+            o.hidden = no; o.disabled = no;
+            if (no && svcSel.value === o.value) svcSel.value = '';
+          });
+        }
+      };
+      form.addEventListener('change', applyShow);
+      applyShow();
       var fill = form.getAttribute('data-prefill');
       if (fill) {
         fill = JSON.parse(fill);

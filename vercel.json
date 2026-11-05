@@ -44,6 +44,46 @@
   ],
   "redirects": [
     {
+      "source": "/services/consumer/",
+      "destination": "/consumer/",
+      "permanent": true
+    },
+    {
+      "source": "/services/consumer",
+      "destination": "/consumer/",
+      "permanent": true
+    },
+    {
+      "source": "/everyday/",
+      "destination": "/consumer/",
+      "permanent": true
+    },
+    {
+      "source": "/everyday",
+      "destination": "/consumer/",
+      "permanent": true
+    },
+    {
+      "source": "/investment/",
+      "destination": "/partners/",
+      "permanent": true
+    },
+    {
+      "source": "/investment",
+      "destination": "/partners/",
+      "permanent": true
+    },
+    {
+      "source": "/investors/",
+      "destination": "/partners/",
+      "permanent": true
+    },
+    {
+      "source": "/investors",
+      "destination": "/partners/",
+      "permanent": true
+    },
+    {
       "source": "/quote/",
       "destination": "/contact/?topic=quote",
       "permanent": true
@@ -55,22 +95,22 @@
     },
     {
       "source": "/partnerships/",
-      "destination": "/about/#work-with-us",
+      "destination": "/partners/",
       "permanent": true
     },
     {
       "source": "/partnerships",
-      "destination": "/about/#work-with-us",
+      "destination": "/partners/",
       "permanent": true
     },
     {
       "source": "/work-with-us/",
-      "destination": "/about/#work-with-us",
+      "destination": "/partners/",
       "permanent": true
     },
     {
       "source": "/work-with-us",
-      "destination": "/about/#work-with-us",
+      "destination": "/partners/",
       "permanent": true
     },
     {
@@ -585,12 +625,12 @@
     },
     {
       "source": "/partnership/",
-      "destination": "/about/#work-with-us",
+      "destination": "/partners/",
       "permanent": true
     },
     {
       "source": "/partnership",
-      "destination": "/about/#work-with-us",
+      "destination": "/partners/",
       "permanent": true
     },
     {
@@ -905,32 +945,32 @@
     },
     {
       "source": "/careers/",
-      "destination": "/contact/",
+      "destination": "/careers/",
       "permanent": true
     },
     {
       "source": "/careers",
-      "destination": "/contact/",
+      "destination": "/careers/",
       "permanent": true
     },
     {
       "source": "/jobs/",
-      "destination": "/contact/",
+      "destination": "/careers/",
       "permanent": true
     },
     {
       "source": "/jobs",
-      "destination": "/contact/",
+      "destination": "/careers/",
       "permanent": true
     },
     {
       "source": "/vacancies/",
-      "destination": "/contact/",
+      "destination": "/careers/",
       "permanent": true
     },
     {
       "source": "/vacancies",
-      "destination": "/contact/",
+      "destination": "/careers/",
       "permanent": true
     },
     {

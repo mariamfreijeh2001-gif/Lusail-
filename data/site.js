@@ -99,6 +99,9 @@ const COMPANIES = [
    An area:
      slug, name, short, headline, intro, body   the area's own story
      facts                                      the strip under its page title
+     audience                                   'partners' or 'consumer' for the two areas that
+                                                are not B2B services: they get pages of their own
+                                                (/partners/, /consumer/) and stay out of Services
      quote                                      true where a buyer asks for a quotation
                                                 (the form at /quote/) rather than sends an enquiry
      buying, buyingTitle                        how buying works, as steps
@@ -794,6 +797,7 @@ const AREAS = [
       },
       {
         slug: 'food-security',
+        related: ['wheat-grains', 'sugar', 'edible-oils', 'rice', 'grains-pulses'],
         name: 'Strategic Commodities & Food Security',
         role: 'Long-term supply for national programmes',
         headline: 'Essential Commodities, Supplied for the Long Term',
@@ -923,6 +927,7 @@ const AREAS = [
 
   {
     slug: 'investment',
+    audience: 'partners',
     name: 'Investment & Partnerships',
     short: 'Capital for energy, technology and industrial development, and joint ventures with partners who know their market.',
     headline: 'Capital With a Long Horizon',
@@ -1016,6 +1021,7 @@ const AREAS = [
 
   {
     slug: 'consumer',
+    audience: 'consumer',
     name: 'Consumer & Hospitality Services',
     short: 'Garment care for households and a café — everyday services, judged on doing the same thing well every time.',
     headline: 'Everyday Services. Better Experiences.',
@@ -1104,6 +1110,27 @@ const AREAS = [
       }
     ]
   }
+];
+
+/* About: how the Group is governed — only what the site can stand behind
+   today. The certificates themselves, the registration number and the
+   office address are on the owner's list in TODO.md. */
+const GOVERNANCE = [
+  { t: 'Certified management systems',
+    d: 'Institutional supply is delivered under ISO 9001 quality, ISO 14001 environmental and ISO 45001 occupational health and safety management systems within the Group.' },
+  { t: 'Independent inspection',
+    d: 'Commodity cargoes are sold to a written specification and certified for weight and quality at the load port by SGS, Intertek or Bureau Veritas.' },
+  { t: 'A Supplier Code of Conduct',
+    d: 'Every supplier accepts ten points at registration: lawful business, no gifts, conflicts disclosed, fair competition, safety, environment, accurate documents, confidentiality.',
+    href: '/supplier-portal/code/', link: 'Read the Code' },
+  { t: 'No intermediaries, no fees',
+    d: 'Sourcing events are published only on this site. The Group never asks for registration fees, advance payments or bank messages, and deals with no mandates.',
+    href: '/supplier-portal/#requirements', link: 'The Supplier Portal' },
+  { t: 'Data protection',
+    d: 'What a visitor sends through a form is kept only to answer it, under the data protection law of the State of Qatar.' },
+  { t: 'Terms every event is run on',
+    d: 'Quotes in USD or QAR, offers firm for the period stated, registration valid two years, and every event an invitation to treat under the laws of Qatar.',
+    href: '/supplier-portal/#terms', link: 'Terms in brief' }
 ];
 
 /* Home: how buying from the Group works, for any service, and the reasons
@@ -1419,9 +1446,15 @@ const ALL_SERVICES = AREAS.flatMap(a =>
   a.services.map(s => Object.assign({}, s, {
     areaSlug: a.slug, areaName: a.name, areaHero: a.hero, desk: a.desk,
     accent: a.accent, accentText: a.accentText, tint: a.tint, accentOn: a.accentOn,
+    quotable: !!a.quote, audience: a.audience || '',
     faq: SERVICE_FAQ[s.slug] || []
   }))
 );
+
+/* The five B2B service areas, and the two pages for other audiences. */
+const SERVICE_AREAS = AREAS.filter(a => !a.audience);
+const PARTNERS_AREA = AREAS.find(a => a.audience === 'partners');
+const CONSUMER_AREA = AREAS.find(a => a.audience === 'consumer');
 
 /* Every slug has to be unique across the site, or two pages would share an
    address. Checked here so the mistake is found at build, not on the server. */
@@ -1719,10 +1752,10 @@ const FORMS = {
       { name: 'topic', label: 'I want to', type: 'select', options: 'topics', required: true, full: true,
         why: 'Choose what your message is about.' },
       { name: 'service', label: 'The service it concerns', type: 'select', options: 'servicesOpt', full: true },
-      { name: 'quantity', label: 'Quantity or scope', type: 'text', max: 160,
-        placeholder: 'For a quotation: 30,000 MT, four reefers a week, one container…' },
-      { name: 'destination', label: 'Destination, terms and timing', type: 'text', max: 200,
-        placeholder: 'For a quotation: CFR Hamad Port, December 2026' },
+      { name: 'quantity', label: 'Quantity or scope', type: 'text', max: 160, showWhen: { topic: 'quote' },
+        placeholder: '30,000 MT, four reefers a week, one container…' },
+      { name: 'destination', label: 'Destination, terms and timing', type: 'text', max: 200, showWhen: { topic: 'quote' },
+        placeholder: 'CFR Hamad Port, December 2026' },
       { name: 'message', label: 'Message', type: 'textarea', required: true, max: 5000, full: true, rows: 4,
         placeholder: 'What you need, the specification, or your question.',
         why: 'Write a line about what you need, so we can send it to the right desk.' },
@@ -1815,8 +1848,8 @@ const FORMS = {
 };
 
 module.exports = {
-  SITE, AREAS, ALL_SERVICES, COMPANIES, REACH, REACH_POINTS, HUB, WHY,
-  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES, BUYING, BUYER_WHY,
+  SITE, AREAS, SERVICE_AREAS, PARTNERS_AREA, CONSUMER_AREA, ALL_SERVICES, COMPANIES, REACH, REACH_POINTS, HUB, WHY,
+  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES, BUYING, BUYER_WHY, GOVERNANCE,
   PARTNER_TYPES, FORMS, FORM_LISTS,
   SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 };

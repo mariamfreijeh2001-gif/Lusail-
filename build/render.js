@@ -39,8 +39,9 @@ const ASSET_V = {
   js: require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, '..', 'assets/js/site.js'))).digest('hex').slice(0, 10)
 };
 const {
-  SITE, REACH, REACH_POINTS, HUB, WHY, AREAS, ALL_SERVICES, COMPANIES, FORMS, FORM_LISTS,
-  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES, BUYING, BUYER_WHY,
+  SITE, REACH, REACH_POINTS, HUB, WHY, AREAS: ALL_AREAS, SERVICE_AREAS: AREAS, PARTNERS_AREA, CONSUMER_AREA,
+  ALL_SERVICES, COMPANIES, FORMS, FORM_LISTS,
+  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES, BUYING, BUYER_WHY, GOVERNANCE,
   PARTNER_TYPES, SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 } = require('../data/site.js');
 
@@ -149,9 +150,17 @@ const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
 /* Where an area and a service live. One helper each, so no link can
    disagree. An area has a page; a service is a section on it, so its one
    address is an anchor on that page. */
-const areaHref = a => `/services/${typeof a === 'string' ? a : a.slug}/`;
+/* AREAS is the five B2B service areas; ALL_AREAS adds the two pages for
+   other audiences, Partners and Everyday Services, which live at their own
+   addresses and stay out of the Services menu. */
+const areaOf = slug => ALL_AREAS.find(a => a.slug === slug);
+const areaHref = a => {
+  const x = typeof a === 'string' ? areaOf(a) : a;
+  return x.audience === 'partners' ? '/partners/' : x.audience === 'consumer' ? '/consumer/' : `/services/${x.slug}/`;
+};
 const svcHref = s => `${areaHref(s.areaSlug)}#${s.slug}`;
-const areaOf = slug => AREAS.find(a => a.slug === slug);
+/* how many services the five areas hold — the number the site quotes */
+const N_SERVICES = ALL_SERVICES.filter(s => !s.audience).length;
 const svcsIn = a => ALL_SERVICES.filter(s => s.areaSlug === (typeof a === 'string' ? a : a.slug));
 
 /* The mark an external link wears, so it is never dressed as an internal
@@ -394,6 +403,7 @@ const NAV = [
   ['Home', '/'],
   ['Services', '/services/'],
   ['About Us', '/about/'],
+  ['Partners', '/partners/'],
   ['Suppliers', '/supplier-portal/']
 ];
 
@@ -454,6 +464,7 @@ ${AREAS.map(x => `    <a class="sub" href="${areaHref(x)}">${esc(x.name)}</a>`).
   </details>
 
   <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
+  <a href="/partners/"${current === '/partners/' ? ' aria-current="page"' : ''}>Partners</a>
   <a href="/supplier-portal/"${current === '/supplier-portal/' ? ' aria-current="page"' : ''}>Suppliers</a>
   <a class="btn btn-light" href="/contact/">Contact us</a>
 </div>
@@ -472,7 +483,7 @@ const FORM_OPTIONS = {
   /* every service, labelled with its area, for the quotation form */
   topics: () => FORM_LISTS.topics.map(([v, t]) => ({ v, t })),
   servicesOpt: () => [{ v: '', t: 'Not about one service' }]
-    .concat(ALL_SERVICES.map(s => ({ v: s.slug, t: s.areaName + ' — ' + s.name }))),
+    .concat(ALL_SERVICES.map(s => ({ v: s.slug, t: s.areaName + ' — ' + s.name, data: s.quotable ? '' : 'data-quote="0"' }))),
   /* the service areas, which is what a visitor is asking about; each one
      routes to a desk behind the scenes (see api/contact.js) */
   areas: () => [{ v: 'general', t: 'General enquiry' }]
@@ -504,6 +515,10 @@ function formFields(kind, p, values = {}) {
     if (f.step) return `      <p class="fstep"><span>${num(stepN++)}</span>${esc(f.step)}</p>`
       + (f.note ? `\n      <p class="fstep-note">${esc(f.note)}</p>` : '');
     const cls = 'field' + (f.full || f.type === 'textarea' ? ' full' : '');
+    /* `showWhen` names a field and the value it must hold for this one to be
+       shown; the script hides it otherwise, and without script it is simply
+       on the page */
+    const show = f.showWhen ? ` data-show-when="${Object.entries(f.showWhen).map(([k, v]) => k + '=' + v).join(',')}"` : '';
     /* A document row: the label and its hint, then a quiet button and the
        chosen file's name. The input is real, so the browser's picker and its
        keyboard behaviour are its own; only the look is ours. */
@@ -540,15 +555,15 @@ ${opts.map(o => `        <label class="chk"><input type="checkbox" name="${f.nam
     }
     if (f.type === 'select') {
       const opts = FORM_OPTIONS[f.options]();
-      return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label>
+      return `      <div class="${cls}"${show}><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label>
         <select id="${id(f.name)}" name="${f.name}" ${attrs(f)}>
-${f.required ? '          <option value="">Choose one</option>\n' : ''}${opts.map(o => `          <option value="${o.v}">${esc(o.t)}</option>`).join('\n')}
+${f.required ? '          <option value="">Choose one</option>\n' : ''}${opts.map(o => `          <option value="${o.v}"${o.data ? ' ' + o.data : ''}>${esc(o.t)}</option>`).join('\n')}
         </select>${f.required ? err(f) : ''}</div>`;
     }
     if (f.type === 'textarea') {
-      return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><textarea id="${id(f.name)}" name="${f.name}"${f.rows ? ` rows="${f.rows}"` : ''} ${attrs(f)}></textarea>${note(f)}${f.required ? err(f) : ''}</div>`;
+      return `      <div class="${cls}"${show}><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><textarea id="${id(f.name)}" name="${f.name}"${f.rows ? ` rows="${f.rows}"` : ''} ${attrs(f)}></textarea>${note(f)}${f.required ? err(f) : ''}</div>`;
     }
-    return `      <div class="${cls}"><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><input id="${id(f.name)}" name="${f.name}" type="${f.type}" ${attrs(f)}>${note(f)}${f.required ? err(f) : ''}</div>`;
+    return `      <div class="${cls}"${show}><label for="${id(f.name)}">${esc(f.label)}${req(f)}</label><input id="${id(f.name)}" name="${f.name}" type="${f.type}" ${attrs(f)}>${note(f)}${f.required ? err(f) : ''}</div>`;
   }).join('\n');
 }
 
@@ -614,13 +629,15 @@ function footer(opts = {}) {
       <nav class="foot-svc" aria-label="Service areas">
         <p class="foot-h">What we provide</p>
 ${AREAS.map(a => `        <a href="${areaHref(a)}">${esc(a.name)}</a>`).join('\n')}
+        <a href="/consumer/">Everyday services</a>
       </nav>
       <div class="foot-go">
         <nav class="foot-nav" aria-label="Footer">
           <p class="foot-h">The Group</p>
           <a href="/services/">Services</a>
           <a href="/about/">About us</a>
-          <a href="/about/#work-with-us">Work with us</a>
+          <a href="/partners/">Partners</a>
+          <a href="/careers/">Careers</a>
           <a href="/supplier-portal/">Supplier Portal</a>
           <a href="/contact/">Contact</a>
         </nav>
@@ -671,6 +688,8 @@ ${note ? `    <p class="pagehead-note">${note}</p>` : ''}
 /* The label above each section heading, by the heading's id. A heading
    with no entry here simply has none. */
 const EYEBROW = {
+  govTitle: 'Governance', capTitle: 'Capital and ventures', hireTitle: 'Where we hire', applyTitle: 'How to apply',
+  alsoTitle: 'Also',
   buyHomeTitle: 'How it works', whyAreaTitle: 'Why Lusail Corp',
   coTitle: 'The companies', whyTitle: 'Why Lusail Corp', wwdTitle: 'How we work',
   valTitle: 'Our values', vcTitle: 'Value creation', prodTitle: 'What we offer',
@@ -840,7 +859,8 @@ ${AREAS.map((sec, i) => `      <li><a class="secgrid-a" href="${areaHref(sec)}">
         <span class="secgrid-n">${num(i)}</span>
         <span class="secgrid-t">${esc(sec.name)}</span>
       </a></li>`).join('\n')}
-    </ul>`;
+    </ul>
+    <p class="also rise">Also, for households: <a href="/consumer/#laundry">laundry and garment care</a> and <a href="/consumer/#cafe">the caf&eacute;</a> &mdash; <a href="/consumer/">everyday services</a>.</p>`;
 }
 
 /* The companies behind the services, named here and nowhere else on the
@@ -880,7 +900,7 @@ function pageHome() {
   /* Counted, not typed: every figure on the band is derived from the content
      further down the same file, so it cannot contradict it. */
   const tally = {
-    services: ALL_SERVICES.length,
+    services: N_SERVICES,
     areas: AREAS.length,
     regions: Object.keys(REACH_POINTS).length,
     countries: Object.values(REACH_POINTS).reduce((n, p) => n + p.length, 0)
@@ -943,7 +963,7 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
 
 <section class="section hs hs-led" aria-labelledby="ledTitle">
   <div class="wrap">
-    ${head2('ledTitle', 'What we <span class="soft">provide</span>', `${cap(count(ALL_SERVICES.length))} services in ${count(AREAS.length)} areas. Each area has a page that writes up every service in it.`)}
+    ${head2('ledTitle', 'What we <span class="soft">provide</span>', `${cap(count(N_SERVICES))} services in ${count(AREAS.length)} areas. Each area has a page that writes up every service in it.`)}
     ${servicesLedger()}
   </div>
 </section>
@@ -1028,7 +1048,7 @@ ${VALUES.map((v, i) => `      <div class="valcard rise d${Math.min(i, 3)}">
 function pageAbout() {
   return head({
     title: `About Us · ${SITE.name}`,
-    desc: 'How Lusail Corp is put together: what the Group does for its businesses, what it believes, and who it wants to hear from.',
+    desc: 'How Lusail Corp is put together: what the Group does for its businesses, what it believes, and how it is governed.',
     url: '/about/', image: 'hero-about',
     schema: graph({ '@type': 'AboutPage', url: abs('/about/'), name: 'About ' + SITE.name,
       mainEntity: { '@id': ORG_ID } }, crumbs([{ name: 'About Us' }]))
@@ -1099,71 +1119,16 @@ ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
 </section>
 
 
-<section class="section tight stone" id="work-with-us" aria-labelledby="pwTitle">
+<section class="section stone" aria-labelledby="govTitle">
   <div class="wrap">
-    ${head2('pwTitle', 'Who we want to <span class="soft">hear from</span>', 'Every service we provide depends on relationships across its market. These are the ones we are looking for.')}
-    <div class="plines">
-${PARTNER_TYPES.map(p => `      <div class="pline rise">
-        <h3>${esc(p.t)}</h3>
-        <p>${esc(p.d)}</p>
-      </div>`).join('\n')}
-    </div>
-  </div>
-</section>
-
-<section class="section how" aria-labelledby="howTitle">
-  <div class="wrap">
-    ${head2('howTitle', 'How it <span class="soft">works</span>', 'From your first message to a specific answer, in four steps.')}
-    <ol class="tline">
-${[
-  ['Tell us which you are', 'Say what it is about and which service it concerns. Your message goes straight to the desk that can answer it, not to a general inbox.'],
-  ['It reaches the right desk', 'Behind every service is the company that delivers it. An enquiry about sulphur reaches the trading desk; one about fresh produce reaches the distribution desk.'],
-  ['We answer with specifics', 'Where it is a commodity, that means the origin, the specification and the route together, because we hold the trading and the freight in one business.'],
-  ['We build from there', 'A first order, a trial shipment or a meeting in Doha — the relationship starts with something real, not a brochure.']
-].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
-        <span class="tl-node" aria-hidden="true">${num(i)}</span>
-        <h3>${t}</h3>
-        <p>${d}</p>
-      </li>`).join('\n')}
-    </ol>
-    <p class="after rise"><a class="btn co-btn tl-cta" href="#routes">Choose your way in</a></p>
-  </div>
-</section>
-
-<section class="section stone routes" id="routes" aria-labelledby="routesTitle">
-  <div class="wrap">
-    ${head2('routesTitle', 'Two ways <span class="soft">in</span>', 'Suppliers register once and are invited to every event in their categories. Everyone else writes to the desk that can answer.')}
-    <div class="route2">
-      <a class="route rise" href="/supplier-portal/">
-        <span class="route-n">01</span>
-        <h3>You supply something we buy</h3>
-        <p>Producers, exporters, manufacturers, contractors and carriers. The Supplier Portal lists everything the Group buys — from granular sulphur to fresh produce — and what it is buying now. One registration covers the whole Group.</p>
-        <span class="route-go">Open the Supplier Portal <span aria-hidden="true">&#8594;</span></span>
-      </a>
-      <a class="route rise d1" href="/contact/">
-        <span class="route-n">02</span>
-        <h3>You have something else in mind</h3>
-        <p>A distributor looking for supply, a joint venture, a new concept, a market we should be in, or a business that fits the Group. Pick the area of interest and the message goes to the right desk.</p>
-        <span class="route-go">Send an enquiry <span aria-hidden="true">&#8594;</span></span>
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="section grow" aria-labelledby="growTitle">
-  <div class="wrap">
-    ${head2('growTitle', 'What we are looking to <span class="soft">do next</span>', 'Seven directions the Group is actively pursuing. If you can help with one of them, we want to hear from you.')}
-    <ol class="dirs">
-${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
-        <span class="dir-top">${icon(g.icon)}<span class="dir-n">${num(i)}</span></span>
+    ${head2('govTitle', 'How the Group is <span class="soft">governed</span>', 'What a counterparty can hold us to: the systems, the rules and the terms the Group works under.')}
+    <div class="gov">
+${GOVERNANCE.map((g, i) => `      <div class="gov-item rise d${Math.min(i, 3)}">
+        <span class="gov-n">${num(i)}</span>
         <h3>${esc(g.t)}</h3>
         <p>${esc(g.d)}</p>
-      </li>`).join('\n')}
-      <li class="dir dir-ask rise d3">
-        <p class="dir-ask-q">Have one of these?</p>
-        <a class="dir-ask-go" href="/contact/?topic=partnership">Bring us an opportunity <span aria-hidden="true">&#8594;</span></a>
-      </li>
-    </ol>
+${g.href ? `        <a class="gov-go" href="${g.href}">${esc(g.link)} <span aria-hidden="true">&#8594;</span></a>\n` : ''}      </div>`).join('\n')}
+    </div>
   </div>
 </section>
 
@@ -1182,35 +1147,11 @@ ${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
    title names the area and its services; the markup carries a Service for
    the area with every service as an offer, a FAQPage from all of their
    questions, and a BreadcrumbList. */
-function pageArea(a) {
-  /* One page per area. After the opening, the services are TABS: one
-     service in view at a time, every one laid out the same way, so a reader
-     always knows where they are. Each tab is a link to the service's anchor,
-     so without script the panels simply stand one under the other; with
-     script, choosing a tab shows that panel and writes its anchor to the
-     address. The h2 and id per service are what every link on the site and
-     the structured data point at. */
-  const list = svcsIn(a);
-  const n = list.length;
-  const others = AREAS.filter(x => x.slug !== a.slug);
-  const low = x => x.name.toLowerCase();
-  const vars = [
-    a.accent && '--co:' + a.accent,
-    a.accentText && '--co-text:' + a.accentText,
-    a.tint && '--co-tint:' + a.tint,
-    a.accentOn && '--co-on:' + a.accentOn
-  ].filter(Boolean).join(';');
-  const askHref = (s, topic) => `/contact/?topic=${topic || 'question'}${s ? '&service=' + s.slug : ''}`;
-  const origins = [...new Set(list.flatMap(s => s.origins || []))];
-
-  /* One service, as a panel. Left: the photograph, the key facts, where it
-     is sourced from. Right: the name, the statement, the story, what is
-     supplied, the questions, and the one action line. */
-  const panel = (s, i) => {
-    /* One sheet per service: the essentials only. The photograph and the
-       facts at the left; the name, one sentence, what we supply as short
-       rows, and where it is sourced from at the right. The quotation is
-       asked for once, at the foot of the page. */
+/* One service, as a chapter of its area's page: the photograph and the
+   facts at the left; the name, one sentence, what we supply as short rows,
+   and where it is sourced from at the right. The h2 and id are what every
+   link on the site and the structured data point at. */
+function serviceChapter(s, i, n) {
     return `      <section class="tpanel sheet" id="${s.slug}" aria-labelledby="h-${s.slug}">
         <div class="tp-grid">
           <aside class="tp-side">
@@ -1230,10 +1171,26 @@ ${s.lines && s.lines.length ? `            <h3 class="th3">What we supply</h3>
 ${s.lines.map((l, j) => `              <div><dt><span>${num(j)}</span>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
             </dl>
 ` : ''}${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>
+` : ''}${s.related && s.related.length ? `            <p class="trel"><span>The commodities themselves</span>${s.related.map(slug => ALL_SERVICES.find(x => x.slug === slug)).filter(Boolean).map(x => `<a href="${svcHref(x)}">${esc(x.name)}</a>`).join('')}</p>
 ` : ''}          </div>
         </div>
       </section>`;
-  };
+}
+
+function pageArea(a) {
+  const list = svcsIn(a);
+  const n = list.length;
+  const others = AREAS.filter(x => x.slug !== a.slug);
+  const low = x => x.name.toLowerCase();
+  const vars = [
+    a.accent && '--co:' + a.accent,
+    a.accentText && '--co-text:' + a.accentText,
+    a.tint && '--co-tint:' + a.tint,
+    a.accentOn && '--co-on:' + a.accentOn
+  ].filter(Boolean).join(';');
+  const askHref = (s, topic) => `/contact/?topic=${topic || 'question'}${s ? '&service=' + s.slug : ''}`;
+  const origins = [...new Set(list.flatMap(s => s.origins || []))];
+  const panel = (s, i) => serviceChapter(s, i, n);
 
   const process = a.buying && a.buying.length
     ? `<section class="section co-steps" aria-labelledby="buyTitle">
@@ -1257,12 +1214,12 @@ ${a.buying.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
     title: `${a.name} — ${list.map(s => s.name).join(', ')} | ${SITE.name}, Qatar`,
     desc: `${a.short} ${list.map(s => s.name).join(', ')}: what Lusail Corp supplies, where from, and how.`.slice(0, 300),
     url: areaHref(a), image: a.hero,
-    schema: graph(areaSchema(a), crumbs([
+    schema: graph(areaSchema(a), crumbs(a.audience ? [{ name: a.name }] : [
       { name: 'Services', url: '/services/' },
       { name: a.name }
     ]))
   })
-    + header('/services/', true)
+    + header(a.audience ? areaHref(a) : '/services/', true)
     + `<div class="co co-full co-${a.slug}" style="${vars}">
 
 <section class="co-hero">
@@ -1270,7 +1227,7 @@ ${a.buying.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
   <div class="co-hero-in">
     <div class="wrap co-hero-wrap">
       <div class="co-hero-say">
-        <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span><a href="/services/">Services</a><span aria-hidden="true">/</span><span>${esc(a.name)}</span></p>
+        <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span>${a.audience ? '' : '<a href="/services/">Services</a><span aria-hidden="true">/</span>'}<span>${esc(a.name)}</span></p>
         <h1>${esc(a.name)}</h1>
         <p class="co-hero-line">${esc(a.headline)}</p>
         <p class="co-hero-lede">${esc(a.intro)}</p>
@@ -1297,6 +1254,12 @@ ${a.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`
   </div>
 </section>
 
+<nav class="subjump" aria-label="The services on this page">
+  <div class="wrap subjump-in">
+${list.map((s, i) => `    <a href="#${s.slug}"><span>${num(i)}</span>${esc(s.name)}</a>`).join('\n')}
+  </div>
+</nav>
+
 <section class="section tight tover2" aria-labelledby="aboutTitle">
   <div class="wrap">
     <div class="tover2-in">
@@ -1316,7 +1279,7 @@ ${a.customers.map(c => `          <li>${esc(c)}</li>`).join('\n')}
 
 <section class="section tabs-sec" id="services" aria-labelledby="svcListTitle">
   <div class="wrap">
-    ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with its specification, what we supply and where it is sourced from.`)}
+    ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, a.quote ? `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with its specification, what we supply and where it is sourced from.` : `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with what it covers and what it is judged on.`)}
     <div class="tpanels sheets" id="sheets">
 ${list.map(panel).join('\n')}
     </div>
@@ -1355,7 +1318,7 @@ ${a.why.map(w => `      <div class="bwhy-item">
 
 <section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
-    ${head2('othTitle', 'The other <span class="soft">service areas</span>', '')}
+    ${head2('othTitle', a.audience ? 'Our <span class="soft">service areas</span>' : 'The other <span class="soft">service areas</span>', '')}
     ${areaRail(others)}
   </div>
 </section>
@@ -1399,6 +1362,194 @@ ${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(
       </div>`).join(String.fromCharCode(10))}
     </div>
     <p class="srcmore"><a href="/#markets">The Group's full sourcing register <span aria-hidden="true">&#8594;</span></a></p>
+  </div>
+</section>
+
+`;
+}
+
+/* ---------- partners ------------------------------------------------------- */
+
+/* Who the Group wants to hear from, how a relationship starts, the capital
+   and the ventures it brings, and what it is looking to do next. Investment
+   and joint ventures are an audience, not a service a buyer orders, so they
+   live here rather than under Services. */
+function pagePartners() {
+  const a = PARTNERS_AREA;
+  const list = svcsIn(a);
+  const vars = [a.accent && '--co:' + a.accent, a.accentText && '--co-text:' + a.accentText, a.tint && '--co-tint:' + a.tint, a.accentOn && '--co-on:' + a.accentOn].filter(Boolean).join(';');
+  return head({
+    title: `Partners — Suppliers, Distributors, Joint Ventures, Investment | ${SITE.name}, Qatar`,
+    desc: 'Who Lusail Corp wants to hear from: producers and exporters, distributors and buyers, business partners and entrepreneurs. Joint ventures, distribution partnerships and strategic investment from Doha.',
+    url: '/partners/', image: 'hero-partnerships',
+    schema: graph(areaSchema(a), crumbs([{ name: 'Partners' }]))
+  })
+    + header('/partners/', true)
+    + pageHead({
+      eyebrow: 'Partners',
+      h1: 'Most of what we do starts with someone else.',
+      lede: 'We buy from producers, sell to distributors, move goods for both, and invest where we can also supply and deliver. If you are one of them, this is the page that says so.',
+      photo: 'hero-partnerships',
+      action: { href: '/contact/?topic=partnership', label: 'Propose a partnership' },
+      action2: { href: '/supplier-portal/register/', label: 'Register as a supplier' }
+    })
+    + `<section class="section tight" aria-labelledby="pwTitle">
+  <div class="wrap">
+    ${head2('pwTitle', 'Who we want to <span class="soft">hear from</span>', 'Every service we provide depends on relationships across its market. These are the ones we are looking for.')}
+    <div class="plines">
+${PARTNER_TYPES.map(p => `      <div class="pline rise">
+        <h3>${esc(p.t)}</h3>
+        <p>${esc(p.d)}</p>
+      </div>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+<section class="section how" aria-labelledby="howTitle">
+  <div class="wrap">
+    ${head2('howTitle', 'How it <span class="soft">works</span>', 'From your first message to a specific answer, in four steps.')}
+    <ol class="tline">
+${[
+  ['Tell us which you are', 'Say what it is about and which service it concerns. Your message goes straight to the desk that can answer it, not to a general inbox.'],
+  ['It reaches the right desk', 'Behind every service is the company that delivers it. An enquiry about sulphur reaches the trading desk; one about fresh produce reaches the distribution desk.'],
+  ['We answer with specifics', 'Where it is a commodity, that means the origin, the specification and the route together, because we hold the trading and the freight in one business.'],
+  ['We build from there', 'A first order, a trial shipment or a meeting in Doha — the relationship starts with something real, not a brochure.']
+].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
+        <span class="tl-node" aria-hidden="true">${num(i)}</span>
+        <h3>${t}</h3>
+        <p>${d}</p>
+      </li>`).join('\n')}
+    </ol>
+  </div>
+</section>
+
+<div class="co co-${a.slug}" style="${vars}">
+<section class="section tabs-sec stone" id="capital" aria-labelledby="capTitle">
+  <div class="wrap">
+    ${head2('capTitle', 'Capital with <span class="soft">a long horizon</span>', esc(a.intro))}
+    <div class="tpanels sheets" id="sheets">
+${list.map((s, i) => serviceChapter(s, i, list.length)).join('\n')}
+    </div>
+  </div>
+</section>
+</div>
+
+<section class="section grow" aria-labelledby="growTitle">
+  <div class="wrap">
+    ${head2('growTitle', 'What we are looking to <span class="soft">do next</span>', 'Seven directions the Group is actively pursuing. If you can help with one of them, we want to hear from you.')}
+    <ol class="dirs">
+${GROWTH.map((g, i) => `      <li class="dir rise d${i % 4}">
+        <span class="dir-top">${icon(g.icon)}<span class="dir-n">${num(i)}</span></span>
+        <h3>${esc(g.t)}</h3>
+        <p>${esc(g.d)}</p>
+      </li>`).join('\n')}
+      <li class="dir dir-ask rise d3">
+        <p class="dir-ask-q">Have one of these?</p>
+        <a class="dir-ask-go" href="/contact/?topic=partnership">Bring us an opportunity <span aria-hidden="true">&#8594;</span></a>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section stone routes" id="routes" aria-labelledby="routesTitle">
+  <div class="wrap">
+    ${head2('routesTitle', 'Two ways <span class="soft">in</span>', 'Suppliers register once and are invited to every event in their categories. Everyone else writes to the desk that can answer.')}
+    <div class="route2">
+      <a class="route rise" href="/supplier-portal/">
+        <span class="route-n">01</span>
+        <h3>You supply something we buy</h3>
+        <p>Producers, exporters, manufacturers, contractors and carriers. The Supplier Portal lists everything the Group buys — from granular sulphur to fresh produce — and what it is buying now. One registration covers the whole Group.</p>
+        <span class="route-go">Open the Supplier Portal <span aria-hidden="true">&#8594;</span></span>
+      </a>
+      <a class="route rise d1" href="/contact/?topic=partnership">
+        <span class="route-n">02</span>
+        <h3>You have something else in mind</h3>
+        <p>A distributor looking for supply, a joint venture, a new concept, a market we should be in, or a business that fits the Group. Say what it is about and the message goes to the right desk.</p>
+        <span class="route-go">Propose a partnership <span aria-hidden="true">&#8594;</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+`
+    + footer();
+}
+
+/* ---------- careers --------------------------------------------------------- */
+
+/* One screen: where the Group hires, how to apply, and the one promise a
+   candidate needs — that nobody is ever asked for a fee. */
+function pageCareers() {
+  return head({
+    title: `Careers — Work at ${SITE.name} in Doha, Qatar`,
+    desc: 'Careers at Lusail Corp: trading, logistics, food distribution, institutional supply, technology and operations, in Doha. How to apply, and how we reply.',
+    url: '/careers/', image: 'hero-about',
+    schema: graph(crumbs([{ name: 'Careers' }]))
+  })
+    + header('/careers/', true)
+    + pageHead({
+      eyebrow: 'Careers',
+      h1: 'Work that moves real goods.',
+      lede: 'The Group trades, ships, distributes, supplies and invests from Doha. It hires people who want to be close to the cargo, the customer and the decision.',
+      photo: 'hero-about',
+      action: { href: '/contact/?topic=careers', label: 'Send us your CV' }
+    })
+    + `<section class="section tight" aria-labelledby="hireTitle">
+  <div class="wrap">
+    ${head2('hireTitle', 'Where we <span class="soft">hire</span>', 'Across the services the Group provides, and the operations behind them.')}
+    <div class="svcs">
+${AREAS.map((a, i) => `      <div class="svc rise d${Math.min(i, 3)}">
+        <span class="svc-n">${num(i)}</span>
+        <h3><a href="${areaHref(a)}">${esc(a.name)}</a></h3>
+        <p>${esc(a.short)}</p>
+      </div>`).join('\n')}
+      <div class="svc rise d3">
+        <span class="svc-n">${num(AREAS.length)}</span>
+        <h3>Operations and the Group</h3>
+        <p>Finance, procurement, compliance, people, and the everyday services the Group runs for households in Qatar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section stone" aria-labelledby="applyTitle">
+  <div class="wrap">
+    ${head2('applyTitle', 'How to <span class="soft">apply</span>', 'There is no portal. A message with a CV reaches the people who hire.')}
+    <ol class="steps steps-4">
+${[
+  ['Write to us', 'Use the contact form with “Ask about careers” as the topic, or email with Careers in the subject. Attach a CV; a line on the kind of work you want is enough.'],
+  ['We read it', 'Every application is read by the desk it fits. If there is a role now, we reply within two weeks; if not, we keep it for six months and say so.'],
+  ['We meet', 'A conversation in Doha or online about the work, then the people you would work with.'],
+  ['An offer in writing', 'Terms, start date and the Qatar work authorisation we arrange. Nothing is asked of you before that.']
+].map(([t, d], i) => `      <li class="step rise d${Math.min(i, 3)}">
+        <span class="step-n">${num(i)}</span>
+        <h3>${t}</h3>
+        <p>${d}</p>
+      </li>`).join('\n')}
+    </ol>
+    <p class="fraud-note rise">Lusail Corp never asks a candidate for a fee, a deposit or a payment of any kind, and writes only from its own domain. Report any such request to <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>.</p>
+  </div>
+</section>
+
+`
+    + ctaBandCareers()
+    + footer();
+}
+
+function ctaBandCareers() {
+  return `<section class="next">
+  <div class="wrap">
+    <div class="next-card rise">
+      <img class="watermark" src="/assets/logo/${B.markOnLight}" alt="" width="270" height="350" aria-hidden="true" loading="lazy">
+      <div class="next-say">
+        <h2>Tell us what you want to work on</h2>
+        <p>A CV and a line on the kind of work. It reaches the desk that hires for it.</p>
+      </div>
+      <div class="next-act">
+        <a class="btn btn-light" href="/contact/?topic=careers">Send us your CV</a>
+        <a class="btn btn-ghost" href="mailto:${SITE.contact.email}?subject=Careers">${esc(SITE.contact.email)}</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1454,6 +1605,13 @@ ${AREAS.map((a, i) => `  <section class="secblk" data-tone="${i % 4}" id="${a.sl
     </div>
   </section>`).join(String.fromCharCode(10) + String.fromCharCode(10))}
 </div>
+
+<section class="section tight" aria-labelledby="alsoTitle">
+  <div class="wrap alsoin">
+    ${head2('alsoTitle', 'For households, <span class="soft">everyday services</span>', '')}
+    <p class="also-say">Laundry and garment care, and a caf&eacute; &mdash; the part of the Group that serves the public. <a href="/consumer/">Everyday services <span aria-hidden="true">&#8594;</span></a></p>
+  </div>
+</section>
 
 `
     + ctaBand()
@@ -2018,6 +2176,9 @@ function build() {
   // one page per area, with every service in it written up as a section
   AREAS.forEach(a => write(`services/${a.slug}/index.html`, pageArea(a)));
   write('services/index.html', pageServicesIndex());
+  write('partners/index.html', pagePartners());
+  write('consumer/index.html', pageArea(CONSUMER_AREA));
+  write('careers/index.html', pageCareers());
   write('supplier-portal/index.html', pageSuppliers());
   write('supplier-portal/opportunities/index.html', pageOpportunities());
   write('supplier-portal/register/index.html', pageRegister());
@@ -2059,7 +2220,7 @@ function build() {
   fs.writeFileSync(path.join(imgOut, 'globe.json'), globeJson);
   console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
-  const urls = ['/', '/about/', '/services/', ...AREAS.map(areaHref),
+  const urls = ['/', '/about/', '/services/', ...AREAS.map(areaHref), '/partners/', '/consumer/', '/careers/',
     '/supplier-portal/', '/supplier-portal/opportunities/', '/supplier-portal/register/', '/supplier-portal/code/', '/contact/'];
   const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
@@ -2071,7 +2232,7 @@ function build() {
 
   console.log('  robots.txt, sitemap.xml (' + urls.length + ' urls)');
   const closedN = OPPORTUNITIES.length - OPEN.length;
-  console.log(`done -> dist/  (${urls.length + 1} pages, ${ALL_SERVICES.length} services in ${AREAS.length} areas, ${OPEN.length} open opportunities${closedN ? `, ${closedN} closed` : ''})`);
+  console.log(`done -> dist/  (${urls.length + 1} pages, ${N_SERVICES} services in ${AREAS.length} areas, ${OPEN.length} open opportunities${closedN ? `, ${closedN} closed` : ''})`);
 }
 
 build();

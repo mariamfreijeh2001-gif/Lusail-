@@ -13,8 +13,12 @@ npm run import -- "path/to/photo.png" hero-tibeco-group   # bring in any photo, 
 
 ## Structure
 
-The site lists **what the Group provides**, not which company provides it.
-Two tiers: a **service area** holds any number of **services**. An area has
+The site lists **what the Group provides**, not which company provides it,
+and keeps its audiences apart: five B2B **service areas** under Services,
+a **Partners** page for investors, joint ventures and everyone who wants to
+work with the Group, an **Everyday Services** page for the laundry and the
+café that serve households, the **Supplier Portal**, and one **Contact**
+form. Two tiers: a **service area** holds any number of **services**. An area has
 a page of its own; every service in it is written up in full as a section
 on that page, with its own anchor. The Group runs seven areas and
 twenty-four services today — sulphur, coffee, sugar,
@@ -35,7 +39,10 @@ never has to know.
 | `/services/` | Every area, each with the services inside it as rows |
 | `/services/<area>/` | One area: the hero and overview, its services as cards and then as sheets in order, why us, how buying works, the ask |
 | `/services/<area>/#<slug>` | One service — a section on its area's page, which is what every link to it points at |
-| `/about/` | The Group: what it is and what it believes, and **Work With Us** (`#work-with-us`): who it wants to hear from, how it works, the two ways in, what it is looking to do next |
+| `/about/` | The Group: what it is, what it believes, how it creates value, and how it is governed |
+| `/partners/` | Who the Group wants to hear from, how it works, capital and joint ventures (the two investment services as chapters), what it is looking to do next, the two ways in |
+| `/consumer/` | Everyday services for households: laundry and garment care, and the café — the area template without a quotation |
+| `/careers/` | Where the Group hires and how to apply |
 | `/supplier-portal/` | The Supplier Portal: what the Group buys, the next events, how it works, requirements |
 | `/supplier-portal/opportunities/` | Every open sourcing event, filterable; each one's action leads to the registration |
 | `/supplier-portal/register/` | The registration — progress rail, documents, a draft that stays in the browser |
@@ -60,6 +67,12 @@ full, then **Request a quotation** — the contact form arrives with
 "Request a quotation" and the service chosen and asks for what an offer needs. Each area page also says
 **how buying works** in four steps (`buying` in data/site.js) and ends in
 the other areas; the footer lists every area on every page.
+
+An area with `audience: 'partners'` or `'consumer'` is rendered at its own
+address and left out of the Services menu, the home accordion, the index
+and the footer's "What we provide" list; its services still carry anchors,
+structured data and a place in the contact form (a quotation is offered only
+for services in areas with `quote: true`).
 
 Adding a service to an area means adding one object to that area's
 `services` array (and a line to `build/imageroles.js` for its photograph).
