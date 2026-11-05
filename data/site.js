@@ -99,6 +99,9 @@ const COMPANIES = [
    An area:
      slug, name, short, headline, intro, body   the area's own story
      facts                                      the strip under its page title
+     quote                                      true where a buyer asks for a quotation
+                                                (the form at /quote/) rather than sends an enquiry
+     buying, buyingTitle                        how buying works, as steps
      hero                                       behind its page title
      accent, accentText, tint, accentOn         the colour its pages carry
      icon                                       its mark in the menu
@@ -134,6 +137,14 @@ const AREAS = [
       'This is the part of the Group that works outside Qatar. We source granular sulphur, green coffee, sugar, edible oils and wheat from producers and suppliers across the Middle East, Europe and the Black Sea, Asia and Central Asia, Africa, the Americas and Australia.',
       'We also move them. Ocean, road and air freight, vessel chartering and heavy transport sit in the same business as the buying, so an enquiry about a commodity is answered with the origin, the specification and the route at the same time.',
       'Which origin is used is a commercial decision, not a standing arrangement: it depends on the product, the season, quality, availability and the terms on the day.'
+    ],
+    quote: true,
+    buyingTitle: 'Enquiry to shipment',
+    buying: [
+      { t: 'Enquiry', d: 'Tell us the product, the quantity, the destination and when you need it. The quotation form takes two minutes.' },
+      { t: 'Offer', d: 'Within two working days: the origin, the specification, the price FOB or CFR, and the laycan or shipping window.' },
+      { t: 'Contract', d: 'A contract on the agreed terms, payment by letter of credit or as agreed, and the load-port inspection named.' },
+      { t: 'Shipment', d: 'The vessel or containers fixed by our own freight desk, the documents issued, and the cargo delivered.' }
     ],
     facts: [
       { k: 'Products', v: 'Sulphur, coffee, sugar, edible oils, wheat' },
@@ -308,6 +319,14 @@ const AREAS = [
       'Almost everything we distribute arrives by ship or by plane, so the work is in the chain rather than any single link: finding producers, getting the goods in, and putting them where the buyer needs them, in the condition the buyer expects.',
       'Fresh produce has a short commercial life and agricultural supply moves with the season, so this is a business of timing. Relationships across several growing regions matter more than a single cheap origin, because they are what let the supply shift when a season ends or availability tightens.',
       'We sell into the retail and food-service trade: supermarkets, hotels, restaurants, caterers and wholesalers.'
+    ],
+    quote: true,
+    buyingTitle: 'Enquiry to delivery',
+    buying: [
+      { t: 'Enquiry', d: 'Tell us the lines, the volumes, the pack and where it is delivered — a store, a kitchen, a warehouse.' },
+      { t: 'Offer and samples', d: 'A priced offer within two working days, with samples where the line needs them.' },
+      { t: 'Programme', d: 'A standing weekly programme agreed: schedule, pack sizes, labels, and the origin to switch to when the season moves.' },
+      { t: 'Delivery', d: 'Imported, cleared, held in Qatar where needed, and delivered chilled or dry to your schedule.' }
     ],
     facts: [
       { k: 'Products', v: 'Fresh produce, rice, pulses, dry foods' },
@@ -493,6 +512,14 @@ const AREAS = [
       'Because the freight desk sits beside the trading desk, it handles the whole movement — booking, documents, customs, delivery — rather than one leg of it, and quotes a door-to-door price when that is what is wanted.',
       'The routes are the ones the Group’s own cargo travels: the Gulf, the Red Sea and Indian Ocean, the Black Sea and the Mediterranean, South-East Asia, and the Americas.'
     ],
+    quote: true,
+    buyingTitle: 'Enquiry to delivery',
+    buying: [
+      { t: 'Enquiry', d: 'Tell us the cargo, the route, the dates and whether you want it port to port or door to door.' },
+      { t: 'Quote', d: 'A rate, a transit time and the documents required, within two working days.' },
+      { t: 'Booking', d: 'Space booked, documents prepared, customs and insurance arranged.' },
+      { t: 'Movement', d: 'The cargo moved, tracked and delivered, with one counterpart and one invoice.' }
+    ],
     facts: [
       { k: 'Modes', v: 'Ocean, chartering, road, air' },
       { k: 'Routes', v: 'Gulf, Indian Ocean, Black Sea, Asia, Americas' },
@@ -632,6 +659,14 @@ const AREAS = [
       'We supply energy operators, industrial sites, government entities and major private-sector organisations with materials, equipment and whole project packages, sourced internationally and delivered against a tender, a contract or a programme.',
       'This is work where a missed delivery stops a plant, so what counts is reliability over the life of a contract: certified management systems, sourcing that can switch origin when it has to, and the ability to finance, supply and deliver as one counterpart.',
       'It draws on the rest of the Group — commodity trading for raw materials, freight for heavy and project cargo — rather than buying those in.'
+    ],
+    quote: true,
+    buyingTitle: 'Specification to delivery',
+    buying: [
+      { t: 'Specification', d: 'Send the specification, the bill of quantities or the tender documents.' },
+      { t: 'Offer', d: 'A compliant offer against it — product, origin, delivery and approvals — within the time the tender allows.' },
+      { t: 'Contract', d: 'A supply contract or framework on the agreed terms, under certified management systems.' },
+      { t: 'Delivery and support', d: 'Delivered to site, inspected, commissioned where it is equipment, and supported afterwards.' }
     ],
     facts: [
       { k: 'Supply', v: 'Materials, equipment, projects, food security' },
@@ -773,6 +808,14 @@ const AREAS = [
       'Advanced technology and artificial intelligence are also an investment focus for the Group: we take positions in them, and use what we learn inside our own businesses.',
       'The work is delivered under the same certified management systems as the rest of the Group’s institutional supply.'
     ],
+    quote: true,
+    buyingTitle: 'Scope to support',
+    buying: [
+      { t: 'Scope', d: 'We scope the system with you: what it has to do, what it connects to, who runs it.' },
+      { t: 'Proposal', d: 'A proposal with the platforms, the integration work, the timeline and the support model.' },
+      { t: 'Delivery', d: 'Supplied, installed, integrated with your existing systems and tested.' },
+      { t: 'Support', d: 'Handed over with training, then monitored and supported from Qatar.' }
+    ],
     facts: [
       { k: 'Scope', v: 'Infrastructure, software, security, AI' },
       { k: 'Partners', v: 'Global technology platforms' },
@@ -854,6 +897,13 @@ const AREAS = [
       'The Group’s investment platform originates, manages and deploys positions in energy, advanced technology and industrial development, alongside the government programmes, institutional buyers and major private-sector projects those sectors serve.',
       'Growth here is selective by design: fewer, larger positions, chosen for whether they will still make sense in a decade rather than this quarter.',
       'The same platform builds the Group’s joint ventures and long-term partnerships — with producers, operators and founders whose business fits where the Group is going.'
+    ],
+    buyingTitle: 'Proposal to partnership',
+    buying: [
+      { t: 'Proposal', d: 'Bring us the business, the project or the market, with a line on what you are looking for.' },
+      { t: 'Review', d: 'We look at whether it fits — the sector, the horizon, and what the Group can add beyond capital.' },
+      { t: 'Structure', d: 'The investment or the venture structured to the business, not the other way round.' },
+      { t: 'Partnership', d: 'A long-term position, with the Group’s sourcing, logistics and customers behind it.' }
     ],
     facts: [
       { k: 'Focus', v: 'Energy, technology, industrial development' },
@@ -1565,6 +1615,7 @@ const FORM_LISTS = {
    page, is validated, and is printed in the email — with nothing else to
    edit. `options` names a list the build fills in:
      areas             every service area, plus the general desks (Contact)
+     services          every service, labelled with its area (the quotation)
      supplyCategories  the SUPPLY categories above, as checkboxes
      companyTypes       the FORM_LISTS above
    `why` is what the visitor is told beside the field when it is missing.
@@ -1659,6 +1710,38 @@ const FORMS = {
       { name: 'agreeAccurate', type: 'agree', required: true, full: true, short: 'Details confirmed accurate',
         label: 'The information given here is complete and accurate.',
         why: 'The details have to be confirmed to register.' }
+    ]
+  },
+
+  /* Request a quotation: the form a buyer who has found a service wants —
+     what, how much, where to, when — routed to the desk of the service's
+     area. `services` is every service, labelled with its area. */
+  quote: {
+    subject: 'Quotation request',
+    subjectFrom: 'service',
+    submit: 'Request a quotation',
+    ok: 'Request received. The desk that handles it replies within two working days with an offer or the questions it needs answered first.',
+    fields: [
+      { step: 'What you need' },
+      { name: 'service', label: 'Service', type: 'select', options: 'services', required: true, full: true,
+        why: 'Choose the service you are asking about, so the request reaches the right desk.' },
+      { name: 'quantity', label: 'Quantity or scope', type: 'text', required: true, max: 160,
+        placeholder: 'For example: 30,000 MT, four reefers a week, one 40-ft container, a site of 200 beds',
+        why: 'Tell us how much, or the scope, so the offer can be priced.' },
+      { name: 'destination', label: 'Destination and delivery terms', type: 'text', max: 160,
+        placeholder: 'For example: CFR Hamad Port; DDP Ras Laffan; delivered to Doha' },
+      { name: 'timing', label: 'When you need it', type: 'text', max: 120,
+        placeholder: 'For example: December 2026; weekly from January; as soon as possible' },
+      { name: 'message', label: 'Specification and anything else', type: 'textarea', max: 5000, full: true, rows: 4,
+        placeholder: 'Grade, specification, packing, certificates required, payment terms you work on, or a reference to attach.' },
+      { step: 'About you' },
+      { name: 'name', label: 'Full name', type: 'text', required: true, max: 120, auto: 'name',
+        why: 'Tell us your name.' },
+      { name: 'company', label: 'Company', type: 'text', required: true, max: 160, auto: 'organization',
+        why: 'Tell us which company the quotation is for.' },
+      { name: 'country', label: 'Country', type: 'text', max: 80, auto: 'country-name' },
+      { name: 'email', label: 'Email address', type: 'email', required: true, max: 254, auto: 'email' },
+      { name: 'phone', label: 'Phone number', type: 'tel', max: 40, auto: 'tel' }
     ]
   },
 

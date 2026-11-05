@@ -44,7 +44,7 @@ const LIMITS = {
    knows the desk that answers for it, which is how an enquiry reaches the
    right company rather than a general inbox. Anything not on the list is
    treated as unspecified rather than trusted into a header. */
-const { SITE, AREAS: SERVICE_AREAS, PARTNER_TYPES, FORMS, FORM_LISTS, SUPPLY } = require('../data/site.js');
+const { SITE, AREAS: SERVICE_AREAS, ALL_SERVICES, PARTNER_TYPES, FORMS, FORM_LISTS, SUPPLY } = require('../data/site.js');
 
 /* Where a message goes. The general inbox unless a desk is configured for
    the area the message concerns. */
@@ -58,6 +58,11 @@ function recipients(form, body) {
   else if (form === 'enquiry' || !form) {
     const area = typeof body.area === 'string' ? body.area.trim() : '';
     const hit = SERVICE_AREAS.find(a => a.slug === area);
+    if (hit) to = deskOf(hit.desk);
+  } else if (form === 'quote') {
+    /* a quotation is routed by the service it asks about, through its area */
+    const svc = typeof body.service === 'string' ? body.service.trim() : '';
+    const hit = ALL_SERVICES.find(s => s.slug === svc);
     if (hit) to = deskOf(hit.desk);
   }
   if (!to.length) to = fallback;
@@ -174,6 +179,7 @@ const OPTION_LABELS = {
   supplyCategories: Object.fromEntries(SUPPLY.map(x => [x.slug, x.name])),
   companyTypes: Object.fromEntries(FORM_LISTS.companyTypes),
   areas: AREAS,
+  services: Object.fromEntries(ALL_SERVICES.map(s => [s.slug, s.areaName + ' — ' + s.name])),
   interests: Object.assign({ general: 'A general enquiry', partnership: 'Working with the Group' },
     Object.fromEntries(SERVICE_AREAS.map(x => [x.slug, x.name])))
 };

@@ -44,6 +44,46 @@
   ],
   "redirects": [
     {
+      "source": "/quotation/",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
+      "source": "/quotation",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
+      "source": "/rfq/",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
+      "source": "/rfq",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
+      "source": "/request-a-quote/",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
+      "source": "/request-a-quote",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
+      "source": "/get-a-quote/",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
+      "source": "/get-a-quote",
+      "destination": "/quote/",
+      "permanent": true
+    },
+    {
       "source": "/services/sulphur/",
       "destination": "/services/commodities/#sulphur",
       "permanent": true

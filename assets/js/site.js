@@ -230,6 +230,9 @@
       }
       var pre = q.get('area');
       if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) areaSel.value = pre;
+      /* /quote/?service=<slug> picks the service the quotation is for */
+      var svcSel = form.querySelector('select[name="service"]'), svc = q.get('service');
+      if (svc && svcSel && [].some.call(svcSel.options, function (o) { return o.value === svc; })) svcSel.value = svc;
       var about = (q.get('about') || '').replace(/[<>]/g, '').trim().slice(0, 80);
       var msg = form.querySelector('textarea[name="message"]');
       if (about && msg && !msg.value) msg.value = 'About ' + about + ':\n';
