@@ -253,9 +253,7 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 - **Home** — the statement with a rail of the seven areas across the foot
   of the photograph, the Group's four figures (counted from the content),
   **What we provide** — the seven areas as the photographic accordion (one
-  open panel, the rest upright strips; tiles on a phone), and under it
-  **every service as a card in a row that scrolls sideways** (drag, swipe,
-  or the two arrows; each card links to its section) — "From enquiry to
+  open panel, the rest upright strips; tiles on a phone) — "From enquiry to
   delivery", the buyer's four steps and four checkable reasons — "What
   makes it a group", the sourcing
   **globe**, how the Group works, and the one **strip of companies**,
@@ -328,8 +326,6 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 
 - **The area accordion** opens the strip pointed at, tabbed to or tapped,
   and keeps the last one open. On a phone it is replaced by photograph tiles.
-- **The services row** scrolls sideways with scroll-snap; the arrows move
-  two cards and retire at either end.
 - **The in-page navigation** on an area page sticks under the bar and marks
   the chapter being read.
 - **The bar** — *Services* is a link and a caret: the caret opens a panel of
