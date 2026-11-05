@@ -3806,3 +3806,40 @@ and the document rows ----------------------------- */
 .why-area .svc{padding-bottom:22px}
 .subnav-list a{font-size:var(--t-xs)}
 @media (max-width:560px){ .co-figs dd,.stats dd{font-size:2rem} }
+
+/* ==========================================================================
+   THE SERVICES ROW — every service as a card in a row that scrolls
+   sideways under the accordion. Appended last, with its own queries.
+   ========================================================================== */
+.srow{margin-top:clamp(28px,3.4vw,44px)}
+.srow-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--ink)}
+.srow-t{margin:0;font:400 clamp(1.25rem,1.6vw,1.5rem)/1.2 var(--display);color:var(--ink)}
+.srow-nav{display:flex;gap:8px}
+.srow-btn{
+  width:44px;height:44px;border:1px solid var(--ink);background:none;color:var(--ink);cursor:pointer;
+  font-size:1.125rem;line-height:1;display:grid;place-items:center;transition:background .2s,color .2s,opacity .2s;
+}
+.srow-btn:hover{background:var(--ink);color:#fff}
+.srow-btn:disabled{opacity:.3;cursor:default;background:none;color:var(--ink)}
+.srow-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.srow-track{
+  list-style:none;margin:0;padding:18px 0 6px;display:flex;gap:16px;
+  overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+}
+.srow-track::-webkit-scrollbar{display:none}
+.srow-track li{flex:0 0 272px;scroll-snap-align:start}
+.srow .scard{display:grid;grid-template-rows:auto 1fr;height:100%;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);transition:border-color .25s}
+.srow .scard:hover,.srow .scard:focus-visible{border-color:var(--co,var(--gold))}
+.srow .scard:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.srow .scard-pic{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--panel)}
+.srow .scard-pic img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.srow .scard:hover .scard-pic img{transform:scale(1.04)}
+.srow .scard-pic::after{content:"";position:absolute;left:0;bottom:0;width:36px;height:3px;background:var(--co,var(--gold))}
+.srow .scard-body{display:grid;gap:5px;align-content:start;padding:14px 16px 16px}
+.srow .scard-n{font:300 .9375rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
+.srow .scard-n em{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-style:normal;margin-left:8px}
+.srow .scard-name{font:400 1.1875rem/1.25 var(--display);color:var(--ink)}
+.srow .scard-say{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
+@media (max-width:560px){ .srow-track li{flex-basis:72vw} .srow-nav{display:none} }
+@media (prefers-reduced-motion:reduce){ .srow .scard,.srow .scard-pic img{transition:none} .srow .scard:hover .scard-pic img{transform:none} .srow-track{scroll-behavior:auto} }
