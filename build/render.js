@@ -1230,18 +1230,6 @@ ${s.lines && s.lines.length ? `            <h3 class="th3">What we supply</h3>
 ${s.lines.map((l, j) => `              <div><dt><span>${num(j)}</span>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
             </dl>
 ` : ''}${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>
-` : ''}${(s.body.length || (s.faq && s.faq.length)) ? `            <details class="tmore">
-              <summary><span>More about ${esc(low(s))}${s.faq && s.faq.length ? ', and ' + plural(s.faq.length, 'question', 'questions') : ''}</span></summary>
-              <div class="tmore-in">
-${s.body.map(p => `                <p>${esc(p)}</p>`).join('\n')}
-${s.faq && s.faq.length ? `                <div class="faq tfaq">
-${s.faq.map(f => `                  <details class="faq-item" name="faq-${s.slug}">
-                    <summary>${esc(f.q)}</summary>
-                    <p>${esc(f.a)}</p>
-                  </details>`).join('\n')}
-                </div>` : ''}
-              </div>
-            </details>
 ` : ''}          </div>
         </div>
       </section>`;
@@ -1269,7 +1257,7 @@ ${a.buying.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
     title: `${a.name} — ${list.map(s => s.name).join(', ')} | ${SITE.name}, Qatar`,
     desc: `${a.short} ${list.map(s => s.name).join(', ')}: what Lusail Corp supplies, where from, and how.`.slice(0, 300),
     url: areaHref(a), image: a.hero,
-    schema: graph(areaSchema(a), faqSchema(list), crumbs([
+    schema: graph(areaSchema(a), crumbs([
       { name: 'Services', url: '/services/' },
       { name: a.name }
     ]))
