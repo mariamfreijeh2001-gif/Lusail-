@@ -4265,3 +4265,100 @@ html:not(.js) .tpanel-close{display:none}
 @media (max-width:1080px){ .svcgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:560px){ .svcgrid{grid-template-columns:1fr;gap:14px} .svccard:hover{transform:none} }
 @media (prefers-reduced-motion:reduce){ .svccard,.svccard-pic img,.svccard-arr{transition:none} .svccard:hover{transform:none} .svccard:hover .svccard-pic img{transform:none} }
+
+/* ---- the area page, composed: the grid takes one row, the figures a strip,
+   the open card points at its details ---- */
+.tover2 .tover2-in{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:clamp(28px,4vw,72px);align-items:start}
+.tover2-serve{padding-top:8px}
+.tover2-serve-h{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3));margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line-2)}
+.tover2-serve ul{list-style:none;margin:0;padding:0}
+.tover2-serve li{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink);padding:7px 0;border-bottom:1px solid var(--line)}
+.tover2 .tover2-figs{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--ink);border-bottom:1px solid var(--line-2)}
+.tover2 .tover2-figs > div{padding:18px clamp(12px,1.6vw,22px) 16px 0}
+.tover2 .tover2-figs dd{font-size:clamp(2rem,2.8vw,2.625rem)}
+.svcgrid{grid-template-columns:repeat(var(--cols,4),minmax(0,1fr))}
+.svccard{position:relative}
+.svccard.on::after{content:"";position:absolute;left:50%;bottom:-1px;width:14px;height:14px;transform:translate(-50%,50%) rotate(45deg);background:var(--paper);border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);z-index:2}
+html.js .tpanels.open{margin-top:clamp(20px,2.6vw,32px)}
+.svccard-name{font-size:1.1875rem}
+@media (max-width:1080px){ .svcgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:860px){ .tover2 .tover2-in{grid-template-columns:1fr;gap:20px} .tover2 .tover2-figs{grid-template-columns:repeat(2,minmax(0,1fr))} .tover2 .tover2-figs > div:nth-child(odd){padding-left:0;border-left:0} .tover2 .tover2-figs > div:nth-child(-n+2){border-bottom:1px solid var(--line)} }
+@media (max-width:560px){ .svcgrid{grid-template-columns:1fr} }
+
+/* ==========================================================================
+   AREA PAGE — the hero names what is inside; the detail is a product sheet.
+   Appended last, with its own queries.
+   ========================================================================== */
+.co-hero-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,380px);align-items:end;gap:clamp(28px,4vw,72px)}
+.co-hero-side{
+  background:rgba(3,12,43,.58);border:1px solid rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:20px 22px 10px;color:#fff;
+}
+.co-hero-side-h{margin:0 0 6px;font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.co-hero-side ol{list-style:none;margin:0;padding:0}
+.co-hero-side a{
+  display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:baseline;
+  padding:10px 0;border-top:1px solid rgba(255,255,255,.14);text-decoration:none;color:#fff;min-height:44px;
+  font:400 1.0625rem/1.3 var(--display);transition:color .2s;
+}
+.co-hero-side a span{font:300 .8125rem/1 var(--display);letter-spacing:.08em;color:var(--gold)}
+.co-hero-side a em{grid-column:2;font:400 var(--t-xs)/1.4 var(--body);font-style:normal;color:rgba(255,255,255,.7)}
+.co-hero-side a:hover{color:var(--gold)}
+.co-hero-side a:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.co-facts dd{font-size:var(--t-sm)}
+@media (max-width:1080px){ .co-hero-wrap{grid-template-columns:minmax(0,1fr) minmax(0,320px)} }
+@media (max-width:860px){ .co-hero-wrap{grid-template-columns:1fr} .co-hero-side{display:none} }
+
+/* the sheet */
+html.js .tpanels.open{margin-top:22px;padding-top:0;border-top:0}
+.svccard.on::after{background:var(--co-tint,var(--panel));border-color:var(--ink)}
+.tpanel{background:var(--co-tint,var(--panel));border:1px solid var(--ink);padding:clamp(22px,3vw,40px) clamp(22px,3vw,40px) clamp(18px,2.4vw,28px)}
+html:not(.js) .tpanel + .tpanel{margin-top:24px;padding-top:clamp(22px,3vw,40px);border-top:1px solid var(--ink)}
+.tp-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 28px;padding-bottom:22px;border-bottom:1px solid var(--ink)}
+.tp-head h2{font:300 clamp(1.75rem,2.8vw,2.375rem)/1.08 var(--display);letter-spacing:-.016em;color:var(--ink);margin:8px 0 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.tp-head .trole{font-size:var(--t-lg)}
+.tp-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-bottom:4px}
+.tp-actions .btn.co-btn{background:var(--co);border-color:var(--co);color:var(--co-on,#fff);padding:12px 20px;font-size:var(--t-xs)}
+.tp-actions .btn.co-btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.tp-grid{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(24px,3.4vw,56px);padding-top:clamp(22px,2.8vw,36px)}
+.tp-side{display:grid;gap:14px;align-content:start}
+.tp-side .th3{margin-top:6px}
+.tp-side .tfacts{border-top-color:var(--line-2)}
+.tp-side .tfacts > div{border-bottom-color:rgba(11,26,58,.12)}
+.tp-side .tfrom{padding-top:4px}
+.tp-supply{display:inline-flex;align-items:center;gap:8px;margin-top:4px;font-size:var(--t-xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;text-decoration:none}
+.tp-supply span{color:var(--gold-text)}
+.tp-main{display:grid;gap:14px;align-content:start}
+.tp-main .tlead{font-size:clamp(1.1875rem,1.5vw,1.3125rem)}
+.tp-body{margin:0;font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2);max-width:66ch}
+.tp-main .th3{margin-top:10px}
+.tlines2{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(20px,2.6vw,36px);border-top:1px solid var(--line-2)}
+.tlines2 > div{padding:12px 0 14px;border-bottom:1px solid rgba(11,26,58,.12);display:grid;gap:4px;align-content:start}
+.tlines2 dt{display:flex;align-items:baseline;gap:10px;font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
+.tlines2 dt span{font:300 .8125rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
+.tlines2 dd{margin:0;font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
+.tp-main .tmore{margin-top:6px;border-color:rgba(11,26,58,.14)}
+.tnav{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 20px;margin:clamp(18px,2.4vw,28px) 0 0;padding-top:14px;border-top:1px solid var(--ink)}
+.tnav-pn{display:flex;gap:22px}
+html:not(.js) .tnav .tpanel-close{display:none}
+@media (max-width:860px){
+  .tp-grid{grid-template-columns:1fr;gap:20px}
+  .tp-side{grid-template-columns:1fr}
+  .tlines2{grid-template-columns:1fr}
+  .tpanel{padding:18px 16px 16px}
+}
+@media (min-width:561px) and (max-width:860px){ .tp-side{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 20px} .tp-side .tpic{grid-row:1 / span 4} }
+
+/* on a phone the cards are rows, so the sheet opens right under them */
+@media (max-width:560px){
+  .svcgrid{gap:0;border-top:1px solid var(--ink)}
+  .svccard{grid-template-columns:84px minmax(0,1fr);grid-template-rows:none;border:0;border-bottom:1px solid var(--line);background:none}
+  .svccard.on{background:var(--co-tint,var(--panel))}
+  .svccard.on::after{display:none}
+  .svccard-pic{aspect-ratio:1;align-self:center;margin:10px 0}
+  .svccard-pic::after{display:none}
+  .svccard-body{padding:12px 12px 12px 14px;gap:3px;align-content:center}
+  .svccard-n{display:none}
+  .svccard-name{font-size:1.0625rem}
+  .svccard-go{margin-top:2px;padding-top:0}
+}

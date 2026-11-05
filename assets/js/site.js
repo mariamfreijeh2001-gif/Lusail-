@@ -1066,6 +1066,9 @@
       }
     };
     fromHash(true);
+    /* nothing chosen by the address: the first service is open, so the page
+       shows what a card does */
+    if (!tpanels.classList.contains('open') && tabs[0]) choose(tabs[0].getAttribute('data-tab'), false, false);
     addEventListener('hashchange', function () { fromHash(true); });
     /* any link elsewhere on the page to a service's anchor */
     document.addEventListener('click', function (e) {

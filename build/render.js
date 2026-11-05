@@ -1212,27 +1212,34 @@ function pageArea(a) {
     const supplyCat = s.supply && SUPPLY.find(x => x.slug === s.supply);
     const prev = list[i - 1], next = list[i + 1];
     return `      <section class="tpanel" id="${s.slug}" role="tabpanel" aria-labelledby="tab-${s.slug}" tabindex="0">
-        <p class="tpanel-top"><a class="tpanel-close" href="#services" data-close><span aria-hidden="true">&#8593;</span> All ${esc(low(a))} services</a></p>
-        <div class="tpanel-grid">
-          <aside class="tside">
+        <div class="tp-head">
+          <div>
+            <p class="eyebrow">${esc(a.name)} &middot; ${num(i)} of ${String(n).padStart(2, '0')}</p>
+            <h2 id="h-${s.slug}">${esc(s.name)} <span class="trole">${esc(s.role)}</span></h2>
+          </div>
+          <div class="tp-actions">
+            <a class="btn co-btn" href="${a.quote ? askHref(s, 'quote') : askHref(s)}">${a.quote ? 'Request a quotation' : esc(s.cta)}</a>
+            <a class="tact-link" href="${askHref(s)}">Ask a question</a>
+          </div>
+        </div>
+        <div class="tp-grid">
+          <aside class="tp-side">
             <figure class="tpic">
               ${pic(s.img, '(max-width:860px) 100vw, 340px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="${i === 0 ? 'eager' : 'lazy'}"`)}
             </figure>
+            <h3 class="th3">At a glance</h3>
             <dl class="tfacts">
 ${s.facts.map(f => `              <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
             </dl>
 ${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>
+` : ''}${supplyCat ? `            <a class="tact-link tp-supply" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(low(s))} to the Group <span aria-hidden="true">&#8594;</span></a>
 ` : ''}          </aside>
-          <div class="tmain">
-            <p class="eyebrow">${esc(a.name)} &middot; ${num(i)} of ${String(n).padStart(2, '0')}</p>
-            <h2 id="h-${s.slug}">${esc(s.name)} <span class="trole">${esc(s.role)}</span></h2>
+          <div class="tp-main">
             <p class="tlead">${esc(s.intro)}</p>
-            <div class="tbody">
-              <p>${esc(s.body[0])}</p>
-            </div>
+            <p class="tp-body">${esc(s.body[0])}</p>
 ${s.lines && s.lines.length ? `            <h3 class="th3">What we supply</h3>
-            <dl class="tlines">
-${s.lines.map(l => `              <div><dt>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
+            <dl class="tlines2">
+${s.lines.map((l, j) => `              <div><dt><span>${num(j)}</span>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
             </dl>
 ` : ''}${(s.body.length > 1 || (s.faq && s.faq.length)) ? `            <details class="tmore">
               <summary><span>The full story${s.faq && s.faq.length ? ' and ' + plural(s.faq.length, 'question', 'questions') : ''}</span></summary>
@@ -1246,14 +1253,13 @@ ${s.faq.map(f => `                  <details class="faq-item" name="faq-${s.slug
                 </div>` : ''}
               </div>
             </details>
-` : ''}            <div class="tact">
-              <a class="btn co-btn" href="${a.quote ? askHref(s, 'quote') : askHref(s)}">${a.quote ? 'Request a quotation for ' + esc(low(s)) : esc(s.cta)}</a>
-              <a class="tact-link" href="${askHref(s)}">Ask a question</a>
-${supplyCat ? `              <a class="tact-link" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(low(s))} to the Group</a>\n` : ''}            </div>
-            <p class="tnav">
-${prev ? `              <a class="tnav-prev" href="#${prev.slug}" data-tab="${prev.slug}"><span aria-hidden="true">&#8592;</span> ${esc(prev.name)}</a>\n` : '              <span></span>\n'}${next ? `              <a class="tnav-next" href="#${next.slug}" data-tab="${next.slug}">${esc(next.name)} <span aria-hidden="true">&#8594;</span></a>\n` : ''}            </p>
-          </div>
+` : ''}          </div>
         </div>
+        <p class="tnav">
+          <a class="tpanel-close" href="#services" data-close><span aria-hidden="true">&#8593;</span> All ${esc(low(a))} services</a>
+          <span class="tnav-pn">
+${prev ? `            <a class="tnav-prev" href="#${prev.slug}" data-tab="${prev.slug}"><span aria-hidden="true">&#8592;</span> ${esc(prev.name)}</a>\n` : ''}${next ? `            <a class="tnav-next" href="#${next.slug}" data-tab="${next.slug}">${esc(next.name)} <span aria-hidden="true">&#8594;</span></a>\n` : ''}          </span>
+        </p>
       </section>`;
   };
 
@@ -1301,6 +1307,12 @@ ${a.buying.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
           <a class="btn co-btn-line" href="#services">What we provide</a>
         </div>
       </div>
+      <nav class="co-hero-side" aria-label="In this area">
+        <p class="co-hero-side-h">${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'} in this area</p>
+        <ol>
+${list.map((s, i) => `          <li><a href="#${s.slug}"><span>${num(i)}</span>${esc(s.name)}<em>${esc(s.role)}</em></a></li>`).join('\n')}
+        </ol>
+      </nav>
     </div>
   </div>
   <a class="co-scroll" href="#aboutTitle" aria-label="Scroll to read about ${esc(a.name)}"><span>Scroll</span></a>
@@ -1314,15 +1326,25 @@ ${a.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`
 </section>
 
 <section class="section tight tover2" aria-labelledby="aboutTitle">
-  <div class="wrap tover2-in">
-    <div class="rise">
-      <p class="eyebrow">${esc(a.name)} from Lusail Corp</p>
-      <h2 id="aboutTitle" class="tover2-h">${esc(a.body[0])}</h2>
-${a.customers && a.customers.length ? `      <p class="tover2-serve"><span>Who we serve</span> ${a.customers.map(esc).join(' · ')}</p>\n` : ''}    </div>
+  <div class="wrap">
+    <div class="tover2-in">
+      <div class="rise">
+        <p class="eyebrow">${esc(a.name)} from Lusail Corp</p>
+        <h2 id="aboutTitle" class="tover2-h">${esc(a.body[0])}</h2>
+      </div>
+${a.customers && a.customers.length ? `      <div class="tover2-serve rise d1">
+        <p class="tover2-serve-h">Who we serve</p>
+        <ul>
+${a.customers.map(c => `          <li>${esc(c)}</li>`).join('\n')}
+        </ul>
+      </div>
+` : ''}    </div>
     <dl class="tover2-figs rise d1">
       <div><dd>${n}</dd><dt>${n === 1 ? 'Service' : 'Services'}</dt></div>
       <div><dd>${list.reduce((t, s) => t + (s.lines || []).length, 0)}</dd><dt>Lines supplied</dt></div>
-${origins.length ? `      <div><dd>${origins.length}</dd><dt>Source countries</dt></div>` : `      <div><dd>${a.facts.length}</dd><dt>Key facts</dt></div>`}
+${origins.length ? `      <div><dd>${origins.length}</dd><dt>Source countries</dt></div>
+      <div><dd>${REACH.filter(reg => origins.some(o => reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(o))).length}</dd><dt>Sourcing regions</dt></div>` : `      <div><dd>${a.facts.length}</dd><dt>Key facts</dt></div>
+      <div><dd>2</dd><dt>Working days to reply</dt></div>`}
     </dl>
   </div>
 </section>
@@ -1330,7 +1352,7 @@ ${origins.length ? `      <div><dd>${origins.length}</dd><dt>Source countries</d
 <section class="section tabs-sec" id="services" aria-labelledby="svcListTitle">
   <div class="wrap">
     ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}. Open one for its specification, what we supply and the way to a quotation.`)}
-    <div class="svcgrid" id="tabsBar" role="tablist" aria-label="${esc(a.name)} services">
+    <div class="svcgrid" id="tabsBar" role="tablist" aria-label="${esc(a.name)} services" style="--cols:${Math.min(n, 5)}">
 ${list.map((s, i) => `      <a class="svccard rise d${i % 4}" id="tab-${s.slug}" href="#${s.slug}" role="tab" aria-selected="false" aria-controls="${s.slug}" data-tab="${s.slug}">
         <span class="svccard-pic">${pic(s.img, '(max-width:560px) 100vw, (max-width:1080px) 46vw, 290px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}</span>
         <span class="svccard-body">
