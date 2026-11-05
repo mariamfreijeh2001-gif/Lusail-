@@ -3806,3 +3806,6 @@ and the document rows ----------------------------- */
 .why-area .svc{padding-bottom:22px}
 .subnav-list a{font-size:var(--t-xs)}
 @media (max-width:560px){ .co-figs dd,.stats dd{font-size:2rem} }
+
+/* the photograph stays above the facts in every chapter */
+.sub-flip .sub-story .sub-pic{order:0}
