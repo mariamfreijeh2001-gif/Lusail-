@@ -930,4 +930,45 @@
       });
     }
   }
+
+  /* ---------- the in-page navigation on an area page ----------------------
+     Sticks under the bar and marks the chapter whose top has most recently
+     passed it, the way the index on /services/ does. */
+  var subnav = $('#subnav');
+  if (subnav) {
+    var links = $$('.subnav-list a', subnav).map(function (a) {
+      return { a: a, sec: document.getElementById(a.getAttribute('href').slice(1)) };
+    }).filter(function (e) { return e.sec; });
+    var strip = subnav.querySelector('.subnav-list');
+    var current = null;
+    var mark = function () {
+      var line = subnav.getBoundingClientRect().bottom + 24;
+      var best = links[0], top = -Infinity;
+      links.forEach(function (e) {
+        var y = e.sec.getBoundingClientRect().top - line;
+        if (y <= 0 && y > top) { top = y; best = e; }
+      });
+      subnav.classList.toggle('stuck', subnav.getBoundingClientRect().top <= (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) + 1);
+      if (best === current) return;
+      current = best;
+      links.forEach(function (e) {
+        if (e === best) e.a.setAttribute('aria-current', 'location'); else e.a.removeAttribute('aria-current');
+      });
+      if (strip && strip.scrollWidth > strip.clientWidth) {
+        var l = best.a.offsetLeft, r = l + best.a.offsetWidth;
+        if (l < strip.scrollLeft) strip.scrollLeft = l;
+        else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth;
+      }
+    };
+    if (links.length) {
+      var ticking = false;
+      addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { mark(); ticking = false; });
+      }, { passive: true });
+      addEventListener('resize', mark);
+      mark();
+    }
+  }
 })();

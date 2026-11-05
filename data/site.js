@@ -102,6 +102,8 @@ const COMPANIES = [
      quote                                      true where a buyer asks for a quotation
                                                 (the form at /quote/) rather than sends an enquiry
      buying, buyingTitle                        how buying works, as steps
+     why                                        the checkable reasons to buy from the Group here
+     customers                                  who the area serves
      hero                                       behind its page title
      accent, accentText, tint, accentOn         the colour its pages carry
      icon                                       its mark in the menu
@@ -146,6 +148,13 @@ const AREAS = [
       { t: 'Contract', d: 'A contract on the agreed terms, payment by letter of credit or as agreed, and the load-port inspection named.' },
       { t: 'Shipment', d: 'The vessel or containers fixed by our own freight desk, the documents issued, and the cargo delivered.' }
     ],
+    why: [
+      { t: 'One counterpart for the buying and the freight', d: 'The trading desk and the freight desk are one business, so an enquiry is answered with the origin, the specification and the delivered price together.' },
+      { t: 'Every cargo inspected independently', d: 'Weight and quality are certified at the load port by SGS, Intertek or Bureau Veritas, and sold to a written specification.' },
+      { t: 'Origins that can switch', d: 'Sourcing across six regions means a cargo can move origin when a season ends, a port closes or the terms change.' },
+      { t: 'An offer within two working days', d: 'A priced offer, or the questions we need answered to price it, inside two working days of your request.' }
+    ],
+    customers: ['Refiners and food manufacturers', 'Fertiliser, chemical and metallurgical plants', 'Flour and feed mills', 'Roasters and coffee traders', 'Importers and distributors', 'Government and institutional buyers'],
     facts: [
       { k: 'Products', v: 'Sulphur, coffee, sugar, edible oils, wheat' },
       { k: 'Sourcing', v: 'Six regions, by season and terms' },
@@ -328,6 +337,13 @@ const AREAS = [
       { t: 'Programme', d: 'A standing weekly programme agreed: schedule, pack sizes, labels, and the origin to switch to when the season moves.' },
       { t: 'Delivery', d: 'Imported, cleared, held in Qatar where needed, and delivered chilled or dry to your schedule.' }
     ],
+    why: [
+      { t: 'Standing programmes, not one-off loads', d: 'Weekly schedules agreed in advance, with the pack sizes, labels and the origin to switch to when the season moves.' },
+      { t: 'Compliant before it ships', d: 'Ministry of Public Health registration, Halal certification where it applies and Arabic labelling on every line.' },
+      { t: 'The cold chain held to the shelf', d: 'Reefers at the variety’s own temperature, cleared on arrival and delivered chilled on your schedule.' },
+      { t: 'Stock in Qatar', d: 'Rice, pulses and dry goods held locally for the customers who need delivery this week.' }
+    ],
+    customers: ['Supermarkets and retail chains', 'Hotels and restaurants', 'Caterers and institutional kitchens', 'Wholesalers', 'Food manufacturers'],
     facts: [
       { k: 'Products', v: 'Fresh produce, rice, pulses, dry foods' },
       { k: 'Market', v: 'Qatar' },
@@ -520,6 +536,13 @@ const AREAS = [
       { t: 'Booking', d: 'Space booked, documents prepared, customs and insurance arranged.' },
       { t: 'Movement', d: 'The cargo moved, tracked and delivered, with one counterpart and one invoice.' }
     ],
+    why: [
+      { t: 'One counterpart, one invoice', d: 'Booking, documents, customs, insurance and delivery handled by the same desk, port to port or door to door.' },
+      { t: 'Our own cargo on the same routes', d: 'The Group moves its own sulphur, grain and produce on these routes, so the capacity and the agents are already in place.' },
+      { t: 'Bulk and project cargo, not only boxes', d: 'Vessel chartering, breakbulk and out-of-gauge pieces alongside containers, road and air.' },
+      { t: 'A quote within two working days', d: 'Rate, transit time and the documents required, inside two working days.' }
+    ],
+    customers: ['Traders and manufacturers shipping to or from Qatar', 'Importers and distributors', 'Contractors with project cargo', 'Bulk commodity buyers and sellers'],
     facts: [
       { k: 'Modes', v: 'Ocean, chartering, road, air' },
       { k: 'Routes', v: 'Gulf, Indian Ocean, Black Sea, Asia, Americas' },
@@ -668,6 +691,13 @@ const AREAS = [
       { t: 'Contract', d: 'A supply contract or framework on the agreed terms, under certified management systems.' },
       { t: 'Delivery and support', d: 'Delivered to site, inspected, commissioned where it is equipment, and supported afterwards.' }
     ],
+    why: [
+      { t: 'Specification first', d: 'Every supply is quoted against the client’s specification, bill of quantities or tender documents, and delivered to it.' },
+      { t: 'Certified management systems', d: 'Delivered under ISO 9001, ISO 14001 and ISO 45001 systems within the Group.' },
+      { t: 'Supplied, approved and supported', d: 'Equipment arrives with the approvals it needs, a warranty and a service agent in Qatar.' },
+      { t: 'Financed, supplied and delivered by one counterpart', d: 'Capital, sourcing and execution sit in one structure for programmes that need all three.' }
+    ],
+    customers: ['Energy operators', 'Industrial sites and contractors', 'Government entities and national programmes', 'Institutions and major private-sector projects'],
     facts: [
       { k: 'Supply', v: 'Materials, equipment, projects, food security' },
       { k: 'Clients', v: 'Operators, institutions, programmes' },
@@ -816,6 +846,13 @@ const AREAS = [
       { t: 'Delivery', d: 'Supplied, installed, integrated with your existing systems and tested.' },
       { t: 'Support', d: 'Handed over with training, then monitored and supported from Qatar.' }
     ],
+    why: [
+      { t: 'Integrated, not just installed', d: 'Systems connected to what the client already runs, tested and handed over with training.' },
+      { t: 'Established global platforms', d: 'Delivered with international technology partners rather than built from scratch.' },
+      { t: 'Support kept in Qatar', d: 'Monitoring, maintenance and a service desk after go-live.' },
+      { t: 'Governed under ISO 9001', d: 'Delivery under certified management systems within the Group.' }
+    ],
+    customers: ['Government entities', 'Institutions', 'Enterprises', 'Operators of critical infrastructure'],
     facts: [
       { k: 'Scope', v: 'Infrastructure, software, security, AI' },
       { k: 'Partners', v: 'Global technology platforms' },
@@ -905,6 +942,12 @@ const AREAS = [
       { t: 'Structure', d: 'The investment or the venture structured to the business, not the other way round.' },
       { t: 'Partnership', d: 'A long-term position, with the Group’s sourcing, logistics and customers behind it.' }
     ],
+    why: [
+      { t: 'More than capital', d: 'Sourcing networks, logistics and institutional supply come with the investment.' },
+      { t: 'A long horizon', d: 'Fewer, larger positions chosen to still make sense in ten years.' },
+      { t: 'A base in Qatar, reach beyond it', d: 'Presence across the Gulf, Europe, North Africa and Asia.' }
+    ],
+    customers: ['Developers and operators', 'Producers seeking a route into Qatar', 'Founders with a concept that fits', 'Institutional co-investors'],
     facts: [
       { k: 'Focus', v: 'Energy, technology, industrial development' },
       { k: 'Forms', v: 'Direct investment, joint ventures, partnerships' },
@@ -985,6 +1028,11 @@ const AREAS = [
       'So the standards that matter here are unglamorous ones — turnaround, careful handling, a result that does not vary, and a room people choose to come back to.',
       'It is also the part of the Group closest to the public, and the part that teaches us most about what customers in Qatar actually want.'
     ],
+    why: [
+      { t: 'The same result every time', d: 'Turnaround, handling and consistency are what a household service is judged on.' },
+      { t: 'Close to the customer', d: 'Daily contact with the public, and the operational discipline that comes with it.' }
+    ],
+    customers: ['Households in Qatar', 'The public'],
     facts: [
       { k: 'Services', v: 'Laundry and garment care; a café' },
       { k: 'For', v: 'Households and the public' },
@@ -1056,6 +1104,26 @@ const AREAS = [
       }
     ]
   }
+];
+
+/* Home: how buying from the Group works, for any service, and the reasons
+   a buyer can check. */
+const BUYING = [
+  { t: 'Tell us what you need',
+    d: 'The service, the quantity or scope, the destination and when. The quotation form takes two minutes.' },
+  { t: 'The right desk picks it up',
+    d: 'A commodity request goes to the trading desk, produce to distribution, equipment to institutional supply.' },
+  { t: 'An offer within two working days',
+    d: 'Origin, specification, price on your terms and the delivery window, or the questions we need answered to price it.' },
+  { t: 'Contract, ship, deliver',
+    d: 'Agreed terms, independent inspection where the cargo needs it, and the freight by our own desk.' }
+];
+
+const BUYER_WHY = [
+  { t: 'One counterpart', d: 'Trading, freight and supply in one group, so a need is answered whole.' },
+  { t: 'Inspected and specified', d: 'Cargoes sold to a written specification and certified at the load port.' },
+  { t: 'Certified systems', d: 'ISO 9001, 14001 and 45001 management systems within the Group.' },
+  { t: 'Based in Doha', d: 'Sourcing from six regions, delivered in Qatar and the markets it trades with.' }
 ];
 
 /* Home: how the Group works with what it builds */
@@ -1761,7 +1829,7 @@ const FORMS = {
 
 module.exports = {
   SITE, AREAS, ALL_SERVICES, COMPANIES, REACH, REACH_POINTS, HUB, WHY,
-  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
+  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES, BUYING, BUYER_WHY,
   PARTNER_TYPES, FORMS, FORM_LISTS,
   SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 };

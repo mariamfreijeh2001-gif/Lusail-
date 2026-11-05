@@ -3737,3 +3737,72 @@ and the document rows ----------------------------- */
 /* the flipped chapter keeps the narrow column narrow, on the right */
 .sub-flip .sub-story{grid-template-columns:minmax(0,1fr) minmax(0,320px)}
 @media (max-width:860px){ .sub-flip .sub-story{grid-template-columns:1fr} }
+
+/* ==========================================================================
+   The accordion returns as the services block; the buyer's process and
+   reasons on the home page; the sticky in-page navigation, who we serve
+   and the reasons on an area page. Appended last, with their own queries.
+   ========================================================================== */
+.sgrid,.areas{display:none}
+.hs-led .acc{margin-top:clamp(24px,3vw,40px)}
+.hs-led .secgrid{margin-top:clamp(20px,2.6vw,32px)}
+
+/* the reasons under the four steps */
+.bwhy{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+.bwhy-item{padding:18px clamp(14px,1.8vw,24px) 20px 0;display:grid;gap:6px;align-content:start}
+.bwhy-item + .bwhy-item{padding-inline-start:clamp(14px,1.8vw,24px);border-inline-start:1px solid var(--line-2)}
+.bwhy-item h3{font:400 1.125rem/1.25 var(--display);color:var(--ink);margin:0}
+.bwhy-item h3::before{content:"";display:block;width:22px;height:2px;background:var(--gold);margin-bottom:10px}
+.bwhy-item p{font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2);margin:0}
+.after{margin-top:clamp(22px,2.6vw,32px)}
+@media (max-width:900px){
+  .bwhy{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bwhy-item:nth-child(odd){padding-inline-start:0;border-inline-start:0}
+  .bwhy-item:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .bwhy{grid-template-columns:1fr}
+  .bwhy-item,.bwhy-item + .bwhy-item{padding-inline:0;border-inline-start:0;border-bottom:1px solid var(--line)}
+  .bwhy-item:last-child{border-bottom:0}
+}
+
+/* the sticky in-page navigation on an area page */
+.subnav{position:sticky;top:var(--head-h);z-index:40;background:var(--paper);border-bottom:1px solid var(--line-2);transition:box-shadow .25s}
+.subnav.stuck{box-shadow:0 1px 0 var(--line-2),0 10px 24px -18px rgba(11,26,58,.35)}
+.subnav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px}
+.subnav-list{list-style:none;margin:0;padding:0;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.subnav-list::-webkit-scrollbar{display:none}
+.subnav-list li{flex:none}
+.subnav-list a{
+  display:inline-flex;align-items:center;gap:8px;min-height:56px;padding:0 14px;white-space:nowrap;
+  font:500 var(--t-xs)/1.3 var(--ui);color:var(--ink-2);text-decoration:none;border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;
+}
+.subnav-list a span{font:300 .875rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
+.subnav-list a:hover,.subnav-list a:focus-visible{color:var(--ink)}
+.subnav-list a[aria-current="location"]{color:var(--ink);border-bottom-color:var(--co,var(--gold))}
+.subnav-list a:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.subnav-cta{flex:none;padding:10px 16px;font-size:var(--t-xs)}
+.sub{scroll-margin-top:calc(var(--head-h) + 60px)}
+@media (max-width:860px){
+  .subnav-cta{display:none}
+  .subnav-in{min-height:48px}
+  .subnav-list a{min-height:48px;padding:0 10px}
+  .sub{scroll-margin-top:calc(var(--head-h) + 52px)}
+}
+
+/* who we serve, under the area's argument */
+.serve{margin:14px 0 8px}
+.serve span{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3))}
+.why-area .svc h3{font:400 1.125rem/1.25 var(--display);color:var(--ink);margin:0}
+
+/* ---- sizing pass: a few components had grown past their place ---- */
+.co .tags li{padding:6px 11px;font-size:var(--t-xs);line-height:1.3}
+.co-figs dd{font-size:clamp(2.125rem,3.2vw,2.875rem)}
+.co-figs dd::before{margin-bottom:12px}
+.stats dd{font-size:clamp(2.125rem,3.2vw,2.875rem)}
+.hs-hero h1,.hero h1{font-size:clamp(2.375rem,5.2vw,4.75rem)}
+.sub-index a > span:last-of-type{font-size:1.0625rem}
+.why-area .svc{padding-bottom:22px}
+.subnav-list a{font-size:var(--t-xs)}
+@media (max-width:560px){ .co-figs dd,.stats dd{font-size:2rem} }

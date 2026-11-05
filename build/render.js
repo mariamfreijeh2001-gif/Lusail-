@@ -40,7 +40,7 @@ const ASSET_V = {
 };
 const {
   SITE, REACH, REACH_POINTS, HUB, WHY, AREAS, ALL_SERVICES, COMPANIES, FORMS, FORM_LISTS,
-  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
+  WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES, BUYING, BUYER_WHY,
   PARTNER_TYPES, SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 } = require('../data/site.js');
 
@@ -674,6 +674,7 @@ ${note ? `    <p class="pagehead-note">${note}</p>` : ''}
 /* The label above each section heading, by the heading's id. A heading
    with no entry here simply has none. */
 const EYEBROW = {
+  buyHomeTitle: 'How it works', whyAreaTitle: 'Why Lusail Corp',
   coTitle: 'The companies', whyTitle: 'Why Lusail Corp', wwdTitle: 'How we work',
   valTitle: 'Our values', vcTitle: 'Value creation', prodTitle: 'What we offer',
   svcTitle: 'Services', ledTitle: 'Our services', linesTitle: 'What we supply',
@@ -822,20 +823,30 @@ ${WHY.map((x, i) => `        <li class="why-item rise d${Math.min(i, 3)}">
    whole offer is on screen at once, and it is the first thing after the
    introduction because it is what a visitor came to find. */
 function servicesLedger() {
-  /* The seven areas as equal cards: a modest photograph, the number, the
-     name, its line, and the way to its page. The services themselves are
-     on the page, not here. */
-  return `<div class="sgrid">
-${AREAS.map((a, i) => `      <a class="scard rise d${i % 4}" href="${areaHref(a)}" style="--co:${a.accent};--co-text:${a.accentText || a.accent}">
-        <span class="scard-pic">${pic(a.hero, '(max-width:560px) 100vw, (max-width:1080px) 46vw, 290px', 'alt="" loading="lazy"')}</span>
-        <span class="scard-body">
-          <span class="scard-n">${num(i)} <em>${esc(plural(svcsIn(a).length, 'service', 'services'))}</em></span>
-          <span class="scard-name">${esc(a.name)}</span>
-          <span class="scard-say">${esc(a.short)}</span>
-          <span class="scard-go">Learn more <span aria-hidden="true">&#8594;</span></span>
-        </span>
+  /* The seven areas as the accordion the site opened with: one panel open
+     with the area's photograph, number, name, line and the way to its page;
+     the rest upright strips that open on hover, focus or a tap. On a phone
+     it is replaced by photograph tiles. */
+  return `<div class="acc" id="acc">
+${AREAS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="${areaHref(sec)}">
+        ${pic(sec.hero, '(max-width:860px) 100vw, 46vw', 'class="acc-bg" alt="" loading="lazy"')}
+        <span class="acc-num" aria-hidden="true">${num(i)}</span>
+        <span class="acc-tab" aria-hidden="true">${esc(sec.name)}</span>
+        <div class="acc-body">
+          <span class="acc-n">${num(i)} &middot; ${esc(plural(svcsIn(sec).length, 'service', 'services'))}</span>
+          <h3>${esc(sec.name)}</h3>
+          <span class="acc-say">${esc(sec.short)}</span>
+          <span class="acc-go">Learn more <span class="acc-arrow" aria-hidden="true">&#8594;</span></span>
+        </div>
       </a>`).join('\n')}
-    </div>`;
+    </div>
+    <ul class="secgrid">
+${AREAS.map((sec, i) => `      <li><a class="secgrid-a" href="${areaHref(sec)}">
+        ${pic(sec.hero, '(max-width:560px) 50vw, 33vw', 'alt="" loading="lazy"')}
+        <span class="secgrid-n">${num(i)}</span>
+        <span class="secgrid-t">${esc(sec.name)}</span>
+      </a></li>`).join('\n')}
+    </ul>`;
 }
 
 /* The companies behind the services, named here and nowhere else on the
@@ -940,6 +951,26 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
   <div class="wrap">
     ${head2('ledTitle', 'What we <span class="soft">provide</span>', `${cap(count(ALL_SERVICES.length))} services in ${count(AREAS.length)} areas. Each area has a page that writes up every service in it.`)}
     ${servicesLedger()}
+  </div>
+</section>
+
+<section class="section hs stone" aria-labelledby="buyHomeTitle">
+  <div class="wrap">
+    ${head2('buyHomeTitle', 'From enquiry <span class="soft">to delivery</span>', 'How buying any of our services works, in four steps.')}
+    <ol class="steps steps-4">
+${BUYING.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
+        <span class="step-n">${num(i)}</span>
+        <h3>${esc(p.t)}</h3>
+        <p>${esc(p.d)}</p>
+      </li>`).join('\n')}
+    </ol>
+    <div class="bwhy rise">
+${BUYER_WHY.map(w => `      <div class="bwhy-item">
+        <h3>${esc(w.t)}</h3>
+        <p>${esc(w.d)}</p>
+      </div>`).join('\n')}
+    </div>
+    <p class="after rise"><a class="btn btn-dark" href="/quote/">Request a quotation <span aria-hidden="true">&#8594;</span></a></p>
   </div>
 </section>
 
@@ -1212,6 +1243,15 @@ ${a.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`
   </div>
 </section>
 
+<nav class="subnav" id="subnav" aria-label="On this page">
+  <div class="wrap subnav-in">
+    <ol class="subnav-list">
+${list.map((s, i) => `      <li><a href="#${s.slug}"${i === 0 ? ' aria-current="location"' : ''}><span>${num(i)}</span>${esc(s.name)}</a></li>`).join('\n')}
+    </ol>
+    <a class="btn btn-dark subnav-cta" href="${a.quote ? '/quote/' : askHref()}">${a.quote ? 'Request a quotation' : 'Send an enquiry'}</a>
+  </div>
+</nav>
+
 <section class="section co-about" aria-labelledby="aboutTitle">
   <div class="wrap">
     <p class="eyebrow">${esc(a.name)} from Lusail Corp</p>
@@ -1225,6 +1265,10 @@ ${list.map((s, i) => `          <li><a href="#${s.slug}"><span class="sub-index-
       </nav>
       <div class="co-story-text rise d1">
 ${a.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
+${a.customers && a.customers.length ? `        <p class="serve"><span>Who we serve</span></p>
+        <ul class="tags">
+${a.customers.map(c => `          <li>${esc(c)}</li>`).join('\n')}
+        </ul>` : ''}
       </div>
     </div>
   </div>
@@ -1238,6 +1282,20 @@ ${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}
   </div>
 </section>
 
+${a.why && a.why.length ? `<section class="section tight" aria-labelledby="whyAreaTitle">
+  <div class="wrap">
+    ${head2('whyAreaTitle', `Why buy ${esc(a.name.toLowerCase())} <span class="soft">from Lusail Corp</span>`, 'Reasons a buyer can check, not claims.')}
+    <div class="svcs why-area">
+${a.why.map((w, i) => `      <div class="svc rise d${Math.min(i, 3)}">
+        <span class="svc-n">${num(i)}</span>
+        <h3>${esc(w.t)}</h3>
+        <p>${esc(w.d)}</p>
+      </div>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+` : ''}
 ${list.map(section).join('')}${a.buying && a.buying.length ? `<section class="section co-steps" aria-labelledby="buyTitle">
   <div class="wrap">
     ${head2('buyTitle', `How buying works: <span class="soft">${esc(a.buyingTitle || 'from enquiry to delivery').toLowerCase()}</span>`, 'What happens after you write, and how long each step takes.')}
