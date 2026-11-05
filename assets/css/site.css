@@ -4362,3 +4362,40 @@ html:not(.js) .tnav .tpanel-close{display:none}
   .svccard-name{font-size:1.0625rem}
   .svccard-go{margin-top:2px;padding-top:0}
 }
+
+/* ==========================================================================
+   AREA PAGE — every service sheet on the page in order, revealed as it
+   scrolls into view. Appended last, with its own queries.
+   ========================================================================== */
+html.js .tpanel:not(.on){display:block}
+html.js .tpanels{margin-top:clamp(24px,3vw,40px)}
+.sheets{display:grid;gap:clamp(18px,2.2vw,28px)}
+.sheet{scroll-margin-top:calc(var(--head-h) + 16px)}
+html.js .sheet{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+html.js .sheet.in{opacity:1;transform:none}
+.svccard.on::after{display:none}
+.svccard-go{color:var(--ink-2)}
+.svccard.on .svccard-go{color:var(--ink)}
+.tnav .tpanel-close{display:inline-flex}
+@media (prefers-reduced-motion:reduce){ html.js .sheet{opacity:1;transform:none;transition:none} }
+
+/* the sheet, trimmed to the essentials */
+.tpanel{padding:clamp(18px,2.4vw,30px)}
+.tp-grid{grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:clamp(20px,3vw,44px);padding-top:0}
+.tp-side{gap:10px}
+.tp-side .tfacts{border-top:0}
+.tp-side .tfacts > div{padding:8px 0}
+.tp-side .tfacts dd{font-size:var(--t-xs)}
+.tp-main{gap:10px}
+.tp-main h2{font:300 clamp(1.5rem,2.2vw,1.875rem)/1.1 var(--display);letter-spacing:-.014em;color:var(--ink);margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.tp-main .trole{font-size:var(--t-body)}
+.tp-main .tlead{font-size:clamp(1.0625rem,1.3vw,1.1875rem);line-height:1.4}
+.tp-main .th3{margin-top:6px}
+.tlist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
+.tlist li{padding:8px 0;border-bottom:1px solid rgba(11,26,58,.12);font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
+.tlist strong{font:400 var(--t-sm)/1.4 var(--display);color:var(--ink);margin-right:6px}
+.tp-main .tfrom{margin-top:4px}
+.tp-main .tmore{margin-top:4px}
+.tp-main .tmore > summary{min-height:40px;padding:8px 0;font-size:var(--t-xs)}
+@media (max-width:860px){ .tp-grid{grid-template-columns:1fr} }
+@media (min-width:561px) and (max-width:860px){ .tp-side{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 20px} .tp-side .tpic{grid-row:auto} }

@@ -987,95 +987,53 @@
       location.hash = to.getAttribute('href');
     });
   });
-
-  /* ---------- the services tabs on an area page ---------------------------
-     One service in view at a time. A tab, a previous/next link or an
-     address with the service's anchor chooses the panel; the address is
-     kept in step so a chosen service can be shared. Arrow keys move
-     between tabs. Without script every panel is simply on the page. */
-  var tabsBar = $('#tabsBar'), tpanels = $('#tpanels');
-  if (tabsBar && tpanels) {
-    var tabs = $$('[role="tab"]', tabsBar), panels = $$('.tpanel', tpanels);
-    var choose = function (slug, focus, scroll) {
-      var hit = null;
-      panels.forEach(function (p) { var on = p.id === slug; p.classList.toggle('on', on); if (on) hit = p; });
-      if (!hit) return false;
-      tabs.forEach(function (t) {
-        var on = t.getAttribute('data-tab') === slug;
-        t.classList.toggle('on', on);
-        t.setAttribute('aria-selected', String(on));
-        t.setAttribute('tabindex', on ? '0' : '-1');
-        var strip = tabsBar.querySelector('.tablist');
-        if (on && strip && strip.scrollWidth > strip.clientWidth) {
-          var l = t.offsetLeft, r = l + t.offsetWidth;
-          if (l < strip.scrollLeft) strip.scrollLeft = l;
-          else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth;
-        }
-      });
-      tpanels.classList.add('open');
-      if (scroll) {
-        var top = hit.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) - 16;
-        window.scrollTo({ top: top, behavior: still.matches ? 'auto' : 'smooth' });
-      }
-      if (focus) hit.focus({ preventScroll: true });
-      return true;
+  /* ---------- the service sheets on an area page --------------------------
+     Every sheet is on the page in order and reveals itself as it scrolls
+     into view, so a reader simply scrolls through the services. The cards
+     above, the list in the hero and the previous/next links jump to a
+     sheet; the card of the sheet being read is marked. */
+  var sheets = $$('#sheets .sheet');
+  if (sheets.length) {
+    var cards = $$('#svcIndex .svccard');
+    var headH = function () { return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104; };
+    var jump = function (id, smooth) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var top = el.getBoundingClientRect().top + window.pageYOffset - headH() - 16;
+      window.scrollTo({ top: top, behavior: (smooth && !still.matches) ? 'smooth' : 'auto' });
+      if (history.replaceState && id !== 'services') history.replaceState(null, '', '#' + id);
     };
-    var go = function (slug, scroll) {
-      if (!choose(slug, false, scroll)) return;
-      if (history.replaceState) history.replaceState(null, '', '#' + slug);
-    };
-    tabs.forEach(function (t, i) {
-      t.addEventListener('click', function (e) { e.preventDefault(); go(t.getAttribute('data-tab'), true); });
-      t.addEventListener('keydown', function (e) {
-        var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
-        if (j < 0 || j >= tabs.length) return;
-        e.preventDefault();
-        go(tabs[j].getAttribute('data-tab'), false);
-        tabs[j].focus();
-      });
-    });
-    var closeAll = function () {
-      panels.forEach(function (p) { p.classList.remove('on'); });
-      tabs.forEach(function (t) { t.classList.remove('on'); t.setAttribute('aria-selected', 'false'); });
-      tpanels.classList.remove('open');
-      if (history.replaceState) history.replaceState(null, '', location.pathname + '#services');
-      var top = tabsBar.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) - 24;
-      window.scrollTo({ top: top, behavior: still.matches ? 'auto' : 'smooth' });
-    };
-    tpanels.addEventListener('click', function (e) {
-      var c = e.target.closest('a[data-close]');
-      if (c) { e.preventDefault(); closeAll(); return; }
-      var a = e.target.closest('a[data-tab]');
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[data-jump]');
       if (!a) return;
       e.preventDefault();
-      go(a.getAttribute('data-tab'), true);
+      jump(a.getAttribute('data-jump'), true);
     });
-    /* a card that is already open closes again */
-    tabs.forEach(function (t) {
-      t.addEventListener('click', function (e) {
-        if (t.classList.contains('on')) { e.preventDefault(); e.stopImmediatePropagation(); closeAll(); }
-      }, true);
-    });
-    /* an address with a service's anchor opens that service and lands on it */
-    var fromHash = function (scroll) {
-      var slug = (location.hash || '').slice(1);
-      if (slug && choose(slug, false, false) && scroll) {
-        var hit = document.getElementById(slug);
-        var top = hit.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) - 16;
-        window.scrollTo({ top: top, behavior: 'auto' });
-      }
+    if ('IntersectionObserver' in window && !still.matches) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { rootMargin: '0px 0px -18% 0px' });
+      sheets.forEach(function (sh) { io.observe(sh); });
+    } else {
+      sheets.forEach(function (sh) { sh.classList.add('in'); });
+    }
+    var current = null;
+    var mark = function () {
+      var line = headH() + window.innerHeight * 0.35, best = null, top = -Infinity;
+      sheets.forEach(function (sh) {
+        var y = sh.getBoundingClientRect().top - line;
+        if (y <= 0 && y > top) { top = y; best = sh; }
+      });
+      if (best === current) return;
+      current = best;
+      cards.forEach(function (c) { c.classList.toggle('on', !!best && c.getAttribute('data-jump') === best.id); });
     };
-    fromHash(true);
-    /* nothing chosen by the address: the first service is open, so the page
-       shows what a card does */
-    if (!tpanels.classList.contains('open') && tabs[0]) choose(tabs[0].getAttribute('data-tab'), false, false);
-    addEventListener('hashchange', function () { fromHash(true); });
-    /* any link elsewhere on the page to a service's anchor */
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest('a[href^="#"]');
-      if (!a || tabsBar.contains(a) || tpanels.contains(a)) return;
-      var slug = a.getAttribute('href').slice(1);
-      if (panels.some(function (p) { return p.id === slug; })) { e.preventDefault(); go(slug, true); }
-    });
+    var tick = false;
+    addEventListener('scroll', function () {
+      if (tick) return; tick = true;
+      requestAnimationFrame(function () { mark(); tick = false; });
+    }, { passive: true });
+    mark();
+    if (location.hash && document.getElementById(location.hash.slice(1))) setTimeout(function () { jump(location.hash.slice(1), false); }, 50);
   }
 })();

@@ -1207,42 +1207,33 @@ function pageArea(a) {
      is sourced from. Right: the name, the statement, the story, what is
      supplied, the questions, and the one action line. */
   const panel = (s, i) => {
-    const supplyCat = s.supply && SUPPLY.find(x => x.slug === s.supply);
-    const prev = list[i - 1], next = list[i + 1];
-    return `      <section class="tpanel" id="${s.slug}" role="tabpanel" aria-labelledby="tab-${s.slug}" tabindex="0">
-        <div class="tp-head">
-          <div>
-            <p class="eyebrow">${esc(a.name)} &middot; ${num(i)} of ${String(n).padStart(2, '0')}</p>
-            <h2 id="h-${s.slug}">${esc(s.name)} <span class="trole">${esc(s.role)}</span></h2>
-          </div>
-          <div class="tp-actions">
-            <a class="btn co-btn" href="${a.quote ? askHref(s, 'quote') : askHref(s)}">${a.quote ? 'Request a quotation' : esc(s.cta)}</a>
-            <a class="tact-link" href="${askHref(s)}">Ask a question</a>
-          </div>
-        </div>
+    /* One sheet per service: the essentials only. The photograph and the
+       facts at the left; the name, one sentence, what we supply as short
+       rows, and where it is sourced from at the right. The quotation is
+       asked for once, at the foot of the page. */
+    return `      <section class="tpanel sheet" id="${s.slug}" aria-labelledby="h-${s.slug}">
         <div class="tp-grid">
           <aside class="tp-side">
             <figure class="tpic">
-              ${pic(s.img, '(max-width:860px) 100vw, 340px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="${i === 0 ? 'eager' : 'lazy'}"`)}
+              ${pic(s.img, '(max-width:860px) 100vw, 300px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="${i === 0 ? 'eager' : 'lazy'}"`)}
             </figure>
-            <h3 class="th3">At a glance</h3>
             <dl class="tfacts">
 ${s.facts.map(f => `              <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
             </dl>
-${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>
-` : ''}${supplyCat ? `            <a class="tact-link tp-supply" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(low(s))} to the Group <span aria-hidden="true">&#8594;</span></a>
-` : ''}          </aside>
+          </aside>
           <div class="tp-main">
+            <p class="eyebrow">${num(i)} of ${String(n).padStart(2, '0')}</p>
+            <h2 id="h-${s.slug}">${esc(s.name)} <span class="trole">${esc(s.role)}</span></h2>
             <p class="tlead">${esc(s.intro)}</p>
-            <p class="tp-body">${esc(s.body[0])}</p>
 ${s.lines && s.lines.length ? `            <h3 class="th3">What we supply</h3>
-            <dl class="tlines2">
-${s.lines.map((l, j) => `              <div><dt><span>${num(j)}</span>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
-            </dl>
-` : ''}${(s.body.length > 1 || (s.faq && s.faq.length)) ? `            <details class="tmore">
-              <summary><span>The full story${s.faq && s.faq.length ? ' and ' + plural(s.faq.length, 'question', 'questions') : ''}</span></summary>
+            <ul class="tlist">
+${s.lines.map(l => `              <li><strong>${esc(l.t)}</strong> <span>${esc(l.d)}</span></li>`).join('\n')}
+            </ul>
+` : ''}${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>
+` : ''}${(s.body.length || (s.faq && s.faq.length)) ? `            <details class="tmore">
+              <summary><span>More about ${esc(low(s))}${s.faq && s.faq.length ? ', and ' + plural(s.faq.length, 'question', 'questions') : ''}</span></summary>
               <div class="tmore-in">
-${s.body.slice(1).map(p => `                <p>${esc(p)}</p>`).join('\n')}
+${s.body.map(p => `                <p>${esc(p)}</p>`).join('\n')}
 ${s.faq && s.faq.length ? `                <div class="faq tfaq">
 ${s.faq.map(f => `                  <details class="faq-item" name="faq-${s.slug}">
                     <summary>${esc(f.q)}</summary>
@@ -1253,11 +1244,6 @@ ${s.faq.map(f => `                  <details class="faq-item" name="faq-${s.slug
             </details>
 ` : ''}          </div>
         </div>
-        <p class="tnav">
-          <a class="tpanel-close" href="#services" data-close><span aria-hidden="true">&#8593;</span> All ${esc(low(a))} services</a>
-          <span class="tnav-pn">
-${prev ? `            <a class="tnav-prev" href="#${prev.slug}" data-tab="${prev.slug}"><span aria-hidden="true">&#8592;</span> ${esc(prev.name)}</a>\n` : ''}${next ? `            <a class="tnav-next" href="#${next.slug}" data-tab="${next.slug}">${esc(next.name)} <span aria-hidden="true">&#8594;</span></a>\n` : ''}          </span>
-        </p>
       </section>`;
   };
 
@@ -1349,19 +1335,19 @@ ${origins.length ? `      <div><dd>${origins.length}</dd><dt>Source countries</d
 
 <section class="section tabs-sec" id="services" aria-labelledby="svcListTitle">
   <div class="wrap">
-    ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}. Open one for its specification, what we supply and the way to a quotation.`)}
-    <div class="svcgrid" id="tabsBar" role="tablist" aria-label="${esc(a.name)} services" style="--cols:${Math.min(n, 5)}">
-${list.map((s, i) => `      <a class="svccard rise d${i % 4}" id="tab-${s.slug}" href="#${s.slug}" role="tab" aria-selected="false" aria-controls="${s.slug}" data-tab="${s.slug}">
+    ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with its specification, what we supply and the way to a quotation. Scroll, or choose one.`)}
+    <div class="svcgrid" id="svcIndex" aria-label="${esc(a.name)} services" style="--cols:${Math.min(n, 5)}">
+${list.map((s, i) => `      <a class="svccard rise d${i % 4}" id="tab-${s.slug}" href="#${s.slug}" data-jump="${s.slug}">
         <span class="svccard-pic">${pic(s.img, '(max-width:560px) 100vw, (max-width:1080px) 46vw, 290px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}</span>
         <span class="svccard-body">
           <span class="svccard-n">${num(i)}</span>
           <span class="svccard-name">${esc(s.name)}</span>
           <span class="svccard-role">${esc(s.role)}</span>
-          <span class="svccard-go"><span class="svccard-open">Details</span><span class="svccard-close">Close</span> <span class="svccard-arr" aria-hidden="true">&#8595;</span></span>
+          <span class="svccard-go">Read <span class="svccard-arr" aria-hidden="true">&#8595;</span></span>
         </span>
       </a>`).join('\n')}
     </div>
-    <div class="tpanels" id="tpanels">
+    <div class="tpanels sheets" id="sheets">
 ${list.map(panel).join('\n')}
     </div>
   </div>
