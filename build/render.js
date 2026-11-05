@@ -1118,8 +1118,17 @@ ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
    the area with every service as an offer, a FAQPage from all of their
    questions, and a BreadcrumbList. */
 function pageArea(a) {
+  /* One page per area. After the opening, the services are TABS: one
+     service in view at a time, every one laid out the same way, so a reader
+     always knows where they are. Each tab is a link to the service's anchor,
+     so without script the panels simply stand one under the other; with
+     script, choosing a tab shows that panel and writes its anchor to the
+     address. The h2 and id per service are what every link on the site and
+     the structured data point at. */
   const list = svcsIn(a);
+  const n = list.length;
   const others = AREAS.filter(x => x.slug !== a.slug);
+  const low = x => x.name.toLowerCase();
   const vars = [
     a.accent && '--co:' + a.accent,
     a.accentText && '--co-text:' + a.accentText,
@@ -1127,155 +1136,92 @@ function pageArea(a) {
     a.accentOn && '--co-on:' + a.accentOn
   ].filter(Boolean).join(';');
   const askHref = s => `/contact/?area=${a.slug}${s ? '&about=' + encodeURIComponent(s.name) : ''}`;
-  const low = s => s.name.toLowerCase();
-  const n = list.length;
-
-  /* Where the area sources from, gathered off every service in it. */
   const origins = [...new Set(list.flatMap(s => s.origins || []))];
-  const sourced = origins.length > 0;
 
-  /* The main action a service offers: a quotation where the area takes
-     them, otherwise the service's own ask (an investment to discuss, a
-     partnership to propose, a question about the café). */
-  const mainAct = s => a.quote
-    ? { href: `/quote/?service=${s.slug}`, label: `Request a quotation for ${low(s)}` }
-    : { href: askHref(s), label: s.cta };
-
-  /* ---- at a glance: one row per service, so a buyer can compare the
-     area's services in one screen and jump to the one that fits. The
-     name is the link; the whole row follows it (site.js). ---- */
-  const glance = `    <div class="glance-wrap rise d1">
-      <table class="glance">
-        <thead>
-          <tr>
-            <th scope="col">Service</th>
-            <th scope="col">What it is</th>
-            <th scope="col">Key facts</th>
-${sourced ? `            <th scope="col">Sourced from</th>\n` : ''}            <th scope="col"><span class="vh">Section</span></th>
-          </tr>
-        </thead>
-        <tbody>
-${list.map((s, i) => `          <tr>
-            <th scope="row"><a href="#${s.slug}"><span class="glance-n">${num(i)}</span><span class="glance-name">${esc(s.name)}</span><span class="glance-role">${esc(s.role)}</span></a></th>
-            <td data-l="What it is">${esc(s.short)}</td>
-            <td data-l="Key facts"><dl>${s.facts.slice(0, 2).map(f => `<div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('')}</dl></td>
-${sourced ? `            <td data-l="Sourced from">${s.origins && s.origins.length ? esc(s.origins.join(', ')) : '<span class="glance-na">Not origin-based</span>'}</td>\n` : ''}            <td class="glance-go"><a href="#${s.slug}" aria-label="Read about ${esc(s.name)}">Read<span aria-hidden="true">&#8595;</span></a></td>
-          </tr>`).join('\n')}
-        </tbody>
-      </table>
-    </div>`;
-
-  /* ---- one service: a compact module. What a buyer scans is visible —
-     the photograph, the role, the one-line intro, the key facts, what is
-     supplied, where from; the story, the steps and the questions sit
-     behind one labelled toggle; one action closes it. ---- */
-  const section = (s, i) => {
+  /* One service, as a panel. Left: the photograph, the key facts, where it
+     is sourced from. Right: the name, the statement, the story, what is
+     supplied, the questions, and the one action line. */
+  const panel = (s, i) => {
     const supplyCat = s.supply && SUPPLY.find(x => x.slug === s.supply);
-    const act = mainAct(s);
-    const hasSteps = s.steps && s.steps.length;
-    const hasFaq = s.faq && s.faq.length;
-    const stepsTitle = hasSteps ? (s.stepsTitle ? s.stepsTitle.replace(/<[^>]+>/g, '') : 'How it works') : '';
-    const moreOf = [
-      'the full story',
-      hasSteps && stepsTitle.toLowerCase(),
-      hasFaq && plural(s.faq.length, 'question', 'questions')
-    ].filter(Boolean);
-    const moreLine = moreOf.length > 1
-      ? moreOf.slice(0, -1).join(', ') + ' and ' + moreOf[moreOf.length - 1]
-      : moreOf[0];
-    return `<section class="sub" id="${s.slug}" aria-labelledby="h-${s.slug}">
-  <div class="wrap">
-    <div class="sub-top rise">
-      <p class="eyebrow">Service ${num(i)} of ${num(n - 1)}</p>
-      <h2 id="h-${s.slug}">${esc(s.name)}</h2>
-      <p class="sub-role">${esc(s.role)}</p>
-    </div>
-    <div class="sub-grid rise d1">
-      <div class="sub-side">
-        <figure class="sub-pic">
-          ${pic(s.img, '(max-width:860px) 100vw, 300px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}
-        </figure>
-${s.activities && s.activities.length ? `        <ul class="tags sub-tags" aria-label="Capabilities">
-${s.activities.map(x => `          <li>${esc(x)}</li>`).join('\n')}
-        </ul>
-` : ''}      </div>
-      <div class="sub-main">
-        <p class="sub-intro">${esc(s.intro)}</p>
-${s.lines && s.lines.length ? `        <h3 class="sub-h3">What we supply</h3>
-        <ul class="sub-lines">
-${s.lines.map(l => `          <li><b>${esc(l.t)}</b><span>${esc(l.d)}</span></li>`).join('\n')}
-        </ul>
-` : ''}${s.origins && s.origins.length ? `        <p class="sub-from"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>\n` : ''}      </div>
-      <dl class="sub-facts">
-${s.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
-      </dl>
-    </div>
-    <details class="more rise d2">
-      <summary>
-        <span class="more-t"><span class="more-open">More about ${esc(low(s))}</span><span class="more-close">Less about ${esc(low(s))}</span></span>
-        <span class="more-d">${esc(cap(moreLine))}</span>
-      </summary>
-      <div class="more-in">
-        <div class="more-story">
-${s.body.map(p => `          <p>${esc(p)}</p>`).join('\n')}
+    const prev = list[i - 1], next = list[i + 1];
+    return `      <section class="tpanel${i === 0 ? ' on' : ''}" id="${s.slug}" role="tabpanel" aria-labelledby="tab-${s.slug}" tabindex="0">
+        <div class="tpanel-grid">
+          <aside class="tside">
+            <figure class="tpic">
+              ${pic(s.img, '(max-width:860px) 100vw, 340px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="${i === 0 ? 'eager' : 'lazy'}"`)}
+            </figure>
+            <dl class="tfacts">
+${s.facts.map(f => `              <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
+            </dl>
+${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>
+` : ''}          </aside>
+          <div class="tmain">
+            <p class="eyebrow">${esc(a.name)} &middot; ${num(i)} of ${String(n).padStart(2, '0')}</p>
+            <h2 id="h-${s.slug}">${esc(s.name)} <span class="trole">${esc(s.role)}</span></h2>
+            <p class="tlead">${esc(s.intro)}</p>
+            <div class="tbody">
+${s.body.map(p => `              <p>${esc(p)}</p>`).join('\n')}
+            </div>
+${s.lines && s.lines.length ? `            <h3 class="th3">What we supply</h3>
+            <dl class="tlines">
+${s.lines.map(l => `              <div><dt>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
+            </dl>
+` : ''}${s.steps && s.steps.length ? `            <h3 class="th3">${esc((s.stepsTitle || 'How it works').replace(/<[^>]+>/g, ''))}</h3>
+            <ol class="tsteps">
+${s.steps.map((p, j) => `              <li><span>${num(j)}</span><div><strong>${esc(p.t)}</strong><p>${esc(p.d)}</p></div></li>`).join('\n')}
+            </ol>
+` : ''}${s.faq && s.faq.length ? `            <h3 class="th3">Questions</h3>
+            <div class="faq tfaq">
+${s.faq.map(f => `              <details class="faq-item" name="faq-${s.slug}">
+                <summary>${esc(f.q)}</summary>
+                <p>${esc(f.a)}</p>
+              </details>`).join('\n')}
+            </div>
+` : ''}            <div class="tact">
+              <a class="btn co-btn" href="${a.quote ? '/quote/?service=' + s.slug : askHref(s)}">${a.quote ? 'Request a quotation for ' + esc(low(s)) : esc(s.cta)}</a>
+              <a class="tact-link" href="${askHref(s)}">Ask a question</a>
+${supplyCat ? `              <a class="tact-link" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(low(s))} to the Group</a>\n` : ''}            </div>
+            <p class="tnav">
+${prev ? `              <a class="tnav-prev" href="#${prev.slug}" data-tab="${prev.slug}"><span aria-hidden="true">&#8592;</span> ${esc(prev.name)}</a>\n` : '              <span></span>\n'}${next ? `              <a class="tnav-next" href="#${next.slug}" data-tab="${next.slug}">${esc(next.name)} <span aria-hidden="true">&#8594;</span></a>\n` : ''}            </p>
+          </div>
         </div>
-${hasSteps ? `        <h3 class="sub-h3">${esc(stepsTitle)}</h3>
-        <ol class="steps sub-steps">
-${s.steps.map((p, j) => `          <li class="step">
-            <span class="step-n">${num(j)}</span>
-            <h4>${esc(p.t)}</h4>
-            <p>${esc(p.d)}</p>
-          </li>`).join('\n')}
-        </ol>
-` : ''}${hasFaq ? `        <h3 class="sub-h3">Questions about ${esc(low(s))}</h3>
-        <div class="faq">
-${s.faq.map(f => `          <details class="faq-item" name="faq-${s.slug}">
-            <summary>${esc(f.q)}</summary>
-            <p>${esc(f.a)}</p>
-          </details>`).join('\n')}
-        </div>
-` : ''}      </div>
-    </details>
-    <p class="sub-act rise d2">
-      <a class="sub-act-main" href="${act.href}">${esc(act.label)} <span aria-hidden="true">&#8594;</span></a>
-${supplyCat ? `      <a class="sub-act-sub" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(low(s))} to the Group</a>\n` : ''}    </p>
-  </div>
-</section>
-
-`;
+      </section>`;
   };
 
-  /* ---- how buying works, with the reasons a buyer can check under it.
-     One band, not two: the steps are what happens, the reasons are why
-     it holds. An area with no steps (the consumer services) keeps the
-     reasons on their own. ---- */
-  const why = a.why && a.why.length ? `    <ul class="bwhy co-why">
-${a.why.map(w => `      <li class="bwhy-item">
-        <h3>${esc(w.t)}</h3>
-        <p>${esc(w.d)}</p>
-      </li>`).join('\n')}
-    </ul>` : '';
-  const process = a.buying && a.buying.length ? `<section class="section tight co-steps" aria-labelledby="buyTitle">
+  const process = a.buying && a.buying.length
+    ? `<section class="section co-steps" aria-labelledby="buyTitle">
   <div class="wrap">
-    ${head2('buyTitle', `How buying works: <span class="soft">${esc(a.buyingTitle || 'from enquiry to delivery').toLowerCase()}</span>`, 'What happens after you write, and how long each step takes.')}
-    <ol class="steps steps-4 rise">
-${a.buying.map((p, i) => `      <li class="step">
+    ${head2('buyTitle', `How buying works: <span class="soft">${esc((a.buyingTitle || 'from enquiry to delivery').toLowerCase())}</span>`, 'What happens after you write, and how long each step takes.')}
+    <ol class="steps steps-4">
+${a.buying.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
         <span class="step-n">${num(i)}</span>
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
       </li>`).join('\n')}
     </ol>
-${why ? `    <p class="eyebrow after rise">Reasons a buyer can check</p>\n${why}\n` : ''}  </div>
+${a.why && a.why.length ? `    <div class="bwhy rise">
+${a.why.map(w => `      <div class="bwhy-item">
+        <h3>${esc(w.t)}</h3>
+        <p>${esc(w.d)}</p>
+      </div>`).join('\n')}
+    </div>
+` : ''}  </div>
 </section>
 
-` : why ? `<section class="section tight" aria-labelledby="whyAreaTitle">
+`
+    : (a.why && a.why.length ? `<section class="section co-steps" aria-labelledby="whyAreaTitle">
   <div class="wrap">
-    ${head2('whyAreaTitle', `Why ${esc(low(a))} <span class="soft">from Lusail Corp</span>`, 'Reasons a buyer can check, not claims.')}
-${why}
+    ${head2('whyAreaTitle', `Why ${esc(low(a))} <span class="soft">from Lusail Corp</span>`, '')}
+    <div class="bwhy rise">
+${a.why.map(w => `      <div class="bwhy-item">
+        <h3>${esc(w.t)}</h3>
+        <p>${esc(w.d)}</p>
+      </div>`).join('\n')}
+    </div>
   </div>
 </section>
 
-` : '';
+` : '');
 
   return head({
     /* the title a search result shows: the area, and every service in it */
@@ -1300,7 +1246,7 @@ ${why}
         <p class="co-hero-line">${esc(a.headline)}</p>
         <div class="co-hero-cta">
           <a class="btn co-btn" href="${a.quote ? '/quote/' : askHref()}">${a.quote ? 'Request a quotation' : 'Enquire about ' + esc(low(a))}</a>
-          <a class="btn co-btn-line" href="#glance">${esc(cap(plural(n, 'service', 'services')))} at a glance</a>
+          <a class="btn co-btn-line" href="#services">See the ${esc(plural(n, 'service', 'services'))}</a>
         </div>
       </div>
     </div>
@@ -1315,39 +1261,41 @@ ${a.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`
   </div>
 </section>
 
-<nav class="subnav" id="subnav" aria-label="On this page">
-  <div class="wrap subnav-in">
-    <ol class="subnav-list">
-${list.map((s, i) => `      <li><a href="#${s.slug}"${i === 0 ? ' aria-current="location"' : ''}><span>${num(i)}</span>${esc(s.name)}</a></li>`).join('\n')}
-    </ol>
-    <a class="btn btn-dark subnav-cta" href="${a.quote ? '/quote/' : askHref()}">${a.quote ? 'Request a quotation' : 'Send an enquiry'}</a>
-  </div>
-</nav>
-
-<section class="section co-about co-over" aria-labelledby="aboutTitle">
-  <div class="wrap">
-    <p class="eyebrow">${esc(a.name)} from Lusail Corp</p>
-    <h2 id="aboutTitle" class="co-statement rise">${esc(a.intro)}</h2>
-    <div class="co-story">
-      <div class="co-story-text rise d1">
-${a.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
-      </div>
-${a.customers && a.customers.length ? `      <div class="co-serve rise d1">
-        <p class="serve"><span>Who we serve</span></p>
-        <ul class="tags">
-${a.customers.map(c => `          <li>${esc(c)}</li>`).join('\n')}
-        </ul>
-      </div>
-` : ''}    </div>
-    <div class="glance-head rise" id="glance">
-      <h2 id="glanceTitle">${esc(cap(count(n)))} services, <span class="soft">at a glance</span></h2>
-      <p>What each one is and the facts a buyer compares on. Each row leads to its section below, where the full write-up is.</p>
+<section class="section co-about tover" aria-labelledby="aboutTitle">
+  <div class="wrap tover-in">
+    <div class="rise">
+      <p class="eyebrow">${esc(a.name)} from Lusail Corp</p>
+      <h2 id="aboutTitle" class="co-statement">${esc(a.intro)}</h2>
     </div>
-${glance}
+    <div class="tover-text rise d1">
+${a.body.map(p => `      <p>${esc(p)}</p>`).join('\n')}
+${a.customers && a.customers.length ? `      <p class="serve"><span>Who we serve</span></p>
+      <ul class="tags">
+${a.customers.map(c => `        <li>${esc(c)}</li>`).join('\n')}
+      </ul>` : ''}
+    </div>
   </div>
 </section>
 
-${list.map(section).join('')}${process}${sourcingSection(a.name, origins)}<section class="co-ask">
+<section class="section tabs-sec" id="services" aria-labelledby="svcListTitle">
+  <div class="wrap">
+    ${head2('svcListTitle', `Our ${esc(low(a))} <span class="soft">services</span>`, `${esc(cap(count(n)))} services. Choose one; each is laid out the same way.`)}
+  </div>
+  <div class="tabs-bar" id="tabsBar">
+    <div class="wrap">
+      <div class="tablist" role="tablist" aria-label="${esc(a.name)} services">
+${list.map((s, i) => `        <a class="tab${i === 0 ? ' on' : ''}" id="tab-${s.slug}" href="#${s.slug}" role="tab" aria-selected="${i === 0 ? 'true' : 'false'}" aria-controls="${s.slug}" data-tab="${s.slug}"><span class="tab-n">${num(i)}</span><span class="tab-t">${esc(s.name)}</span></a>`).join('\n')}
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="tpanels" id="tpanels">
+${list.map(panel).join('\n')}
+    </div>
+  </div>
+</section>
+
+${process}${sourcingSection(a.name, origins)}<section class="co-ask">
   <div class="wrap co-ask-in">
     <div>
       <p class="eyebrow">${esc(a.name)}</p>

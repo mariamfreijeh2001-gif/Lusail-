@@ -985,4 +985,73 @@
       location.hash = to.getAttribute('href');
     });
   });
+
+  /* ---------- the services tabs on an area page ---------------------------
+     One service in view at a time. A tab, a previous/next link or an
+     address with the service's anchor chooses the panel; the address is
+     kept in step so a chosen service can be shared. Arrow keys move
+     between tabs. Without script every panel is simply on the page. */
+  var tabsBar = $('#tabsBar'), tpanels = $('#tpanels');
+  if (tabsBar && tpanels) {
+    var tabs = $$('.tab', tabsBar), panels = $$('.tpanel', tpanels);
+    var choose = function (slug, focus, scroll) {
+      var hit = null;
+      panels.forEach(function (p) { var on = p.id === slug; p.classList.toggle('on', on); if (on) hit = p; });
+      if (!hit) return false;
+      tabs.forEach(function (t) {
+        var on = t.getAttribute('data-tab') === slug;
+        t.classList.toggle('on', on);
+        t.setAttribute('aria-selected', String(on));
+        t.setAttribute('tabindex', on ? '0' : '-1');
+        if (on && tabsBar.querySelector('.tablist').scrollWidth > tabsBar.clientWidth) {
+          var strip = tabsBar.querySelector('.tablist'), l = t.offsetLeft, r = l + t.offsetWidth;
+          if (l < strip.scrollLeft) strip.scrollLeft = l;
+          else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth;
+        }
+      });
+      if (scroll) {
+        var top = tabsBar.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104);
+        window.scrollTo({ top: top, behavior: still.matches ? 'auto' : 'smooth' });
+      }
+      if (focus) hit.focus({ preventScroll: true });
+      return true;
+    };
+    var go = function (slug, scroll) {
+      if (!choose(slug, false, scroll)) return;
+      if (history.replaceState) history.replaceState(null, '', '#' + slug);
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function (e) { e.preventDefault(); go(t.getAttribute('data-tab'), true); });
+      t.addEventListener('keydown', function (e) {
+        var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+        if (j < 0 || j >= tabs.length) return;
+        e.preventDefault();
+        go(tabs[j].getAttribute('data-tab'), false);
+        tabs[j].focus();
+      });
+    });
+    tpanels.addEventListener('click', function (e) {
+      var a = e.target.closest('a[data-tab]');
+      if (!a) return;
+      e.preventDefault();
+      go(a.getAttribute('data-tab'), true);
+    });
+    /* an address with a service's anchor opens that service and lands on it */
+    var fromHash = function (scroll) {
+      var slug = (location.hash || '').slice(1);
+      if (slug && choose(slug, false, false) && scroll) {
+        var top = tabsBar.getBoundingClientRect().top + window.pageYOffset - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104);
+        window.scrollTo({ top: top, behavior: 'auto' });
+      }
+    };
+    fromHash(true);
+    addEventListener('hashchange', function () { fromHash(true); });
+    /* any link elsewhere on the page to a service's anchor */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href^="#"]');
+      if (!a || tabsBar.contains(a) || tpanels.contains(a)) return;
+      var slug = a.getAttribute('href').slice(1);
+      if (panels.some(function (p) { return p.id === slug; })) { e.preventDefault(); go(slug, true); }
+    });
+  }
 })();
