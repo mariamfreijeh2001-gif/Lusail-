@@ -3809,3 +3809,295 @@ and the document rows ----------------------------- */
 
 /* the photograph stays above the facts in every chapter */
 .sub-flip .sub-story .sub-pic{order:0}
+
+/* ==========================================================================
+   The area pages and the services index, reworked for use. An area page
+   had every service written up as a page of its own stacked on the others:
+   a hero-like opening, a facts strip, four columns of lines, steps,
+   questions and three buttons, five times over, under a jump list that
+   repeated the sticky navigation and a figures band that repeated the
+   facts. Now: the opening, one table of the area's services to compare
+   and jump from, then one compact module per service — photograph, role,
+   intro, what is supplied, the key facts, where from — with the story,
+   the steps and the questions behind one labelled toggle and one action
+   under it; one closing band for the page. Appended last, every
+   narrow-screen rule in its own query.
+   ========================================================================== */
+
+/* ---- the opening: the statement, the argument, who we serve ---- */
+.co-serve{align-self:start}
+.co-serve .serve{margin:0 0 10px}
+
+/* ---- at a glance: one row per service, on the area's tint ---- */
+.glance-sec{background:var(--co-tint,var(--panel));scroll-margin-top:calc(var(--head-h) + 60px)}
+.glance-wrap{margin-top:clamp(20px,2.4vw,32px);overflow-x:auto}
+.glance{width:100%;border-collapse:collapse;border-top:1px solid var(--ink);text-align:left}
+.glance th,.glance td{vertical-align:top;padding:16px clamp(12px,1.8vw,26px) 18px 0;border-bottom:1px solid var(--line-2)}
+.glance thead th{font:600 .6875rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label);padding:12px clamp(12px,1.8vw,26px) 10px 0}
+.glance thead th:nth-child(1){width:22%}
+.glance thead th:nth-child(2){width:36%}
+.glance thead th:nth-child(3){width:22%}
+.glance thead th:last-child{width:1%}
+.glance tbody th{font-weight:400}
+.glance tbody th a{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;row-gap:3px;align-items:baseline;text-decoration:none;color:var(--ink)}
+.glance-n{font:300 .9375rem/1.4 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
+.glance-name{font:400 1.25rem/1.2 var(--display);color:var(--ink);transition:color .2s}
+.glance-role{grid-column:2;font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-3)}
+.glance tbody th a:hover .glance-name,
+.glance tbody tr:hover .glance-name{color:var(--co-text,var(--gold-text))}
+.glance td{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
+.glance td dl{margin:0;display:grid;gap:8px}
+.glance td dl > div{display:grid;gap:2px}
+.glance dt{font:600 .625rem/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--label)}
+.glance dd{margin:0;color:var(--ink)}
+.glance-na{color:var(--ink-3);font-style:italic}
+.glance-go{text-align:right;white-space:nowrap;padding-right:0}
+.glance-go a{display:inline-flex;align-items:center;gap:6px;min-height:24px;font:500 var(--t-xs)/1.4 var(--ui);color:var(--ink);text-decoration:none}
+.glance-go a span{color:var(--co-text,var(--gold-text));transition:transform .2s}
+.glance tbody tr:hover .glance-go a span{transform:translateY(3px)}
+.glance-go a:focus-visible,
+.glance tbody th a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.js .glance tbody tr{cursor:pointer}
+@media (max-width:760px){
+  .glance{border-top:0}
+  .glance thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .glance tbody,.glance tr,.glance th,.glance td{display:block}
+  .glance tr{display:grid;gap:12px;padding:18px 0 20px;border-bottom:1px solid var(--line-2)}
+  .glance th,.glance td{padding:0;border:0}
+  .glance td[data-l]::before{content:attr(data-l);display:block;font:600 .625rem/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--label);margin-bottom:4px}
+  .glance td dl{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+  .glance-go{text-align:left}
+  .glance-go a{min-height:44px}
+}
+@media (prefers-reduced-motion:reduce){ .glance-name,.glance-go a span{transition:none} }
+
+/* ---- one service, as a compact module on one ground ---- */
+.co .sub,.co .sub:nth-of-type(even){background:none}
+.co .sub{padding-block:clamp(40px,5vw,64px)}
+.sub-top{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:18px;row-gap:6px;align-items:baseline;max-width:none}
+.sub-top .eyebrow{grid-column:1 / -1}
+.sub-top h2{font:300 clamp(1.75rem,2.8vw,2.5rem)/1.05 var(--display);letter-spacing:-.015em;color:var(--ink);margin:0}
+.sub-top .sub-role{font:400 var(--t-lg)/1.4 var(--display);color:var(--co-text,var(--gold-text));margin:0}
+.sub-grid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr) minmax(0,250px);gap:clamp(24px,3vw,48px);align-items:start;margin-top:clamp(20px,2.6vw,32px)}
+.sub-side{display:grid;gap:14px;align-content:start}
+.sub-grid .sub-pic{min-height:0;aspect-ratio:4/3;align-self:auto}
+.sub-tags{gap:6px}
+.co .sub-tags li{padding:5px 9px;font-size:var(--t-xxs)}
+.sub-main{display:grid;gap:14px;align-content:start}
+.sub-main .sub-intro{font:400 clamp(1.125rem,1.5vw,1.375rem)/1.35 var(--display);color:var(--ink);margin:0}
+.sub-main .sub-h3{margin-top:4px}
+.sub-main .sub-lines{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
+.sub-lines li{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr);gap:4px 18px;padding:10px 0;border-bottom:1px solid var(--line)}
+.sub-lines b{font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
+.sub-lines span{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
+.sub-grid .sub-facts{margin:0;grid-template-columns:1fr;border-top:1px solid var(--line-2);border-bottom:0}
+.sub-grid .sub-facts > div{padding:10px 0 11px;border-bottom:1px solid var(--line);gap:3px}
+.sub-grid .sub-facts > div + div{border-inline-start:0;padding-inline-start:0}
+
+/* the story, the steps and the questions, behind one labelled toggle */
+.more{margin-top:clamp(20px,2.6vw,32px);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+.more summary{cursor:pointer;list-style:none;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px;padding:14px 44px 14px 0;min-height:44px}
+.more summary::-webkit-details-marker{display:none}
+.more summary::after{content:"+";position:absolute;right:4px;top:50%;translate:0 -50%;font:300 1.5rem/1 var(--display);color:var(--co-text,var(--gold-text));transition:transform .25s}
+.more[open] summary::after{transform:rotate(45deg)}
+.more-t{font:600 var(--t-sm)/1.4 var(--ui);color:var(--ink);transition:color .2s}
+.more-close{display:none}
+.more[open] .more-open{display:none}
+.more[open] .more-close{display:inline}
+.more-d{font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-3)}
+.more summary:hover .more-t{color:var(--co-text,var(--gold-text))}
+.more summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.more-in{padding:6px 0 clamp(24px,3vw,36px)}
+.more-story{display:grid;gap:1em;max-width:68ch;color:var(--ink-2);font:400 var(--t-body)/1.65 var(--body)}
+.more-in .sub-h3{margin-top:clamp(24px,3vw,36px)}
+.more-in .sub-steps{margin-top:12px}
+.more-in .sub-steps .step{padding-block:18px 8px}
+.more-in .faq{margin-top:10px;border-top:0}
+.more-in .faq-item summary{padding-block:14px;font-size:1.0625rem}
+
+/* one action under each service, as a line rather than three buttons */
+.sub-act{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px;margin-top:clamp(16px,2vw,24px)}
+.sub-act-main{display:inline-flex;align-items:center;gap:8px;min-height:24px;font:600 var(--t-sm)/1.4 var(--ui);color:var(--ink);text-decoration:none;transition:color .2s}
+.sub-act-main span{color:var(--co-text,var(--gold-text));transition:transform .2s}
+.sub-act-main:hover{color:var(--co-text,var(--gold-text))}
+.sub-act-main:hover span{transform:translateX(4px)}
+.sub-act-sub{font:400 var(--t-xs)/1.4 var(--ui);color:var(--ink-2);text-underline-offset:4px;text-decoration-color:var(--line-2)}
+.sub-act-sub:hover{color:var(--ink);text-decoration-color:currentColor}
+.sub-act a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media (max-width:1100px){
+  .sub-grid{grid-template-columns:minmax(0,260px) minmax(0,1fr)}
+  .sub-grid .sub-facts{grid-column:1 / -1;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:16px;border-bottom:0}
+}
+@media (max-width:860px){
+  .co .sub{padding-block:36px 40px}
+  .sub-top{grid-template-columns:1fr;row-gap:4px}
+  .sub-grid{grid-template-columns:1fr;gap:20px}
+  .sub-grid .sub-pic{aspect-ratio:16/10}
+  .sub-grid .sub-facts{grid-column:auto;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sub-grid .sub-facts > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .sub-lines li{grid-template-columns:1fr;gap:2px}
+  .more-in .sub-steps{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ .more summary::after,.more-t,.sub-act-main,.sub-act-main span{transition:none} }
+
+/* ---- how buying works, with the reasons a buyer can check under it ---- */
+.co-steps .steps{margin-top:clamp(20px,2.4vw,32px)}
+.co-steps .step{padding:18px 0 10px;gap:8px}
+.co-steps .step h3{font-size:1.25rem}
+.co-steps .step p{font-size:var(--t-xs)}
+.co-steps .after{margin-top:clamp(28px,3.4vw,44px)}
+.co-why{list-style:none;padding:0;margin-top:14px}
+.co-why .bwhy-item h3::before{background:var(--co,var(--gold))}
+
+/* ---- the other areas: a ruled row each, the services named ---- */
+.oth{list-style:none;margin:clamp(20px,2.4vw,32px) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(20px,2.4vw,32px);border-top:1px solid var(--line-2)}
+.oth a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-content:start;align-items:start;padding:18px 0 20px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink);min-height:44px;height:100%}
+.oth-k{font:600 .625rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--co-text,var(--gold-text))}
+.oth-t{grid-column:1;font:400 1.375rem/1.2 var(--display);transition:color .2s}
+.oth-d{grid-column:1;font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
+.oth-go{grid-column:2;grid-row:1 / span 3;align-self:center;font:300 1.375rem/1 var(--display);color:var(--co-text,var(--gold-text));opacity:.55;transition:transform .2s,opacity .2s}
+.oth a:hover .oth-t{color:var(--co-text,var(--gold-text))}
+.oth a:hover .oth-go{opacity:1;transform:translateX(4px)}
+.oth a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media (max-width:900px){ .oth{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .oth{grid-template-columns:1fr} .oth a{height:auto} }
+@media (prefers-reduced-motion:reduce){ .oth-t,.oth-go{transition:none} }
+
+/* ---- the services index: each area's services as rows, not cards ---- */
+.secblk-col > .svclist{justify-self:stretch;width:100%}
+.svclist{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(24px,3vw,40px);border-top:1px solid var(--rule,var(--line-2))}
+.svclist a{display:grid;grid-template-columns:88px minmax(0,1fr) auto;gap:0 16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule,var(--line));text-decoration:none;color:var(--on,var(--ink));min-height:44px;height:100%}
+.svclist-pic{display:block;aspect-ratio:1;overflow:hidden;background:var(--tile,var(--panel))}
+.svclist-pic img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.svclist a:hover .svclist-pic img{transform:scale(1.05)}
+.svclist-body{display:grid;gap:3px}
+.svclist-t{display:flex;gap:10px;align-items:baseline;font:400 1.25rem/1.2 var(--display);transition:color .2s}
+.svclist-n{font:300 .875rem/1 var(--display);letter-spacing:.08em;color:var(--gold-text)}
+.svclist-r{font:500 var(--t-xs)/1.4 var(--ui);color:var(--on-2,var(--ink-3))}
+.svclist-d{font:400 var(--t-xs)/1.5 var(--body);color:var(--on-2,var(--ink-2))}
+.svclist-go{font:300 1.375rem/1 var(--display);color:var(--gold-text);opacity:.55;transition:transform .2s,opacity .2s}
+.svclist a:hover .svclist-t{color:var(--gold-text)}
+.svclist a:hover .svclist-go{opacity:1;transform:translateX(4px)}
+.svclist a:focus-visible{outline:2px solid var(--on,var(--ink));outline-offset:2px}
+.secidx[data-tone="3"] .svclist-n,
+.secidx[data-tone="3"] .svclist-go,
+.secidx[data-tone="3"] .svclist a:hover .svclist-t{color:var(--gold)}
+@media (max-width:1180px){ .svclist{grid-template-columns:1fr} }
+@media (max-width:560px){
+  .svclist a{grid-template-columns:72px minmax(0,1fr) auto;gap:0 12px;padding:12px 0}
+  .svclist-t{font-size:1.125rem}
+}
+@media (prefers-reduced-motion:reduce){ .svclist-pic img,.svclist-t,.svclist-go{transition:none} .svclist a:hover .svclist-pic img{transform:none} }
+
+/* ---- the overview band: statement, argument and the table in one ---- */
+.co-over{background:var(--co-tint,var(--panel))}
+.co-over .wrap{row-gap:22px}
+.glance-head{grid-column:1 / -1;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 32px;margin-top:clamp(24px,3vw,40px);padding-top:clamp(20px,2.4vw,28px);border-top:1px solid var(--line-2)}
+.glance-head h2{font:300 clamp(1.5rem,2.2vw,1.9375rem)/1.2 var(--display);letter-spacing:-.012em;color:var(--ink);margin:0}
+.glance-head p{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2);max-width:48ch;margin:0}
+.co-over .glance-wrap{grid-column:1 / -1;margin-top:0}
+.co-over .glance{border-top-color:var(--ink)}
+.glance td dl{gap:5px}
+.glance td dl > div{grid-template-columns:auto minmax(0,1fr);gap:0 8px;align-items:baseline}
+.glance dt{padding-top:2px}
+.glance thead th:nth-child(2){width:34%}
+.glance thead th:nth-child(3){width:26%}
+.co .sub{padding-block:clamp(36px,4.2vw,52px)}
+.sub-grid{margin-top:clamp(18px,2.2vw,26px)}
+.more{margin-top:clamp(16px,2vw,24px)}
+.sub-act{margin-top:14px}
+.co-steps{padding-block:clamp(40px,4.5vw,56px)}
+@media (max-width:900px){
+  .co-over .wrap{row-gap:18px}
+  .glance-head{margin-top:16px}
+}
+@media (max-width:760px){
+  .glance td[data-l="Key facts"]{display:none}
+  .glance td dl > div{grid-template-columns:1fr;gap:2px}
+}
+@media (max-width:860px){
+  .sub-side{display:contents}
+  .sub-grid .sub-pic{order:0}
+  .sub-main{order:1}
+  .sub-grid .sub-facts{order:2}
+  .sub-tags{order:3}
+}
+@media (max-width:560px){ .svclist-d{display:none} }
+
+/* ---- the bands after the services are supporting matter: smaller
+   headings, the sourcing regions on one row ---- */
+.co-full .section.tight .head2 h2{font-size:clamp(1.5rem,2.4vw,2.125rem)}
+.co-full .section.tight .head2{margin-bottom:0}
+.co-full .srcregs{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:clamp(20px,2.4vw,32px)}
+.co-full .srcreg li{font-size:var(--t-sm)}
+.co-full .srcmore{margin-top:clamp(16px,2vw,24px)}
+@media (max-width:900px){ .co-full .srcregs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .co-full .srcregs{grid-template-columns:minmax(0,1fr)} }
+
+/* ---- the table, a touch denser: five rows fit under the statement ---- */
+.glance th,.glance td{padding-block:13px 15px}
+.glance td{font-size:var(--t-xs)}
+.glance-name{font-size:1.1875rem}
+.glance dd{font-size:var(--t-xs)}
+.glance-head{margin-top:clamp(20px,2.4vw,28px);padding-top:clamp(16px,2vw,22px)}
+.co-over{padding-block:clamp(40px,4.5vw,56px)}
+@media (max-width:760px){ .glance th,.glance td{padding:0} }
+
+/* ---- the other areas as one strip: the footer already lists every area,
+   so this is a pointer, not a gallery ---- */
+.oth{grid-template-columns:repeat(6,minmax(0,1fr));gap:0 clamp(14px,1.6vw,24px);margin-top:clamp(16px,2vw,24px)}
+.oth a{grid-template-columns:minmax(0,1fr);padding:14px 0 16px;gap:4px}
+.oth-t{font-size:1.125rem;line-height:1.2}
+.oth-d{display:none}
+.oth-go{grid-column:1;grid-row:auto;align-self:start;font-size:1.125rem;margin-top:2px}
+@media (max-width:1100px){ .oth{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:560px){ .oth{grid-template-columns:repeat(2,minmax(0,1fr))} .oth a{height:100%} }
+
+/* ---- the services index: one row per service, its line beside it ---- */
+.svclist{grid-template-columns:1fr;gap:0}
+.svclist a{grid-template-columns:72px minmax(0,14rem) minmax(0,1fr) auto;gap:0 20px;padding:12px 0}
+.svclist-body{display:contents}
+.svclist-t{grid-column:2;grid-row:1;display:block}
+.svclist-n{margin-right:10px}
+.svclist-r{grid-column:2;grid-row:2;align-self:start}
+.svclist-d{grid-column:3;grid-row:1 / span 2;align-self:center}
+.svclist-go{grid-column:4;grid-row:1 / span 2}
+.svclist a{grid-template-rows:auto auto;align-items:start}
+@media (max-width:1180px){ .svclist a{grid-template-columns:72px minmax(0,13rem) minmax(0,1fr) auto} }
+@media (max-width:900px){
+  .svclist a{grid-template-columns:72px minmax(0,1fr) auto;grid-template-rows:auto auto auto}
+  .svclist-d{grid-column:2;grid-row:3;margin-top:4px}
+  .svclist-go{grid-row:1 / span 3}
+}
+@media (max-width:560px){ .svclist a{grid-template-columns:64px minmax(0,1fr) auto;gap:0 12px} }
+
+/* ---- the opening's argument in two columns, the chapters a touch tighter ---- */
+.co-over .co-story-text{columns:2;column-gap:clamp(24px,3vw,40px);display:block;max-width:none}
+.co-over .co-story-text p{break-inside:avoid;margin:0 0 .9em}
+.co-over .co-story-text p:last-child{margin-bottom:0}
+.co .sub{padding-block:clamp(32px,3.6vw,44px)}
+@media (max-width:900px){ .co-over .co-story-text{columns:1} }
+
+/* ---- index rows: the name and role as one block, the line beside it ---- */
+.svclist a{grid-template-columns:72px minmax(0,14rem) minmax(0,1fr) auto;grid-template-rows:auto;align-items:center}
+.svclist-body{display:grid;gap:3px;grid-column:2;grid-row:1}
+.svclist-t,.svclist-r{grid-column:auto;grid-row:auto}
+.svclist-t{display:flex;gap:10px;align-items:baseline}
+.svclist-n{margin-right:0}
+.svclist-d{grid-column:3;grid-row:1;align-self:center}
+.svclist-go{grid-column:4;grid-row:1}
+.co-over .co-story-text{columns:auto;display:grid;gap:1em}
+.co-over .co-story-text p{margin:0}
+@media (max-width:1180px){ .svclist a{grid-template-columns:72px minmax(0,13rem) minmax(0,1fr) auto} }
+@media (max-width:900px){
+  .svclist a{grid-template-columns:72px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:start}
+  .svclist-d{grid-column:2;grid-row:2;margin-top:4px}
+  .svclist-go{grid-row:1 / span 2;align-self:center}
+}
+@media (max-width:560px){ .svclist a{grid-template-columns:64px minmax(0,1fr) auto;grid-template-rows:auto;gap:0 12px;align-items:center} .svclist-go{grid-row:1} }
+
+/* ---- two small corrections from the final check: the strip measures its
+   links against itself, so the mark's reveal brings the first one fully
+   back; the quiet supply link is a 24px target ---- */
+.subnav-list{position:relative}
+.sub-act-sub{display:inline-flex;align-items:center;min-height:24px}

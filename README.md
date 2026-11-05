@@ -32,7 +32,7 @@ never has to know.
 | URL | |
 |---|---|
 | `/` | Home: the services ledger, the areas, the globe, the one strip of companies |
-| `/services/` | Every area, each with the services inside it as cards |
+| `/services/` | Every area, each with the services inside it as rows |
 | `/services/<area>/` | One area: its story, then every service in it in full — the story, what is supplied, where from, how it works, its questions, the ask |
 | `/services/<area>/#<slug>` | One service — a section on its area's page, which is what every link to it points at |
 | `/about/` | The Group: what it is and what it believes |
@@ -265,18 +265,29 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   region in the list beside it lights its arcs; drag turns it. It only draws
   while on screen and holds still under reduced motion.
 - **Area pages** are landing pages of their own: the area's photograph
-  behind the title, its facts strip, its statement with a jump list of its
-  services beside the argument, its figures, then **one section per
-  service** — a narrow column with the photograph and the facts beside the
-  story, what is supplied line by line, how it works where that helps, the
-  questions, and the ask
-  (an enquiry pre-addressed to the area with the service named, and "Supply
-  this to the Group" where a portal category matches) — then where the area
-  sources from, grouped by the Group's regions, and the other areas. The
-  structure is shared; the colour is the area's own.
+  behind the title, its facts strip, the sticky in-page navigation, then
+  one overview band on the area's tint — its statement, the argument, who
+  it serves, and **the services at a glance**: a table with a row per
+  service (what it is, two key facts, where it is sourced), each row a link
+  to its section. Then **one compact section per service**, built to fit a
+  screen: the photograph, the role, the one-line intro, what is supplied
+  line by line, the key facts and where it is sourced from stay visible;
+  the story, how it works and the questions sit behind one labelled
+  "More about …" toggle (the content is in the page, only folded); one
+  action line closes it (a quotation for that service, and "Supply … to
+  the Group" where a portal category matches). After the services: how
+  buying works with the reasons a buyer can check, where the area sources
+  from, the one closing band (quotation, question, supplier), and a strip
+  of the other areas. The structure is shared; the colour is the area's
+  own. A usability review found the earlier page read as five pages
+  stacked on each other — every service with its own hero-like opening,
+  facts strip, four columns, steps, questions and three buttons, under a
+  jump list that repeated the navigation and a figures band that repeated
+  the facts — and this is what replaced it.
 - **The services index** — a numbered rail of the areas at the left that
   marks the one being read, and each area as a block with its argument and
-  its services as cards.
+  its services as rows (number, name, role and line), each a link to its
+  section.
 - **Work With Us** — who the Group wants to hear from, how it works (a
   timeline), the two ways in (the Supplier Portal, or the contact form), and
   what it is looking to do next (a grid ending in the ask).

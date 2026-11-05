@@ -971,4 +971,18 @@
       mark();
     }
   }
+  /* ---------- the at-a-glance table on an area page ------------------------
+     The name in each row is the link to the service's section; the rest of
+     the row follows it, so a reader can aim at the row rather than the
+     word. A click on any other link in the row, or a drag to select text,
+     is left alone. */
+  $$('.glance tbody tr').forEach(function (row) {
+    var to = row.querySelector('th a[href^="#"]');
+    if (!to) return;
+    row.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return;
+      if (String(getSelection && getSelection())) return;
+      location.hash = to.getAttribute('href');
+    });
+  });
 })();
