@@ -1346,26 +1346,19 @@ ${list.map(panel).join('\n')}
   </div>
 </section>
 
-<section class="section stone whybuy" aria-labelledby="whyAreaTitle">
-  <div class="wrap whybuy-in">
-    <div class="rise">
-      <p class="eyebrow">Why Lusail Corp</p>
-      <h2 id="whyAreaTitle">Why ${esc(low(a))} <span class="soft">from us</span></h2>
-${a.why && a.why.length ? `      <ul class="whylist">
-${a.why.map(w => `        <li><strong>${esc(w.t)}</strong><span>${esc(w.d)}</span></li>`).join('\n')}
-      </ul>` : ''}
+${a.why && a.why.length ? `<section class="section tight stone" aria-labelledby="whyAreaTitle">
+  <div class="wrap">
+    ${head2('whyAreaTitle', `Why ${esc(low(a))} <span class="soft">from Lusail Corp</span>`, '')}
+    <div class="bwhy rise">
+${a.why.map(w => `      <div class="bwhy-item">
+        <h3>${esc(w.t)}</h3>
+        <p>${esc(w.d)}</p>
+      </div>`).join('\n')}
     </div>
-${a.buying && a.buying.length ? `    <div class="rise d1">
-      <p class="eyebrow">How buying works</p>
-      <h2>${esc(cap((a.buyingTitle || 'From enquiry to delivery').toLowerCase()))}</h2>
-      <ol class="buysteps">
-${a.buying.map((p, i) => `        <li><span>${num(i)}</span><div><strong>${esc(p.t)}</strong><p>${esc(p.d)}</p></div></li>`).join('\n')}
-      </ol>
-    </div>` : ''}
   </div>
 </section>
 
-<section class="co-ask">
+` : ''}${process}<section class="co-ask">
   <div class="wrap co-ask-in">
     <div>
       <p class="eyebrow">${esc(a.name)}</p>
