@@ -4458,3 +4458,113 @@ html.js .tpanels{margin-top:clamp(20px,2.6vw,32px)}
 .hs .wwd-n::before{margin-bottom:12px}
 .hs .wwd-card h3{margin-top:8px;font-size:clamp(1.125rem,1.4vw,1.25rem)}
 .hs .wwd-card p{font-size:var(--t-sm)}
+
+/* ==========================================================================
+   SIZING AND MOBILE PASS
+   A study of every component's size on every page, then one scale for all
+   of them. What it found: five section-heading sizes (31–46px) for one
+   component, three closing-band sizes (24/35/44), numerals at 28, 35 and 43
+   on neighbouring bands, the four figures at 46, the services index's area
+   names at hero weight (42), the home accordion's name larger than any h2
+   (52), buying steps set 24/15 on the home page and 20/13 on an area page,
+   labels at 10, 11, 12 and 13px, and band padding anywhere from 44 to 80.
+   On a phone: 31px gutters, 36px footer links, 43px inputs, buttons that
+   stayed inline in the closing band, and the companies strip still a
+   marquee. Appended last; every narrow-screen rule in its own query.
+
+   The scale, top to bottom:
+     h1          --t-display / the hero clamp   (page title)
+     h2          --t-h2   30–42   a section heading (.head2)
+     h2b         --t-h2b  24–34   a chapter heading, a statement, a closing band
+     figure      --t-fig  28–34   the four figures
+     h3          --t-h3   20–24   a card title (step, value, direction, route…)
+     row title   --t-lg   18      a ruled row's title (reason, opportunity, index row)
+     numeral     --t-num  28      the "01" that heads a card
+     body        --t-sm   15      copy inside a card; --t-body 16 under a band heading
+     caption     --t-micro 14     the line under a row title
+     eyebrow     --t-xxs  12      tracked caps above a heading
+     label       --t-label 11     tracked caps inside a component
+   ========================================================================== */
+:root{
+  --t-h2:var(--t-h1);
+  --t-h2b:clamp(1.5rem,2.4vw,2.125rem);
+  --t-fig:clamp(1.75rem,2.4vw,2.125rem);
+}
+
+/* ---- h1: the compact portal openings join the page-title size ---------- */
+.opp-hero h1{font-size:var(--t-display)}
+
+/* ---- h2: every section heading at one size, the chapter/statement/closing
+   heads at the next size down, and the accordion name no larger than an h2 */
+.head2 h2,.co-full .section.tight .head2 h2,.intro-head h2,.platform-h,.contact-h,
+.sp-two h2,.apply-side h2,.src-side h2{font-size:var(--t-h2);line-height:1.1}
+.acc-body h3{font-size:var(--t-h2)}
+.sheet .tp-main h2,.tp-head h2,.tmain h2,.secblk h2,.tover2-h,.vm h3,.dir .dir-ask-q,
+.next-card h2,.co-ask h2{font-size:var(--t-h2b)}
+.tover2-h{line-height:1.3}
+.stats dd,.co-figs dd,.tover2 .tover2-figs dd{font-size:var(--t-fig)}
+.stats dd::before{margin-bottom:12px}
+
+/* ---- h3: one card title, one row title; one body size inside a card ---- */
+.step h3,.co-steps .step h3,.hs .wwd-card h3,.dir h3,.route h3,.vc h3,.pline h3,.valcard h3,
+.tl-step h3,.why-item h3,.qsteps h3{font-size:var(--t-h3)}
+.bwhy-item h3,.opp-title,.catrow-name,.oth-t,.svclist-t{font-size:var(--t-lg)}
+.hs-cos .cos-name{font-size:clamp(1.375rem,1.9vw,1.75rem)}
+.acc-say,.tp-main .tlead,.sheet .tp-main .tlead{font-size:var(--t-lg)}
+.step p,.co-steps .step p,.hs .wwd-card p,.vc p,.pline p,.dir p,.valcard p,.vm p,.route p,
+.tl-step p,.why-item p{font-size:var(--t-sm)}
+.bwhy-item p,.tlist2 dd,.tp-side .tfacts dd{font-size:var(--t-micro)}
+.co-ask p:not(.eyebrow),.next-say p,.regcta-line{font-size:var(--t-body)}
+
+/* ---- numerals: the card numeral is 28px wherever it heads a card ------- */
+.why-n,.hs .wwd-n,.step-n,.dir-n,.route-n,.valcard-n,.catrow-n{font-size:var(--t-num)}
+.hs .wwd-n::before{margin-bottom:12px}
+
+/* ---- labels: 12px eyebrows at one tracking; 11px labels inside components */
+.eyebrow,.pagehead-eyebrow,.hero-kicker,.th3,.secblk-count,.vm-label,.cos-role,.sub-h3{font-size:var(--t-xxs);letter-spacing:.14em}
+.stats dt,.oth-k,.reg-n,.co-scroll span,.glance dt,.opp-req-rows dt{
+  font:600 var(--t-label)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;
+}
+
+/* ---- rhythm: one band of padding on every section, and no double gap
+   where two sections on the same ground meet ----------------------------- */
+.section,.section.tight,.section.hs,.section.hs.hs-led,.section.hs.sectors,.section.hs.tight,
+.next,.co-ask,.secblk,.tabs-sec,.co-steps,.co-over,.whybuy{padding-block:var(--band)}
+.tover2 + .tabs-sec,
+.section.stone + .section.stone,
+.section.grow + .next,
+.secidx + .next,
+#categories + #requirements{padding-top:0}
+.section.apply + .section.stone{padding-top:32px}
+
+/* ---- small alignments the study turned up ------------------------------ */
+/* the other-areas row: every arrow on the same baseline, whatever the name wraps to */
+.oth a{grid-template-rows:auto 1fr auto;align-content:stretch}
+.oth-go{align-self:end}
+
+/* ---- tablets and phones: every tap a 44px target ----------------------- */
+@media (max-width:860px){
+  .foot-svc a,.foot-nav a,.foot-reach a{min-height:44px}
+  .foot-nav,.foot-reach,.foot-svc{gap:0}
+  .crumbs a,.pagehead-note a{display:inline-flex;align-items:center;min-height:44px;margin-block:-13px}
+  .catrow-count a,.opp-req summary,.fdoc-btn,.opp-go,.foot-id a,.chk span{min-height:44px}
+  .opp-go{display:inline-flex;align-items:center}
+  .burger{min-width:44px}
+  .lform input:not([type="checkbox"]),.lform select{min-height:44px}
+}
+
+/* ---- phones: 16px gutters, buttons the full width in every closing band,
+   the companies strip a ruled list, the footer clear of the corner button */
+@media (max-width:560px){
+  :root{--gutter:16px}
+  .co-figs dd,.stats dd{font-size:1.75rem}
+  .next-act{flex-direction:column}
+  .next-act .btn,.after .btn,.pagehead-cta .btn,.regcta-act .btn{width:100%}
+  .hs-cos .cos{-webkit-mask-image:none;mask-image:none}
+  .hs-cos .cos-track{animation:none;width:auto;flex-direction:column}
+  .hs-cos .cos-item[aria-hidden="true"]{display:none}
+  .hs-cos .cos-item > a,.hs-cos .cos-item > span{border-inline-end:0;border-bottom:1px solid var(--line);padding:14px 0}
+  .hs-cos .cos-item:last-child > a,.hs-cos .cos-item:last-child > span{border-bottom:0}
+  .hs-cos .cos-name{font-size:1.375rem}
+  .foot-legal{padding-inline-end:64px}
+}
