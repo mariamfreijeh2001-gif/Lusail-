@@ -1226,9 +1226,9 @@ ${s.facts.map(f => `              <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd><
             <h2 id="h-${s.slug}">${esc(s.name)} <span class="trole">${esc(s.role)}</span></h2>
             <p class="tlead">${esc(s.intro)}</p>
 ${s.lines && s.lines.length ? `            <h3 class="th3">What we supply</h3>
-            <ul class="tlist">
-${s.lines.map(l => `              <li><strong>${esc(l.t)}</strong> <span>${esc(l.d)}</span></li>`).join('\n')}
-            </ul>
+            <dl class="tlist2">
+${s.lines.map((l, j) => `              <div><dt><span>${num(j)}</span>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('\n')}
+            </dl>
 ` : ''}${s.origins && s.origins.length ? `            <p class="tfrom"><span>Sourced from</span>${s.origins.map(o => `<b>${esc(o)}</b>`).join('')}</p>
 ` : ''}${(s.body.length || (s.faq && s.faq.length)) ? `            <details class="tmore">
               <summary><span>More about ${esc(low(s))}${s.faq && s.faq.length ? ', and ' + plural(s.faq.length, 'question', 'questions') : ''}</span></summary>
@@ -1323,13 +1323,6 @@ ${a.customers.map(c => `          <li>${esc(c)}</li>`).join('\n')}
         </ul>
       </div>
 ` : ''}    </div>
-    <dl class="tover2-figs rise d1">
-      <div><dd>${n}</dd><dt>${n === 1 ? 'Service' : 'Services'}</dt></div>
-      <div><dd>${list.reduce((t, s) => t + (s.lines || []).length, 0)}</dd><dt>Lines supplied</dt></div>
-${origins.length ? `      <div><dd>${origins.length}</dd><dt>Source countries</dt></div>
-      <div><dd>${REACH.filter(reg => origins.some(o => reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(o))).length}</dd><dt>Sourcing regions</dt></div>` : `      <div><dd>${a.facts.length}</dd><dt>Key facts</dt></div>
-      <div><dd>2</dd><dt>Working days to reply</dt></div>`}
-    </dl>
   </div>
 </section>
 
@@ -1353,19 +1346,26 @@ ${list.map(panel).join('\n')}
   </div>
 </section>
 
-${a.why && a.why.length ? `<section class="section tight stone" aria-labelledby="whyAreaTitle">
-  <div class="wrap">
-    ${head2('whyAreaTitle', `Why ${esc(low(a))} <span class="soft">from Lusail Corp</span>`, '')}
-    <div class="bwhy rise">
-${a.why.map(w => `      <div class="bwhy-item">
-        <h3>${esc(w.t)}</h3>
-        <p>${esc(w.d)}</p>
-      </div>`).join('\n')}
+<section class="section stone whybuy" aria-labelledby="whyAreaTitle">
+  <div class="wrap whybuy-in">
+    <div class="rise">
+      <p class="eyebrow">Why Lusail Corp</p>
+      <h2 id="whyAreaTitle">Why ${esc(low(a))} <span class="soft">from us</span></h2>
+${a.why && a.why.length ? `      <ul class="whylist">
+${a.why.map(w => `        <li><strong>${esc(w.t)}</strong><span>${esc(w.d)}</span></li>`).join('\n')}
+      </ul>` : ''}
     </div>
+${a.buying && a.buying.length ? `    <div class="rise d1">
+      <p class="eyebrow">How buying works</p>
+      <h2>${esc(cap((a.buyingTitle || 'From enquiry to delivery').toLowerCase()))}</h2>
+      <ol class="buysteps">
+${a.buying.map((p, i) => `        <li><span>${num(i)}</span><div><strong>${esc(p.t)}</strong><p>${esc(p.d)}</p></div></li>`).join('\n')}
+      </ol>
+    </div>` : ''}
   </div>
 </section>
 
-` : ''}${process}<section class="co-ask">
+<section class="co-ask">
   <div class="wrap co-ask-in">
     <div>
       <p class="eyebrow">${esc(a.name)}</p>
@@ -1383,12 +1383,12 @@ ${a.why.map(w => `      <div class="bwhy-item">
   </div>
 </section>
 
-<section class="section tight" aria-labelledby="othTitle">
-  <div class="wrap">
-    ${head2('othTitle', 'The other <span class="soft">service areas</span>', '')}
-    ${areaRail(others)}
+<nav class="othernav" aria-label="The other service areas">
+  <div class="wrap othernav-in">
+    <span class="othernav-h">Also from Lusail Corp</span>
+${others.map(o => `    <a href="${areaHref(o)}">${esc(o.name)}</a>`).join('\n')}
   </div>
-</section>
+</nav>
 
 </div>
 `

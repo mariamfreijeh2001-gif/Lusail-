@@ -4399,3 +4399,53 @@ html.js .sheet.in{opacity:1;transform:none}
 .tp-main .tmore > summary{min-height:40px;padding:8px 0;font-size:var(--t-xs)}
 @media (max-width:860px){ .tp-grid{grid-template-columns:1fr} }
 @media (min-width:561px) and (max-width:860px){ .tp-side{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 20px} .tp-side .tpic{grid-row:auto} }
+
+/* ==========================================================================
+   AREA PAGE — refined: chapters ruled rather than boxed, numbered supply
+   rows in two columns, why-us and the process as one band, the other
+   areas as one line. Appended last, with its own queries.
+   ========================================================================== */
+.tover2 .tover2-in{grid-template-columns:minmax(0,8fr) minmax(0,4fr)}
+.tover2-h{font-size:clamp(1.5rem,2.2vw,1.9375rem);line-height:1.3}
+.tabs-sec{padding-top:clamp(28px,3.4vw,44px)}
+.sheets{gap:0;border-top:1px solid var(--ink)}
+.tpanel.sheet{background:none;border:0;border-bottom:1px solid var(--line-2);padding:clamp(32px,4vw,56px) 0}
+.sheet .tp-grid{grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:clamp(28px,4vw,64px)}
+.sheet .tpic::after{width:44px}
+.sheet .tp-side .tfacts{border-top:1px solid var(--line-2)}
+.sheet .tp-side .tfacts > div{border-bottom-color:var(--line)}
+.sheet .tp-main .eyebrow{color:var(--co-text,var(--gold-text))}
+.sheet .tp-main .eyebrow::before{background:var(--co,var(--gold))}
+.sheet .tp-main h2{font-size:clamp(1.75rem,2.6vw,2.25rem)}
+.sheet .tp-main .tlead{max-width:60ch}
+.tlist2{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(22px,2.8vw,40px);border-top:1px solid var(--line-2)}
+.tlist2 > div{padding:12px 0 14px;border-bottom:1px solid var(--line);display:grid;gap:4px;align-content:start}
+.tlist2 dt{display:flex;align-items:baseline;gap:10px;font:400 1rem/1.3 var(--display);color:var(--ink)}
+.tlist2 dt span{font:300 .75rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
+.tlist2 dd{margin:0;font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
+.sheet .tp-main .tfrom{margin-top:6px}
+.sheet .tp-main .tmore{border-bottom:0}
+.sheet .tp-main .tmore > summary{color:var(--co-text,var(--gold-text))}
+.whybuy{padding-block:clamp(44px,5.5vw,76px)}
+.whybuy-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,96px);align-items:start}
+.whybuy h2{font:300 clamp(1.5rem,2.2vw,1.9375rem)/1.15 var(--display);color:var(--ink);margin:10px 0 18px}
+.whylist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
+.whylist li{display:grid;gap:3px;padding:12px 0;border-bottom:1px solid var(--line)}
+.whylist strong{font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
+.whylist span{font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
+.buysteps{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
+.buysteps li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.buysteps li > span{font:300 1rem/1.4 var(--display);letter-spacing:.08em;color:var(--gold-text)}
+.buysteps strong{display:block;font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
+.buysteps p{margin:3px 0 0;font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
+.othernav{border-top:1px solid var(--line-2);padding-block:18px}
+.othernav-in{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px}
+.othernav-h{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-right:6px}
+.othernav a{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink);text-decoration:none;min-height:24px;display:inline-flex;align-items:center;border-bottom:1px solid transparent}
+.othernav a:hover{border-bottom-color:var(--gold)}
+@media (max-width:860px){
+  .sheet .tp-grid{grid-template-columns:1fr}
+  .tlist2{grid-template-columns:1fr}
+  .whybuy-in{grid-template-columns:1fr;gap:28px}
+  .tover2 .tover2-in{grid-template-columns:1fr}
+}
