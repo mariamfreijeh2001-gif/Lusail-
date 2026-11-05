@@ -23,12 +23,12 @@ module.exports = {
   // a service area: the photograph behind every page title in it, and its
   // strip in the home page's accordion
   'hero-sector-investments': ['hero'],
-  'hero-sector-energy-industrial': ['hero', 'still', 'rail'],   // also the sulphur service
+  'hero-sector-energy-industrial': ['hero'],
   'hero-sector-technology': ['hero'],
   'hero-sector-trading': ['hero'],
   'hero-sector-supply-distribution': ['hero'],
   'hero-sector-consumer-services': ['hero'],
-  'hero-sector-food-beverage': ['hero', 'still', 'rail'],       // also the edible oils service
+  'hero-sector-food-beverage': ['hero'],
   'hero-lusail-commercial': ['hero'],                           // freight & logistics
 
   // a service: the shot beside its story (still) and its card on the index
@@ -43,13 +43,17 @@ module.exports = {
   'panel-food-commodities': ['panel', 'still', 'rail'],
   'panel-ocean-freight': ['panel', 'still', 'rail'],
   'coffee-still': ['still', 'rail'],
+  // generated product photographs (see TODO): the sulphur, sugar, edible
+  // oils and energy-materials services
+  'prod-sulphur': ['still', 'rail'],
+  'prod-sugar': ['still', 'rail'],
+  'prod-edible-oils': ['still', 'rail'],
+  'prod-industrial-materials': ['still', 'rail'],
   'prod-air-freight': ['still', 'rail'],
   'prod-dry-food': ['still', 'rail'],
-  'prod-food-commodities': ['still', 'rail'],
   'prod-fresh-fruits': ['still', 'rail'],
   'prod-fresh-vegetables': ['still', 'rail'],
   'prod-grains-pulses': ['still', 'rail'],
-  'prod-industrial-commodities': ['still', 'rail'],
   'prod-land-freight': ['still', 'rail'],
   'prod-energy-materials': ['panel', 'still', 'rail'],
   'prod-technology-systems': ['panel', 'still', 'rail'],

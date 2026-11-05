@@ -18,10 +18,13 @@ Group's own sourcing events, **not from anything you have confirmed.** Go
 through `lines`, `facts` and `SERVICE_FAQ` in [data/site.js](data/site.js)
 and correct anything you would not want a buyer to hold you to.
 
-Three services also borrow a photograph that does not show the product:
-**sugar** (a market stall), **edible oils** (bowls of pulses) and **energy
-and industrial materials** (steel). A photograph of each would be better;
-until then they are the nearest the stock holds.
+Four services — **sulphur, sugar, edible oils and energy and industrial
+materials** — carry AI-generated photographs (made on 5 November 2026 in the
+Figma file "Lusail Corp — service photographs", because the stock held
+nothing that showed the product). They are `prod-sulphur`, `prod-sugar`,
+`prod-edible-oils` and `prod-industrial-materials` in `site-assets/img/`.
+Replace them with real photographs of the Group's own product when you have
+them; the names can stay.
 
 Every service page also shows **"Sourced from"** with a list of countries.
 Those pairings are **mine, not yours.**

@@ -154,7 +154,7 @@ const AREAS = [
           'The product is granular: formed, dry, low in dust and fines, which is what receiving ports and plants ask for. Every cargo is sold to a specification sheet and inspected at the load port by an independent surveyor.',
           'Because the freight sits in the same business, a sulphur enquiry is answered as a delivered price — FOB or CFR — with the laycan and the vessel class the route allows.'
         ],
-        img: 'hero-sector-energy-industrial',
+        img: 'prod-sulphur',
         facts: [
           { k: 'Form', v: 'Granular, 2–6 mm' },
           { k: 'Typical purity', v: '99.5% minimum, dry basis' },
@@ -214,7 +214,7 @@ const AREAS = [
           'The work is in the documents and the timing as much as the price: a current crop year, a polarisation and moisture that hold on arrival, packing that survives the port, and a shipment date that fits the buyer’s own programme.',
           'Smaller buyers take containers of 50 kg bags; larger ones take breakbulk or bulk vessels. Both are quoted with the freight, so the price is a landed one.'
         ],
-        img: 'prod-food-commodities',
+        img: 'prod-sugar',
         facts: [
           { k: 'Grades', v: 'ICUMSA 45 refined white; raw sugar' },
           { k: 'Packing', v: '50 kg PP bags with liner; 1 MT big bags; bulk' },
@@ -244,7 +244,7 @@ const AREAS = [
           'A manufacturer takes oil in flexitanks or ISO tanks; a distributor takes it in drums, jerrycans or retail bottles under its own label. We quote all of them, with the freight, because the pack decides the route as much as the origin does.',
           'Food oil has a shelf life, so the schedule matters: production date, shipping window and arrival are agreed before the order is confirmed.'
         ],
-        img: 'hero-sector-food-beverage',
+        img: 'prod-edible-oils',
         facts: [
           { k: 'Oils', v: 'Palm olein, sunflower, soybean' },
           { k: 'Packing', v: 'Flexitank, ISO tank, drum, jerrycan, bottle' },
@@ -652,7 +652,7 @@ const AREAS = [
           'A supply contract here is measured in years, so each product is sourced from more than one origin and inspected independently, and the contract is backed by a counterpart with the balance sheet and the certified systems to carry it.',
           'Logistics for heavy and hazardous materials — tankers, ISO tanks, bulk vessels, permits — is handled by the Group’s own freight desk.'
         ],
-        img: 'prod-industrial-commodities',
+        img: 'prod-industrial-materials',
         facts: [
           { k: 'Materials', v: 'Fuels, petrochemicals, lubricants, bitumen, steel, chemicals' },
           { k: 'Customers', v: 'Energy operators, industrial sites, contractors, institutions' },
