@@ -1376,12 +1376,12 @@ ${a.why.map(w => `      <div class="bwhy-item">
   </div>
 </section>
 
-<nav class="othernav" aria-label="The other service areas">
-  <div class="wrap othernav-in">
-    <span class="othernav-h">Also from Lusail Corp</span>
-${others.map(o => `    <a href="${areaHref(o)}">${esc(o.name)}</a>`).join('\n')}
+<section class="section tight" aria-labelledby="othTitle">
+  <div class="wrap">
+    ${head2('othTitle', 'The other <span class="soft">service areas</span>', '')}
+    ${areaRail(others)}
   </div>
-</nav>
+</section>
 
 </div>
 `
