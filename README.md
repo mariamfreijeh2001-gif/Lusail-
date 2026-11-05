@@ -13,17 +13,26 @@ npm run import -- "path/to/photo.png" hero-tibeco-group   # bring in any photo, 
 
 ## Structure
 
-Two tiers: a **sector** holds any number of **companies**. The Group runs seven
-sectors and five companies today, and a company can sit in more than one
-sector — Lusail Commercial appears under both Trading and Supply &
-Distribution, and TIBECO Group under five.
+The site lists **what the Group provides**, not which company provides it.
+Two tiers: a **service area** holds any number of **services**. The Group
+runs seven areas and twenty-four services today — sulphur, coffee, sugar,
+edible oils and wheat; fresh produce, rice and dry foods; ocean, land and air
+freight and chartering; energy and industrial materials, equipment, project
+supply and food security; enterprise IT and advanced systems; investment and
+partnerships; laundry and a café.
+
+The **companies** that deliver the services are named in **one place only**:
+the scrolling strip at the foot of the home page (`/#companies`). No service
+links to a company and no menu names one. An enquiry about a service is
+routed to the company behind it by the contact function, which the visitor
+never has to know.
 
 | URL | |
 |---|---|
-| `/` | Home |
-| `/sectors/` | Every sector, each with the businesses inside it |
-| `/sectors/#sec-<slug>` | One sector — a block on the index, not a page of its own |
-| `/companies/<slug>/` | One company. TIBECO has no page here: every link to it opens tibecogroup.com in a new tab |
+| `/` | Home: the services ledger, the areas, the globe, the one strip of companies |
+| `/services/` | Every area, each with the services inside it as cards |
+| `/services/#<area>` | One area — a block on the index, not a page of its own |
+| `/services/<slug>/` | One service: its story, what is supplied, where from, how it works, its questions, the ask |
 | `/about/` | The Group: what it is and what it believes |
 | `/partnerships/` | Work With Us — who the Group wants to hear from, and the two ways in |
 | `/supplier-portal/` | The Supplier Portal: what the Group buys, the next events, how it works, requirements |
@@ -32,21 +41,33 @@ Distribution, and TIBECO Group under five.
 | `/contact/` | Channels and the enquiry form |
 | `/404.html` | Not found |
 
-There is **no portfolio index, no careers page, and no page per sector** —
-each sector is a block on /sectors/ with an anchor, which is what the menus,
-the footer and the old per-sector URLs (by redirect) all point at. The menus
-name no companies either: a company is reached from its sector's block or
-from the home page, and TIBECO — the one company with a website of its own —
-is linked straight there, in a new tab. Suppliers register once on the Supplier
-Portal; every other enquiry goes through the contact form, which routes on
-the "area of interest" field. The old `/companies/`, `/portfolio/` and
-`/careers/` URLs redirect, and so do guessed ones like `/vendors/`,
-`/tenders/` and `/procurement/`.
+There is **no company page, no careers page, and no page per area** — each
+area is a block on /services/ with an anchor, which is what the menus, the
+footer and the old per-sector URLs (by redirect) all point at. TIBECO — the
+one company with a website of its own — is linked there from the companies
+strip, in a new tab. Suppliers register once on the Supplier Portal; every
+other enquiry goes through the contact form, which routes on the "area of
+interest" field: the visitor picks a service area, and `desk` on that area
+names the company whose mailbox it reaches. The old `/sectors/`,
+`/companies/`, `/portfolio/` and `/careers/` URLs redirect, and so do
+guessed ones like `/vendors/`, `/tenders/` and `/procurement/`.
 
-Adding a company to a sector means adding one object to that sector's
-`companies` array. The sectors menu, the sectors index, the sector page, the
-home page's sector accordion and tiles, the footer, the contact dropdown (and the email
-routing behind it) and the sitemap all follow.
+Adding a service to an area means adding one object to that area's
+`services` array (and a line to `build/imageroles.js` for its photograph).
+The services menu, the services index, the service page, the home page's
+ledger, the related-services row, the sitemap and the structured data all
+follow.
+
+### Search
+
+Each service page is built to be the page a search engine lands a buyer on:
+a title of the form *Sulphur — Granular solid sulphur, in bulk | Lusail Corp,
+Qatar*, the service's `short` as the description, a `Service` in JSON-LD with
+its provider, its lines as an offer catalogue and its activities as
+keywords, a `FAQPage` from `SERVICE_FAQ`, a `BreadcrumbList`, descriptive
+`alt` text on its photograph, and internal links to its area, its siblings
+and the sourcing register. The home page carries the whole offer catalogue
+on the `Organization`, and `/services/` an `ItemList` of every service.
 
 ## Where things live
 
@@ -76,37 +97,44 @@ _source/                 raw photography, the full logo kit, retired photos;
 
 Everything is in [data/site.js](data/site.js) — including `FIGURES`, the four
 numbers on the home page's stat band. Each is counted from the content
-(companies, sectors, sourcing regions, source countries), so none can drift.
+(services, areas, sourcing regions, source countries), so none can drift.
 
-A sector:
+A service area:
 
 ```js
 {
-  slug: 'trading',
-  name: 'Trading & Commodities',
-  short, headline, intro,              // the sector's line, used in listings
-  hero,                                // behind its own page title
-  shot,                                // optional; beside it on /sectors/
-  companies: [ … ]                     // one or more
+  slug: 'commodities',
+  name: 'Commodity Trading',
+  short, headline, intro, body,        // the area's line and its argument
+  hero,                                // behind every page title in the area
+  accent, accentText, tint, accentOn,  // the colour its pages carry
+  icon,                                // its mark in the menu
+  desk: 'lusail-commercial',           // which company's mailbox an enquiry reaches
+  services: [ … ]                      // one or more
 }
 ```
 
-A company:
+A service:
 
 ```js
 {
-  slug: 'lusail-commercial',
+  slug: 'sulphur',
   name, role, headline, short, intro,
   body: [ … ],                         // the paragraphs beside the photograph
-  facts: [{ k, v }, … ],               // the strip under them
-  products: [{ t, d, img }, … ],       // optional; becomes the rail
-  activities: [ … ],                   // optional; becomes the tags
-  alsoIn: ['supply-distribution'],     // optional second sector
-  cta: 'Partner with Lusail Commercial',
-  hero: 'hero-lusail-commercial',      // wide, behind the title
-  still: 'still-lusail-commercial'     // upright, beside the reading
+  img: 'prod-industrial-commodities',  // beside the story, and its card
+  facts: [{ k, v }, … ],               // the strip under the opening
+  lines: [{ t, d }, … ],               // what is supplied, line by line
+  origins: [ … ],                      // countries, each on REACH
+  steps: [{ t, d }, … ],               // optional; how the work moves
+  activities: [ … ],                   // the tags, and the search keywords
+  supply: 'energy-materials',          // optional; the portal category, which adds "Supply this"
+  cta: 'Enquire about sulphur'
 }
 ```
+
+The questions under a service are in `SERVICE_FAQ`, keyed by slug. The
+companies are `COMPANIES`: name, role, one line, and a `site` for the one
+with a website.
 
 ### Photography
 
@@ -115,10 +143,8 @@ them live in `site-assets/img/` as `.jpg`:
 
 | Name | Used by | Shape |
 |---|---|---|
-| `hero-<page>`, `hero-sector-<slug>` | the photograph behind a page title | wide |
-| `still-<company>` | the shot beside a company's story | 1600px |
-| `prod-<product>` | a product or business-area thumbnail | 1600px |
-| `panel-<name>` | a large photograph inside a company page | 2400px |
+| `hero-<page>`, `hero-sector-<slug>` | the photograph behind a page title; an area's hero stands behind every service in it | wide |
+| `still-<name>`, `prod-<name>`, `panel-<name>`, `coffee-still` | a service's photograph: beside its story, and its card on the index | 640–2560px |
 | `hero-doha`, `hero-sectors`, `why-group`, `about-platform` | the home, sectors and about pages | — |
 
 Banners are imported at up to 2560px from the largest original
@@ -211,23 +237,29 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 ### The pages
 
 - **Every page opens full-screen** with its photograph, the bar transparent
-  over it until the page scrolls. ROMA, Cavallo and Nero open on a colour
-  panel beside the photograph instead, with a solid bar.
+  over it until the page scrolls.
 - **Home** — the statement and the Group's four figures (counted from the
-  content), the sectors as a large accordion (one open panel, the rest upright
-  strips), the businesses with TIBECO as the lead card, "What makes it a
-  group", the sourcing **globe**, and how the Group works.
+  content), the **services ledger** (one row per area, every service as a
+  link), the areas as a large accordion (one open panel, the rest upright
+  strips), "What makes it a group", the sourcing **globe**, how the Group
+  works, and the one **strip of companies**, scrolling across the foot of
+  the page (paused under the pointer; standing still under reduced motion).
 - **The globe** — land points sampled from Natural Earth at build time
   (`build/worldmap.js` → `/assets/img/globe.json`), drawn and turned in a
   canvas, with a gold arc from every source country to Doha. Pointing at a
   region in the list beside it lights its arcs; drag turns it. It only draws
   while on screen and holds still under reduced motion.
-- **Company pages** are landing pages of their own. Each company in
-  `data/site.js` carries `look` (`full`, `split` or `dark`), an `accent`
-  colour, `figures`, and optionally `pillars`, `steps`, `quote`, `presence`,
-  `credentials` and `offerStyle: 'showcase'` (TIBECO's list-and-photograph
-  showcase). The structure is shared; the colour and opening are the
-  company's own.
+- **Service pages** are landing pages of their own: the area's photograph
+  behind the title, the facts strip, the statement and the story beside the
+  service's own photograph, its figures, what is supplied line by line,
+  where it is sourced from (grouped by the Group's regions), how it works
+  where that helps, the questions, the ask (an enquiry pre-addressed to the
+  area, and "Supply this to the Group" where a portal category matches),
+  and the other services in the area. The structure is shared; the colour
+  is the area's own.
+- **The services index** — a numbered rail of the areas at the left that
+  marks the one being read, and each area as a block with its argument and
+  its services as cards.
 - **Work With Us** — who the Group wants to hear from, how it works (a
   timeline), the two ways in (the Supplier Portal, or the contact form), and
   what it is looking to do next (a grid ending in the ask).
@@ -254,7 +286,7 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
   every line and the buyers as links — one open at a time); how it works in
   four short steps; **the registration form, folded** behind a "Register as
   a supplier" row with an "Open the form" button, which the opening's
-  button, a company page's "Supply …" button and any link to `#register`
+  button, a service page's "Supply … to the Group" button and any link to `#register`
   unfold — the documents to have ready sit in the form's side column; the
   **terms in brief** (currency, payment, offer validity, registration
   validity, and the line that every event is an invitation to treat under
@@ -275,14 +307,12 @@ and led by a gold dash. **Every section fits one screen** at 1440×900.
 
 ### Interactive parts
 
-- **The bar** — *Sectors* is a link and a caret: the caret opens a compact
-  panel of sectors and their companies (also on hover; Escape or a click
+- **The bar** — *Services* is a link and a caret: the caret opens a panel of
+  the areas with every service under each (also on hover; Escape or a click
   outside closes it). Below 1080px the bar becomes a full-screen menu with
-  Sectors and Companies folded into groups that open on a tap.
-- **The sector accordion** opens the strip pointed at, tabbed to or tapped,
+  the areas folded into a group that opens on a tap.
+- **The area accordion** opens the strip pointed at, tabbed to or tapped,
   and keeps the last one open. On a phone it is replaced by photograph tiles.
-- **The TIBECO showcase** brings forward the photograph of the area pointed
-  at, focused or tapped.
 - **The figures** are written into the HTML and count up once in view.
 - **Arrival** — each band lifts in once as it scrolls into view. Hiding is
   scoped to a `.js` class the script adds, so nothing is ever invisible if the
@@ -385,9 +415,10 @@ through Resend. The payload carries `area`, the dropdown value, so an enquiry
 can be routed to the right company; the function turns that code into the
 company's name and puts it in the subject line.
 
-Each company page's button links to `/contact/?company=<slug>`, which opens the
-form with that company already selected; its second button, "Supply
-<company>", opens the Supplier Portal with that company's categories ticked.
+Each service page's button links to `/contact/?area=<area>&about=<service>`,
+which opens the form with that area already selected and the service named
+in the message; its second button, "Supply <service> to the Group", opens
+the Supplier Portal registration with that category ticked.
 
 The function needs `RESEND_API_KEY` set in the Vercel project. `CONTACT_TO`
 and `CONTACT_FROM` are optional overrides.
@@ -461,9 +492,10 @@ Field types beyond the usual: `checks` (a group of boxes with a tick-all),
 The field called `message` is the body of the email; every other field,
 long or short, is a row, so a registration's product list is never lost.
 
-A link can preselect: `/supplier-portal/register/?company=<slug>` ticks the
-categories that company buys in (every company page's "Supply …" button
-links there), and `/contact/?company=<slug>` picks the desk. A page can also
+A link can preselect: `/supplier-portal/register/?cat=<slug>` ticks a supply
+category (every service page's "Supply …" button links there), and
+`/contact/?area=<slug>` picks the service area, which is routed to the right
+company's desk by `api/contact.js` without the visitor seeing it. A page can also
 hand a form a first draft (`data-prefill`), which is how an invite-only
 event's "Request an invitation" arrives addressed to the right desk with the
 reference in the message. The email subject says which form it came from —
@@ -500,7 +532,7 @@ URLs. Any other static host works the same way: build, then upload `dist/`
 
 It also sets `Cache-Control`, which nothing did before: every repeat visit was
 revalidating the stylesheet, the script and every photograph — eighteen
-conditional requests on `/sectors/` alone. Fonts are immutable for a year, as
+conditional requests on `/services/` alone. Fonts are immutable for a year, as
 their names pin the family and the cut. Photographs and logos get a month with
 a week of `stale-while-revalidate`; the stylesheet and script an hour with a
 day. The stylesheet and script are requested as `site.css?v=<hash>` and

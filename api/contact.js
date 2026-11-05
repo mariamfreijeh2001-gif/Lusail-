@@ -12,12 +12,16 @@
  *
  * Routing to a company's own desk, each optional; unset ones fall back to
  * CONTACT_TO. A value may hold several addresses separated by commas.
+ * The visitor picks a service area; each area in data/site.js names the
+ * desk (a company) its enquiries go to, so the site never has to show the
+ * company to reach it.
  *
- *   CONTACT_TO_TIBECO_GROUP        everything addressed to TIBECO Group: an
- *   CONTACT_TO_LUSAIL_COMMERCIAL   enquiry with that area of interest, a
- *   CONTACT_TO_ROMA_COMMERCIAL     quotation on one of its events (by the
- *   CONTACT_TO_CAVALLO_LAUNDRY     reference prefix), an invitation request
- *   CONTACT_TO_NERO_CAFE
+ *   CONTACT_TO_TIBECO_GROUP        enquiries about energy, industrial and
+ *                                  project supply, technology, investment
+ *   CONTACT_TO_LUSAIL_COMMERCIAL   commodity trading, freight and logistics
+ *   CONTACT_TO_ROMA_COMMERCIAL     food supply and distribution
+ *   CONTACT_TO_CAVALLO_LAUNDRY     consumer and hospitality services
+ *   CONTACT_TO_NERO_CAFE           (reserved; the café has no desk of its own yet)
  *   CONTACT_TO_SUPPLIERS           supplier registrations (default: TIBECO
  *                                  Group's address if set, else CONTACT_TO)
  *   CONTACT_CC                     copied on every message, e.g. the general inbox
@@ -36,14 +40,14 @@ const LIMITS = {
 };
 
 /* The area codes come from the same file that renders the form's <select>, so
-   the two cannot drift apart. The list includes every company, which is how an
-   enquiry reaches the right desk rather than a general inbox. Anything not on
-   the list is treated as unspecified rather than trusted into a header. */
-const { SITE, ALL_COMPANIES, SECTORS, PARTNER_TYPES, FORMS, FORM_LISTS, SUPPLY, OPPORTUNITIES } = require('../data/site.js');
+   the two cannot drift apart. The list is every service area, and each area
+   knows the desk that answers for it, which is how an enquiry reaches the
+   right company rather than a general inbox. Anything not on the list is
+   treated as unspecified rather than trusted into a header. */
+const { SITE, AREAS: SERVICE_AREAS, PARTNER_TYPES, FORMS, FORM_LISTS, SUPPLY } = require('../data/site.js');
 
 /* Where a message goes. The general inbox unless a desk is configured for
-   the company the message concerns: the area of interest on an enquiry, or
-   the issuing company of the event a quotation answers. */
+   the area the message concerns. */
 const envList = name => (process.env[name] || '').split(',').map(s => s.trim()).filter(Boolean);
 const deskOf = slug => envList('CONTACT_TO_' + String(slug || '').toUpperCase().replace(/-/g, '_'));
 function recipients(form, body) {
@@ -53,7 +57,8 @@ function recipients(form, body) {
   if (form === 'supplier') to = envList('CONTACT_TO_SUPPLIERS').length ? envList('CONTACT_TO_SUPPLIERS') : deskOf('tibeco-group');
   else if (form === 'enquiry' || !form) {
     const area = typeof body.area === 'string' ? body.area.trim() : '';
-    if (ALL_COMPANIES.some(c => c.slug === area)) to = deskOf(area);
+    const hit = SERVICE_AREAS.find(a => a.slug === area);
+    if (hit) to = deskOf(hit.desk);
   }
   if (!to.length) to = fallback;
   const cc = envList('CONTACT_CC').filter(a => !to.includes(a));
@@ -62,7 +67,7 @@ function recipients(form, body) {
 
 const AREAS = Object.assign(
   { general: 'General Enquiry' },
-  ...ALL_COMPANIES.map(c => ({ [c.slug]: c.name })),
+  ...SERVICE_AREAS.map(a => ({ [a.slug]: a.name })),
   {
     supplier: 'Supplier Opportunity',
     partnership: 'Business Partnership',
@@ -165,12 +170,12 @@ function qatarTime(d) {
 /* The lists a FORMS field can take its values from, as value -> label. */
 const OPTION_LABELS = {
   partnerTypes: Object.fromEntries(PARTNER_TYPES.map(p => [p.v, p.t])),
-  sectors: Object.fromEntries(SECTORS.map(x => [x.slug, x.name])),
+  sectors: Object.fromEntries(SERVICE_AREAS.map(x => [x.slug, x.name])),
   supplyCategories: Object.fromEntries(SUPPLY.map(x => [x.slug, x.name])),
   companyTypes: Object.fromEntries(FORM_LISTS.companyTypes),
   areas: AREAS,
   interests: Object.assign({ general: 'A general enquiry', partnership: 'Working with the Group' },
-    Object.fromEntries(SECTORS.map(x => [x.slug, x.name])))
+    Object.fromEntries(SERVICE_AREAS.map(x => [x.slug, x.name])))
 };
 
 /* The documents a registration may attach. The browser enforces the same

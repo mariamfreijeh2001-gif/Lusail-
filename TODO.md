@@ -7,10 +7,24 @@ Everything still outstanding on the site, and where each one lives. Items under
 
 ## Needs you
 
-### 0. Product origins are indicative — confirm them before launch *— blocking*
+### 0. Service specifications and origins are indicative — confirm them before launch *— blocking*
 
-Every product on the Lusail Commercial and ROMA pages now shows **"Sourced
-from"** with a list of countries. Those pairings are **mine, not yours.**
+Every service page under `/services/` now says what is supplied, line by
+line — the sulphur purity and granule size, the sugar's ICUMSA grade and
+polarisation, the wheat protein range, the vessel sizes, the rice
+varieties — and the questions under each page answer in the same terms.
+Those figures were written from ordinary trade practice and from the
+Group's own sourcing events, **not from anything you have confirmed.** Go
+through `lines`, `facts` and `SERVICE_FAQ` in [data/site.js](data/site.js)
+and correct anything you would not want a buyer to hold you to.
+
+Three services also borrow a photograph that does not show the product:
+**sugar** (a market stall), **edible oils** (bowls of pulses) and **energy
+and industrial materials** (steel). A photograph of each would be better;
+until then they are the nearest the stock holds.
+
+Every service page also shows **"Sourced from"** with a list of countries.
+Those pairings are **mine, not yours.**
 
 What is solid: every country used is already on the Group's own declared
 sourcing list, so nothing new was introduced, and the build refuses any origin
@@ -21,7 +35,8 @@ sulphur from the Gulf and Central Asia — not from anything you have told me.
 
 A buyer may read these as a statement about your actual supply chain. Go
 through `origins` in [data/site.js](data/site.js) and correct or delete them.
-Deleting is safe: a product with no `origins` simply renders without the row.
+Deleting is safe: a service with no `origins` simply renders without the
+section.
 
 
 ### 0b. The Supplier Portal's events are examples — replace them *— blocking*

@@ -44,6 +44,156 @@
   ],
   "redirects": [
     {
+      "source": "/sectors/",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/sectors",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/companies/cavallo-laundry/",
+      "destination": "/services/laundry/",
+      "permanent": true
+    },
+    {
+      "source": "/companies/cavallo-laundry",
+      "destination": "/services/laundry/",
+      "permanent": true
+    },
+    {
+      "source": "/companies/nero-cafe/",
+      "destination": "/services/cafe/",
+      "permanent": true
+    },
+    {
+      "source": "/companies/nero-cafe",
+      "destination": "/services/cafe/",
+      "permanent": true
+    },
+    {
+      "source": "/companies/roma-commercial/",
+      "destination": "/services/#food",
+      "permanent": true
+    },
+    {
+      "source": "/companies/roma-commercial",
+      "destination": "/services/#food",
+      "permanent": true
+    },
+    {
+      "source": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
+      "permanent": true
+    },
+    {
+      "source": "/companies/lusail-commercial",
+      "destination": "/services/#commodities",
+      "permanent": true
+    },
+    {
+      "source": "/products/",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/products",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/what-we-do/",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/what-we-do",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/our-services/",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/our-services",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/services/sulfur/",
+      "destination": "/services/sulphur/",
+      "permanent": true
+    },
+    {
+      "source": "/services/sulfur",
+      "destination": "/services/sulphur/",
+      "permanent": true
+    },
+    {
+      "source": "/services/food/",
+      "destination": "/services/#food",
+      "permanent": true
+    },
+    {
+      "source": "/services/food",
+      "destination": "/services/#food",
+      "permanent": true
+    },
+    {
+      "source": "/services/freight/",
+      "destination": "/services/#logistics",
+      "permanent": true
+    },
+    {
+      "source": "/services/freight",
+      "destination": "/services/#logistics",
+      "permanent": true
+    },
+    {
+      "source": "/services/logistics/",
+      "destination": "/services/#logistics",
+      "permanent": true
+    },
+    {
+      "source": "/services/logistics",
+      "destination": "/services/#logistics",
+      "permanent": true
+    },
+    {
+      "source": "/services/commodities/",
+      "destination": "/services/#commodities",
+      "permanent": true
+    },
+    {
+      "source": "/services/commodities",
+      "destination": "/services/#commodities",
+      "permanent": true
+    },
+    {
+      "source": "/services/technology/",
+      "destination": "/services/#technology",
+      "permanent": true
+    },
+    {
+      "source": "/services/technology",
+      "destination": "/services/#technology",
+      "permanent": true
+    },
+    {
+      "source": "/services/investment/",
+      "destination": "/services/#investment",
+      "permanent": true
+    },
+    {
+      "source": "/services/investment",
+      "destination": "/services/#investment",
+      "permanent": true
+    },
+    {
       "source": "/home/",
       "destination": "/",
       "permanent": true
@@ -85,42 +235,42 @@
     },
     {
       "source": "/our-companies/",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/our-companies",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/subsidiaries/",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/subsidiaries",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/our-sectors/",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/our-sectors",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/our-business/",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/our-business",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
@@ -145,252 +295,252 @@
     },
     {
       "source": "/sector/:slug/",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/sector/:slug",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/company/lusail-coffee",
-      "destination": "/companies/nero-cafe/",
+      "destination": "/services/cafe/",
       "permanent": true
     },
     {
       "source": "/company/lusail-coffee/",
-      "destination": "/companies/nero-cafe/",
+      "destination": "/services/cafe/",
       "permanent": true
     },
     {
       "source": "/company/lusail-foods",
-      "destination": "/companies/roma-commercial/",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/company/lusail-foods/",
-      "destination": "/companies/roma-commercial/",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/company/lusail-commodities",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/company/lusail-commodities/",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/company/lusail-distribution",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/company/lusail-distribution/",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/company/lusail-shipping",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/company/lusail-shipping/",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/company/lusail-contracting",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/company/lusail-contracting/",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/company/lusail-energy",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/company/lusail-energy/",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/company/",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/company",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/company/:slug/",
-      "destination": "/companies/:slug/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/company/:slug",
-      "destination": "/companies/:slug/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/sectors/coffee/",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/services/coffee/",
       "permanent": true
     },
     {
       "source": "/sectors/coffee",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/services/coffee/",
       "permanent": true
     },
     {
       "source": "/sectors/food/",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/food",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/food-supply",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/distribution/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/distribution",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/logistics/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/sectors/logistics",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/sectors/shipping/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/sectors/shipping",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/sectors/contracting/",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/sectors/contracting",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/sectors/energy/",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/sectors/energy",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/companies/lusail-coffee/",
-      "destination": "/companies/nero-cafe/",
+      "destination": "/services/cafe/",
       "permanent": true
     },
     {
       "source": "/companies/lusail-coffee",
-      "destination": "/companies/nero-cafe/",
+      "destination": "/services/cafe/",
       "permanent": true
     },
     {
       "source": "/companies/lusail-foods/",
-      "destination": "/companies/roma-commercial/",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/companies/lusail-foods",
-      "destination": "/companies/roma-commercial/",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/companies/lusail-commodities/",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/companies/lusail-commodities",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/companies/lusail-distribution/",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/companies/lusail-distribution",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/companies/lusail-shipping/",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/companies/lusail-shipping",
-      "destination": "/companies/lusail-commercial/",
+      "destination": "/services/#logistics",
       "permanent": true
     },
     {
       "source": "/companies/lusail-contracting/",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/companies/lusail-contracting",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/companies/lusail-energy/",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/companies/lusail-energy",
-      "destination": "/sectors/",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
@@ -435,12 +585,12 @@
     },
     {
       "source": "/sectors/future-ventures/",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
       "source": "/sectors/future-ventures",
-      "destination": "/sectors/",
+      "destination": "/services/",
       "permanent": true
     },
     {
@@ -475,22 +625,22 @@
     },
     {
       "source": "/companies/",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/companies",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/portfolio/",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
       "source": "/portfolio",
-      "destination": "/sectors/",
+      "destination": "/#companies",
       "permanent": true
     },
     {
@@ -575,72 +725,72 @@
     },
     {
       "source": "/sectors/investments/",
-      "destination": "/sectors/#sec-investments",
+      "destination": "/services/#investment",
       "permanent": true
     },
     {
       "source": "/sectors/investments",
-      "destination": "/sectors/#sec-investments",
+      "destination": "/services/#investment",
       "permanent": true
     },
     {
       "source": "/sectors/trading/",
-      "destination": "/sectors/#sec-trading",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/sectors/trading",
-      "destination": "/sectors/#sec-trading",
+      "destination": "/services/#commodities",
       "permanent": true
     },
     {
       "source": "/sectors/supply-distribution/",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/supply-distribution",
-      "destination": "/sectors/#sec-supply-distribution",
+      "destination": "/services/#food",
       "permanent": true
     },
     {
       "source": "/sectors/energy-industrial/",
-      "destination": "/sectors/#sec-energy-industrial",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/sectors/energy-industrial",
-      "destination": "/sectors/#sec-energy-industrial",
+      "destination": "/services/#energy-industrial",
       "permanent": true
     },
     {
       "source": "/sectors/technology/",
-      "destination": "/sectors/#sec-technology",
+      "destination": "/services/#technology",
       "permanent": true
     },
     {
       "source": "/sectors/technology",
-      "destination": "/sectors/#sec-technology",
+      "destination": "/services/#technology",
       "permanent": true
     },
     {
       "source": "/sectors/consumer-services/",
-      "destination": "/sectors/#sec-consumer-services",
+      "destination": "/services/#consumer",
       "permanent": true
     },
     {
       "source": "/sectors/consumer-services",
-      "destination": "/sectors/#sec-consumer-services",
+      "destination": "/services/#consumer",
       "permanent": true
     },
     {
       "source": "/sectors/food-beverage/",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/services/#consumer",
       "permanent": true
     },
     {
       "source": "/sectors/food-beverage",
-      "destination": "/sectors/#sec-food-beverage",
+      "destination": "/services/#consumer",
       "permanent": true
     },
     {
@@ -691,6 +841,36 @@
     {
       "source": "/register",
       "destination": "/supplier-portal/register/",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/:slug/",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/sectors/:slug",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/companies/:slug/",
+      "destination": "/#companies",
+      "permanent": true
+    },
+    {
+      "source": "/companies/:slug",
+      "destination": "/#companies",
+      "permanent": true
+    },
+    {
+      "source": "/service/:slug/",
+      "destination": "/services/:slug/",
+      "permanent": true
+    },
+    {
+      "source": "/service/:slug",
+      "destination": "/services/:slug/",
       "permanent": true
     }
   ]

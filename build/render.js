@@ -39,7 +39,7 @@ const ASSET_V = {
   js: require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, '..', 'assets/js/site.js'))).digest('hex').slice(0, 10)
 };
 const {
-  SITE, REACH, REACH_POINTS, HUB, WHY, SECTORS, ALL_COMPANIES, FORMS, FORM_LISTS,
+  SITE, REACH, REACH_POINTS, HUB, WHY, AREAS, ALL_SERVICES, COMPANIES, FORMS, FORM_LISTS,
   WHAT_WE_DO, VALUE_CREATION, VALUES, GROWTH, FIGURES,
   PARTNER_TYPES, SUPPLY, OPPORTUNITIES, SUPPLIER_DOCS, SOURCING_TERMS, CODE_OF_CONDUCT
 } = require('../data/site.js');
@@ -146,21 +146,18 @@ const count = n => WORDS[n] || String(n);
 const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
 const plural = (n, one, many) => n === 1 ? `1 ${one}` : `${n} ${many}`;
 
-/* Where a company link points. A company with a website of its own — TIBECO —
-   is linked there, in a new tab, and gets no page here; the rest keep their
-   pages until they have sites. One helper, so no link can disagree. */
-const coHref = c => c.site || `/companies/${c.slug}/`;
-/* The mark an external company link wears, so it is never dressed as an
-   internal one: the away-arrow for the eye, the destination for a reader. */
-const coMark = c => c.site
-  ? ' <span class="ext" aria-hidden="true">&#8599;</span><span class="vh"> — opens tibecogroup.com in a new tab</span>'
-  : '';
-const coLink = c => c.site
-  ? `href="${c.site}" target="_blank" rel="noopener"`
-  : `href="/companies/${c.slug}/"`;
+/* Where a service and an area live. One helper each, so no link can
+   disagree. An area's one address is its block on the services index. */
+const svcHref = s => `/services/${s.slug}/`;
+const areaHref = a => `/services/#${typeof a === 'string' ? a : a.slug}`;
+const areaOf = slug => AREAS.find(a => a.slug === slug);
+const svcsIn = a => ALL_SERVICES.filter(s => s.areaSlug === (typeof a === 'string' ? a : a.slug));
 
-/* A sector's one address is its block on the index. */
-const secHref = s => `/sectors/#sec-${typeof s === 'string' ? s : s.slug}`;
+/* The mark an external link wears, so it is never dressed as an internal
+   one: the away-arrow for the eye, the destination for a reader. Only the
+   one company with a website of its own gets one. */
+const host = url => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, '');
+const extMark = c => ` <span class="ext" aria-hidden="true">&#8599;</span><span class="vh"> — opens ${esc(host(c.site))} in a new tab</span>`;
 
 /* A social link is only rendered once it points somewhere. While the handles
    are unset the link simply is not there, rather than a link to '#'. */
@@ -232,7 +229,7 @@ const BURGER = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><p
 
 const ORG_ID = SITE.domain + '/#organization';
 const abs = p => SITE.domain + p;
-const coId = c => (c.site || abs('/companies/' + c.slug + '/')) + '#organization';
+const svcId = s => abs(svcHref(s)) + '#service';
 
 function orgSchema() {
   const social = SOCIAL().map(([, href]) => href);
@@ -255,11 +252,15 @@ function orgSchema() {
       '@type': 'ContactPoint', contactType: 'sales',
       email: SITE.contact.email, availableLanguage: ['en']
     }],
-    knowsAbout: [
-      'Commodity trading', 'International freight forwarding', 'Ocean freight',
-      'Vessel chartering', 'Food import and distribution', 'Garment care'
-    ],
-    subOrganization: ALL_COMPANIES.map(c => ({ '@id': coId(c) }))
+    knowsAbout: ALL_SERVICES.map(s => s.name),
+    /* every service, as the catalogue a search engine can read off the
+       organisation itself; each entry points at the service's own page */
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog', name: SITE.name + ' services',
+      itemListElement: ALL_SERVICES.map(s => ({ '@type': 'Offer', itemOffered: { '@id': svcId(s) } }))
+    },
+    subOrganization: COMPANIES.map(c => Object.assign({ '@type': 'Organization', name: c.name, description: c.short },
+      c.site ? { url: c.site } : {}))
   };
   if (SITE.contact.phone && !/0{4}/.test(SITE.contact.phone)) {
     org.telephone = SITE.contact.phone.replace(/\s/g, '');
@@ -268,27 +269,42 @@ function orgSchema() {
   return org;
 }
 
-function companySchema(c) {
-  const org = {
-    '@type': 'Organization',
-    '@id': coId(c),
-    name: c.name,
-    url: c.site || abs('/companies/' + c.slug + '/'),
-    image: abs('/assets/img/' + c.hero + '.jpg'),
-    description: c.short,
-    parentOrganization: { '@id': ORG_ID },
-    address: { '@type': 'PostalAddress', addressCountry: 'QA' },
-    areaServed: { '@type': 'Country', name: 'Qatar' }
+/* One service, in schema.org's vocabulary: what it is, who provides it,
+   where, and the lines it is made of. The FAQ, where a service has one, is
+   published as a FAQPage so a search engine can show the questions. */
+function serviceSchema(s) {
+  const svc = {
+    '@type': 'Service',
+    '@id': svcId(s),
+    name: s.name,
+    serviceType: s.areaName,
+    description: s.short,
+    url: abs(svcHref(s)),
+    image: abs('/assets/img/' + s.img + '.jpg'),
+    provider: { '@id': ORG_ID },
+    areaServed: s.origins && s.origins.length
+      ? [{ '@type': 'Country', name: 'Qatar' }, { '@type': 'Place', name: 'International' }]
+      : { '@type': 'Country', name: 'Qatar' },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog', name: s.name + ' — what we supply',
+      itemListElement: (s.lines || []).map(l => ({
+        '@type': 'Offer', itemOffered: { '@type': 'Service', name: l.t, description: l.d }
+      }))
+    }
   };
-  const offers = (c.products || c.services || []).map(p => ({
-    '@type': 'Offer', itemOffered: { '@type': 'Service', name: p.t }
-  }));
-  if (offers.length) {
-    org.hasOfferCatalog = {
-      '@type': 'OfferCatalog', name: c.name + ' — what it offers', itemListElement: offers
-    };
-  }
-  return org;
+  if (s.activities && s.activities.length) svc.keywords = s.activities.join(', ');
+  return svc;
+}
+
+function faqSchema(s) {
+  if (!s.faq || !s.faq.length) return null;
+  return {
+    '@type': 'FAQPage',
+    mainEntity: s.faq.map(f => ({
+      '@type': 'Question', name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a }
+    }))
+  };
 }
 
 /* A trail of where the page sits. The last step names the current page and
@@ -350,32 +366,24 @@ ${TURNSTILE ? `<script src="https://challenges.cloudflare.com/turnstile/v0/api.j
    they came for in one move. */
 const NAV = [
   ['Home', '/'],
-  ['Sectors', '/sectors/'],
+  ['Services', '/services/'],
   ['About Us', '/about/'],
   ['Work With Us', '/partnerships/'],
   ['Suppliers', '/supplier-portal/']
 ];
 
-/* A mark per sector, drawn from the set already in ICON_PATHS. */
-const SECTOR_ICON = {
-  'investments': 'target',
-  'energy-industrial': 'spark',
-  'technology': 'solve',
-  'trading': 'markets',
-  'supply-distribution': 'crate',
-  'consumer-services': 'ring',
-  'food-beverage': 'cup'
-};
-
-function sectorsPanel() {
+/* The services panel under the bar: every area as a column, and every
+   service under its area, so any service is one click from any page. */
+function servicesPanel() {
   return `      <div class="secmenu" id="secmenu">
-        <a class="secmenu-eyebrow" href="/sectors/">Our sectors <span aria-hidden="true">&#8594;</span></a>
+        <a class="secmenu-eyebrow" href="/services/">All our services <span aria-hidden="true">&#8594;</span></a>
         <div class="secmenu-cols">
-${SECTORS.map(s => `          <div class="secmenu-col">
-            <a class="secmenu-head" href="${secHref(s)}">
-              ${icon(SECTOR_ICON[s.slug] || 'markets')}
-              <span>${esc(s.name)}</span>
+${AREAS.map(a => `          <div class="secmenu-col">
+            <a class="secmenu-head" href="${areaHref(a)}">
+              ${icon(a.icon || 'markets')}
+              <span>${esc(a.name)}</span>
             </a>
+${svcsIn(a).map(s => `            <a class="secmenu-item" href="${svcHref(s)}">${esc(s.name)}</a>`).join('\n')}
           </div>`).join('\n')}
         </div>
       </div>`;
@@ -387,17 +395,17 @@ ${SECTORS.map(s => `          <div class="secmenu-col">
 function header(current, overHero) {
   const link = ([label, href]) => {
     const here = href === current ? ' aria-current="page"' : '';
-    /* a sector page is "under" Sectors, so the button carries the mark */
-    const onSector = current && current.startsWith('/sectors/') ? ' aria-current="true"' : '';
-    /* Sectors is a link to the sectors page and a panel listing them, which
+    /* a service page is "under" Services, so the button carries the mark */
+    const onService = current && current.startsWith('/services/') ? ' aria-current="true"' : '';
+    /* Services is a link to the services page and a panel listing them, which
        are two things, so they are two controls: clicking the word goes to
        the page, and the caret beside it opens the panel. One element cannot
        do both — a click would have to either navigate or not. */
-    return label === 'Sectors'
+    return label === 'Services'
       ? `      <div class="navwrap" id="navwrap">
-        <a class="nav-link nav-sec" href="${href}"${here || onSector}>Sectors</a>
-        <button class="nav-caret" type="button" id="secBtn" aria-expanded="false" aria-controls="secmenu" aria-label="Show the sectors">${CARET}</button>
-${sectorsPanel()}
+        <a class="nav-link nav-sec" href="${href}"${here || onService}>Services</a>
+        <button class="nav-caret" type="button" id="secBtn" aria-expanded="false" aria-controls="secmenu" aria-label="Show the services">${CARET}</button>
+${servicesPanel()}
       </div>`
       : `      <a class="nav-link" href="${href}"${here}>${esc(label)}</a>`;
   };
@@ -415,9 +423,9 @@ ${NAV.map(link).join('\n')}
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
   <a href="/"${current === '/' ? ' aria-current="page"' : ''}>Home</a>
   <details class="menu-grp">
-    <summary>Sectors</summary>
-    <a class="sub" href="/sectors/"${current === '/sectors/' ? ' aria-current="page"' : ''}>All sectors</a>
-${SECTORS.map(x => `    <a class="sub" href="${secHref(x)}">${esc(x.name)}</a>`).join('\n')}
+    <summary>Services</summary>
+    <a class="sub" href="/services/"${current === '/services/' ? ' aria-current="page"' : ''}>All services</a>
+${AREAS.map(x => `    <a class="sub" href="${areaHref(x)}">${esc(x.name)}</a>`).join('\n')}
   </details>
 
   <a href="/about/"${current === '/about/' ? ' aria-current="page"' : ''}>About us</a>
@@ -434,17 +442,17 @@ ${SECTORS.map(x => `    <a class="sub" href="${secHref(x)}">${esc(x.name)}</a>`)
 /* The lists a field can draw its options from. */
 const FORM_OPTIONS = {
   partnerTypes: () => PARTNER_TYPES.map(p => ({ v: p.v, t: p.t })),
-  sectors: () => SECTORS.map(x => ({ v: x.slug, t: x.name })),
-  /* each category knows which companies buy in it, so a link from a company
-     page can tick its categories */
-  supplyCategories: () => SUPPLY.map(x => ({ v: x.slug, t: x.name, data: `data-buyers="${x.buyers.join(' ')}"` })),
+  sectors: () => AREAS.map(x => ({ v: x.slug, t: x.name })),
+  supplyCategories: () => SUPPLY.map(x => ({ v: x.slug, t: x.name })),
   companyTypes: () => FORM_LISTS.companyTypes.map(([v, t]) => ({ v, t })),
+  /* the service areas, which is what a visitor is asking about; each one
+     routes to a desk behind the scenes (see api/contact.js) */
   areas: () => [{ v: 'general', t: 'General enquiry' }]
-    .concat(ALL_COMPANIES.map(c => ({ v: c.slug, t: c.name })))
+    .concat(AREAS.map(a => ({ v: a.slug, t: a.name })))
     .concat([{ v: 'supplier', t: 'Supplier opportunity' }, { v: 'partnership', t: 'Business partnership' },
       { v: 'careers', t: 'Careers' }, { v: 'other', t: 'Other' }]),
   interests: () => [{ v: 'general', t: 'A general enquiry' }]
-    .concat(SECTORS.map(x => ({ v: x.slug, t: x.name })))
+    .concat(AREAS.map(x => ({ v: x.slug, t: x.name })))
     .concat([{ v: 'partnership', t: 'Working with the Group' }])
 };
 
@@ -577,6 +585,7 @@ function footer(opts = {}) {
       </div>
       <div class="foot-go">
         <nav class="foot-nav" aria-label="Footer">
+          <a href="/services/">Services</a>
           <a href="/about/">About us</a>
           <a href="/partnerships/">Work with us</a>
           <a href="/supplier-portal/">Supplier Portal</a>
@@ -628,9 +637,10 @@ ${note ? `    <p class="pagehead-note">${note}</p>` : ''}
 /* The label above each section heading, by the heading's id. A heading
    with no entry here simply has none. */
 const EYEBROW = {
-  coTitle: 'Portfolio', whyTitle: 'Why Lusail Corp', wwdTitle: 'How we work',
+  coTitle: 'The companies', whyTitle: 'Why Lusail Corp', wwdTitle: 'How we work',
   valTitle: 'Our values', vcTitle: 'Value creation', prodTitle: 'What we offer',
-  svcTitle: 'Services', actTitle: 'Capabilities', othTitle: 'Explore further',
+  svcTitle: 'Services', ledTitle: 'Our services', linesTitle: 'What we supply',
+  faqTitle: 'Questions', actTitle: 'Capabilities', othTitle: 'Explore further',
   srcTitle: 'Sourcing', mktTitle: 'Global reach', pwTitle: 'Partnerships',
   pillarTitle: 'How it is built', stepTitle: 'How it works',
   howTitle: 'The process', growTitle: 'What comes next',
@@ -647,24 +657,21 @@ ${aside ? `      <p>${esc(aside)}</p>` : ''}
     </div>`;
 }
 
-/* The card. Every company listing on the site is made of these. */
-function coCard(c) {
-  /* a company can sit in more than one sector, so this is a space-separated
-     list and the filter matches any of them */
-  const inSectors = (c.sectors || [c.sectorSlug]).join(' ');
-  return `      <a class="cocard" ${coLink(c)} data-sector="${inSectors}">
-        <span class="cocard-shot">${pic(c.hero, '(max-width:700px) 72vw, 334px', `alt="${esc(c.name)}" loading="lazy"`)}</span>
+/* The card. Every service listing on the site is made of these. */
+function svcCard(s) {
+  return `      <a class="cocard" href="${svcHref(s)}">
+        <span class="cocard-shot">${pic(s.img, '(max-width:700px) 72vw, 334px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}</span>
         <span class="cocard-body">
-          <span class="cocard-sector">${esc(c.sectorName)}</span>
-          <span class="cocard-name">${esc(c.name)}${coMark(c)}</span>
-          <span class="cocard-role">${esc(c.role)}</span>
+          <span class="cocard-sector">${esc(s.areaName)}</span>
+          <span class="cocard-name">${esc(s.name)}</span>
+          <span class="cocard-role">${esc(s.role)}</span>
         </span>
       </a>`;
 }
 
-function companyRail(list, id) {
+function serviceRail(list, id) {
   return `<div class="cogrid"${id ? ` id="${id}"` : ''}>
-${list.map(coCard).join('\n')}
+${list.map(svcCard).join('\n')}
     </div>`;
 }
 
@@ -755,21 +762,43 @@ ${WHY.map((x, i) => `        <li class="why-item rise d${Math.min(i, 3)}">
     </div>`;
 }
 
-/* The four businesses, as panels that open one at a time. The first is open
-   until the pointer picks another, and each one is a link — so pointing at a
-   company previews it and clicking goes there. Pure CSS, so it works before
-   any script runs and on a keyboard. */
-function companyLadder() {
-  return `<div class="ladder">
-${ALL_COMPANIES.map((c, i) => `      <a class="lad${i === 0 ? ' lad-lead' : ''}" ${coLink(c)}>
-        ${pic(c.hero, i === 0 ? '(max-width:860px) 100vw, 41vw' : '(max-width:860px) 100vw, 25vw', 'class="lad-bg" alt="" loading="lazy"')}
-        <span class="n">${num(i)}</span>
-        <div class="lad-b">
-          <span class="lad-sec">${esc(c.sectorName)}</span>
-          <h3>${esc(c.name)} <span class="lad-arrow" aria-hidden="true">${c.site ? '&#8599;' : '&#8594;'}</span>${c.site ? '<span class="vh"> — opens tibecogroup.com in a new tab</span>' : ''}</h3>
-          <span class="lad-role">${esc(c.role)}</span>
+/* The services, as a ledger: one row per area, the area named on the left
+   and every service in it as a link on the right. This is the one place the
+   whole offer is on screen at once, and it is the first thing after the
+   introduction because it is what a visitor came to find. */
+function servicesLedger() {
+  return `<div class="ledger">
+${AREAS.map((a, i) => `      <div class="led rise d${Math.min(i, 3)}">
+        <div class="led-head">
+          <span class="led-n" aria-hidden="true">${num(i)}</span>
+          <h3><a href="${areaHref(a)}">${esc(a.name)}</a></h3>
+          <p>${esc(a.short)}</p>
         </div>
-      </a>`).join('\n')}
+        <ul class="led-list">
+${svcsIn(a).map(x => `          <li><a href="${svcHref(x)}">${esc(x.name)}</a></li>`).join('\n')}
+        </ul>
+      </div>`).join('\n')}
+    </div>`;
+}
+
+/* The companies behind the services, named here and nowhere else on the
+   site: one strip that scrolls across, each company with its role. The list
+   is written twice so the loop closes without a gap; the second copy is
+   hidden from assistive technology, and under reduced motion the strip
+   stands still and wraps instead. The one company with a website of its own
+   is linked there, in a new tab. */
+function companyStrip() {
+  const one = (c, hidden) => `        <li class="cos-item"${hidden ? ' aria-hidden="true"' : ''}>
+          ${c.site ? `<a href="${c.site}" target="_blank" rel="noopener"${hidden ? ' tabindex="-1"' : ''}>` : '<span>'}
+            <span class="cos-name">${esc(c.name)}${c.site && !hidden ? extMark(c) : ''}</span>
+            <span class="cos-role">${esc(c.role)}</span>
+          ${c.site ? '</a>' : '</span>'}
+        </li>`;
+  return `<div class="cos" id="companies">
+      <ul class="cos-track">
+${COMPANIES.map(c => one(c, false)).join('\n')}
+${COMPANIES.map(c => one(c, true)).join('\n')}
+      </ul>
     </div>`;
 }
 
@@ -788,16 +817,16 @@ function pageHome() {
   /* Counted, not typed: every figure on the band is derived from the content
      further down the same file, so it cannot contradict it. */
   const tally = {
-    companies: ALL_COMPANIES.length,
-    sectors: SECTORS.length,
+    services: ALL_SERVICES.length,
+    areas: AREAS.length,
     regions: Object.keys(REACH_POINTS).length,
     countries: Object.values(REACH_POINTS).reduce((n, p) => n + p.length, 0)
   };
   const stats = FIGURES.map(f => [f.k, String(f.count ? tally[f.count] : f.v)]);
 
   return head({
-    title: `${SITE.name} · ${SITE.tagline}`,
-    desc: `A Qatar-based group of ${count(ALL_COMPANIES.length)} companies across investment, energy, technology, commodity trading and freight, food distribution and consumer services.`,
+    title: `${SITE.name} · Commodity Trading, Freight, Food Supply, Energy & Technology in Qatar`,
+    desc: `Lusail Corp supplies sulphur, coffee, sugar, edible oils and wheat, fresh produce and rice, ocean, land and air freight, energy and industrial materials, equipment and technology — ${count(ALL_SERVICES.length)} services from Qatar.`,
     url: '/', image: 'hero-doha',
     schema: graph(orgSchema(), {
       '@type': 'WebSite', '@id': SITE.domain + '/#website',
@@ -811,10 +840,10 @@ function pageHome() {
   <div class="wrap">
     <div class="hero-say">
       <h1>Building Businesses. Creating <em>Value</em>.</h1>
-      <p class="hero-lede">A Qatar-based group across investment, energy and technology, commodity trading and freight, food distribution and consumer services.</p>
+      <p class="hero-lede">Commodities, freight and logistics, food supply, energy and industrial materials, technology and everyday services &mdash; provided from Qatar to the world.</p>
     </div>
     <div class="hero-cta">
-      <a class="btn btn-light" href="/sectors/">Explore our sectors</a>
+      <a class="btn btn-light" href="/services/">Explore our services</a>
       <a class="btn btn-ghost" href="/about/">Discover Lusail Corp</a>
     </div>
   </div>
@@ -829,8 +858,8 @@ function pageHome() {
       </div>
       <div class="intro-note">
         <div>
-          <p>Lusail Corp brings together businesses that invest, trade, supply and serve &mdash; energy, technology and institutional supply through TIBECO Group, and commodity trading with international freight through Lusail Commercial.</p>
-          <p>Alongside them the Group imports and distributes food across Qatar, and runs a laundry and a caf&eacute;. Sourcing, logistics and commercial relationships built in one company are open to the others.</p>
+          <p>Lusail Corp trades commodities &mdash; sulphur, coffee, sugar, edible oils and wheat &mdash; and carries them by sea, land and air. It supplies energy operators, industrial sites and institutions with materials, equipment, technology and whole project packages, and invests in the sectors it serves.</p>
+          <p>In Qatar it imports and distributes fresh produce, rice and dry foods, and runs a laundry and a caf&eacute;. Sourcing, logistics and commercial relationships built for one service are open to all of them.</p>
         </div>
       </div>
     </div>
@@ -842,22 +871,22 @@ ${stats.map(([k, v]) => `        <div><dt>${esc(k)}</dt><dd data-to="${esc(v)}">
   </div>
 </section>
 
-<section class="section" aria-labelledby="coTitle">
+<section class="section" aria-labelledby="ledTitle">
   <div class="wrap">
-    ${head2('coTitle', 'Our <span class="soft">businesses</span>', 'Each runs in its own market with its own customers.')}
-    ${companyLadder()}
+    ${head2('ledTitle', 'What we <span class="soft">provide</span>', `${cap(count(ALL_SERVICES.length))} services in ${count(AREAS.length)} areas. Each has a page of its own.`)}
+    ${servicesLedger()}
   </div>
 </section>
 
 <section class="section sectors stone" aria-labelledby="secTitle">
   <div class="wrap">
     <div class="sec-intro rise">
-      <p class="eyebrow">Our sectors</p>
+      <p class="eyebrow">Our service areas</p>
       <h2 id="secTitle">Diversified by Design</h2>
-      <p>${cap(count(SECTORS.length))} sectors, ${count(ALL_COMPANIES.length)} companies. Each one serves a market we can see from Qatar.</p>
+      <p>${cap(count(AREAS.length))} areas, ${count(ALL_SERVICES.length)} services. Each one serves a market we can see from Qatar.</p>
     </div>
     <div class="acc" id="acc">
-${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="${secHref(sec)}">
+${AREAS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}" href="${areaHref(sec)}">
         ${pic(sec.hero, '(max-width:860px) 100vw, 46vw', 'class="acc-bg" alt="" loading="lazy"')}
         <span class="acc-num" aria-hidden="true">${num(i)}</span>
         <span class="acc-tab" aria-hidden="true">${esc(sec.name)}</span>
@@ -870,7 +899,7 @@ ${SECTORS.map((sec, i) => `      <a class="acc-item${i === 0 ? ' is-open' : ''}"
       </a>`).join('\n')}
     </div>
     <ul class="secgrid">
-${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="${secHref(sec)}">
+${AREAS.map((sec, i) => `      <li><a class="secgrid-a" href="${areaHref(sec)}">
         ${pic(sec.hero, '(max-width:560px) 50vw, 33vw', 'alt="" loading="lazy"')}
         <span class="secgrid-n">${num(i)}</span>
         <span class="secgrid-t">${esc(sec.name)}</span>
@@ -902,9 +931,16 @@ ${SECTORS.map((sec, i) => `      <li><a class="secgrid-a" href="${secHref(sec)}"
 
 <section class="section" aria-labelledby="wwdTitle">
   <div class="wrap">
-    ${head2('wwdTitle', 'Building <span class="soft">More</span> Than a Portfolio', 'We are an active owner. Each company is run independently, but none of them is run alone.')}
+    ${head2('wwdTitle', 'Building <span class="soft">More</span> Than a Portfolio', 'We are an active owner. Each business is run independently, but none of them is run alone.')}
     ${whatWeDo()}
   </div>
+</section>
+
+<section class="section tight stone" aria-labelledby="coTitle">
+  <div class="wrap">
+    ${head2('coTitle', 'The companies <span class="soft">behind the services</span>', 'Every enquiry about a service reaches the company that delivers it.')}
+  </div>
+  ${companyStrip()}
 </section>
 
 `
@@ -932,7 +968,7 @@ ${VALUES.map((v, i) => `      <div class="valcard rise d${Math.min(i, 3)}">
 function pageAbout() {
   return head({
     title: `About Us · ${SITE.name}`,
-    desc: 'How Lusail Corp is put together: what the Group does for its companies, what it believes, and who it wants to hear from.',
+    desc: 'How Lusail Corp is put together: what the Group does for its businesses, what it believes, and who it wants to hear from.',
     url: '/about/', image: 'hero-about',
     schema: graph({ '@type': 'AboutPage', url: abs('/about/'), name: 'About ' + SITE.name,
       mainEntity: { '@id': ORG_ID } }, crumbs([{ name: 'About Us' }]))
@@ -941,7 +977,7 @@ function pageAbout() {
     + pageHead({
       eyebrow: 'About Us',
       h1: 'Building a Group for the Future.',
-      lede: 'Lusail Corp is a diversified corporate group based in the State of Qatar, bringing together investment, energy and technology, commodity trading, food supply and distribution, consumer services and hospitality.',
+      lede: 'Lusail Corp is a diversified corporate group based in the State of Qatar, providing commodity trading and freight, food supply and distribution, energy, industrial and project supply, technology, investment and everyday consumer services.',
       photo: 'hero-about'
     })
     + `<section class="section tight stone" aria-labelledby="whoTitle">
@@ -951,11 +987,11 @@ function pageAbout() {
     <div class="twocol rise">
       <div>
         <p>Lusail Corp was established with a straightforward ambition: to create, develop and support businesses with the potential to grow.</p>
-        <p>Our portfolio companies operate independently within their respective markets while sharing the strategic direction and broader capabilities of the Group.</p>
+        <p>Each service is run by a business of its own, operating independently in its market while sharing the strategic direction and broader capabilities of the Group.</p>
       </div>
       <div>
         <p>This structure allows each business to keep its own identity, customers and commercial focus while benefiting from belonging to a diversified organisation.</p>
-        <p>As the Group develops, additional businesses and sectors will become part of the Lusail Corp portfolio.</p>
+        <p>As the Group develops, additional services and sectors will become part of what Lusail Corp provides.</p>
       </div>
     </div>
     <figure class="bandshot rise">
@@ -991,7 +1027,7 @@ function pageAbout() {
 
 <section class="section stone" aria-labelledby="vcTitle">
   <div class="wrap">
-    ${head2('vcTitle', 'How We <span class="soft">Create Value</span>', 'Growth is not adding companies to a list. It is making each one better than it was.')}
+    ${head2('vcTitle', 'How We <span class="soft">Create Value</span>', 'Growth is not adding services to a list. It is making each one better than it was.')}
     <div class="vcreate">
 ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
         ${icon(v.icon)}
@@ -1008,85 +1044,36 @@ ${VALUE_CREATION.map((v, i) => `      <div class="vc rise d${Math.min(i, 3)}">
     + footer();
 }
 
-/* ---------- one company -------------------------------------------------- */
+/* ---------- one service --------------------------------------------------- */
 
-function pageCompany(c) {
-  /* Each company page is a landing page of its own. The structure is shared —
-     an opening, a statement, the story, what it offers, a closing ask — but
-     each company brings its own colour (c.accent) and its own opening
-     (c.look): 'full' is a full-screen photograph, 'split' a colour panel
-     beside the photograph, 'dark' a dark ground for hospitality. The Lusail
-     bar and footer stay the same on every one, so it is still one group. */
-  const others = ALL_COMPANIES.filter(x => x.slug !== c.slug);
-  const look = c.look || 'full';
+/* Each service page is a landing page of its own, and the page a search
+   engine should land a buyer on. The structure is shared — an opening, a
+   statement, the story, what is supplied, where from, how it works, the
+   questions, a closing ask — and each area brings its own colour. The title
+   carries the service and what it is; the description is the short line;
+   the markup carries a Service, a FAQPage and a BreadcrumbList. */
+function pageService(s) {
+  const area = areaOf(s.areaSlug);
+  const siblings = svcsIn(area).filter(x => x.slug !== s.slug);
   const vars = [
-    c.accent && '--co:' + c.accent,
-    c.accentText && '--co-text:' + c.accentText,
-    c.tint && '--co-tint:' + c.tint,
-    c.accentOn && '--co-on:' + c.accentOn
+    s.accent && '--co:' + s.accent,
+    s.accentText && '--co-text:' + s.accentText,
+    s.tint && '--co-tint:' + s.tint,
+    s.accentOn && '--co-on:' + s.accentOn
   ].filter(Boolean).join(';');
+  const askHref = `/contact/?area=${s.areaSlug}&about=${encodeURIComponent(s.name)}`;
 
-  const offerTitle = c.products && c.products.length
-    ? (c.productsTitle || 'What we trade <span class="soft">today</span>')
-    : 'What we <span class="soft">do</span>';
-
-  /* The showcase: the business areas listed on the left, one large
-     photograph on the right that changes with the area pointed at. */
-  const showcase = c.offerStyle === 'showcase' && c.products && c.products.length
-    ? `<section class="section co-show" id="offer" aria-labelledby="prodTitle">
+  /* What is actually supplied: the specifications, the varieties, the
+     routes — the lines a buyer is looking for. */
+  const lines = s.lines && s.lines.length
+    ? `<section class="section co-offer" id="offer" aria-labelledby="linesTitle">
   <div class="wrap">
-    ${head2('prodTitle', offerTitle, 'Five areas the three platforms work across.')}
-    <div class="show" id="show">
-      <ol class="show-list">
-${c.products.map((p, i) => `        <li class="show-item${i === 0 ? ' on' : ''}" tabindex="0" data-i="${i}">
-          <span class="show-n">${num(i)}</span>
-          <div class="show-b">
-            <h3>${esc(p.t)}</h3>
-            <p>${esc(p.d)}</p>
-          </div>
-        </li>`).join('\n')}
-      </ol>
-      <div class="show-pics">
-${c.products.map((p, i) => `        <figure class="show-pic${i === 0 ? ' on' : ''}" data-i="${i}">${pic(p.img, '(max-width:900px) 100vw, 52vw', `alt="${esc(p.t)}" loading="lazy"`)}</figure>`).join('\n')}
-      </div>
-    </div>
-  </div>
-</section>
-
-`
-    : '';
-
-  const products = c.offerStyle !== 'showcase' && c.products && c.products.length
-    ? `<section class="section co-offer" id="offer" aria-labelledby="prodTitle">
-  <div class="wrap">
-    ${head2('prodTitle', offerTitle, '')}
-    <div class="prodgrid">
-${c.products.map((p, i) => `      <article class="prod rise d${Math.min(i, 3)}">
-        <span class="prod-pic">${pic(p.img, '(max-width:520px) 84px, 116px', `alt="${esc(p.t)}" loading="lazy"`)}</span>
-        <span class="prod-n">${num(i)}</span>
-        <h3>${esc(p.t)}</h3>
-        <p>${esc(p.d)}</p>
-${p.origins ? `        <p class="prod-from"><span>Sourced from</span>${p.origins.map(o =>
-    `<span>${esc(o)}</span>`).join('')}</p>` : ''}
-      </article>`).join('\n')}
-    </div>
-  </div>
-</section>
-
-`
-    : '';
-
-  /* A company with no product list still has to say what it does. These are
-     the named services, spelled out. */
-  const services = c.services && c.services.length
-    ? `<section class="section co-offer" id="offer" aria-labelledby="svcTitle">
-  <div class="wrap">
-    ${head2('svcTitle', offerTitle, `The work ${esc(c.name)} is actually asked for.`)}
+    ${head2('linesTitle', s.linesTitle || 'What we <span class="soft">supply</span>', `${esc(s.name)}, line by line.`)}
     <div class="svcs">
-${c.services.map((s, i) => `      <div class="svc rise d${Math.min(i, 3)}">
+${s.lines.map((l, i) => `      <div class="svc rise d${Math.min(i, 3)}">
         <span class="svc-n">${num(i)}</span>
-        <h3>${esc(s.t)}</h3>
-        <p>${esc(s.d)}</p>
+        <h3>${esc(l.t)}</h3>
+        <p>${esc(l.d)}</p>
       </div>`).join('\n')}
     </div>
   </div>
@@ -1095,39 +1082,13 @@ ${c.services.map((s, i) => `      <div class="svc rise d${Math.min(i, 3)}">
 `
     : '';
 
-  const sourcing = sourcingSection(c);
-
-  /* What makes this company this company: its platforms, its two sides, the
-     standards it is judged on — two or three columns, with a photograph each
-     where there is one. TIBECO adds its credentials and presence beneath. */
-  const pillars = c.pillars && c.pillars.length
-    ? `<section class="section co-pillars" aria-labelledby="pillarTitle">
-  <div class="wrap">
-    ${head2('pillarTitle', c.pillarsTitle || 'How it is <span class="soft">built</span>', '')}
-    <div class="pillars pillars-${c.pillars.length}">
-${c.pillars.map((p, i) => `      <article class="pillar rise d${Math.min(i, 3)}">
-${p.img ? `        <span class="pillar-pic">${pic(p.img, '(max-width:860px) 100vw, 40vw', 'alt="" loading="lazy"')}</span>\n` : ''}        <span class="pillar-n">${num(i)}</span>
-        <h3>${esc(p.t)}</h3>
-        <p>${esc(p.d)}</p>
-      </article>`).join('\n')}
-    </div>
-${c.credentials ? `    <ul class="creds">
-${c.credentials.map(x => `      <li>${esc(x)}</li>`).join('\n')}
-    </ul>
-` : ''}${c.presence ? `    <p class="presence"><span>Presence</span>${c.presence.map(x => `<b>${esc(x)}</b>`).join('')}</p>
-` : ''}  </div>
-</section>
-
-`
-    : '';
-
   /* A flow, left to right: how the work actually moves. */
-  const steps = c.steps && c.steps.length
+  const steps = s.steps && s.steps.length
     ? `<section class="section co-steps" aria-labelledby="stepTitle">
   <div class="wrap">
-    ${head2('stepTitle', c.stepsTitle || 'How it <span class="soft">works</span>', '')}
+    ${head2('stepTitle', s.stepsTitle || 'How it <span class="soft">works</span>', '')}
     <ol class="steps">
-${c.steps.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
+${s.steps.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
         <span class="step-n">${num(i)}</span>
         <h3>${esc(p.t)}</h3>
         <p>${esc(p.d)}</p>
@@ -1139,19 +1100,35 @@ ${c.steps.map((p, i) => `      <li class="step rise d${Math.min(i, 3)}">
 `
     : '';
 
-  /* A company's figures: counted from its own content where they can be. */
-  const origins = [...new Set((c.products || []).flatMap(p => p.origins || []))];
+  /* The questions a buyer asks before writing, answered on the page, and
+     published as a FAQPage so a search engine can show them. */
+  const faq = s.faq && s.faq.length
+    ? `<section class="section tight" aria-labelledby="faqTitle">
+  <div class="wrap">
+    ${head2('faqTitle', `${esc(s.name)}: <span class="soft">questions</span>`, '')}
+    <div class="faq rise">
+${s.faq.map(f => `      <details class="faq-item" name="faq">
+        <summary>${esc(f.q)}</summary>
+        <p>${esc(f.a)}</p>
+      </details>`).join('\n')}
+    </div>
+  </div>
+</section>
+
+`
+    : '';
+
+  /* The service's figures: counted from its own content where they can be. */
+  const origins = s.origins || [];
   const regionsOf = REACH.filter(reg => origins.some(o =>
     reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(o))).length;
-  const AUTO = {
-    pillars: (c.pillars || []).length, products: (c.products || []).length,
-    presence: (c.presence || []).length, countries: origins.length, regions: regionsOf
-  };
-  const figs = (c.figures || []).map(f => ({
-    k: f.k, v: String(f.v).startsWith('auto:') ? AUTO[f.v.slice(5)] : f.v
-  })).filter(f => f.v);
-  const figures = figs.length
-    ? `<section class="co-figs" aria-label="${esc(c.name)} in figures">
+  const figs = [
+    s.lines && s.lines.length && { k: 'Lines supplied', v: s.lines.length },
+    origins.length && { k: 'Source countries', v: origins.length },
+    regionsOf && { k: 'Sourcing regions', v: regionsOf },
+    { k: 'Services in this area', v: svcsIn(area).length }
+  ].filter(Boolean);
+  const figures = `<section class="co-figs" aria-label="${esc(s.name)} in figures">
   <div class="wrap">
     <dl>
 ${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}</dt><dd>${esc(String(f.v))}</dd></div>`).join('\n')}
@@ -1159,53 +1136,47 @@ ${figs.map((f, i) => `      <div class="rise d${Math.min(i, 3)}"><dt>${esc(f.k)}
   </div>
 </section>
 
-`
-    : '';
+`;
 
-  /* The company in one of its own sentences. */
-  const quote = c.quote
-    ? `<section class="co-quote">
-  <div class="wrap">
-    <blockquote><p>${esc(c.quote)}</p></blockquote>
-  </div>
-</section>
-
-`
-    : '';
+  const sourcing = sourcingSection(s.name, origins);
+  const supplyCat = s.supply && SUPPLY.find(x => x.slug === s.supply);
 
   return head({
-    title: `${c.name} · ${SITE.name}`, desc: c.short,
-    url: `/companies/${c.slug}/`, image: c.hero,
-    schema: graph(companySchema(c), crumbs([
-      { name: 'Our Sectors', url: '/sectors/' },
-      /* the sector's one address is its block on the index */
-      { name: c.sectorName, url: '/sectors/#sec-' + c.sectorSlug },
-      { name: c.name }
+    /* the title a search result shows: the service, what it is, and where
+       it is provided from */
+    title: `${s.name} — ${s.role} | ${SITE.name}, Qatar`,
+    desc: s.short,
+    url: svcHref(s), image: s.img,
+    schema: graph(serviceSchema(s), faqSchema(s), crumbs([
+      { name: 'Services', url: '/services/' },
+      /* the area's one address is its block on the index */
+      { name: s.areaName, url: areaHref(area) },
+      { name: s.name }
     ]))
   })
-    + header('/sectors/', (c.look || 'full') === 'full')
-    + `<div class="co co-${look} co-${c.slug}" style="${vars}">
+    + header('/services/', true)
+    + `<div class="co co-full co-${s.slug}" style="${vars}">
 
 <section class="co-hero">
-  ${pic(c.hero, look === 'full' ? '100vw' : '(max-width:860px) 100vw, 50vw', `class="co-hero-img" alt="" fetchpriority="high"`)}
+  ${pic(s.areaHero, '100vw', `class="co-hero-img" alt="" fetchpriority="high"`)}
   <div class="co-hero-in">
     <div class="wrap co-hero-wrap">
       <div class="co-hero-say">
-        <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span><a href="${secHref(c.sectorSlug)}">${esc(c.sectorName)}</a><span aria-hidden="true">/</span><span>${esc(c.name)}</span></p>
-        <h1>${esc(c.name)}</h1>
-        <p class="co-hero-line">${esc(c.headline)}</p>
+        <p class="crumbs co-crumbs"><a href="/">Lusail Corp</a><span aria-hidden="true">/</span><a href="/services/">Services</a><span aria-hidden="true">/</span><a href="${areaHref(area)}">${esc(s.areaName)}</a><span aria-hidden="true">/</span><span>${esc(s.name)}</span></p>
+        <h1>${esc(s.name)}</h1>
+        <p class="co-hero-line">${esc(s.headline)}</p>
         <div class="co-hero-cta">
-          <a class="btn co-btn" href="/contact/?company=${c.slug}">${esc(c.cta)}</a>
-          <a class="btn co-btn-line" href="#offer">See what we do</a>
+          <a class="btn co-btn" href="${askHref}">${esc(s.cta)}</a>
+          <a class="btn co-btn-line" href="#offer">What we supply</a>
         </div>
       </div>
     </div>
   </div>
-  <a class="co-scroll" href="#aboutTitle" aria-label="Scroll to read about ${esc(c.name)}"><span>Scroll</span></a>
+  <a class="co-scroll" href="#aboutTitle" aria-label="Scroll to read about ${esc(s.name)}"><span>Scroll</span></a>
   <div class="co-facts">
     <div class="wrap">
       <dl>
-${c.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
+${s.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`).join('\n')}
       </dl>
     </div>
   </div>
@@ -1213,33 +1184,33 @@ ${c.facts.map(f => `        <div><dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd></div>`
 
 <section class="section co-about" aria-labelledby="aboutTitle">
   <div class="wrap">
-    <p class="eyebrow">About ${esc(c.name)}</p>
-    <h2 id="aboutTitle" class="co-statement rise">${esc(c.intro)}</h2>
+    <p class="eyebrow">${esc(s.name)} from Lusail Corp</p>
+    <h2 id="aboutTitle" class="co-statement rise">${esc(s.intro)}</h2>
     <div class="co-story">
       <figure class="co-story-pic rise">
-        ${pic(c.still, '(max-width:860px) 100vw, 605px', `alt="${esc(c.name)}" loading="lazy"`)}
+        ${pic(s.img, '(max-width:860px) 100vw, 605px', `alt="${esc(s.name)} — ${esc(s.role)}" loading="lazy"`)}
       </figure>
       <div class="co-story-text rise d1">
-${c.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
-${c.activities && c.activities.length ? `        <ul class="tags">
-${c.activities.map(a => `          <li>${esc(a)}</li>`).join('\n')}
+${s.body.map(p => `        <p>${esc(p)}</p>`).join('\n')}
+${s.activities && s.activities.length ? `        <ul class="tags">
+${s.activities.map(a => `          <li>${esc(a)}</li>`).join('\n')}
         </ul>` : ''}
       </div>
     </div>
   </div>
 </section>
 
-${figures}${pillars}${steps}${showcase}${products}${services}${quote}${sourcing}<section class="co-ask">
+${figures}${lines}${sourcing}${steps}${faq}<section class="co-ask">
   <div class="wrap co-ask-in">
     <div>
-      <p class="eyebrow">Work with ${esc(c.name)}</p>
-      <h2>${esc(c.cta)}.</h2>
-      <p>Tell us what you need and the message goes straight to the ${esc(c.name)} desk.</p>
+      <p class="eyebrow">${esc(s.name)}</p>
+      <h2>${esc(s.cta)}.</h2>
+      <p>Tell us what you need and the message goes straight to the desk that handles ${esc(s.name.toLowerCase())}.</p>
     </div>
     <div class="co-ask-cta">
       <div class="co-ask-btns">
-        <a class="btn co-btn" href="/contact/?company=${c.slug}">Send an enquiry</a>
-${SUPPLY.some(x => x.buyers.includes(c.slug)) ? `        <a class="btn co-btn-line" href="/supplier-portal/register/?company=${c.slug}">Supply ${esc(c.name)}</a>\n` : ''}      </div>
+        <a class="btn co-btn" href="${askHref}">Send an enquiry</a>
+${supplyCat ? `        <a class="btn co-btn-line" href="/supplier-portal/register/?cat=${supplyCat.slug}">Supply ${esc(s.name.toLowerCase())} to the Group</a>\n` : ''}      </div>
       <a class="co-ask-mail" href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
     </div>
   </div>
@@ -1247,8 +1218,9 @@ ${SUPPLY.some(x => x.buyers.includes(c.slug)) ? `        <a class="btn co-btn-li
 
 <section class="section tight" aria-labelledby="othTitle">
   <div class="wrap">
-    ${head2('othTitle', 'The other <span class="soft">companies</span>', '')}
-    ${companyRail(others)}
+    ${head2('othTitle', `More in <span class="soft">${esc(s.areaName)}</span>`, '')}
+    ${serviceRail(siblings)}
+    <p class="srcmore"><a href="${areaHref(area)}">All ${esc(s.areaName.toLowerCase())} services <span aria-hidden="true">&#8594;</span></a></p>
   </div>
 </section>
 
@@ -1257,12 +1229,9 @@ ${SUPPLY.some(x => x.buyers.includes(c.slug)) ? `        <a class="btn co-btn-li
     + footer();
 }
 
-/* Where a company sources from, gathered off its own products and grouped by
-   the Group sourcing regions. The countries were only ever a line under each
-   product card, so a company that buys from eleven of them never said so in
-   one place. Companies with no product origins get no section at all. */
-function sourcingSection(c) {
-  const used = [...new Set((c.products || []).flatMap(p => p.origins || []))];
+/* Where a service is sourced from, grouped by the Group's sourcing regions.
+   A service with no origins gets no section at all. */
+function sourcingSection(name, used) {
   if (!used.length) return '';
 
   const groups = REACH.map(reg => ({
@@ -1271,21 +1240,19 @@ function sourcingSection(c) {
   })).filter(g => g.countries.length);
 
   /* Every origin has to land in a region. Without this an origin the Group
-     does not declare would be dropped from this section in silence while the
-     product card above went on claiming it. */
+     does not declare would be dropped from this section in silence. */
   const placed = groups.reduce((n, g) => n + g.countries.length, 0);
   if (placed !== used.length) {
     const lost = used.filter(u => !groups.some(g => g.countries.includes(u)));
-    console.error(String.fromCharCode(10) + `  ${c.slug}: ` + lost.join(
-) +
-      ` is not on the Group's sourcing list. Add it to REACH, or correct the product.` + String.fromCharCode(10));
+    console.error(String.fromCharCode(10) + `  ${name}: ` + lost.join(', ') +
+      ` is not on the Group's sourcing list. Add it to REACH, or correct the service.` + String.fromCharCode(10));
     process.exit(1);
   }
 
   return `<section class="section tight" aria-labelledby="srcTitle">
   <div class="wrap">
-    ${head2('srcTitle', 'Where we <span class="soft">buy from</span>',
-      `${esc(c.name)} sources ${plural(used.length, 'country', 'countries')} across ${plural(groups.length, 'region', 'regions')}.`)}
+    ${head2('srcTitle', 'Where we <span class="soft">source it</span>',
+      `${esc(name)} is sourced from ${plural(used.length, 'country', 'countries')} across ${plural(groups.length, 'region', 'regions')}. Which one is used depends on the season, the quality and the terms on the day.`)}
     <div class="srcregs rise">
 ${groups.map(g => `      <div class="srcreg">
         <h3>${esc(g.t)}</h3>
@@ -1301,57 +1268,50 @@ ${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(
 `;
 }
 
-/* ---------- the sectors ---------------------------------------------------- */
+/* ---------- the services index ------------------------------------------- */
 
-/* Built to the Figma (node 200:360). A numbered index of the four sectors
-   stands at the left and stays there while the page moves, marking whichever
-   sector you are reading; the sector itself runs down the right as a heading,
-   its line, its argument, the businesses inside it and a photograph. Four is
-   few enough to show the whole list at once, so the index answers "where am I
-   and what else is there" without anybody having to scroll to find out. */
-function pageSectorsIndex() {
+/* A numbered index of the areas stands at the left and stays there while
+   the page moves, marking whichever area you are reading; the area itself
+   runs down the right as a heading, its line, its argument and the services
+   inside it as cards. Every service on the site is on this one page. */
+function pageServicesIndex() {
   return head({
-    title: `Our Sectors · ${SITE.name}`,
-    desc: 'Lusail Corp operates across investment, energy and technology, commodity trading, food supply and distribution, consumer services and hospitality.',
-    url: '/sectors/', image: 'hero-sectors',
-    schema: graph(crumbs([{ name: 'Our Sectors' }]), {
-      '@type': 'ItemList', name: 'Lusail Corp sectors',
-      itemListElement: SECTORS.map((s, i) => ({
-        '@type': 'ListItem', position: i + 1, name: s.name, url: abs('/sectors/' + s.slug + '/')
+    title: `Our Services — Commodities, Freight, Food Supply, Energy, Technology | ${SITE.name}`,
+    desc: `Every service Lusail Corp provides from Qatar: sulphur, coffee, sugar, edible oils and wheat; fresh produce and rice; ocean, land and air freight; energy and industrial materials, equipment and project supply; technology; investment; laundry and a café.`,
+    url: '/services/', image: 'hero-sectors',
+    schema: graph(crumbs([{ name: 'Services' }]), {
+      '@type': 'ItemList', name: 'Lusail Corp services',
+      itemListElement: ALL_SERVICES.map((s, i) => ({
+        '@type': 'ListItem', position: i + 1, name: s.name, url: abs(svcHref(s))
       }))
     })
   })
-    + header('/sectors/', true)
+    + header('/services/', true)
     + pageHead({
-      eyebrow: 'Our Sectors',
-      h1: `${cap(count(SECTORS.length))} sectors. One way of working.`,
-      lede: 'The Group operates across investment, energy and technology, commodity trading, food supply and distribution, everyday consumer services and hospitality. The sectors are deliberately broad: they describe where we are now and leave room for what comes next.',
-      /* the Group, not one of its sectors — the trading photograph is the
-         first band on this same page, and a page should not open on it */
+      eyebrow: 'Our Services',
+      h1: `${cap(count(ALL_SERVICES.length))} services. One way of working.`,
+      lede: 'Commodities bought abroad and carried by sea, land and air. Food imported and delivered across Qatar. Materials, equipment, technology and whole projects supplied to the industries and institutions that run the economy. Capital, and the everyday services households use every week.',
       photo: 'hero-sectors'
     })
     + `<div class="secidx">
-  <nav class="secrail" aria-label="The sectors on this page">
+  <nav class="secrail" aria-label="The service areas on this page">
     <ol>
-${SECTORS.map((s, i) => `      <li><a href="#sec-${s.slug}"${i === 0 ? ' aria-current="location"' : ''}>
+${AREAS.map((a, i) => `      <li><a href="#${a.slug}"${i === 0 ? ' aria-current="location"' : ''}>
         <span class="secrail-n">${i + 1}.</span>
-        <span class="secrail-t">${esc(s.name)}</span>
+        <span class="secrail-t">${esc(a.name)}</span>
         <span class="secrail-go" aria-hidden="true">&#8627;</span>
       </a></li>`).join('\n')}
     </ol>
   </nav>
 
-${SECTORS.map((s, i) => `  <section class="secblk" data-tone="${i % 4}" id="sec-${s.slug}" aria-labelledby="h-${s.slug}">
+${AREAS.map((a, i) => `  <section class="secblk" data-tone="${i % 4}" id="${a.slug}" aria-labelledby="h-${a.slug}">
     <div class="secblk-col rise">
-      <h2 id="h-${s.slug}">${esc(s.name)}</h2>
-      <p class="secblk-lede">${esc(s.intro)}</p>
-${s.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join(String.fromCharCode(10))}
+      <h2 id="h-${a.slug}">${esc(a.name)}</h2>
+      <p class="secblk-lede">${esc(a.intro)}</p>
+${a.body.map(p => `      <p class="secblk-say">${esc(p)}</p>`).join(String.fromCharCode(10))}
 
-      <h3 class="secblk-count">${esc(plural(s.companies.length, 'company', 'companies'))} in this sector</h3>
-      <div class="cotiles">
-${s.companies.map(c => `        <a class="cotile" ${coLink(c)}>${s.companies.length === 1 && c.site ? 'through ' : ''}${esc(c.name)}${coMark(c)}</a>`).join(String.fromCharCode(10))}
-      </div>
-
+      <h3 class="secblk-count">${esc(plural(svcsIn(a).length, 'service', 'services'))} in this area</h3>
+      ${serviceRail(svcsIn(a))}
     </div>
   </section>`).join(String.fromCharCode(10) + String.fromCharCode(10))}
 </div>
@@ -1378,7 +1338,7 @@ function pagePartnerships() {
     })
     + `<section class="section tight" aria-labelledby="pwTitle">
   <div class="wrap">
-    ${head2('pwTitle', 'Who we want to <span class="soft">hear from</span>', 'Our companies depend on relationships across their markets. These are the ones we are looking for.')}
+    ${head2('pwTitle', 'Who we want to <span class="soft">hear from</span>', 'Every service we provide depends on relationships across its market. These are the ones we are looking for.')}
     <div class="plines">
 ${PARTNER_TYPES.map(p => `      <div class="pline rise">
         <h3>${esc(p.t)}</h3>
@@ -1393,8 +1353,8 @@ ${PARTNER_TYPES.map(p => `      <div class="pline rise">
     ${head2('howTitle', 'How it <span class="soft">works</span>', 'From your first message to a specific answer, in four steps.')}
     <ol class="tline">
 ${[
-  ['Tell us which you are', 'Choose an area of interest on the form. Your message goes straight to the company that can answer it, not to a general inbox.'],
-  ['It reaches the right desk', 'A supplier enquiry goes to the company that would buy from you, not to a general inbox that forwards it on.'],
+  ['Tell us which you are', 'Choose the service area on the form. Your message goes straight to the desk that can answer it, not to a general inbox.'],
+  ['It reaches the right desk', 'Behind every service is the company that delivers it. An enquiry about sulphur reaches the trading desk; one about fresh produce reaches the distribution desk.'],
   ['We answer with specifics', 'Where it is a commodity, that means the origin, the specification and the route together, because we hold the trading and the freight in one business.'],
   ['We build from there', 'A first order, a trial shipment or a meeting in Doha — the relationship starts with something real, not a brochure.']
 ].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
@@ -1414,7 +1374,7 @@ ${[
       <a class="route rise" href="/supplier-portal/">
         <span class="route-n">01</span>
         <h3>You supply something we buy</h3>
-        <p>Producers, exporters, manufacturers, contractors and carriers. The Supplier Portal lists everything the Group buys — from granular sulphur to fresh produce — and what it is buying now. One registration covers every company.</p>
+        <p>Producers, exporters, manufacturers, contractors and carriers. The Supplier Portal lists everything the Group buys — from granular sulphur to fresh produce — and what it is buying now. One registration covers the whole Group.</p>
         <span class="route-go">Open the Supplier Portal <span aria-hidden="true">&#8594;</span></span>
       </a>
       <a class="route rise d1" href="/contact/">
@@ -1480,14 +1440,14 @@ const fmtDoha = (d, withTime = true) => {
    its state; registering is the next move whatever the event type. */
 const regUrl = o => `/supplier-portal/register/?ref=${o.ref}`;
 const regAct = o => o.invite ? 'Request invite' : o.type === 'RFI' ? 'Register to respond' : 'Register to bid';
-const companyOf = slug => ALL_COMPANIES.find(c => c.slug === slug);
+const deskOf = slug => COMPANIES.find(c => c.slug === slug);
 const categoryOf = slug => SUPPLY.find(x => x.slug === slug);
 
 /* The same checks the rest of the build makes: a broken reference fails the
    build rather than shipping a page that points nowhere. */
 (function checkSupply() {
   for (const cat of SUPPLY) {
-    for (const b of cat.buyers) if (!companyOf(b)) {
+    for (const b of cat.buyers) if (!deskOf(b)) {
       console.error(`\n  SUPPLY: '${cat.slug}' names a buyer '${b}' that is not a company.\n`); process.exit(1);
     }
   }
@@ -1498,7 +1458,7 @@ const categoryOf = slug => SUPPLY.find(x => x.slug === slug);
     if (!/^[A-Z]{2,4}-[A-Z]{2,4}-\d{2}-\d{3}$/.test(o.ref)) {
       console.error(`\n  OPPORTUNITIES: '${o.ref}' is not of the form XX-XXX-YY-NNN.\n`); process.exit(1);
     }
-    if (!companyOf(o.company)) { console.error(`\n  ${o.ref}: '${o.company}' is not a company.\n`); process.exit(1); }
+    if (!deskOf(o.company)) { console.error(`\n  ${o.ref}: '${o.company}' is not a company.\n`); process.exit(1); }
     if (!categoryOf(o.category)) { console.error(`\n  ${o.ref}: '${o.category}' is not a SUPPLY category.\n`); process.exit(1); }
     if (!['RFQ', 'Tender', 'RFI'].includes(o.type)) { console.error(`\n  ${o.ref}: type must be RFQ, Tender or RFI.\n`); process.exit(1); }
     dohaDate(o.closes);
@@ -1518,23 +1478,23 @@ const OPEN = OPPORTUNITIES
   .filter(o => oppState(o) !== 'closed')
   .sort((a, b) => dohaDate(a.closes) - dohaDate(b.closes));
 
-/* One row of the list: the reference, the event, who is buying, when it
-   closes and what you can do. The closing date is also written as data, so
+/* One row of the list: the reference, the event, the category it is in,
+   when it closes and what you can do. The closing date is also written as data, so
    the script can turn it into "in 9 days" and retire the row at the hour. */
 function oppRow(o, full) {
-  const st = oppState(o), co = companyOf(o.company), cat = categoryOf(o.category);
+  const st = oppState(o), cat = categoryOf(o.category);
   /* The badge is written twice — beside the reference, and in the action
      column — and the stylesheet shows one or the other by screen width, so
      on a phone the status sits on the first line where a thumb reads it. */
   const badge = `<span class="badge badge-${st}" data-badge>${STATE_LABEL[st]}</span>`;
   /* One row, one line on a wide screen: reference and type, the title with
-     its brief underneath, who is buying, when it closes, the status, and the
+     its brief underneath, its category, when it closes, the status, and the
      one action — which is always the register page carrying the reference. */
   return `      <li class="opp rise" data-closes="${dohaDate(o.closes).toISOString()}" data-invite="${o.invite ? 1 : 0}" data-cat="${cat.slug}">
         <p class="opp-id"><span class="opp-ref">${esc(o.ref)}</span></p>
         <p class="opp-type"><span>${esc(o.type)}</span></p>
         <h3 class="opp-title">${esc(o.title)}${o.brief ? `<span class="opp-brief-line">${esc(o.brief)}</span>` : ''}</h3>
-        <p class="opp-who">${co.site ? `<span>${esc(co.name)}</span>` : `<a ${coLink(co)}>${esc(co.name)}</a>`}</p>
+        <p class="opp-who"><a href="/supplier-portal/opportunities/?cat=${cat.slug}">${esc(cat.short)}</a></p>
         <p class="opp-when"><time datetime="${dohaDate(o.closes).toISOString()}" title="${fmtDoha(dohaDate(o.closes))} Doha time">${fmtDoha(dohaDate(o.closes), false)}</time><span class="opp-in" data-in></span></p>
         <p class="opp-st">${badge}</p>
         <p class="opp-act"><a class="opp-go" href="${regUrl(o)}">${regAct(o)} <span aria-hidden="true">&#8594;</span></a></p>
@@ -1556,12 +1516,10 @@ ${o.clarifications.map(c => `              <p><strong>${esc(c.q)}</strong> ${esc
 
 function pageSuppliers() {
   const soon = OPEN.slice(0, 1);
-  const buyers = cat => cat.buyers.map(b => companyOf(b)).map(c => `<a ${coLink(c)}>${esc(c.name)}${coMark(c)}</a>`).join('');
   const nCats = SUPPLY.length;
-  const nBuyers = new Set(SUPPLY.flatMap(c => c.buyers)).size;
   return head({
     title: `Supplier Portal · ${SITE.name}`,
-    desc: 'What the Lusail Corp companies buy, what is open to quote now, and the one free registration that covers all of them.',
+    desc: 'What Lusail Corp buys — sulphur, sugar, fresh produce, equipment, technology, freight — what is open to quote now, and the one free registration that covers all of it.',
     url: '/supplier-portal/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal' }]), {
       '@type': 'ItemList', name: 'Open sourcing events',
@@ -1575,7 +1533,7 @@ function pageSuppliers() {
     + pageHead({
       eyebrow: 'Supplier Portal',
       h1: 'Supply the Group. Register once.',
-      lede: 'One free registration covers TIBECO Group, Lusail Commercial and ROMA Commercial — sulphur and sugar to fresh produce, equipment, technology and freight.',
+      lede: 'One free registration covers everything the Group buys — sulphur and sugar to fresh produce, equipment, technology and freight.',
       photo: 'hero-sector-trading',
       action: { href: '/supplier-portal/register/', label: 'Register as a supplier' },
       action2: { href: '/supplier-portal/opportunities/', label: 'View open opportunities' },
@@ -1585,7 +1543,7 @@ function pageSuppliers() {
   <div class="wrap">
     ${head2('oppTitle', 'Open <span class="soft">opportunities</span>', 'Every action leads to the one registration. Once qualified, invitations, clarifications and award notices come to you by email.')}
     <ol class="opps" id="opps">
-      <li class="opp-head" aria-hidden="true"><span>Reference</span><span>Type</span><span>Opportunity</span><span>Buyer</span><span>Closes (Doha)</span><span>Status</span><span></span></li>
+      <li class="opp-head" aria-hidden="true"><span>Reference</span><span>Type</span><span>Opportunity</span><span>Category</span><span>Closes (Doha)</span><span>Status</span><span></span></li>
 ${OPEN.slice(0, 4).map(oppRow).join('\n')}
     </ol>
     <p class="opp-none" id="oppNone"${OPEN.length ? ' hidden' : ''}>Nothing is open right now. Register and you are invited the moment an event opens in your categories.</p>
@@ -1601,7 +1559,7 @@ ${[
   ['Register once', 'One profile for the whole Group: what you supply, and who may quote.'],
   ['Get qualified', 'Procurement checks the profile and asks for your licence, tax and bank documents by email.'],
   ['Receive invitations', 'Events in your categories arrive by email with the requirement and the reference. Clarifications go to every bidder.'],
-  ['Award and deliver', 'The issuing company awards, contracts and pays you directly.']
+  ['Award and deliver', 'The Group company that issued the event awards, contracts and pays you directly.']
 ].map(([t, d], i) => `      <li class="tl-step rise d${Math.min(i, 3)}">
         <span class="tl-node" aria-hidden="true">${num(i)}</span>
         <h3>${t}</h3>
@@ -1622,7 +1580,7 @@ ${SUPPLY.map((c, i) => `      <details class="catrow rise d${i % 4}" id="cat-${c
             <span class="catrow-name">${esc(c.name)}</span>
             <span class="catrow-sample">${esc(c.items.slice(0, 3).map(x => x.replace(/ —.*$/, '').replace(/ \(.*\)$/, '').replace(/^([A-Z])(?![A-Z])/, m => m.toLowerCase())).join(', '))}…</span>
           </span>
-          <span class="catrow-who">${c.buyers.length > 2 ? plural(c.buyers.length, 'buyer', 'buyers') : c.buyers.map(b => esc(companyOf(b).name)).join(' · ')}</span>
+          <span class="catrow-who">${esc(plural(c.items.length, 'line', 'lines'))}</span>
           <span class="catrow-count">${(n => n ? `<a href="/supplier-portal/opportunities/?cat=${c.slug}">${n} open</a>` : '<span>none open</span>')(OPEN.filter(o => o.category === c.slug).length)}</span>
           <span class="catrow-plus" aria-hidden="true"></span>
         </summary>
@@ -1630,7 +1588,6 @@ ${SUPPLY.map((c, i) => `      <details class="catrow rise d${i % 4}" id="cat-${c
           <ul class="catrow-items">
 ${c.items.map(x => `            <li>${esc(x)}</li>`).join('\n')}
           </ul>
-          <p class="catrow-buyers"><span>Bought by</span>${buyers(c)}</p>
         </div>
       </details>`).join('\n')}
     </div>
@@ -1658,7 +1615,7 @@ ${SUPPLIER_DOCS.map(x => `      <li>${esc(x)}</li>`).join('\n')}
       <div class="regcta-say">
         <p class="eyebrow">Register</p>
         <h2 id="regTitle">Register as <span class="soft">a supplier</span></h2>
-        <p class="regcta-line">One profile for the Group’s ${count(nBuyers)} buying companies. Free to register and to quote; reviewed within five working days. Your details save in this browser as you type, so you can finish later.</p>
+        <p class="regcta-line">One profile for the whole Group. Free to register and to quote; reviewed within five working days. Your details save in this browser as you type, so you can finish later.</p>
       </div>
       <p class="regcta-act"><a class="btn btn-dark" href="/supplier-portal/register/">Open the registration <span aria-hidden="true">&#8594;</span></a></p>
     </div>
@@ -1739,7 +1696,7 @@ ${CODE_OF_CONDUCT.map((c, i) => `      <li class="rise d${i % 4}"><span class="c
 function pageOpportunities() {
   return head({
     title: `Open Opportunities · Supplier Portal · ${SITE.name}`,
-    desc: 'Every sourcing event open across the Lusail Corp companies — RFQs, tenders and RFIs — and the one registration that lets you bid.',
+    desc: 'Every sourcing event open across Lusail Corp — RFQs, tenders and RFIs — and the one registration that lets you bid.',
     url: '/supplier-portal/opportunities/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal', url: '/supplier-portal/' }, { name: 'Open Opportunities' }]), {
       '@type': 'ItemList', name: 'Open sourcing events',
@@ -1770,7 +1727,7 @@ ${SUPPLY.filter(c => OPEN.some(o => o.category === c.slug)).map(c => `        <o
       </select></label>
     </div>
     <ol class="opps" id="opps">
-      <li class="opp-head" aria-hidden="true"><span>Reference</span><span>Type</span><span>Opportunity</span><span>Buyer</span><span>Closes (Doha)</span><span>Status</span><span></span></li>
+      <li class="opp-head" aria-hidden="true"><span>Reference</span><span>Type</span><span>Opportunity</span><span>Category</span><span>Closes (Doha)</span><span>Status</span><span></span></li>
 ${OPEN.map(o => oppRow(o, true)).join('\n')}
     </ol>
     <p class="opp-none" id="oppNone"${OPEN.length ? ' hidden' : ''}>Nothing is open right now. Register and you are invited the moment an event opens in your categories.</p>
@@ -1801,7 +1758,7 @@ function pageRegister() {
   const steps = FORMS.supplier.fields.filter(f => f.step).map(f => f.step);
   return head({
     title: `Register as a Supplier · ${SITE.name}`,
-    desc: 'One free registration covers every Lusail Corp company. Your details, categories and documents — reviewed within five working days.',
+    desc: 'One free registration covers everything Lusail Corp buys. Your details, categories and documents — reviewed within five working days.',
     url: '/supplier-portal/register/', image: 'hero-sector-trading',
     schema: graph(crumbs([{ name: 'Supplier Portal', url: '/supplier-portal/' }, { name: 'Register' }]))
   })
@@ -1811,7 +1768,7 @@ function pageRegister() {
     <p class="crumbs"><a href="/supplier-portal/">Supplier Portal</a><span aria-hidden="true">/</span><span>Register</span></p>
     <div class="opp-hero-say">
       <h1>Register as a supplier</h1>
-      <p class="opp-brief">One profile for every company in the Group. Your details save automatically in this browser, so you can finish later.</p>
+      <p class="opp-brief">One profile for the whole Group. Your details save automatically in this browser, so you can finish later.</p>
       <p class="reg-ref" id="regRef" hidden>Registering to bid on <strong data-ref></strong> — procurement invites you to it as soon as you qualify.</p>
     </div>
   </div>
@@ -1844,10 +1801,10 @@ ${steps.map((t, i) => `          <li data-step="${i}"><span class="regprog-n">${
 
 function pageContact() {
   /* The dropdown is built from the same list api/contact.js validates
-     against, so a new company appears in both at once. */
+     against, so a new service area appears in both at once. */
   return head({
     title: `Contact · ${SITE.name}`,
-    desc: 'Contact Lusail Corp about our companies, supply, commercial opportunities or careers.',
+    desc: 'Contact Lusail Corp about any of our services — commodities, freight, food supply, energy and industrial supply, technology — or about supplying the Group, partnerships or careers.',
     url: '/contact/', image: 'hero-contact',
     schema: graph({ '@type': 'ContactPage', url: abs('/contact/'),
       name: 'Contact ' + SITE.name, mainEntity: { '@id': ORG_ID } },
@@ -1857,7 +1814,7 @@ function pageContact() {
     + pageHead({
       eyebrow: 'Contact',
       h1: 'Let’s connect.',
-      lede: 'Whether you want to work with one of our companies, supply them, propose something commercial, or just understand the Group better — this reaches us.',
+      lede: 'Whether you want to buy one of our services, supply the Group, propose something commercial, or just understand us better — this reaches us.',
       photo: 'hero-contact'
     })
     + `<section class="section tight stone">
@@ -1869,7 +1826,7 @@ function pageContact() {
         <div><dt>Email</dt><dd><a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a></dd></div>
         <div><dt>Phone</dt><dd><a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a></dd></div>
         <div><dt>Location</dt><dd>${esc(SITE.contact.location)}</dd></div>
-        <div><dt>Where your message goes</dt><dd>Choose an area of interest in the form and your message goes straight to the company that can answer it, not to a general inbox.</dd></div>
+        <div><dt>Where your message goes</dt><dd>Choose the service area in the form and your message goes straight to the desk that handles it, not to a general inbox.</dd></div>
       </dl>
     </div>
     ${formBlock('enquiry', 'f', 'fcard rise d1')}
@@ -1887,14 +1844,14 @@ function page404() {
     + pageHead({
       eyebrow: '404',
       h1: 'That page does not exist.',
-      lede: 'The link may have changed. Head back to the home page, or see our sectors.',
+      lede: 'The link may have changed. Head back to the home page, or see our services.',
       photo: 'hero-contact'
     })
     + `<section class="section tight">
   <div class="wrap">
     <div class="hero-cta">
       <a class="btn btn-dark" href="/">Home</a>
-      <a class="btn btn-line" href="/sectors/">Our sectors</a>
+      <a class="btn btn-line" href="/services/">Our services</a>
     </div>
   </div>
 </section>
@@ -2007,13 +1964,10 @@ function build() {
   console.log('pages');
   write('index.html', pageHome());
   write('about/index.html', pageAbout());
-  // one page per company, from the flat list, so a company listed in two
-  // sectors is still written exactly once. A company with a site of its own
-  // is linked there instead and gets no page here.
-  ALL_COMPANIES.filter(c => !c.site).forEach(c => write(`companies/${c.slug}/index.html`, pageCompany(c)));
-  // the sectors live on one page; each block carries the anchor the old
-  // per-sector pages answered to
-  write('sectors/index.html', pageSectorsIndex());
+  // one page per service, from the flat list
+  ALL_SERVICES.forEach(s => write(`services/${s.slug}/index.html`, pageService(s)));
+  // the areas live on one page; each block carries an anchor
+  write('services/index.html', pageServicesIndex());
   write('partnerships/index.html', pagePartnerships());
   write('supplier-portal/index.html', pageSuppliers());
   write('supplier-portal/opportunities/index.html', pageOpportunities());
@@ -2056,8 +2010,8 @@ function build() {
   fs.writeFileSync(path.join(imgOut, 'globe.json'), globeJson);
   console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
-  const urls = ['/', '/about/', ...ALL_COMPANIES.filter(c => !c.site).map(c => `/companies/${c.slug}/`),
-    '/sectors/', '/partnerships/',
+  const urls = ['/', '/about/', '/services/', ...ALL_SERVICES.map(svcHref),
+    '/partnerships/',
     '/supplier-portal/', '/supplier-portal/opportunities/', '/supplier-portal/register/', '/supplier-portal/code/', '/contact/'];
   const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
@@ -2069,7 +2023,7 @@ function build() {
 
   console.log('  robots.txt, sitemap.xml (' + urls.length + ' urls)');
   const closedN = OPPORTUNITIES.length - OPEN.length;
-  console.log(`done -> dist/  (${urls.length + 1 + closedN} pages, ${ALL_COMPANIES.length} companies, ${OPEN.length} open opportunities${closedN ? `, ${closedN} closed` : ''})`);
+  console.log(`done -> dist/  (${urls.length + 1} pages, ${ALL_SERVICES.length} services in ${AREAS.length} areas, ${OPEN.length} open opportunities${closedN ? `, ${closedN} closed` : ''})`);
 }
 
 build();

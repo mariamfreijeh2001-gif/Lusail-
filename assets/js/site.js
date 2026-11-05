@@ -213,10 +213,11 @@
     var kind = form.getAttribute('data-form');
     var areaSel = form.querySelector('select[name="area"]');
 
-    /* A link can preselect: /contact/?company=<slug> (or ?area=) picks the
-       desk; /supplier-portal/register/?company=<slug> ticks the categories that company
-       buys in. A page can also hand the form a first draft (data-prefill):
-       the desk an invitation request is for, the reference in its message. */
+    /* A link can preselect: /contact/?area=<slug> picks the service area
+       (and ?about=<name> opens the message with the service it concerns);
+       /supplier-portal/register/?cat=<slug> ticks that supply category. A
+       page can also hand the form a first draft (data-prefill): the desk an
+       invitation request is for, the reference in its message. */
     try {
       var q = new URLSearchParams(location.search);
       /* an event's action arrives carrying its reference */
@@ -227,11 +228,14 @@
         var refSay = document.getElementById('regRef');
         if (refSay) { refSay.querySelector('[data-ref]').textContent = ref; refSay.hidden = false; }
       }
-      var pre = q.get('company') || q.get('area');
+      var pre = q.get('area');
       if (pre && areaSel && [].some.call(areaSel.options, function (o) { return o.value === pre; })) areaSel.value = pre;
-      var co = (q.get('company') || '').replace(/[^a-z0-9-]/g, '');
-      if (co) $$('input[type="checkbox"][data-buyers]', form).forEach(function (b) {
-        if ((' ' + b.getAttribute('data-buyers') + ' ').indexOf(' ' + co + ' ') !== -1) b.checked = true;
+      var about = (q.get('about') || '').replace(/[<>]/g, '').trim().slice(0, 80);
+      var msg = form.querySelector('textarea[name="message"]');
+      if (about && msg && !msg.value) msg.value = 'About ' + about + ':\n';
+      var cat = (q.get('cat') || '').replace(/[^a-z0-9-]/g, '');
+      if (cat) $$('input[type="checkbox"][name="categories"]', form).forEach(function (b) {
+        if (b.value === cat) b.checked = true;
       });
       var fill = form.getAttribute('data-prefill');
       if (fill) {

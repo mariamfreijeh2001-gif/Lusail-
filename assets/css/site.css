@@ -2944,3 +2944,108 @@ and the document rows ----------------------------- */
 }
 .opp-brief-line{display:block;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-3);margin-top:2px}
 
+
+/* ==========================================================================
+   Services first — the ledger on the home page, the services under each
+   area in the bar's panel, the service cards inside an area block on
+   /services/, the questions on a service page, and the one strip of
+   companies. Appended after the phone block, so every narrow-screen rule
+   here carries its own media query.
+   ========================================================================== */
+
+/* ---- the services ledger: one row per area, the services beside it ---- */
+.ledger{margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--line-2)}
+.led{
+  position:relative;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);
+  gap:clamp(16px,3vw,48px);padding:clamp(22px,2.6vw,32px) 0;border-bottom:1px solid var(--line);
+}
+.led::before{
+  content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.led:hover::before{transform:scaleX(1)}
+.led-head{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:6px;align-content:start}
+.led-n{grid-row:1 / span 2;font:300 1.0625rem/1.6 var(--display);letter-spacing:.08em;color:var(--gold-text)}
+.led-head h3{font:400 clamp(1.375rem,1.8vw,1.75rem)/1.2 var(--display);color:var(--ink)}
+.led-head h3 a{color:inherit;text-decoration:none;transition:color .2s}
+.led-head h3 a:hover{color:var(--gold-text)}
+.led-head p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);max-width:44ch}
+.led-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px;align-content:start}
+.led-list a{
+  display:inline-flex;align-items:center;min-height:44px;padding:9px 18px;
+  border:1px solid var(--line-2);border-radius:2px;
+  font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);text-decoration:none;
+  transition:border-color .2s,background .2s,color .2s;
+}
+.led-list a:hover,
+.led-list a:focus-visible{border-color:var(--ink);background:var(--ink);color:#fff}
+@media (max-width:860px){
+  .led{grid-template-columns:1fr;gap:16px}
+}
+@media (prefers-reduced-motion:reduce){ .led::before,.led-list a{transition:none} }
+
+/* ---- the services under each area in the bar's panel ---- */
+.secmenu-col{gap:4px;padding:16px 18px 18px}
+.secmenu-head{margin-bottom:4px}
+.secmenu-item{
+  display:block;padding:5px 0 5px 23px;min-height:24px;
+  font:400 var(--t-micro)/1.35 var(--ui);color:var(--ink-2);text-decoration:none;
+  transition:color .15s;
+}
+.secmenu-item:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.secmenu{width:min(960px,calc(100vw - 2 * var(--gutter)))}
+.secmenu-cols{grid-template-columns:repeat(4,minmax(0,1fr))}
+.secmenu-col:nth-child(3n+2),
+.secmenu-col:nth-child(3n+3){border-inline-start:0}
+.secmenu-col:nth-child(4n+2),
+.secmenu-col:nth-child(4n+3),
+.secmenu-col:nth-child(4n+4){border-inline-start:1px solid #efefef}
+
+/* ---- the cards inside an area block on /services/ ---- */
+.secblk-col > .cogrid{justify-self:stretch;width:100%;margin-top:6px;grid-template-columns:repeat(auto-fill,minmax(228px,1fr))}
+.secblk .cocard{background:var(--tile,var(--paper));border-color:var(--rule,var(--line))}
+.secblk .cocard-name{color:var(--on,var(--ink))}
+.secblk .cocard-role{color:var(--on-2,var(--ink-3))}
+.secblk .cocard-sector{display:none}
+.secidx[data-tone="3"] .cocard:hover{border-color:var(--gold)}
+
+/* ---- the questions on a service page ---- */
+.faq{margin-top:clamp(24px,2.8vw,36px);border-top:1px solid var(--line-2)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-item summary{
+  cursor:pointer;list-style:none;position:relative;padding:18px 44px 18px 0;min-height:44px;
+  font:400 clamp(1.0625rem,1.3vw,1.25rem)/1.35 var(--display);color:var(--ink);
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{
+  content:"+";position:absolute;right:4px;top:50%;translate:0 -50%;
+  font:300 1.5rem/1 var(--display);color:var(--gold-text);transition:transform .25s;
+}
+.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-item summary:hover{color:var(--co-text,var(--gold-text))}
+.faq-item summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.faq-item p{margin:0 0 20px;max-width:70ch;font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2)}
+@media (prefers-reduced-motion:reduce){ .faq-item summary::after{transition:none} }
+
+/* ---- the one strip of companies ---- */
+.cos{overflow:hidden;margin-top:clamp(24px,2.8vw,36px);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.cos-track{list-style:none;margin:0;padding:0;display:flex;width:max-content;animation:cos-run 38s linear infinite}
+.cos:hover .cos-track,
+.cos:focus-within .cos-track{animation-play-state:paused}
+.cos-item{flex:none}
+.cos-item > a,
+.cos-item > span{
+  display:grid;gap:4px;padding:clamp(22px,2.6vw,32px) clamp(28px,3.4vw,56px);
+  border-inline-end:1px solid var(--line);text-decoration:none;color:inherit;
+}
+.cos-item > a:hover .cos-name{color:var(--gold-text)}
+.cos-item > a:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+.cos-name{font:400 clamp(1.25rem,1.8vw,1.75rem)/1.2 var(--display);color:var(--ink);white-space:nowrap;transition:color .2s}
+.cos-name .ext{font-size:.7em;color:var(--gold-text)}
+.cos-role{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+@keyframes cos-run{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){
+  .cos{-webkit-mask-image:none;mask-image:none}
+  .cos-track{animation:none;width:auto;flex-wrap:wrap}
+  .cos-item[aria-hidden="true"]{display:none}
+}
