@@ -463,7 +463,7 @@ const AREAS = [
           'They arrive in containers of 25 or 50 kg bags and are repacked in Qatar into retail packs under our labels or the customer’s, or supplied in bulk bags to food manufacturers and caterers.',
           'Alongside them we supply packed wheat products — flour, semolina, bulgur and pasta — to the same customers, on the same deliveries.'
         ],
-        img: 'prod-grains-pulses',
+        img: 'prod-food-security',
         facts: [
           { k: 'Lines', v: 'Lentils, chickpeas, beans, peas, flour, semolina, bulgur' },
           { k: 'Quality', v: 'By size, colour and defect count' },
@@ -493,7 +493,7 @@ const AREAS = [
           'The range follows demand. A supermarket chain, a hotel group or a catering company tells us what it needs on the shelf and in the store, and the line is sourced, registered and delivered to that.',
           'Every product carries the Ministry of Public Health registration, the Halal certification where it applies, and the Arabic labelling Qatar requires, before it ships.'
         ],
-        img: 'prod-dry-food',
+        img: 'prod-food-commodities',
         facts: [
           { k: 'Lines', v: 'Oils, canned goods, dried fruit and nuts, spices, dairy, beverages' },
           { k: 'Brands', v: 'Manufacturers’ brands or private label' },
@@ -804,7 +804,7 @@ const AREAS = [
           'The commodities are the ones the Group already trades — wheat and grains, sugar, rice, edible oils and pulses — so the programme draws on existing suppliers and existing routes rather than ones built for the occasion.',
           'The client is a government entity, a national programme or an institutional buyer, and the contract is a tender or a framework agreement.'
         ],
-        img: 'prod-food-security',
+        img: 'prod-vessel-chartering',
         facts: [
           { k: 'Commodities', v: 'Wheat, grains, sugar, rice, edible oils, pulses' },
           { k: 'Basis', v: 'Framework agreement, multi-year' },
@@ -967,7 +967,7 @@ const AREAS = [
           'The focus is energy, advanced technology and industrial development — the sectors the Group already works in and understands — and the horizon is long: positions chosen to still make sense in ten years.',
           'We work with developers, operators and co-investors in Qatar and across the Gulf, Europe, North Africa and Asia.'
         ],
-        img: 'hero-tibeco-group',
+        img: 'hero-sector-investments',
         facts: [
           { k: 'Focus', v: 'Energy, advanced technology, industrial development' },
           { k: 'Horizon', v: 'Long term; fewer, larger positions' },

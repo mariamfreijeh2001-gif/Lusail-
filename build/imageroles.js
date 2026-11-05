@@ -22,7 +22,7 @@ module.exports = {
 
   // a service area: the photograph behind every page title in it, and its
   // strip in the home page's accordion
-  'hero-sector-investments': ['hero'],
+  'hero-sector-investments': ['hero', 'still', 'rail'],   // also the strategic investment service
   'hero-sector-energy-industrial': ['hero'],
   'hero-sector-technology': ['hero'],
   'hero-sector-trading': ['hero'],
@@ -50,10 +50,10 @@ module.exports = {
   'prod-edible-oils': ['still', 'rail'],
   'prod-industrial-materials': ['still', 'rail'],
   'prod-air-freight': ['still', 'rail'],
-  'prod-dry-food': ['still', 'rail'],
+  'prod-food-commodities': ['still', 'rail'],
+  'prod-vessel-chartering': ['still', 'rail'],
   'prod-fresh-fruits': ['still', 'rail'],
   'prod-fresh-vegetables': ['still', 'rail'],
-  'prod-grains-pulses': ['still', 'rail'],
   'prod-land-freight': ['still', 'rail'],
   'prod-energy-materials': ['panel', 'still', 'rail'],
   'prod-technology-systems': ['panel', 'still', 'rail'],
