@@ -3299,3 +3299,310 @@ and the document rows ----------------------------- */
 
 /* four buying steps in one row on a wide screen */
 @media (min-width:901px){ .steps.steps-4{grid-template-columns:repeat(4,minmax(0,1fr))} }
+
+/* ==========================================================================
+   SITE-WIDE DESIGN REVIEW — every page but the home page
+   Appended after the phone block on purpose: every narrow-screen rule here
+   carries its own media query. The home page's own block above is left as
+   it is; the rules here reach the shared chrome and every other page.
+
+   What it settles, in order: the type scale (four tokens added for the
+   sizes the cards were improvising), one eyebrow, one card, one numeral,
+   one label; secondary text that had slipped under AA; the area page's
+   chapters; the opportunities list; the footer; and the phone.
+   ========================================================================== */
+
+/* ---- the four sizes the scale was missing ------------------------------ */
+:root{
+  --t-h3:clamp(1.25rem,1.7vw,1.5rem);  /* a card's title: 20–24px, the clamp the home page's claims already use */
+  --t-num:1.75rem;                     /* the numeral that heads a card */
+  --t-num-s:1.0625rem;                 /* the small numeral beside a row's title */
+  --t-label:.6875rem;                  /* 11px: the meta label under a 12px eyebrow */
+  --card-pt:clamp(22px,2.4vw,30px);    /* a ruled card's padding, above and below */
+  --card-pb:clamp(24px,2.6vw,32px);
+}
+
+/* ---- eyebrows: one treatment, a 24px gold dash and 12px tracked caps ---- */
+.sub-h3{
+  display:flex;align-items:center;gap:12px;
+  font:600 var(--t-xxs)/1.2 var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--label);
+}
+.sub-h3::before{display:block;width:24px;height:2px;margin:0;vertical-align:baseline;background:var(--co,var(--gold))}
+.sub-index-h,
+.secblk-count{font:600 var(--t-xxs)/1.2 var(--ui);letter-spacing:.18em;text-transform:uppercase}
+
+/* ---- meta labels: 11px, 600, tracked, in the grotesque ----------------- */
+.sub-facts dt,.co-facts dt,.co-figs dt,.srcreg h3,.channels dt,.lform label,.lform .checks legend,
+.foot-h,.cocard-sector,.sub-from span,.catrow-buyers > span,.opp-head,.opp-l,.opp-type span,
+.secmenu-eyebrow{
+  font:600 var(--t-label)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;
+}
+.lform label.agree{font:400 var(--t-sm)/1.5 var(--body);letter-spacing:0;text-transform:none}
+.lform label.chk{font:500 var(--t-sm)/1.2 var(--ui);letter-spacing:0;text-transform:none}
+.srcreg h3{color:var(--label)}
+
+/* ---- card titles: the serif at one size, regular, never bold ----------- */
+.valcard h3,.vc h3,.pline h3,.svc h3,.sub-lines h4,.sub-steps h4,.step h3,.dir h3,.route h3,
+.pillar h3,.tl-step h3,.cocard-name,.fdone h3{
+  font:400 var(--t-h3)/1.2 var(--display);letter-spacing:-.005em;color:var(--ink);margin:0;
+}
+.tl-step h3{color:#fff}
+.valcard h3,.step h3,.svc h3,.sub-lines h4,.sub-steps h4{margin-top:4px}
+/* row titles — a list, not a card — hold the lead size */
+.qsteps h3,.catrow-name,.conduct h3,.apply-h,.opp-title{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink)}
+.opp-title{margin:0}
+
+/* ---- numerals: "01" in the light serif, the area's colour -------------- */
+.valcard-n,.svc-n,.step-n,.catrow-n,.conduct-n,.dir-n,.route-n{
+  font:300 var(--t-num)/1 var(--display);letter-spacing:-.01em;color:var(--co-text,var(--gold-text));
+}
+.sub-index-n,.qsteps li > span,.fstep span,.regprog-n,.secrail-n{
+  font:300 var(--t-num-s)/1.4 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text));
+}
+.regprog-n{align-self:baseline}
+.regprog li.is-done .regprog-n{color:var(--gold-deep)}
+.secrail-n{color:var(--gold-text)}
+.secidx[data-tone="3"] .secrail-n{color:var(--gold)}
+.conduct li{grid-template-columns:56px minmax(0,1fr)}
+
+/* ---- secondary copy that had slipped under AA at small sizes ----------
+   --ink-3 is for the greyed heading word at 24px and up; at 12–15px it
+   measured 3.6–3.9:1 on paper. Everything small reads in --ink-2. */
+.cocard-role,.sub-index small,.catrow-who,.catrow-count,.catrow-buyers > span,.opp-head,.opp-l,
+.opp-in,.badge-invite,.fnote,.fhelp,.fdoc-hint,.fdoc-file,.regprog-s,.opp-req-rows dt,.opp-req-note,
+.opp-req-clar em,.opp-req summary::after,.secmenu-eyebrow{color:var(--ink-2)}
+.secmenu-eyebrow{color:var(--gold-text)}
+
+/* ---- running text holds a readable measure ------------------------------ */
+.secblk-say{max-width:66ch}
+.secblk-lede{max-width:60ch}
+
+/* ==========================================================================
+   Cards — one shape: a hairline above, a gold rule drawn across on hover,
+   the same padding, no shadow and no lift
+   ========================================================================== */
+.valcard,.pline,.vc,.srcreg,.step{padding-top:var(--card-pt);padding-bottom:var(--card-pb)}
+.vc{transition:none}
+.vc:hover{border-color:var(--line-2);transform:none}
+.vc::before{
+  content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.vc:hover::before{transform:scaleX(1)}
+.step{border-top:1px solid var(--line-2)}
+.step::after{width:100%;transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.step:hover::after{width:100%;transform:scaleX(1)}
+
+/* the two ways in, and the form card: ruled, not floated */
+.route{box-shadow:none;border-top:1px solid var(--line-2);transition:none}
+.route:hover{border-top-color:var(--line-2);transform:none}
+.route::before{
+  content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.route:hover::before,.route:focus-visible::before{transform:scaleX(1)}
+.route:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.fcard{box-shadow:none;border:1px solid var(--line);border-top:3px solid var(--gold)}
+/* the hand-over panel: a ruled band rather than a tinted box */
+.regcta{background:none;border:0;border-block:1px solid var(--line-2);padding-inline:0}
+
+/* the lines a service is made of: the outer rules match every other card */
+.svcs{border-top-color:var(--line-2)}
+.svc{border-bottom-color:var(--line-2)}
+
+/* the service and area cards: a 4:3 photograph, then the name and the
+   line, and every card in a row shares its rows — a two-line name in one
+   card pushes the lines of all of them to the same baseline */
+.cocard-shot img{aspect-ratio:4/3}
+@media (min-width:561px){
+  .cocard{grid-row:span 4;grid-template-rows:subgrid;row-gap:0}
+  .cocard-body{display:contents}
+  .cocard-sector{padding-top:clamp(14px,1.6vw,18px)}
+  .cocard-name{padding-top:5px}
+  .secblk .cocard-name{padding-top:clamp(14px,1.6vw,18px)}
+  .cocard-role{padding-top:5px;padding-bottom:clamp(16px,1.8vw,22px);align-self:start}
+}
+.cocard:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* the questions: compact, with the mark held in its column */
+.faq-item summary{padding:15px 44px 15px 0}
+.faq-item p{margin-bottom:18px}
+
+/* the opened category keeps the hairline weight of the rest */
+.catrow-body{border-top-color:var(--line)}
+
+/* ==========================================================================
+   The area pages — each service a chapter
+   ========================================================================== */
+/* the facts strip reads as one line of facts, so it no longer mirrors the
+   four-column table of lines under it */
+.sub-facts{column-gap:clamp(16px,2.2vw,36px);margin-top:clamp(24px,3vw,40px)}
+.sub-facts > div,.sub-facts > div + div{padding:14px 0 16px;border-inline-start:0}
+.sub-facts dd{font-size:var(--t-body)}
+/* the chapter head and its story */
+.sub-head{gap:12px}
+.sub-head .eyebrow{margin-bottom:4px}
+.sub-role{max-width:48ch}
+.sub-story{margin-top:clamp(28px,3.4vw,44px)}
+/* the chapter's closing buttons */
+.sub-cta{margin-top:clamp(28px,3.4vw,44px)}
+.sub .faq{margin-top:12px}
+/* the tags inside the story keep to the system's hairline, the area's colour on hover */
+.co .tags li{border-color:var(--line-2)}
+.co .tags li:hover{border-color:var(--co,var(--gold))}
+/* the jump list in the opening */
+.sub-index a > span:last-of-type{font-size:var(--t-lg)}
+.sub-index a{padding:11px 0}
+/* the buying steps on a wide screen: no arrow between ruled cards — the
+   numbers already say the order */
+@media (min-width:901px){ .steps.steps-4 .step + .step::before{display:none} }
+@media (max-width:900px){ .steps .step + .step::before{display:none} }
+
+/* ==========================================================================
+   The services index
+   ========================================================================== */
+.secrail a{grid-template-columns:2.4em minmax(0,1fr);gap:8px}
+.secrail a[aria-current="location"] .secrail-n{color:var(--gold-text)}
+.secidx[data-tone="3"] .secrail a[aria-current="location"] .secrail-n{color:var(--gold)}
+.secblk-col{gap:18px}
+.secblk-col > .cogrid{margin-top:4px}
+.secblk-go{margin-top:12px}
+@media (max-width:900px){ .secrail a{grid-template-columns:auto minmax(0,1fr)} }
+
+/* ==========================================================================
+   The supplier portal — the list of open events
+   Every column is a fixed width but two, so the status never spills into
+   the action: "Closing soon" measured 116px in a 96px column and sat on
+   the button. The countdown takes its own line under the date, so a date
+   never breaks in two.
+   ========================================================================== */
+.opp-head,
+.opp{grid-template-columns:112px 60px minmax(0,2fr) minmax(136px,.8fr) 112px 120px 172px}
+.opp-when .opp-in{display:block;white-space:nowrap}
+.opp-in:not(:empty)::before{content:none}
+.opp-st .badge{white-space:nowrap}
+.opps .badge-soon{padding:6px 8px 5px}
+.opp-act{justify-self:end}
+/* the folded requirement: a rule under the row, not a box inside it */
+.opp-req{border:0;border-top:1px solid var(--line);background:none;margin:8px 0 0}
+.opp-req summary{padding:0;min-height:40px}
+.opp-req-in{padding:0 0 12px}
+.opp-req summary::after{font:300 1.5rem/1 var(--display);color:var(--co-text,var(--gold-text))}
+.opp-req summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* the catalogue headings over the list */
+.opp-head{padding-block:12px}
+
+@media (max-width:1100px){
+  /* a card of three lines: reference, type and status; the title; the
+     category and the date on the left, the action in a column of its own */
+  .opp{grid-template-columns:auto auto minmax(0,1fr) auto;gap:8px 14px}
+  .opp-id{grid-column:1;grid-row:1}
+  .opp-type{grid-column:2;grid-row:1}
+  .opp-st{grid-column:3 / -1;grid-row:1;justify-self:end}
+  .opp-title{grid-column:1 / -1;grid-row:2}
+  .opp-who{grid-column:1 / 3;grid-row:3;align-self:center}
+  .opp-when{grid-column:3;grid-row:3;justify-self:start;align-self:center}
+  .opp-when .opp-in{display:inline}
+  .opp-in:not(:empty)::before{content:" · "}
+  .opp-act{grid-column:4;grid-row:3;justify-self:end}
+  .opp-req{grid-column:1 / -1}
+}
+@media (max-width:560px){
+  .opp{grid-template-columns:auto auto minmax(0,1fr)}
+  .opp-st{grid-column:3;grid-row:1}
+  .opp-who{grid-column:1 / 3;grid-row:3}
+  .opp-when{grid-column:3;grid-row:3;justify-self:end;text-align:right}
+  .opp-when .opp-in{display:none}
+  .opp-act{grid-column:1 / -1;grid-row:4;justify-self:stretch;margin-top:4px}
+}
+
+/* the code of conduct: its heading is read, not seen, so the list starts at the top */
+.vh + .conduct{margin-top:0}
+.conduct li{padding:18px 0 20px}
+
+/* ==========================================================================
+   The chrome — the bar's panel, the phone menu, the buttons, the footer
+   ========================================================================== */
+/* the panel: the system's hairline, and the mark held to the first line */
+.secmenu{border-color:var(--line)}
+.secmenu-eyebrow,.secmenu-col,.secmenu-col:nth-child(4n+2),.secmenu-col:nth-child(4n+3),
+.secmenu-col:nth-child(4n+4){border-color:var(--line)}
+.secmenu-head{align-items:flex-start}
+.secmenu-head .ico{margin-top:2px}
+.secmenu-item:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:2px}
+
+/* the phone menu: the area links are plain links. `.sub` is also the class
+   of a service chapter, whose even sections carry a tinted ground — which
+   was being painted across every second link in this menu. */
+@media (max-width:1080px){
+  .menu a.sub,.menu a.sub:nth-of-type(even){background:none}
+  .menu a.sub{color:rgba(247,244,241,.78)}
+}
+
+/* an outlined button on paper — the 404 page asked for one that did not exist */
+.btn-line{background:transparent;border-color:var(--ink);color:var(--ink)}
+.btn-line:hover,.btn-line:focus-visible{background:var(--ink);color:#fff}
+
+/* ---- the footer: the mark, then three lists under three labels ----------
+   The seven areas had been one narrow column, with "Energy, Industrial &
+   Project Supply" wrapping under every page. They run in two columns now,
+   and the page links and the address stand as lists of their own. */
+.foot-svc a,.foot-nav a,.foot-reach a{
+  font:400 var(--t-sm)/1.5 var(--body);color:rgba(255,255,255,.78);text-decoration:none;
+  display:inline-flex;align-items:center;min-height:28px;transition:color .2s;
+}
+.foot-nav a:hover,.foot-nav a:focus-visible,.foot-reach a:hover,.foot-reach a:focus-visible,
+.foot-svc a:hover,.foot-svc a:focus-visible{color:#fff;text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.foot-h{margin-bottom:4px}
+.foot-nav .foot-h,.foot-reach .foot-h{flex-basis:100%;width:100%}
+@media (min-width:861px){
+  .foot{grid-template-columns:minmax(0,250px) auto auto auto;column-gap:clamp(32px,4vw,64px);justify-content:space-between;align-items:start}
+  .foot-go{display:contents}
+  .foot-nav,.foot-reach{display:grid;gap:4px;align-content:start;justify-content:start;justify-items:start}
+  .foot-svc{gap:4px}
+}
+@media (min-width:861px) and (max-width:999px){
+  .foot{grid-template-columns:auto auto auto}
+  .foot-id{grid-column:1 / -1}
+}
+@media (min-width:1200px){
+  .foot-svc{grid-template-columns:repeat(2,max-content);grid-template-rows:auto repeat(4,auto);grid-auto-flow:column;column-gap:clamp(24px,3vw,40px)}
+  .foot-svc .foot-h{grid-column:1 / -1;grid-row:1}
+}
+@media (max-width:860px){
+  .foot-nav{display:grid;gap:2px}
+  .foot-reach{display:grid;gap:2px}
+  .foot-go{gap:22px}
+  .foot-svc a,.foot-nav a,.foot-reach a{min-height:36px}
+}
+
+/* ==========================================================================
+   Phones
+   ========================================================================== */
+@media (max-width:860px){
+  /* a chapter's photograph keeps the card shape rather than a fixed height */
+  .sub-pic{aspect-ratio:4/3;min-height:0}
+  /* the facts strip: two by two, a hairline between the rows */
+  .sub-facts > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:560px){
+  /* every service and area card is a row: the photograph, the name, the line */
+  .cogrid{gap:0}
+  .cocard{display:grid;grid-template-columns:96px minmax(0,1fr);grid-template-rows:auto;gap:0 14px;align-items:center;padding:10px 0}
+  .cocard-shot{aspect-ratio:1}
+  .cocard-shot img{width:100%;height:100%;aspect-ratio:1;object-fit:cover}
+  .cocard-body{padding:0;gap:3px}
+  .cocard-sector{display:none}
+  .secblk-col > .cogrid{margin-top:0}
+  .secblk-go{display:block;width:100%;text-align:center}
+  /* a chapter's buttons, and the dark ask's, run the full width */
+  .sub-cta,.co-ask-btns{flex-direction:column}
+  .sub-cta .btn,.co-ask-btns .btn{width:100%}
+  .co-ask-cta{width:100%;justify-items:stretch}
+  .co-ask-btns{width:100%}
+  /* the chapter head */
+  .sub-head h2{font-size:2.25rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .vc::before,.route::before,.step::after{transition:none}
+}

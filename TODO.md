@@ -42,18 +42,6 @@ Deleting is safe: a service with no `origins` simply renders without the
 section.
 
 
-### 0a. The Supplier Portal needs a fix — the "Closing soon" badge
-
-When a sourcing event is within three days of closing, its row on
-`/supplier-portal/` and `/supplier-portal/opportunities/` shows the
-"Closing soon" badge on top of the "Register to bid" button on a wide
-screen. The badge is written twice in the row (once in the status column,
-once beside the action) and the stylesheet is meant to show one or the
-other by width; it does not for this state. The fix is in the `.opps` /
-`.opp-st` / `.opp-act` / `.badge-soon` rules in `assets/css/site.css`.
-Visible today because the sulphur event `TG-RFQ-26-041` closes on
-5 November 2026.
-
 ### 0b. The Supplier Portal's events are examples — replace them *— blocking*
 
 `/suppliers/` lists five open sourcing events (granular sulphur, lighting

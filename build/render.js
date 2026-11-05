@@ -618,6 +618,7 @@ ${AREAS.map(a => `        <a href="${areaHref(a)}">${esc(a.name)}</a>`).join('\n
       </nav>
       <div class="foot-go">
         <nav class="foot-nav" aria-label="Footer">
+          <p class="foot-h">The Group</p>
           <a href="/services/">Services</a>
           <a href="/quote/">Request a quotation</a>
           <a href="/about/">About us</a>
@@ -625,11 +626,12 @@ ${AREAS.map(a => `        <a href="${areaHref(a)}">${esc(a.name)}</a>`).join('\n
           <a href="/supplier-portal/">Supplier Portal</a>
           <a href="/contact/">Contact</a>
         </nav>
-        <p class="foot-reach">
+        <div class="foot-reach">
+          <p class="foot-h">Reach us</p>
           <a href="mailto:${SITE.contact.email}">${esc(SITE.contact.email)}</a>
           <a href="tel:${SITE.contact.phone.replace(/\s/g, '')}">${esc(SITE.contact.phone)}</a>
 ${social.map(([label, href]) => `          <a href="${href}">${esc(label)}</a>`).join('\n')}
-        </p>
+        </div>
       </div>
     </div>
     <p class="foot-legal">© ${esc(SITE.name)}. All Rights Reserved. · ${esc(SITE.contact.location)}</p>
@@ -677,7 +679,7 @@ const EYEBROW = {
   faqTitle: 'Questions', actTitle: 'Capabilities', othTitle: 'Explore further',
   srcTitle: 'Sourcing', mktTitle: 'Global reach', pwTitle: 'Partnerships',
   pillarTitle: 'How it is built', stepTitle: 'How it works',
-  howTitle: 'The process', growTitle: 'What comes next',
+  howTitle: 'The process', growTitle: 'What comes next', buyTitle: 'The process',
   spHowTitle: 'How it works', catTitle: 'What we buy', oppTitle: 'Open opportunities',
   routesTitle: 'Two ways in'
 };
@@ -1381,7 +1383,7 @@ function pageServicesIndex() {
   <nav class="secrail" aria-label="The service areas on this page">
     <ol>
 ${AREAS.map((a, i) => `      <li><a href="#${a.slug}"${i === 0 ? ' aria-current="location"' : ''}>
-        <span class="secrail-n">${i + 1}.</span>
+        <span class="secrail-n">${num(i)}</span>
         <span class="secrail-t">${esc(a.name)}</span>
         <span class="secrail-go" aria-hidden="true">&#8627;</span>
       </a></li>`).join('\n')}
