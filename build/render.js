@@ -28,6 +28,7 @@
 const fs = require('fs');
 const path = require('path');
 const { globeDots } = require('./worldmap.js');
+const routes = require('./routes.js');
 
 /* A fingerprint of the stylesheet and the script, added to their URLs. The
    files are cached in the browser for an hour (and served stale for a day
@@ -360,7 +361,7 @@ const graph = (...nodes) => ({ '@context': 'https://schema.org', '@graph': nodes
 
 /* ---------- chrome ----------------------------------------------------- */
 
-function head({ title, desc, url, image, schema, noindex }) {
+function head({ title, desc, url, image, schema, noindex, refresh }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -369,7 +370,7 @@ function head({ title, desc, url, image, schema, noindex }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <meta name="theme-color" content="#0B1A3A">
-${noindex ? '<meta name="robots" content="noindex">\n' : `<link rel="canonical" href="${SITE.domain}${url}">`}
+${noindex ? '<meta name="robots" content="noindex">\n' : `<link rel="canonical" href="${SITE.domain}${url}">`}${refresh ? `<meta http-equiv="refresh" content="0;url=${refresh}">\n` : ''}
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${esc(SITE.name)}">
@@ -2046,26 +2047,22 @@ function pageContact() {
     + footer({ noQuick: true });
 }
 
+/* Not found. The server still answers 404, which is what a search engine
+   should see, and the page itself takes the visitor to the home page. The
+   refresh needs no script; the link is there for anyone whose browser
+   ignores it. */
 function page404() {
   return head({ title: `Page not found · ${SITE.name}`, desc: 'That page does not exist.',
-    url: '/404.html', noindex: true })
+    url: '/404.html', noindex: true, refresh: '/' })
     + header('')
     + pageHead({
       eyebrow: '404',
       h1: 'That page does not exist.',
-      lede: 'The link may have changed. Head back to the home page, or see our services.',
-      photo: 'hero-contact'
+      lede: 'Taking you to the home page.',
+      photo: 'hero-contact',
+      action: { href: '/', label: 'Go to the home page' }
     })
-    + `<section class="section tight">
-  <div class="wrap">
-    <div class="hero-cta">
-      <a class="btn btn-dark" href="/">Home</a>
-      <a class="btn btn-line" href="/services/">Our services</a>
-    </div>
-  </div>
-</section>
-`
-    + footer();
+    + footer({ noQuick: true });
 }
 
 /* ---------- write ------------------------------------------------------ */
@@ -2220,8 +2217,23 @@ function build() {
   fs.writeFileSync(path.join(imgOut, 'globe.json'), globeJson);
   console.log(`  ${full} photographs in ${cut} sizes (${Math.round(bytes / 1024)} KB) + globe.json (${dots.length / 2} land points, ${Math.round(globeJson.length / 1024)} KB)`);
 
-  const urls = ['/', '/about/', '/services/', ...AREAS.map(areaHref), '/partners/', '/consumer/', '/careers/',
-    '/supplier-portal/', '/supplier-portal/opportunities/', '/supplier-portal/register/', '/supplier-portal/code/', '/contact/'];
+  /* the pages, as build/routes.js lists them; the build refuses to disagree */
+  const urls = routes.PAGES;
+  for (const u of urls) {
+    if (!fs.existsSync(path.join(OUT, u === '/' ? 'index.html' : u.slice(1) + 'index.html'))) {
+      console.error(`\n  build/routes.js lists '${u}', which was not written.\n`); process.exit(1);
+    }
+  }
+  /* every redirect lands on a page that exists, at an anchor that exists,
+     and never on another redirect */
+  const anchorsOf = u => new Set([...fs.readFileSync(path.join(OUT, u === '/' ? 'index.html' : u.slice(1) + 'index.html'), 'utf8')
+    .matchAll(/ id="([^"]+)"/g)].map(m => m[1]));
+  const routeErrors = routes.checkRoutes(urls, anchorsOf);
+  if (routeErrors.length) { console.error('\n  routes:\n    ' + routeErrors.join('\n    ') + '\n'); process.exit(1); }
+  const live = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+  if (JSON.stringify(live) !== JSON.stringify(routes.vercelConfig())) {
+    console.error('\n  vercel.json is out of date: run `npm run routes`.\n'); process.exit(1);
+  }
   const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
     `User-agent: *\nAllow: /\n\nSitemap: ${SITE.domain}/sitemap.xml\n`);

@@ -5,6 +5,7 @@
   "description": "Lusail Corp group website - static, generated from data/site.js",
   "scripts": {
     "build": "node build/render.js",
+    "routes": "node build/routes.js",
     "images": "node build/variants.js",
     "images:force": "node build/variants.js --force",
     "import": "node build/import.js",
