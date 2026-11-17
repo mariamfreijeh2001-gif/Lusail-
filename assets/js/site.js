@@ -28,7 +28,7 @@
     onHeadScroll();
   }
 
-  /* ---------- the sectors panel -------------------------------------------
+  /* ---------- the services panel ------------------------------------------
      Opens on hover with a pointer, on click or Enter without one, and closes
      on Escape or on a click outside. */
 
@@ -115,12 +115,6 @@
       if (innerWidth > 1080 && menu.classList.contains('open')) setMenu(false);
     });
   }
-
-  /* ---------- the values ---------------------------------------------------
-     One open at a time. The first is open in the markup, so the column has a
-     shape before this runs and keeps one if it never does. */
-
-
 
   /* ---------- the four figures ---------------------------------------------
      They are written into the HTML, so they are right before this runs and
@@ -661,7 +655,7 @@
     }
   }
 
-  /* ---- the sectors index tracks the reading -----------------------------
+  /* ---- the services index tracks the reading ----------------------------
      The index at the left of /sectors/ marks whichever sector is on screen.
      The mark is driven from scroll position rather than from clicks, so it
      is right however you arrived — a link from elsewhere, the back button,
@@ -737,7 +731,7 @@
     }
   }
 
-  /* ---------- the sector accordion ---------------------------------------- */
+  /* ---------- the area accordion ------------------------------------------ */
 
   /* Pointing at a strip, or tabbing to it, opens it; the last one opened stays
      open, so moving the pointer away never leaves seven equal slivers. A tap
@@ -957,65 +951,11 @@
     }
   }
 
-  /* ---------- the in-page navigation on an area page ----------------------
-     Sticks under the bar and marks the chapter whose top has most recently
-     passed it, the way the index on /services/ does. */
-  var subnav = $('#subnav');
-  if (subnav) {
-    var links = $$('.subnav-list a', subnav).map(function (a) {
-      return { a: a, sec: document.getElementById(a.getAttribute('href').slice(1)) };
-    }).filter(function (e) { return e.sec; });
-    var strip = subnav.querySelector('.subnav-list');
-    var current = null;
-    var mark = function () {
-      var line = subnav.getBoundingClientRect().bottom + 24;
-      var best = links[0], top = -Infinity;
-      links.forEach(function (e) {
-        var y = e.sec.getBoundingClientRect().top - line;
-        if (y <= 0 && y > top) { top = y; best = e; }
-      });
-      subnav.classList.toggle('stuck', subnav.getBoundingClientRect().top <= (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--head-h'), 10) || 104) + 1);
-      if (best === current) return;
-      current = best;
-      links.forEach(function (e) {
-        if (e === best) e.a.setAttribute('aria-current', 'location'); else e.a.removeAttribute('aria-current');
-      });
-      if (strip && strip.scrollWidth > strip.clientWidth) {
-        var l = best.a.offsetLeft, r = l + best.a.offsetWidth;
-        if (l < strip.scrollLeft) strip.scrollLeft = l;
-        else if (r > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = r - strip.clientWidth;
-      }
-    };
-    if (links.length) {
-      var ticking = false;
-      addEventListener('scroll', function () {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(function () { mark(); ticking = false; });
-      }, { passive: true });
-      addEventListener('resize', mark);
-      mark();
-    }
-  }
-  /* ---------- the at-a-glance table on an area page ------------------------
-     The name in each row is the link to the service's section; the rest of
-     the row follows it, so a reader can aim at the row rather than the
-     word. A click on any other link in the row, or a drag to select text,
-     is left alone. */
-  $$('.glance tbody tr').forEach(function (row) {
-    var to = row.querySelector('th a[href^="#"]');
-    if (!to) return;
-    row.addEventListener('click', function (e) {
-      if (e.target.closest('a')) return;
-      if (String(getSelection && getSelection())) return;
-      location.hash = to.getAttribute('href');
-    });
-  });
-  /* ---------- the service sheets on an area page --------------------------
-     Every sheet is on the page in order and reveals itself as it scrolls
-     into view, so a reader simply scrolls through the services. The cards
-     above, the list in the hero and the previous/next links jump to a
-     sheet; the card of the sheet being read is marked. */
+  /* ---------- the service chapters on an area page -------------------------
+     Every chapter is on the page in order and reveals itself as it scrolls
+     into view, so a reader simply scrolls through the services. The list in
+     the hero jumps to a chapter, and its line for the chapter being read is
+     marked. */
   var sheets = $$('#sheets .sheet');
   if (sheets.length) {
     var cards = $$('.co-hero-side a[href^="#"]');

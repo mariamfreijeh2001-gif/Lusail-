@@ -1,37 +1,3 @@
-/* ==========================================================================
-   Lusail Corp — site stylesheet
-
-   DIRECTION: the Lusail Corp design system (Claude Design). Editorial and
-   architectural: navy type on a near-white ground,
-fine rules instead of
-   shadows and boxes,
-a light serif for the voice and a grotesque for the
-   work,
-and gold spent in small,
-deliberate amounts. Navy carries the hero,
-the sourcing map,
-the closing card and the footer.
-
-   COLOUR: navy is the ink,
-gold is the mark,
-warm grey is the material,
-white is the air. Gold is never small text on paper — it reads at about
-   2:1 there — so where gold has to be read on a light ground it is
-   --gold-text,
-a deepened gold that holds 5.8:1.
-
-   TYPE: Newsreader (light serif) for page titles,
-section headings,
-card
-   titles and the large numerals; Inter for everything else,
-labels and
-   eyebrows included. Both are served from this origin rather than from
-   Google,
-which saves a DNS lookup,
-a TLS handshake and a render-blocking
-   stylesheet. SIL Open Font License; see site-assets/font/.
-   ========================================================================== */
-
 /* The latin cut of each,
 which is all an English-only site needs. Inter is
    the text face — the one TIBECO's site is set in,
@@ -205,12 +171,6 @@ led by a gold dash ------- */
 .eyebrow::before,
 .pagehead-eyebrow::before{content:"";width:24px;height:2px;background:var(--gold);flex:none}
 
-/* ---------- micro label: one face,
-one size,
-everywhere ----------------- */
-
-/* ---------- buttons and links ------------------------------------------ */
-
 /* Square,
 not rounded,
 and set in the UI face rather than the body one. */
@@ -360,10 +320,6 @@ and the section is about half as
 @media (max-width:900px){ .vals{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:560px){ .vals{grid-template-columns:minmax(0,1fr)} }
 
-/* ==========================================================================
-   How we create value — five numbered statements across the measure
-   ========================================================================== */
-
 /* Cards,
 not cells divided by rules. The rules made a table of it and the
    nth-child arithmetic underneath was holding five items in a six-column grid
@@ -454,10 +410,6 @@ and the facts underneath
   
 }
 
-/* ==========================================================================
-   What we trade today — a rail of products that scrolls when it has to
-   ========================================================================== */
-
 /* A grid,
 not a rail. Sideways scrolling kept most of the list behind the
    right edge,
@@ -473,43 +425,8 @@ so five or six fit
    on one screen — a photograph,
 the number,
 the name and a line. */
-.prodgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(28px,4vw,64px);margin-top:clamp(20px,2.6vw,32px)}
-.prod{
-  display:grid;grid-template-columns:116px minmax(0,1fr);grid-template-rows:auto auto auto;
-  gap:4px 20px;align-content:start;padding:18px 0;border-top:1px solid var(--line-2);
-}
-.prod-pic{grid-row:1 / span 4;display:block;overflow:hidden;background:var(--panel);aspect-ratio:1}
-.prod img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.prod:hover img{transform:scale(1.06)}
-.prod-n{grid-column:2;font:300 1.125rem/1 var(--display);color:var(--co-text,var(--gold-text))}
-.prod h3{grid-column:2;font:400 1.25rem/1.2 var(--display);color:var(--ink);margin:0}
-.prod p{grid-column:2;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2)}
-.prod-from{grid-column:2}
-@media (max-width:860px){ .prodgrid{grid-template-columns:1fr} }
-@media (max-width:520px){ .prod{grid-template-columns:84px minmax(0,1fr)} }
-@media (prefers-reduced-motion:reduce){
-  .prod img,
-.prod-pic{transition:none}
-  .prod:hover img,
-.prod:focus-within img{transform:none}
-}
 
 /* activity tags */
-.tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
-.tags li{
-  border:1px solid var(--line);padding:.65em 1.1em;
-  font:500 var(--t-sm)/1.4 var(--body);color:var(--ink-2);
-  transition:border-color .2s,color .2s;
-}
-.tags li:hover{border-color:var(--ink-3);color:var(--ink)}
-
-/* ==========================================================================
-   The portfolio — filter chips over the cards
-   ========================================================================== */
-
-/* ==========================================================================
-   Careers
-   ========================================================================== */
 
 /* ==========================================================================
    Contact
@@ -559,7 +476,6 @@ which is where the focus had been sent from. */
 textarea{min-height:140px;resize:vertical}
 .form-end{grid-column:1/-1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .status{color:var(--gold-deep);font-size:var(--t-sm)}
-.status.err{color:#A3341A}
 /* Honeypot. Off-screen rather than display:none,
 and out of the tab order.
    A person never reaches it,
@@ -629,18 +545,7 @@ in gold: the hero's single flourish */
   .hero-cta .btn{width:100%;justify-content:center}
 }
 
-/* ==========================================================================
-   Components introduced with the real content
-   ========================================================================== */
-
 /* activity / value tags */
-.tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
-.tags li{
-  border:1px solid var(--line-2);padding:.65em 1.1em;
-  font-size:var(--t-sm);color:var(--ink-2);border-radius:2px;
-  transition:border-color .2s,color .2s;
-}
-.tags li:hover{border-color:var(--gold);color:var(--ink)}
 
 /* ==========================================================================
    The bar — the mark on the left,
@@ -808,12 +713,6 @@ so each
   background:rgba(11,26,58,.92);backdrop-filter:blur(10px);
 }
 
-/* ==========================================================================
-   Footer — the mark and what the Group is,
-then the two lists that answer
-   "which business?" and "how do I reach you?"
-   ========================================================================== */
-
 /* Compact: the seven sectors run in two columns rather than one long one,
 and the legal line sits on a rule rather than under a gap. */
 .site-foot{background:var(--ink);color:var(--warm);padding-block:44px 22px}
@@ -936,24 +835,6 @@ so counting up changes the
   .stats dl > div:nth-child(3){border-inline-start:0;padding-inline-start:0}
   .stats dl > div:nth-child(n+3){border-top:1px solid var(--line-2)}
 }
-
-/* ==========================================================================
-   Diversified by Design — the sectors as an accordion
-   One sector stands open with its line and a way in; the rest are narrow
-   strips with their names set upright. Pointing at a strip,
-or tabbing to
-   it,
-opens it — and it stays open when the pointer leaves,
-so the row never
-   collapses into seven equal slivers. Without script the first is open and
-   every strip is still a plain link to its sector.
-   ========================================================================== */
-
-.sectors{padding-block:clamp(40px,5vw,56px)}
-.sectors .wrap{display:grid;gap:clamp(24px,3vw,32px);justify-items:center}
-.sec-intro{max-width:746px;text-align:center;display:grid;gap:10px;justify-items:center}
-.sec-intro h2{font-size:var(--t-h1);line-height:1.33}
-.sec-intro p{font-size:var(--t-lg);line-height:1.39;font-weight:500;color:var(--ink-2)}
 
 /* The accordion runs wider than the page column — nearly the full screen,
 up to 1680px — and tall,
@@ -1234,63 +1115,14 @@ and only once
   .rise.d3.in{transition-delay:.24s}
 }
 
-/* ==========================================================================
-   The company card,
-and the rail that holds it
-   One shape wherever a company is listed. The rail scrolls sideways only
-   when the row cannot hold every card,
-and snaps so a card never stops
-   half off the edge.
-   ========================================================================== */
-
 /* A grid that wraps,
 not a rail that scrolls sideways. A max as well as a
    min: with one company in it,
 a 1fr track would stretch the card across the
    whole measure and its 4:3 photograph would stand 578px tall. */
-.cogrid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,336px));
-  justify-content:start;
-  gap:clamp(18px,2.2vw,28px) clamp(12px,1.4vw,18px);
-  margin-top:clamp(24px,2.6vw,34px);
-}
-@media (max-width:560px){ .cogrid{grid-template-columns:minmax(0,1fr)} }
-
-.cocard{
-  display:grid;grid-template-rows:auto 1fr;
-  text-decoration:none;color:inherit;background:var(--paper);
-  border:1px solid var(--line);
-  transition:border-color .25s,transform .25s;
-}
-.cocard:hover{border-color:var(--gold);transform:translateY(-3px)}
-.cocard:focus-visible{outline:2px solid var(--gold-deep);outline-offset:2px}
-
-.cocard-shot{display:block;overflow:hidden;background:var(--stone)}
-.cocard-shot img{
-  display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;
-  transition:transform .55s cubic-bezier(.2,.7,.2,1);
-}
-.cocard:hover .cocard-shot img{transform:scale(1.05)}
-
-.cocard-body{display:grid;gap:5px;align-content:start;padding:clamp(16px,1.8vw,22px)}
-.cocard-sector{color:var(--gold-deep)}
-.cocard-name{font-family:var(--display);font-weight:400;font-size:1.375rem;line-height:1.2;color:var(--ink)}
-.cocard-role{color:var(--ink-3);font-size:var(--t-micro);line-height:1.5}
-
-@media (prefers-reduced-motion:reduce){
-  .cocard,
-.cocard-shot img{transition:none}
-  .cocard:hover{transform:none}
-  .cocard:hover .cocard-shot img{transform:none}
-}
-
-/* ---- every card in a rail is the same height ---------------------------- */
 /* The name gets its own row and the role the one under it,
 so a role that
    wraps to two lines does not make its card taller than its neighbours. */
-.cogrid{align-items:stretch}
-.cocard-body{grid-template-rows:auto auto 1fr}
-.cocard-role{align-self:start}
 
 /* ---- the bar over the home photograph -----------------------------------
    Transparent to start,
@@ -1340,8 +1172,6 @@ so the page always
   padding-inline:var(--gutter);
 }
 
-/* ---- the index ---------------------------------------------------------- */
-
 /* A list,
 not a table of contents in a box. The entries are quiet until the
    reading reaches them; the one you are in goes to full carbon and puts a
@@ -1385,16 +1215,6 @@ and pointing at the sector you
 .secrail-n,
 .secrail-go{transition:none}
 }
-
-/* ---- the other sectors,
-at the foot of a sector page --------------------
-   Three cards in a row. This had been carrying the class the sectors index
-   uses for its rail-and-reading layout{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:clamp(12px,1.6vw,20px);margin-top:clamp(26px,3.4vw,44px);
-}
-
-/* ---- one sector --------------------------------------------------------- */
 
 /* Each sector is as tall as its reading. Holding every sector to a full
    screen left most of each one empty on a laptop — 2,
@@ -1452,24 +1272,6 @@ which repeated what the sector paragraph above it
    had just said and cost most of the height. A logo goes in each of these
    when there are logos to put in them. */
 
-.cotiles{display:flex;flex-wrap:wrap;gap:12px;margin-top:2px}
-.cotile{
-  display:inline-flex;align-items:center;min-height:56px;padding:14px 22px;
-  background:var(--tile);border:1px solid var(--rule);
-  font:500 var(--t-lede)/1.3 var(--body);color:var(--on);text-decoration:none;
-  transition:border-color .25s,transform .25s,box-shadow .25s;
-}
-.cotile:hover,
-.cotile:focus-visible{
-  border-color:var(--on);transform:translateY(-2px);
-  
-}
-@media (prefers-reduced-motion:reduce){
-  .cotile{transition:none}
-  .cotile:hover,
-.cotile:focus-visible{transform:none}
-}
-
 @media (max-width:1180px){
   .secidx{column-gap:clamp(32px,5vw,105px);grid-template-columns:[rail] 300px [main] minmax(0,1fr) [end]}
   .secrail a{font-size:var(--t-body);min-height:62px}
@@ -1526,71 +1328,10 @@ and the map on Contact -------------- */
 .bandshot img{width:100%;height:auto;aspect-ratio:1212/353;object-fit:cover;background:var(--panel)}
 @media (max-width:820px){ .bandshot img{aspect-ratio:16/9} }
 
-/* ==========================================================================
-   The businesses — a photograph,
-its sector and its name
-   A grid that wraps rather than a row that squeezes,
-so the portfolio can
-   grow without every panel getting narrower: four sit in a row on a laptop,
-and a fifth starts the next row at the same size. Nothing opens on hover;
-   the photograph brightens and the arrow moves,
-and a click goes there.
-   ========================================================================== */
-
-.ladder{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));
-  gap:clamp(10px,1.2vw,16px);margin-top:clamp(30px,4vw,54px);
-}
-.lad{
-  position:relative;overflow:hidden;isolation:isolate;
-  aspect-ratio:3/4;min-height:300px;
-  background:var(--ink);text-decoration:none;
-  display:grid;align-content:end;padding:clamp(20px,2.2vw,28px);
-}
-.lad-bg{
-  position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;
-  opacity:.8;transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .4s;
-}
-.lad::after{
-  content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to top,rgba(6,15,36,.92) 0%,rgba(6,15,36,.45) 40%,rgba(6,15,36,.05) 70%);
-}
-.lad:hover .lad-bg,
-.lad:focus-visible .lad-bg{opacity:1;transform:scale(1.05)}
-.lad:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-
-.lad .n{
-  position:absolute;top:clamp(18px,2vw,24px);left:clamp(20px,2.2vw,28px);
-  font:400 var(--t-sm)/1.2 var(--display);letter-spacing:.1em;color:var(--gold);
-}
-.lad-b{display:grid;gap:8px;min-width:0}
-.lad-sec{font:600 .6875rem/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);overflow-wrap:anywhere}
-.lad h3{font:400 clamp(1.25rem,1.7vw,1.625rem)/1.15 var(--display);color:#fff;overflow-wrap:anywhere}
-.lad-arrow{display:inline-block;color:var(--gold);transition:transform .3s}
-.lad:hover .lad-arrow,
-.lad:focus-visible .lad-arrow{transform:translateX(5px)}
-
 /* The lead company — the Group's largest — takes a double square at the
    start: two columns and two rows on a laptop,
 with the four after it in a
    two-by-two beside it. More companies continue in rows of four below. */
-@media (min-width:861px){
-  .ladder{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .lad{aspect-ratio:4/3;min-height:0}
-  .lad-lead{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
-}
-.lad-lead h3{font:300 clamp(2rem,3.2vw,3rem)/1.05 var(--display);letter-spacing:-.018em}
-.lad-lead .lad-sec{font-size:var(--t-micro)}
-.lad-role{font:400 var(--t-lg)/1.4 var(--body);color:rgba(255,255,255,.85)}
-.lad-lead .lad-bg{opacity:.9}
-
-@media (max-width:560px){
-  .lad{aspect-ratio:4/3;min-height:0}
-}
-@media (prefers-reduced-motion:reduce){
-  .lad-bg,
-.lad-arrow{transition:none}
-}
 
 /* ---- what the Group does with them: four plain cards -------------------- */
 
@@ -1611,27 +1352,9 @@ with the four after it in a
 .wwd-card p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-2)}
 @media (max-width:900px){ .wwd{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:520px){ .wwd{grid-template-columns:1fr} }
-
-/* ---- where a product comes from ----------------------------------------- */
 /* Each origin is a link back to the sourcing register,
 so "Sourced from
    Ukraine" is a thing you can follow rather than a word on a card. */
-.prod-from{
-  display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-top:4px;
-}
-.prod-from > span{
-  font:600 .75rem/1.4 var(--mono);color:var(--label);letter-spacing:.14em;text-transform:uppercase;
-  width:100%;margin-bottom:2px;
-}
-.prod-from a{
-  font:500 var(--t-xs)/1 var(--body);color:var(--ink-2);text-decoration:none;
-  border:1px solid var(--line);padding:5px 9px;
-  transition:border-color .2s,color .2s,background .2s;
-}
-.prod-from a:hover,
-.prod-from a:focus-visible{
-  border-color:var(--ink);color:var(--ink);background:var(--white);
-}
 
 /* ---- the named services on a company with no product list --------------- */
 .svcs{
@@ -1674,9 +1397,7 @@ and these were the ones that fell between the two. The
   .site-head .brand,.foot-id a{display:inline-flex;align-items:center;min-height:44px}
   .burger{width:44px}
   a.pagehead-eyebrow{display:inline-flex;align-items:center;min-height:44px}
-  .prod-from a{min-height:44px;font-size:var(--t-micro)}
   .secrail a{min-height:48px}
-  .cotile{min-height:52px}
   .foot-legal{font-size:var(--t-xs)}
   /* the address and the number are the point of this page */
   .channels a{display:inline-flex;align-items:center;min-height:44px}
@@ -1696,49 +1417,9 @@ and these were the ones that fell between the two. The
   .stats dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 16px}
   .stats dl > div{justify-items:start;text-align:start}
 }
-
-/* ---- where a company buys from ------------------------------------------
-   The countries were only ever a line under each product card,
-so a company
-   buying from eleven of them never said so in one place. Grouped by the
-   Group sourcing regions,
-which is the same register the home page prints. */
-
-.srcregs{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:clamp(12px,1.6vw,20px);margin-top:clamp(28px,3.4vw,44px);
-}
-.srcreg{
-  position:relative;border-top:1px solid var(--line-2);
-  padding:clamp(18px,2vw,24px) clamp(4px,1vw,12px) clamp(20px,2.2vw,26px) 0;
-  display:grid;gap:12px;align-content:start;
-}
-.srcreg::before{
-  content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--co,var(--gold));
-  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
-}
-.srcreg:hover::before{transform:scaleX(1)}
-.srcreg h3{font:600 .75rem/1.4 var(--mono);color:var(--label);text-transform:uppercase;letter-spacing:.14em}
-.srcreg ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 10px}
-.srcreg li{font:400 var(--t-body)/1.5 var(--body);color:var(--ink)}
 /* no separator between them: a pseudo-element divider wraps onto the start
    of the next line,
 so a region read "· Turkmenistan". The gap is enough. */
-.srcreg ul{gap:4px 16px}
-.srcmore{margin-top:clamp(18px,2.2vw,26px)}
-.srcmore a{
-  display:inline-flex;align-items:center;gap:7px;min-height:44px;
-  font:500 var(--t-micro)/1.4 var(--ui);color:var(--ink);
-  text-underline-offset:4px;text-decoration-thickness:1px;
-}
-.srcmore a span{display:inline-block;transition:transform .25s}
-.srcmore a:hover span{transform:translateX(4px)}
-@media (max-width:900px){ .srcregs{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:560px){ .srcregs{grid-template-columns:minmax(0,1fr)} }
-@media (prefers-reduced-motion:reduce){
-  .srcreg{transition:none}
-  .srcreg:hover{transform:none}
-}
 
 /* ==========================================================================
    Company landing pages
@@ -1756,9 +1437,7 @@ so a company's
 .co{--co:var(--gold);--co-text:var(--gold-text);--co-tint:var(--paper);--co-on:#fff}
 .co .eyebrow{color:var(--co-text);text-decoration:none}
 .co .eyebrow::before{background:var(--co)}
-.co .svc-n,
-.co .prod-n{color:var(--co-text)}
-.co .tags li{border-color:color-mix(in srgb,var(--co) 45%,transparent)}
+.co .svc-n{color:var(--co-text)}
 
 .co-btn{background:var(--co);border-color:var(--co);color:var(--co-on)}
 .co-btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -1777,7 +1456,6 @@ so a company's
 }
 .co-hero-line{margin-top:18px;max-width:36ch;font:400 clamp(1.125rem,1.6vw,1.375rem)/1.45 var(--body)}
 .co-hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(26px,3vw,38px)}
-.co-hero .co-eyebrow{color:#fff}
 .co-hero-wrap{position:relative}
 
 /* the key facts,
@@ -1804,50 +1482,9 @@ the name over it */
 
 /* split: a colour panel with the name,
 the photograph beside it */
-.co-split .co-hero{
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:1fr auto;
-  background:var(--co-tint);color:var(--ink);
-}
-.co-split .co-hero-img{grid-column:2;grid-row:1;width:100%;height:100%;object-fit:cover}
-.co-split .co-hero-in{grid-column:1;grid-row:1;align-self:center;padding-block:clamp(56px,7vw,96px)}
-.co-split .co-hero-wrap{max-width:none;padding-inline:var(--gutter) clamp(24px,4vw,72px)}
-.co-split .co-hero .co-eyebrow{color:var(--co-text)}
-.co-split .co-hero-line{color:var(--ink-2)}
-.co-split .co-btn-line:hover{background:var(--ink);border-color:var(--ink);color:#fff}
-.co-split .co-facts{grid-column:1 / -1;grid-row:2;background:var(--ink);color:#fff}
-.co-split .co-facts dt{color:var(--co)}
 
 /* dark: a warm dark ground,
 the photograph framed beside the name */
-.co-dark .co-hero{
-  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-rows:1fr auto;
-  background:#1d1410;
-}
-.co-dark .co-hero-img{
-  grid-column:2;grid-row:1;align-self:center;width:calc(100% - var(--gutter));height:min(58svh,540px);
-  object-fit:cover;margin-block:clamp(40px,5vw,64px);
-}
-.co-dark .co-hero-in{grid-column:1;grid-row:1;align-self:center;padding-block:clamp(56px,7vw,96px)}
-.co-dark .co-hero-wrap{max-width:none;padding-inline:var(--gutter) clamp(24px,4vw,72px)}
-.co-dark .co-hero h1{color:#f6eee6}
-.co-dark .co-hero-line{color:rgba(246,238,230,.82)}
-.co-dark .co-facts{grid-column:1 / -1;grid-row:2;border-top:1px solid rgba(255,255,255,.14)}
-
-/* ---- the statement and the story ---------------------------------------- */
-
-.co-statement{
-  font:300 clamp(1.625rem,2.8vw,2.375rem)/1.2 var(--display);letter-spacing:-.012em;
-  max-width:30ch;margin:16px 0 clamp(28px,4vw,48px);
-}
-.co-story{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(32px,5vw,80px);align-items:stretch}
-.co-split .co-story-pic{order:2}
-.co-story-pic{margin:0;position:relative;min-height:340px}
-.co-story-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.co-story-pic::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:4px;background:var(--co)}
-.co-story-text{display:grid;gap:1em;align-content:center;color:var(--ink-2);font-size:1rem;line-height:1.65;max-width:60ch}
-.co-story-text .tags{margin-top:.6em}
-
-.co-offer{background:var(--co-tint)}
 
 /* ---- the closing ask,
 in the company's colour ---------------------------- */
@@ -1862,61 +1499,14 @@ in the company's colour ---------------------------- */
 .co-ask .co-btn{background:var(--co);border-color:var(--co);color:var(--co-on)}
 .co-ask .co-btn:hover{background:#fff;border-color:#fff;color:var(--ink)}
 .co-ask-mail{color:inherit;font:500 var(--t-sm)/1.4 var(--ui);text-underline-offset:4px}
-.co-dark .co-ask{background:#1d1410;color:#f6eee6}
-.co-dark .co-ask .eyebrow::before{background:var(--co)}
-.co-dark .co-ask .co-btn{background:var(--co);border-color:var(--co);color:#1d1410}
 
 @media (max-width:860px){
-  .co-split .co-hero,
-.co-dark .co-hero{grid-template-columns:1fr;grid-template-rows:auto auto auto}
-  .co-split .co-hero-img,
-.co-dark .co-hero-img{grid-column:1;grid-row:1;width:100%;height:auto;aspect-ratio:4/3;margin:0}
-  .co-split .co-hero-in,
-.co-dark .co-hero-in{grid-column:1;grid-row:2;padding-block:36px 40px}
-  .co-split .co-facts,
-.co-dark .co-facts{grid-row:3}
-  .co-split .co-hero-wrap,
-.co-dark .co-hero-wrap{padding-inline:var(--gutter)}
-  .co-story{grid-template-columns:1fr}
-  .co-split .co-story-pic{order:0}
   .co-facts dl > div + div{border-inline-start:0;padding-inline-start:0}
   .co-facts dl > div{border-top:1px solid rgba(255,255,255,.14)}
 }
 
-/* ---- pillars: two or three columns that say how the company is built ---- */
-.co-pillars{background:var(--ink);color:#fff}
-.co-pillars .head2 h2,
-.co-pillars h3{color:#fff}
-.co-pillars .eyebrow{color:var(--ink-inv-2)}
-.pillars{display:grid;gap:clamp(16px,2vw,28px);margin-top:clamp(24px,3vw,40px)}
-.pillars-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-.pillars-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-.pillar{
-  position:relative;display:grid;gap:12px;align-content:start;
-  padding:clamp(22px,2.6vw,34px) 0 8px;border-top:1px solid rgba(255,255,255,.18);
-}
-.pillar::before{
-  content:"";position:absolute;left:0;top:-1px;height:2px;width:72px;background:var(--co);
-  transition:width .5s cubic-bezier(.2,.7,.3,1);
-}
-.pillar:hover::before{width:100%}
-.pillar-pic{display:block;overflow:hidden;aspect-ratio:16/9;margin-bottom:8px}
-.pillar-pic img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
-.pillar:hover .pillar-pic img{transform:scale(1.05)}
-.pillar-n{font:300 2rem/1 var(--display);color:var(--co)}
-.pillar h3{font:400 clamp(1.375rem,1.9vw,1.75rem)/1.2 var(--display);margin:0}
-.pillar p{font:400 var(--t-body)/1.6 var(--body);color:var(--ink-inv-2);max-width:40ch}
-
 /* a light,
 airy company keeps its pillars on white */
-.co-cavallo-laundry .co-pillars{background:#fff;color:var(--ink)}
-.co-cavallo-laundry .co-pillars .head2 h2,
-.co-cavallo-laundry .co-pillars h3{color:var(--ink)}
-.co-cavallo-laundry .co-pillars .eyebrow{color:var(--co-text)}
-.co-cavallo-laundry .pillar{border-top-color:var(--line-2)}
-.co-cavallo-laundry .pillar p{color:var(--ink-2)}
-.co-cavallo-laundry .pillar-n{color:var(--co-text)}
-.co-cavallo-laundry .co-about{background:var(--co-tint)}
 
 /* ---- steps: a flow,
 left to right,
@@ -1937,34 +1527,16 @@ in the company's colour ---- */
 .step h3{font:400 1.5rem/1.2 var(--display);color:var(--ink);margin:0}
 .step p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
 
-/* ---- the quote: the company in one of its own sentences ---- */
-.co-quote{padding-block:clamp(40px,5vw,72px);background:var(--ink)}
-.co-quote blockquote{margin:0 auto;max-width:40ch;text-align:center}
-.co-quote p{font:300 italic clamp(1.5rem,2.8vw,2.375rem)/1.3 var(--display);color:#fff;text-wrap:balance}
-.co-quote p::before{content:"";display:block;width:48px;height:2px;background:var(--co);margin:0 auto 24px}
-.co-dark .co-quote{background:#2a1d16}
-.co-dark .co-quote p{color:#f6eee6}
-
 /* the other companies: all of them on one row */
-.co .cogrid{grid-template-columns:repeat(4,minmax(0,1fr))}
 
 @media (max-width:900px){
-  .co .cogrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .pillars-3,
-.pillars-2,
-.steps{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
   .step + .step::before{left:50%;top:calc(-1 * clamp(10px,1.2vw,18px));transform:translate(-50%,-50%) rotate(90deg)}
 }
 @media (max-width:860px){
   .co-hero{height:auto;min-height:0;max-height:none}
   .co-full .co-hero{min-height:72svh}
 }
-@media (max-width:560px){ .co .cogrid{grid-template-columns:1fr} }
-
-/* ==========================================================================
-   After the design review: boxes become rules,
-labels become labels
-   ========================================================================== */
 
 /* a dark band for the About page's vision and mission */
 .section.dark{background:var(--ink);color:#fff}
@@ -1979,10 +1551,6 @@ labels become labels
 
 /* company cards: a rule above,
 not a box */
-.cocard{background:none;border:0;border-top:1px solid var(--line-2);border-radius:0}
-.cocard:hover{transform:none;border-top-color:var(--gold)}
-.cocard-body{padding-inline:0}
-.cocard-sector{font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-text)}
 
 /* the five ways the Group creates value,
 five to the row */
@@ -1995,9 +1563,6 @@ five to the row */
 /* the sectors index: the count as a label,
 the companies as a ruled list */
 .secblk-count{font:600 .75rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--on-2)}
-.cotile{border:0;border-top:1px solid var(--rule);background:none;padding:14px 0;min-width:200px;border-radius:0}
-.cotile:hover,
-.cotile:focus-visible{border-top-color:var(--on);transform:none;background:none}
 
 /* ROMA's steps: ruled like the pillars,
 the arrows kept */
@@ -2006,17 +1571,9 @@ the arrows kept */
 .step:hover::after{width:100%}
 
 /* origin chips centre their text */
-.prod-from a{display:inline-flex;align-items:center}
 
 /* on a phone the other companies are rows,
 not four tall cards */
-@media (max-width:560px){
-  .co .cogrid{gap:0}
-  .co .cocard{display:grid;grid-template-columns:96px minmax(0,1fr);grid-template-rows:auto;gap:0 14px;align-items:center;padding:10px 0}
-  .co .cocard-shot{aspect-ratio:1}
-  .co .cocard-shot img{width:100%;height:100%;aspect-ratio:1;object-fit:cover}
-  .co .cocard-body{padding:0}
-}
 
 /* ---- the last few sections that ran past one screen at 1440x900 ---- */
 .why{margin-top:clamp(24px,3vw,36px)}
@@ -2024,34 +1581,9 @@ not four tall cards */
 .why-item h3{margin-bottom:4px}
 .why-item p{font-size:var(--t-sm)}
 .bandshot img{aspect-ratio:1212/300}
-.co-about{padding-block:clamp(40px,5vw,56px)}
-.co-statement{margin-bottom:clamp(22px,3vw,32px);font-size:clamp(1.5rem,2.5vw,2.125rem)}
-.co-story-pic{min-height:300px}
-.co-pillars{padding-block:clamp(40px,5vw,56px)}
-.pillar-pic{aspect-ratio:2/1}
-.co-offer{padding-block:clamp(40px,5vw,56px)}
-.prod{padding:14px 0}
 
 /* The company's statement stands beside its story rather than above it:
    statement | text | photograph. The block then fits one screen. */
-.co-about .wrap{display:grid;grid-template-columns:minmax(0,3.6fr) minmax(0,8.4fr);column-gap:clamp(32px,4vw,64px);row-gap:22px;align-items:start}
-.co-about .eyebrow{grid-column:1 / -1}
-.co-statement{grid-column:1;margin:0;max-width:none;font-size:clamp(1.5rem,2.2vw,1.9375rem);line-height:1.22}
-.co-story{grid-column:2;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:clamp(24px,3vw,44px)}
-.co-story-pic,
-.co-split .co-story-pic{order:2;min-height:280px}
-.co-story-text{align-content:start;font-size:.9375rem;line-height:1.6}
-.co-story-text .tags{gap:8px}
-@media (max-width:900px){
-  .co-about .wrap{grid-template-columns:1fr}
-  .co-statement,
-.co-story{grid-column:auto}
-  .co-story{grid-template-columns:1fr}
-  .co-story-pic,
-.co-split .co-story-pic{order:0}
-}
-
-/* ---- after the sizing audit ---- */
 /* the footer's three columns stay on one row at every desktop width */
 .foot{grid-template-columns:minmax(0,240px) minmax(0,1fr);gap:clamp(24px,3vw,48px)}
 /* the globe band fits a 900px screen */
@@ -2063,19 +1595,10 @@ products three to a row */
   :root{--band:clamp(36px,4vw,48px)}
   .section.tight,.next{padding-block:40px}
 }
-@media (max-height:760px) and (min-width:1180px){
-  .prodgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
 /* phones: every company opening lands its facts bar on the first screen,
 the home grid is two to a row,
 the sectors strip fits more tabs */
-@media (max-width:860px){
-  .co-split .co-hero-img,.co-dark .co-hero-img{aspect-ratio:16/10}
-}
 @media (max-width:560px){
-  .ladder{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .lad{aspect-ratio:1}
-  .lad-lead{grid-column:1 / -1;aspect-ratio:16/10}
   .secrail a{padding:8px 12px;font-size:var(--t-xs)}
 }
 
@@ -2141,8 +1664,6 @@ html:not(.js) .tline::after{transform:scaleX(1)}
 .tl-step h3{font:400 clamp(1.25rem,1.6vw,1.5rem)/1.2 var(--display);color:#fff;margin:0}
 .tl-step p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-inv-2);max-width:34ch}
 .how .after{margin-top:clamp(36px,4vw,52px)}
-.tl-cta{--co:var(--gold);--co-on:var(--ink)}
-.tl-cta:hover{background:#fff;border-color:#fff;color:var(--ink)}
 @media (max-width:900px){
   .tline{grid-template-columns:1fr;gap:28px;padding-left:78px}
   .tline::before,
@@ -2153,27 +1674,8 @@ html:not(.js) .tline::after{transform:scaleX(1)}
 }
 @media (prefers-reduced-motion:reduce){ .tline::after{transition:none} }
 
-/* ==========================================================================
-   Company pages,
-polished: a figures band,
-a scroll cue,
-larger thumbnails
-   ========================================================================== */
-
 /* the company in four numbers,
 in its own colour */
-.co-figs{padding-block:clamp(28px,3.4vw,44px);border-block:1px solid var(--line)}
-.co-figs dl{margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
-.co-figs dl > div{display:grid;gap:8px;padding:6px clamp(16px,2.2vw,32px)}
-.co-figs dl > div:first-child{padding-inline-start:0}
-.co-figs dl > div + div{border-inline-start:1px solid var(--line-2)}
-.co-figs dd{grid-row:1;margin:0;font:300 clamp(2.75rem,4.4vw,4rem)/1 var(--display);letter-spacing:-.02em;color:var(--co-text);font-variant-numeric:lining-nums}
-.co-figs dt{grid-row:2;font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--label)}
-.co-figs dd::before{content:"";display:block;width:28px;height:2px;background:var(--co);margin-bottom:16px}
-@media (max-width:860px){
-  .co-figs dl{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:24px}
-  .co-figs dl > div:nth-child(3){border-inline-start:0;padding-inline-start:0}
-}
 
 /* a quiet cue that there is more below a full-screen opening */
 .co-scroll{display:none}
@@ -2191,14 +1693,8 @@ in its own colour */
 
 /* product rows: a larger picture,
 a cleaner hover */
-.prod{grid-template-columns:140px minmax(0,1fr);gap:4px 24px;transition:background .3s}
-.prod h3{transition:color .25s}
-.prod:hover h3{color:var(--co-text,var(--gold-text))}
-@media (max-width:520px){ .prod{grid-template-columns:84px minmax(0,1fr)} }
 
 /* the pillars' photographs carry a thin accent along their foot */
-.pillar-pic{position:relative}
-.pillar-pic::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;background:var(--co)}
 
 /* ---- the sectors menu,
 compact: a panel under the word,
@@ -2265,18 +1761,6 @@ so the grid ends in an
 @media (max-width:560px){ .dirs{grid-template-columns:1fr} .dir{min-height:0} }
 @media (prefers-reduced-motion:reduce){ .dir::before{transition:none} }
 
-/* ==========================================================================
-   A company's showcase (TIBECO): the areas on the left,
-one large photograph
-   on the right that crossfades to the area pointed at. On navy{background:var(--ink);color:#fff}
-
-/* ==========================================================================
-   PHONES — the last word. Everything below is scoped to small screens and
-   sits at the end of the file on purpose: rules added later for wide screens
-   had been overriding the phone layout (the footer columns ran into each
-   other). Nothing may be appended after this block without a media query.
-   ========================================================================== */
-
 /* the menu: groups that fold */
 .menu-grp{border-bottom:1px solid rgba(255,255,255,.08)}
 .menu-grp > summary{
@@ -2315,7 +1799,6 @@ the first wide */
   .secgrid-n{font:400 .9375rem/1 var(--display);color:var(--gold);letter-spacing:.08em;margin-bottom:6px}
   .secgrid-t{font:400 1.0625rem/1.2 var(--display);overflow-wrap:anywhere}
   .secgrid li:first-child .secgrid-t{font-size:1.5rem}
-  .sec-intro{text-align:left;justify-items:start}
 
   /* the four figures: a clean two by two */
   .stats dl{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -2349,13 +1832,6 @@ not four tall rows */
 
 @media (max-width:560px){
   /* the businesses grid: the lead card tall enough for its label and name */
-  .lad-lead{aspect-ratio:4/3}
-  .lad.lad-lead h3{font-size:1.75rem}
-  .lad-lead .lad-role{font-size:var(--t-sm)}
-  .lad .lad-sec{font-size:.625rem}
-  .lad h3{font-size:1.125rem}
-  .lad{padding:14px}
-  .lad .n{top:12px;left:14px}
   /* buttons on a phone run the full width,
 one under the other */
   .hero-cta .btn,
@@ -2623,10 +2099,6 @@ and the row grows with it. */
 .catrow-items{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .catrow-items li{position:relative;padding-left:18px;font:400 var(--t-sm)/1.45 var(--body);color:var(--ink)}
 .catrow-items li::before{content:"";position:absolute;left:0;top:.72em;width:10px;height:1.5px;background:var(--gold)}
-.catrow-buyers{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
-.catrow-buyers > span{font:600 var(--t-xxs)/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-.catrow-buyers a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-2)}
-.catrow-buyers a:hover{border-color:var(--gold)}
 /* open,
 a card takes two columns and shows its lines to the right of the
    summary,
@@ -2902,8 +2374,6 @@ and the document rows ----------------------------- */
 .regprog li.is-done .regprog-n,
 .regprog li.is-done .regprog-s{color:var(--gold-deep)}
 .regprog li.is-done .regprog-s::after{content:" ✓"}
-
-/* ---- the list pages' small pieces ------------------------------------------ */
 /* the mark an external link wears */
 .ext{font-size:.8em;opacity:.75}
 
@@ -2926,10 +2396,6 @@ and the document rows ----------------------------- */
 .opp-req-rows dt{font:500 var(--t-xs)/1.5 var(--mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
 .opp-req-rows dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink)}
 .opp-req-note{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-3)}
-.opp-req-clar{display:grid;gap:8px}
-.opp-req-clar p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2)}
-.opp-req-clar strong{color:var(--ink);font-weight:500}
-.opp-req-clar em{color:var(--ink-3);font-style:normal}
 @media (max-width:700px){ .opp-req-rows > div{grid-template-columns:1fr;gap:2px} }
 
 /* crumbs over a company's photograph speak in its light */
@@ -2943,46 +2409,6 @@ and the document rows ----------------------------- */
   font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);text-underline-offset:4px;
 }
 .opp-brief-line{display:block;font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-3);margin-top:2px}
-
-
-/* ==========================================================================
-   Services first — the ledger on the home page, the services under each
-   area in the bar's panel, the service cards inside an area block on
-   /services/, the questions on a service page, and the one strip of
-   companies. Appended after the phone block, so every narrow-screen rule
-   here carries its own media query.
-   ========================================================================== */
-
-/* ---- the services ledger: one row per area, the services beside it ---- */
-.ledger{margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--line-2)}
-.led{
-  position:relative;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);
-  gap:clamp(16px,3vw,48px);padding:clamp(22px,2.6vw,32px) 0;border-bottom:1px solid var(--line);
-}
-.led::before{
-  content:"";position:absolute;left:0;top:-1px;height:2px;width:100%;background:var(--gold);
-  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1);
-}
-.led:hover::before{transform:scaleX(1)}
-.led-head{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:6px;align-content:start}
-.led-n{grid-row:1 / span 2;font:300 1.0625rem/1.6 var(--display);letter-spacing:.08em;color:var(--gold-text)}
-.led-head h3{font:400 clamp(1.375rem,1.8vw,1.75rem)/1.2 var(--display);color:var(--ink)}
-.led-head h3 a{color:inherit;text-decoration:none;transition:color .2s}
-.led-head h3 a:hover{color:var(--gold-text)}
-.led-head p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);max-width:44ch}
-.led-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px;align-content:start}
-.led-list a{
-  display:inline-flex;align-items:center;min-height:44px;padding:9px 18px;
-  border:1px solid var(--line-2);border-radius:2px;
-  font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);text-decoration:none;
-  transition:border-color .2s,background .2s,color .2s;
-}
-.led-list a:hover,
-.led-list a:focus-visible{border-color:var(--ink);background:var(--ink);color:#fff}
-@media (max-width:860px){
-  .led{grid-template-columns:1fr;gap:16px}
-}
-@media (prefers-reduced-motion:reduce){ .led::before,.led-list a{transition:none} }
 
 /* ---- the services under each area in the bar's panel ---- */
 .secmenu-col{gap:4px;padding:16px 18px 18px}
@@ -3000,32 +2426,6 @@ and the document rows ----------------------------- */
 .secmenu-col:nth-child(4n+2),
 .secmenu-col:nth-child(4n+3),
 .secmenu-col:nth-child(4n+4){border-inline-start:1px solid #efefef}
-
-/* ---- the cards inside an area block on /services/ ---- */
-.secblk-col > .cogrid{justify-self:stretch;width:100%;margin-top:6px;grid-template-columns:repeat(auto-fill,minmax(228px,1fr))}
-.secblk .cocard{background:var(--tile,var(--paper));border-color:var(--rule,var(--line))}
-.secblk .cocard-name{color:var(--on,var(--ink))}
-.secblk .cocard-role{color:var(--on-2,var(--ink-3))}
-.secblk .cocard-sector{display:none}
-.secidx[data-tone="3"] .cocard:hover{border-color:var(--gold)}
-
-/* ---- the questions on a service page ---- */
-.faq{margin-top:clamp(24px,2.8vw,36px);border-top:1px solid var(--line-2)}
-.faq-item{border-bottom:1px solid var(--line)}
-.faq-item summary{
-  cursor:pointer;list-style:none;position:relative;padding:18px 44px 18px 0;min-height:44px;
-  font:400 clamp(1.0625rem,1.3vw,1.25rem)/1.35 var(--display);color:var(--ink);
-}
-.faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary::after{
-  content:"+";position:absolute;right:4px;top:50%;translate:0 -50%;
-  font:300 1.5rem/1 var(--display);color:var(--gold-text);transition:transform .25s;
-}
-.faq-item[open] summary::after{transform:rotate(45deg)}
-.faq-item summary:hover{color:var(--co-text,var(--gold-text))}
-.faq-item summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.faq-item p{margin:0 0 20px;max-width:70ch;font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2)}
-@media (prefers-reduced-motion:reduce){ .faq-item summary::after{transition:none} }
 
 /* ---- the one strip of companies ---- */
 .cos{overflow:hidden;margin-top:clamp(24px,2.8vw,36px);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
@@ -3053,71 +2453,18 @@ and the document rows ----------------------------- */
 /* ---- one service, written up as a section of its area's page ---- */
 .sub{padding-block:clamp(48px,6vw,88px);border-top:1px solid var(--line-2);scroll-margin-top:calc(var(--head-h) + 12px)}
 .sub:nth-of-type(even){background:var(--co-tint,var(--panel))}
-.sub-head{display:grid;gap:10px;max-width:70ch}
-.sub-head h2{font:300 clamp(2rem,3.6vw,3.25rem)/1.05 var(--display);letter-spacing:-.018em;color:var(--ink)}
-.sub-role{font:400 var(--t-lg)/1.45 var(--display);color:var(--co-text,var(--gold-text))}
-.sub-story{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(28px,4vw,64px);align-items:start;margin-top:clamp(24px,3vw,40px)}
-.sub-flip .sub-story .sub-pic{order:2}
-.sub-pic{margin:0;position:relative;min-height:300px;align-self:stretch}
-.sub-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.sub-pic::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:4px;background:var(--co)}
-.sub-text{display:grid;gap:1em;align-content:start;color:var(--ink-2);font-size:1rem;line-height:1.65;max-width:62ch}
-.sub-intro{font:400 clamp(1.25rem,1.7vw,1.5rem)/1.35 var(--display);color:var(--ink)}
-.sub-from{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;margin:0}
-.sub-from span{font:600 .6875rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label);margin-right:4px}
-.sub-from b{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
-.sub-facts{margin:clamp(24px,3vw,40px) 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
-.sub-facts > div{display:grid;gap:6px;padding:16px clamp(14px,1.8vw,24px) 18px}
-.sub-facts > div:first-child{padding-inline-start:0}
-.sub-facts > div + div{border-inline-start:1px solid var(--line-2)}
-.sub-facts dt{font:600 .6875rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--co-text,var(--gold-text))}
-.sub-facts dd{margin:0;font:400 var(--t-sm)/1.45 var(--body);color:var(--ink)}
-.sub-h3{margin-top:clamp(32px,4vw,52px);font:600 .75rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--label)}
-.sub-h3::before{content:"";display:inline-block;width:22px;height:1px;background:var(--co);vertical-align:middle;margin-right:10px}
-.sub-lines{margin-top:10px}
-.sub-lines h4,.sub-steps h4{font:400 1.25rem/1.22 var(--display);color:var(--ink);margin:0}
-.sub-steps{margin-top:10px}
-.sub .faq{margin-top:10px}
-.sub-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:clamp(28px,3.4vw,44px)}
 .sub .btn.co-btn{background:var(--co);border-color:var(--co);color:var(--co-on,#fff)}
 .sub .btn.co-btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
 .sub .btn.co-btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
 .sub .btn.co-btn-line:hover{background:var(--ink);color:#fff}
 /* the jump list in the area's opening */
-.sub-index{align-self:start}
-.sub-index-h{font:600 .6875rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--label);margin-bottom:10px}
-.sub-index ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
-.sub-index a{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink);min-height:44px}
-.sub-index a > span:last-of-type{font:400 var(--t-lg)/1.25 var(--display)}
-.sub-index-n{font:300 .9375rem/1.4 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.sub-index small{grid-column:2;font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-3)}
-.sub-index a:hover > span:last-of-type{color:var(--co-text,var(--gold-text))}
-.co-about .co-story:has(.sub-index){grid-template-columns:minmax(0,300px) minmax(0,1fr)}
 .secblk-go{margin-top:8px;justify-self:start}
 .secblk h2 a{text-decoration:none;color:inherit}
-@media (max-width:860px){
-  .sub-story{grid-template-columns:1fr}
-  .sub-flip .sub-story .sub-pic{order:0}
-  .sub-pic{min-height:240px}
-  .sub-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .sub-facts > div:nth-child(odd){padding-inline-start:0;border-inline-start:0}
-  .sub-facts > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
-  .co-about .co-story:has(.sub-index){grid-template-columns:1fr}
-}
-
-/* ==========================================================================
-   HOME PAGE — the design pass
-   Appended after the phone block on purpose, so every narrow-screen rule
-   here carries its own media query. Every home section wears .hs; the hero
-   wears .hs-hero, the ledger section .hs-led and the companies .hs-cos.
-   Nothing here reaches another page.
-   ========================================================================== */
 
 /* ---- rhythm: the home sections sit a little closer than the token ------ */
 .section.hs{padding-block:clamp(44px,5.2vw,68px)}
 .section.hs.intro .wrap{gap:clamp(32px,4.2vw,56px)}
 .section.hs.hs-led{padding-bottom:clamp(36px,4vw,52px)}
-.section.hs.sectors{padding-block:clamp(40px,4.6vw,60px)}
 .section.hs.tight{padding-block:clamp(40px,4.6vw,60px)}
 .hs .head2 > p{max-width:380px}
 
@@ -3175,56 +2522,6 @@ and the document rows ----------------------------- */
 }
 @media (prefers-reduced-motion:reduce){
   .hero-scroll-line::after{animation:none;transform:none}
-}
-
-/* ---- the ledger: a row is the area's photograph, its number and mark, its
-   name and line, and every service as a link. The area signs its row with
-   its own colour on the photograph's foot and on its mark; the page's gold
-   rule still draws across the row under the pointer. ---------------------- */
-.hs-led .ledger{margin-top:clamp(24px,3vw,40px);border-top:1px solid var(--ink)}
-.hs-led .led{
-  grid-template-columns:150px minmax(0,4fr) minmax(0,6fr);
-  gap:clamp(18px,2.6vw,40px);padding:clamp(16px,2vw,22px) 0;align-items:start;
-}
-.led-pic{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--panel);outline:0}
-.led-pic img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.led:hover .led-pic img{transform:scale(1.05)}
-.led-pic::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:3px;background:var(--co,var(--gold))}
-.hs-led .led-head{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-content:start;padding-top:2px}
-.hs-led .led-n{
-  grid-row:auto;display:inline-flex;align-items:center;gap:12px;
-  font:400 .9375rem/1 var(--display);letter-spacing:.1em;color:var(--gold-text);
-}
-.hs-led .led-n .ico{width:18px;height:18px;color:var(--co-text,var(--ink-2));stroke-width:1.5}
-.hs-led .led-head h3{font:300 clamp(1.5rem,2vw,1.875rem)/1.12 var(--display);letter-spacing:-.014em}
-.hs-led .led-head h3 a:hover{color:var(--co-text,var(--gold-text))}
-.hs-led .led-head p{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2);max-width:40ch}
-.hs-led .led-list{gap:8px;padding-top:4px}
-.hs-led .led-list a{
-  min-height:40px;padding:8px 12px 8px 14px;gap:10px;background:var(--white);
-  font:500 var(--t-micro)/1.3 var(--ui);border-color:var(--line-2);
-}
-.led-arr{font-size:.95em;line-height:1;color:var(--gold-text);transition:transform .25s,color .2s}
-.hs-led .led-list a:hover,
-.hs-led .led-list a:focus-visible{background:var(--ink);border-color:var(--ink);color:#fff}
-.hs-led .led-list a:hover .led-arr,
-.hs-led .led-list a:focus-visible .led-arr{color:var(--gold);transform:translateX(3px)}
-@media (max-width:1100px){
-  .hs-led .led{grid-template-columns:120px minmax(0,5fr) minmax(0,6fr)}
-}
-@media (max-width:860px){
-  .hs-led .led{grid-template-columns:84px minmax(0,1fr);gap:14px 16px;padding:18px 0}
-  .led-pic{aspect-ratio:1}
-  .led-pic::after{width:28px}
-  .hs-led .led-head{gap:6px;padding-top:0}
-  .hs-led .led-head h3{font-size:1.375rem}
-  .hs-led .led-head p{max-width:none}
-  .hs-led .led-list{grid-column:1 / -1;gap:6px;padding-top:0}
-  .hs-led .led-list a{min-height:36px;padding:6px 10px 6px 12px;font-size:var(--t-xs);gap:8px}
-}
-@media (prefers-reduced-motion:reduce){
-  .led-pic img,.led-arr{transition:none}
-  .led:hover .led-pic img{transform:none}
 }
 
 /* ---- how we work: the same system as the four figures — one ruled band,
@@ -3291,26 +2588,8 @@ and the document rows ----------------------------- */
 }
 @media (max-width:560px){ .foot-svc{grid-template-columns:1fr} }
 
-.qsteps{list-style:none;margin:28px 0 0;padding:0;display:grid;border-top:1px solid var(--line-2)}
-.qsteps li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
-.qsteps li > span{font:300 1.125rem/1.5 var(--display);letter-spacing:.08em;color:var(--gold-text)}
-.qsteps h3{font:400 1.1875rem/1.3 var(--display);color:var(--ink);margin:0 0 4px}
-.qsteps p{font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);margin:0;max-width:52ch}
-
 /* four buying steps in one row on a wide screen */
 @media (min-width:901px){ .steps.steps-4{grid-template-columns:repeat(4,minmax(0,1fr))} }
-
-/* ==========================================================================
-   SITE-WIDE DESIGN REVIEW — every page but the home page
-   Appended after the phone block on purpose: every narrow-screen rule here
-   carries its own media query. The home page's own block above is left as
-   it is; the rules here reach the shared chrome and every other page.
-
-   What it settles, in order: the type scale (four tokens added for the
-   sizes the cards were improvising), one eyebrow, one card, one numeral,
-   one label; secondary text that had slipped under AA; the area page's
-   chapters; the opportunities list; the footer; and the phone.
-   ========================================================================== */
 
 /* ---- the four sizes the scale was missing ------------------------------ */
 :root{
@@ -3323,40 +2602,30 @@ and the document rows ----------------------------- */
 }
 
 /* ---- eyebrows: one treatment, a 24px gold dash and 12px tracked caps ---- */
-.sub-h3{
-  display:flex;align-items:center;gap:12px;
-  font:600 var(--t-xxs)/1.2 var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--label);
-}
-.sub-h3::before{display:block;width:24px;height:2px;margin:0;vertical-align:baseline;background:var(--co,var(--gold))}
-.sub-index-h,
 .secblk-count{font:600 var(--t-xxs)/1.2 var(--ui);letter-spacing:.18em;text-transform:uppercase}
 
 /* ---- meta labels: 11px, 600, tracked, in the grotesque ----------------- */
-.sub-facts dt,.co-facts dt,.co-figs dt,.srcreg h3,.channels dt,.lform label,.lform .checks legend,
-.foot-h,.cocard-sector,.sub-from span,.catrow-buyers > span,.opp-head,.opp-l,.opp-type span,
-.secmenu-eyebrow{
+.co-facts dt,.channels dt,.lform label,.lform .checks legend,.foot-h,.opp-head,.opp-l,.opp-type span,.secmenu-eyebrow{
   font:600 var(--t-label)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;
 }
 .lform label.agree{font:400 var(--t-sm)/1.5 var(--body);letter-spacing:0;text-transform:none}
 .lform label.chk{font:500 var(--t-sm)/1.2 var(--ui);letter-spacing:0;text-transform:none}
-.srcreg h3{color:var(--label)}
 
 /* ---- card titles: the serif at one size, regular, never bold ----------- */
-.valcard h3,.vc h3,.pline h3,.svc h3,.sub-lines h4,.sub-steps h4,.step h3,.dir h3,.route h3,
-.pillar h3,.tl-step h3,.cocard-name,.fdone h3{
+.valcard h3,.vc h3,.pline h3,.svc h3,.step h3,.dir h3,.route h3,.tl-step h3,.fdone h3{
   font:400 var(--t-h3)/1.2 var(--display);letter-spacing:-.005em;color:var(--ink);margin:0;
 }
 .tl-step h3{color:#fff}
-.valcard h3,.step h3,.svc h3,.sub-lines h4,.sub-steps h4{margin-top:4px}
+.valcard h3,.step h3,.svc h3{margin-top:4px}
 /* row titles — a list, not a card — hold the lead size */
-.qsteps h3,.catrow-name,.conduct h3,.apply-h,.opp-title{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink)}
+.catrow-name,.conduct h3,.apply-h,.opp-title{font:400 var(--t-lg)/1.3 var(--display);color:var(--ink)}
 .opp-title{margin:0}
 
 /* ---- numerals: "01" in the light serif, the area's colour -------------- */
 .valcard-n,.svc-n,.step-n,.catrow-n,.conduct-n,.dir-n,.route-n{
   font:300 var(--t-num)/1 var(--display);letter-spacing:-.01em;color:var(--co-text,var(--gold-text));
 }
-.sub-index-n,.qsteps li > span,.fstep span,.regprog-n,.secrail-n{
+.fstep span,.regprog-n,.secrail-n{
   font:300 var(--t-num-s)/1.4 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text));
 }
 .regprog-n{align-self:baseline}
@@ -3368,9 +2637,7 @@ and the document rows ----------------------------- */
 /* ---- secondary copy that had slipped under AA at small sizes ----------
    --ink-3 is for the greyed heading word at 24px and up; at 12–15px it
    measured 3.6–3.9:1 on paper. Everything small reads in --ink-2. */
-.cocard-role,.sub-index small,.catrow-who,.catrow-count,.catrow-buyers > span,.opp-head,.opp-l,
-.opp-in,.badge-invite,.fnote,.fhelp,.fdoc-hint,.fdoc-file,.regprog-s,.opp-req-rows dt,.opp-req-note,
-.opp-req-clar em,.opp-req summary::after,.secmenu-eyebrow{color:var(--ink-2)}
+.catrow-who,.catrow-count,.opp-head,.opp-l,.opp-in,.badge-invite,.fnote,.fhelp,.fdoc-hint,.fdoc-file,.regprog-s,.opp-req-rows dt,.opp-req-note,.opp-req summary::after,.secmenu-eyebrow{color:var(--ink-2)}
 .secmenu-eyebrow{color:var(--gold-text)}
 
 /* ---- running text holds a readable measure ------------------------------ */
@@ -3381,7 +2648,7 @@ and the document rows ----------------------------- */
    Cards — one shape: a hairline above, a gold rule drawn across on hover,
    the same padding, no shadow and no lift
    ========================================================================== */
-.valcard,.pline,.vc,.srcreg,.step{padding-top:var(--card-pt);padding-bottom:var(--card-pb)}
+.valcard,.pline,.vc,.step{padding-top:var(--card-pt);padding-bottom:var(--card-pb)}
 .vc{transition:none}
 .vc:hover{border-color:var(--line-2);transform:none}
 .vc::before{
@@ -3413,46 +2680,17 @@ and the document rows ----------------------------- */
 /* the service and area cards: a 4:3 photograph, then the name and the
    line, and every card in a row shares its rows — a two-line name in one
    card pushes the lines of all of them to the same baseline */
-.cocard-shot img{aspect-ratio:4/3}
-@media (min-width:561px){
-  .cocard{grid-row:span 4;grid-template-rows:subgrid;row-gap:0}
-  .cocard-body{display:contents}
-  .cocard-sector{padding-top:clamp(14px,1.6vw,18px)}
-  .cocard-name{padding-top:5px}
-  .secblk .cocard-name{padding-top:clamp(14px,1.6vw,18px)}
-  .cocard-role{padding-top:5px;padding-bottom:clamp(16px,1.8vw,22px);align-self:start}
-}
-.cocard:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 
 /* the questions: compact, with the mark held in its column */
-.faq-item summary{padding:15px 44px 15px 0}
-.faq-item p{margin-bottom:18px}
 
 /* the opened category keeps the hairline weight of the rest */
 .catrow-body{border-top-color:var(--line)}
-
-/* ==========================================================================
-   The area pages — each service a chapter
-   ========================================================================== */
 /* the facts strip reads as one line of facts, so it no longer mirrors the
    four-column table of lines under it */
-.sub-facts{column-gap:clamp(16px,2.2vw,36px);margin-top:clamp(24px,3vw,40px)}
-.sub-facts > div,.sub-facts > div + div{padding:14px 0 16px;border-inline-start:0}
-.sub-facts dd{font-size:var(--t-body)}
 /* the chapter head and its story */
-.sub-head{gap:12px}
-.sub-head .eyebrow{margin-bottom:4px}
-.sub-role{max-width:48ch}
-.sub-story{margin-top:clamp(28px,3.4vw,44px)}
 /* the chapter's closing buttons */
-.sub-cta{margin-top:clamp(28px,3.4vw,44px)}
-.sub .faq{margin-top:12px}
 /* the tags inside the story keep to the system's hairline, the area's colour on hover */
-.co .tags li{border-color:var(--line-2)}
-.co .tags li:hover{border-color:var(--co,var(--gold))}
 /* the jump list in the opening */
-.sub-index a > span:last-of-type{font-size:var(--t-lg)}
-.sub-index a{padding:11px 0}
 /* the buying steps on a wide screen: no arrow between ruled cards — the
    numbers already say the order */
 @media (min-width:901px){ .steps.steps-4 .step + .step::before{display:none} }
@@ -3465,7 +2703,6 @@ and the document rows ----------------------------- */
 .secrail a[aria-current="location"] .secrail-n{color:var(--gold-text)}
 .secidx[data-tone="3"] .secrail a[aria-current="location"] .secrail-n{color:var(--gold)}
 .secblk-col{gap:18px}
-.secblk-col > .cogrid{margin-top:4px}
 .secblk-go{margin-top:12px}
 @media (max-width:900px){ .secrail a{grid-template-columns:auto minmax(0,1fr)} }
 
@@ -3519,10 +2756,6 @@ and the document rows ----------------------------- */
 /* the code of conduct: its heading is read, not seen, so the list starts at the top */
 .vh + .conduct{margin-top:0}
 .conduct li{padding:18px 0 20px}
-
-/* ==========================================================================
-   The chrome — the bar's panel, the phone menu, the buttons, the footer
-   ========================================================================== */
 /* the panel: the system's hairline, and the mark held to the first line */
 .secmenu{border-color:var(--line)}
 .secmenu-eyebrow,.secmenu-col,.secmenu-col:nth-child(4n+2),.secmenu-col:nth-child(4n+3),
@@ -3540,8 +2773,6 @@ and the document rows ----------------------------- */
 }
 
 /* an outlined button on paper — the 404 page asked for one that did not exist */
-.btn-line{background:transparent;border-color:var(--ink);color:var(--ink)}
-.btn-line:hover,.btn-line:focus-visible{background:var(--ink);color:#fff}
 
 /* ---- the footer: the mark, then three lists under three labels ----------
    The seven areas had been one narrow column, with "Energy, Industrial &
@@ -3581,133 +2812,26 @@ and the document rows ----------------------------- */
    ========================================================================== */
 @media (max-width:860px){
   /* a chapter's photograph keeps the card shape rather than a fixed height */
-  .sub-pic{aspect-ratio:4/3;min-height:0}
   /* the facts strip: two by two, a hairline between the rows */
-  .sub-facts > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
 }
 @media (max-width:560px){
   /* every service and area card is a row: the photograph, the name, the line */
-  .cogrid{gap:0}
-  .cocard{display:grid;grid-template-columns:96px minmax(0,1fr);grid-template-rows:auto;gap:0 14px;align-items:center;padding:10px 0}
-  .cocard-shot{aspect-ratio:1}
-  .cocard-shot img{width:100%;height:100%;aspect-ratio:1;object-fit:cover}
-  .cocard-body{padding:0;gap:3px}
-  .cocard-sector{display:none}
-  .secblk-col > .cogrid{margin-top:0}
   .secblk-go{display:block;width:100%;text-align:center}
   /* a chapter's buttons, and the dark ask's, run the full width */
-  .sub-cta,.co-ask-btns{flex-direction:column}
-  .sub-cta .btn,.co-ask-btns .btn{width:100%}
+  .co-ask-btns{flex-direction:column}
+  .co-ask-btns .btn{width:100%}
   .co-ask-cta{width:100%;justify-items:stretch}
   .co-ask-btns{width:100%}
   /* the chapter head */
-  .sub-head h2{font-size:2.25rem}
 }
 @media (prefers-reduced-motion:reduce){
   .vc::before,.route::before,.step::after{transition:none}
 }
 
-/* ==========================================================================
-   WHAT WE PROVIDE — area tiles. The first tile is wide, with the photograph
-   beside the words; the rest stand, photograph above. Every service is a
-   ruled row inside its area's tile. Appended last, with its own queries.
-   ========================================================================== */
-.areas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.6vw,22px);margin-top:clamp(28px,3.4vw,44px)}
-.atile{
-  display:grid;grid-template-rows:auto 1fr;background:var(--paper);
-  border:1px solid var(--line);transition:border-color .25s;
-}
-.atile:hover,.atile:focus-within{border-color:var(--co,var(--gold))}
-.atile-lead{grid-column:span 2;grid-template-rows:none;grid-template-columns:minmax(0,11fr) minmax(0,9fr)}
-.atile-pic{display:block;position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel);outline:0}
-.atile-lead .atile-pic{aspect-ratio:auto;min-height:360px;height:100%}
-.atile-pic img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.atile:hover .atile-pic img{transform:scale(1.04)}
-.atile-pic::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:3px;background:var(--co,var(--gold))}
-.atile-body{display:grid;gap:8px;align-content:start;padding:clamp(18px,2vw,26px) clamp(18px,2vw,26px) clamp(16px,1.8vw,22px)}
-.atile-n{display:flex;align-items:baseline;gap:10px;font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-.atile-n span{font:300 var(--t-num-s,1.0625rem)/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.atile h3{font:300 clamp(1.5rem,2vw,1.875rem)/1.12 var(--display);letter-spacing:-.014em;color:var(--ink);margin:0}
-.atile-lead h3{font-size:clamp(1.875rem,2.6vw,2.5rem)}
-.atile h3 a{color:inherit;text-decoration:none;transition:color .2s}
-.atile h3 a:hover{color:var(--co-text,var(--gold-text))}
-.atile-say{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2);max-width:40ch;margin:0 0 6px}
-.atile-list{list-style:none;margin:auto 0 0;padding:0;border-top:1px solid var(--line-2)}
-.atile-list a{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  min-height:44px;padding:9px 0;border-bottom:1px solid var(--line);
-  font:500 var(--t-sm)/1.3 var(--ui);color:var(--ink);text-decoration:none;transition:color .2s,padding-left .25s;
-}
-.atile-list li:last-child a{border-bottom:0}
-.atile-arr{color:var(--gold-text);transition:transform .25s}
-.atile-list a:hover,.atile-list a:focus-visible{color:var(--co-text,var(--gold-text));padding-left:6px}
-.atile-list a:hover .atile-arr,.atile-list a:focus-visible .atile-arr{transform:translateX(4px)}
-.atile-list a:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
-.atile-lead .atile-list{columns:1}
-@media (max-width:1080px){
-  .areas{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .atile-lead{grid-column:span 2;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-}
-@media (max-width:860px){
-  .areas{grid-template-columns:1fr;gap:14px}
-  .atile-lead{grid-column:auto;grid-template-columns:1fr;grid-template-rows:auto 1fr}
-  .atile-lead .atile-pic{aspect-ratio:3/2;min-height:0;height:auto}
-  .atile-list a{min-height:48px}
-}
-@media (prefers-reduced-motion:reduce){ .atile,.atile-pic img,.atile-list a,.atile-arr{transition:none} .atile:hover .atile-pic img{transform:none} }
-
 /* the seventh tile is wide too, photograph on the right, so the grid closes */
-.atile-last{grid-template-columns:minmax(0,9fr) minmax(0,11fr)}
-.atile-last .atile-pic{order:2}
-@media (max-width:1080px){ .atile-last{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} }
-@media (max-width:860px){ .atile-last{grid-template-columns:1fr} .atile-last .atile-pic{order:0} }
-
-/* ==========================================================================
-   WHAT WE PROVIDE — seven equal cards; and the service chapters on an area
-   page made compact: a narrow column for the photograph and the facts, the
-   story beside it, tighter lines. Appended last, with their own queries.
-   ========================================================================== */
-.areas{display:none}
-.sgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,1.6vw,22px);margin-top:clamp(28px,3.4vw,44px)}
-.scard{
-  display:grid;grid-template-rows:auto 1fr;text-decoration:none;color:inherit;
-  background:var(--paper);border:1px solid var(--line);transition:border-color .25s,transform .25s;
-}
-.scard:hover,.scard:focus-visible{border-color:var(--co,var(--gold));transform:translateY(-3px)}
-.scard:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.scard-pic{display:block;position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel)}
-.scard-pic img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.scard:hover .scard-pic img{transform:scale(1.04)}
-.scard-pic::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:3px;background:var(--co,var(--gold))}
-.scard-body{display:grid;gap:8px;align-content:start;padding:18px 18px 20px}
-.scard-n{font:300 var(--t-num-s,1.0625rem)/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.scard-n em{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-style:normal;margin-left:8px}
-.scard-name{font:400 1.375rem/1.2 var(--display);color:var(--ink)}
-.scard-say{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
-.scard-go{margin-top:auto;padding-top:10px;font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
-.scard-go span{display:inline-block;color:var(--gold-text);transition:transform .25s}
-.scard:hover .scard-go span{transform:translateX(4px)}
-@media (max-width:1080px){ .sgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:560px){ .sgrid{grid-template-columns:1fr;gap:14px} .scard:hover{transform:none} }
-@media (prefers-reduced-motion:reduce){ .scard,.scard-pic img,.scard-go span{transition:none} .scard:hover{transform:none} .scard:hover .scard-pic img{transform:none} }
 
 /* the chapters, compact */
 .sub{padding-block:clamp(36px,4.5vw,64px)}
-.sub-head{gap:6px}
-.sub-head h2{font-size:clamp(1.75rem,2.8vw,2.5rem)}
-.sub-story{grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(24px,3.4vw,52px);margin-top:clamp(20px,2.4vw,32px);align-items:start}
-.sub-flip .sub-story .sub-side{order:2}
-.sub-side{display:grid;gap:0;align-content:start}
-.sub-side .sub-pic{position:relative;min-height:0;height:auto;aspect-ratio:4/3;margin:0}
-.sub-side .sub-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.sub-side .sub-facts{margin:0;display:grid;grid-template-columns:1fr;border:0;border-bottom:1px solid var(--line-2)}
-.sub-side .sub-facts > div{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr);column-gap:12px;align-items:baseline;padding:10px 0;border:0;border-top:1px solid var(--line)}
-.sub-side .sub-facts > div:first-child{border-top:0;padding-top:14px}
-.sub-side .sub-facts dt{font:600 var(--t-label,.6875rem)/1.5 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--co-text,var(--gold-text))}
-.sub-side .sub-facts dd{margin:0;font:400 var(--t-sm)/1.45 var(--body);color:var(--ink)}
-.sub-text{font-size:var(--t-sm);line-height:1.6;gap:.8em;max-width:66ch}
-.sub-intro{font-size:clamp(1.125rem,1.5vw,1.3125rem);line-height:1.35}
-.sub-h3{margin-top:clamp(24px,3vw,40px)}
 .sub .svcs{border-top:1px solid var(--line-2)}
 .sub .svc{gap:6px;padding:16px 18px 20px 0}
 .sub .svc + .svc{padding-inline-start:18px}
@@ -3718,32 +2842,18 @@ and the document rows ----------------------------- */
 .sub .step{padding:14px 0 16px}
 .sub .step h4{font-size:1.125rem}
 .sub .step p{font-size:var(--t-xs)}
-.sub .faq-item summary{padding:13px 44px 13px 0;font-size:1rem}
-.sub .faq-item p{font-size:var(--t-sm);margin-bottom:14px}
-.sub-cta{margin-top:clamp(22px,2.6vw,32px)}
 .sub .btn{padding:12px 20px;font-size:var(--t-xs)}
 @media (max-width:860px){
-  .sub-story{grid-template-columns:1fr}
-  .sub-flip .sub-story .sub-side{order:0}
-  .sub-side{grid-template-columns:1fr}
-  .sub-side .sub-pic{aspect-ratio:3/2}
   .sub .svc{padding-inline:0}
   .sub .svc + .svc{padding-inline-start:0}
 }
-@media (min-width:561px) and (max-width:860px){
-  .sub-side{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
-  .sub-side .sub-facts{border-bottom:0}
-}
 /* the flipped chapter keeps the narrow column narrow, on the right */
-.sub-flip .sub-story{grid-template-columns:minmax(0,1fr) minmax(0,320px)}
-@media (max-width:860px){ .sub-flip .sub-story{grid-template-columns:1fr} }
 
 /* ==========================================================================
    The accordion returns as the services block; the buyer's process and
    reasons on the home page; the sticky in-page navigation, who we serve
    and the reasons on an area page. Appended last, with their own queries.
    ========================================================================== */
-.sgrid,.areas{display:none}
 .hs-led .acc{margin-top:clamp(24px,3vw,40px)}
 .hs-led .secgrid{margin-top:clamp(20px,2.6vw,32px)}
 
@@ -3767,178 +2877,30 @@ and the document rows ----------------------------- */
 }
 
 /* the sticky in-page navigation on an area page */
-.subnav{position:sticky;top:var(--head-h);z-index:40;background:var(--paper);border-bottom:1px solid var(--line-2);transition:box-shadow .25s}
-.subnav.stuck{box-shadow:0 1px 0 var(--line-2),0 10px 24px -18px rgba(11,26,58,.35)}
-.subnav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px}
-.subnav-list{list-style:none;margin:0;padding:0;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
-.subnav-list::-webkit-scrollbar{display:none}
-.subnav-list li{flex:none}
-.subnav-list a{
-  display:inline-flex;align-items:center;gap:8px;min-height:56px;padding:0 14px;white-space:nowrap;
-  font:500 var(--t-xs)/1.3 var(--ui);color:var(--ink-2);text-decoration:none;border-bottom:2px solid transparent;
-  transition:color .2s,border-color .2s;
-}
-.subnav-list a span{font:300 .875rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.subnav-list a:hover,.subnav-list a:focus-visible{color:var(--ink)}
-.subnav-list a[aria-current="location"]{color:var(--ink);border-bottom-color:var(--co,var(--gold))}
-.subnav-list a:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
-.subnav-cta{flex:none;padding:10px 16px;font-size:var(--t-xs)}
 .sub{scroll-margin-top:calc(var(--head-h) + 60px)}
 @media (max-width:860px){
-  .subnav-cta{display:none}
-  .subnav-in{min-height:48px}
-  .subnav-list a{min-height:48px;padding:0 10px}
   .sub{scroll-margin-top:calc(var(--head-h) + 52px)}
 }
 
 /* who we serve, under the area's argument */
-.serve{margin:14px 0 8px}
-.serve span{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3))}
-.why-area .svc h3{font:400 1.125rem/1.25 var(--display);color:var(--ink);margin:0}
 
 /* ---- sizing pass: a few components had grown past their place ---- */
-.co .tags li{padding:6px 11px;font-size:var(--t-xs);line-height:1.3}
-.co-figs dd{font-size:clamp(2.125rem,3.2vw,2.875rem)}
-.co-figs dd::before{margin-bottom:12px}
 .stats dd{font-size:clamp(2.125rem,3.2vw,2.875rem)}
 .hs-hero h1,.hero h1{font-size:clamp(2.375rem,5.2vw,4.75rem)}
-.sub-index a > span:last-of-type{font-size:1.0625rem}
-.why-area .svc{padding-bottom:22px}
-.subnav-list a{font-size:var(--t-xs)}
-@media (max-width:560px){ .co-figs dd,.stats dd{font-size:2rem} }
+@media (max-width:560px){ .stats dd{font-size:2rem} }
 
 /* the photograph stays above the facts in every chapter */
-.sub-flip .sub-story .sub-pic{order:0}
-
-/* ==========================================================================
-   The area pages and the services index, reworked for use. An area page
-   had every service written up as a page of its own stacked on the others:
-   a hero-like opening, a facts strip, four columns of lines, steps,
-   questions and three buttons, five times over, under a jump list that
-   repeated the sticky navigation and a figures band that repeated the
-   facts. Now: the opening, one table of the area's services to compare
-   and jump from, then one compact module per service — photograph, role,
-   intro, what is supplied, the key facts, where from — with the story,
-   the steps and the questions behind one labelled toggle and one action
-   under it; one closing band for the page. Appended last, every
-   narrow-screen rule in its own query.
-   ========================================================================== */
-
-/* ---- the opening: the statement, the argument, who we serve ---- */
-.co-serve{align-self:start}
-.co-serve .serve{margin:0 0 10px}
-
-/* ---- at a glance: one row per service, on the area's tint ---- */
-.glance-sec{background:var(--co-tint,var(--panel));scroll-margin-top:calc(var(--head-h) + 60px)}
-.glance-wrap{margin-top:clamp(20px,2.4vw,32px);overflow-x:auto}
-.glance{width:100%;border-collapse:collapse;border-top:1px solid var(--ink);text-align:left}
-.glance th,.glance td{vertical-align:top;padding:16px clamp(12px,1.8vw,26px) 18px 0;border-bottom:1px solid var(--line-2)}
-.glance thead th{font:600 .6875rem/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label);padding:12px clamp(12px,1.8vw,26px) 10px 0}
-.glance thead th:nth-child(1){width:22%}
-.glance thead th:nth-child(2){width:36%}
-.glance thead th:nth-child(3){width:22%}
-.glance thead th:last-child{width:1%}
-.glance tbody th{font-weight:400}
-.glance tbody th a{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;row-gap:3px;align-items:baseline;text-decoration:none;color:var(--ink)}
-.glance-n{font:300 .9375rem/1.4 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.glance-name{font:400 1.25rem/1.2 var(--display);color:var(--ink);transition:color .2s}
-.glance-role{grid-column:2;font:400 var(--t-xs)/1.45 var(--body);color:var(--ink-3)}
-.glance tbody th a:hover .glance-name,
-.glance tbody tr:hover .glance-name{color:var(--co-text,var(--gold-text))}
-.glance td{font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
-.glance td dl{margin:0;display:grid;gap:8px}
-.glance td dl > div{display:grid;gap:2px}
-.glance dt{font:600 .625rem/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--label)}
-.glance dd{margin:0;color:var(--ink)}
-.glance-na{color:var(--ink-3);font-style:italic}
-.glance-go{text-align:right;white-space:nowrap;padding-right:0}
-.glance-go a{display:inline-flex;align-items:center;gap:6px;min-height:24px;font:500 var(--t-xs)/1.4 var(--ui);color:var(--ink);text-decoration:none}
-.glance-go a span{color:var(--co-text,var(--gold-text));transition:transform .2s}
-.glance tbody tr:hover .glance-go a span{transform:translateY(3px)}
-.glance-go a:focus-visible,
-.glance tbody th a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.js .glance tbody tr{cursor:pointer}
-@media (max-width:760px){
-  .glance{border-top:0}
-  .glance thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-  .glance tbody,.glance tr,.glance th,.glance td{display:block}
-  .glance tr{display:grid;gap:12px;padding:18px 0 20px;border-bottom:1px solid var(--line-2)}
-  .glance th,.glance td{padding:0;border:0}
-  .glance td[data-l]::before{content:attr(data-l);display:block;font:600 .625rem/1.4 var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--label);margin-bottom:4px}
-  .glance td dl{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
-  .glance-go{text-align:left}
-  .glance-go a{min-height:44px}
-}
-@media (prefers-reduced-motion:reduce){ .glance-name,.glance-go a span{transition:none} }
 
 /* ---- one service, as a compact module on one ground ---- */
 .co .sub,.co .sub:nth-of-type(even){background:none}
 .co .sub{padding-block:clamp(40px,5vw,64px)}
-.sub-top{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:18px;row-gap:6px;align-items:baseline;max-width:none}
-.sub-top .eyebrow{grid-column:1 / -1}
-.sub-top h2{font:300 clamp(1.75rem,2.8vw,2.5rem)/1.05 var(--display);letter-spacing:-.015em;color:var(--ink);margin:0}
-.sub-top .sub-role{font:400 var(--t-lg)/1.4 var(--display);color:var(--co-text,var(--gold-text));margin:0}
-.sub-grid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr) minmax(0,250px);gap:clamp(24px,3vw,48px);align-items:start;margin-top:clamp(20px,2.6vw,32px)}
-.sub-side{display:grid;gap:14px;align-content:start}
-.sub-grid .sub-pic{min-height:0;aspect-ratio:4/3;align-self:auto}
-.sub-tags{gap:6px}
-.co .sub-tags li{padding:5px 9px;font-size:var(--t-xxs)}
-.sub-main{display:grid;gap:14px;align-content:start}
-.sub-main .sub-intro{font:400 clamp(1.125rem,1.5vw,1.375rem)/1.35 var(--display);color:var(--ink);margin:0}
-.sub-main .sub-h3{margin-top:4px}
-.sub-main .sub-lines{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
-.sub-lines li{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr);gap:4px 18px;padding:10px 0;border-bottom:1px solid var(--line)}
-.sub-lines b{font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
-.sub-lines span{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
-.sub-grid .sub-facts{margin:0;grid-template-columns:1fr;border-top:1px solid var(--line-2);border-bottom:0}
-.sub-grid .sub-facts > div{padding:10px 0 11px;border-bottom:1px solid var(--line);gap:3px}
-.sub-grid .sub-facts > div + div{border-inline-start:0;padding-inline-start:0}
 
 /* the story, the steps and the questions, behind one labelled toggle */
-.more{margin-top:clamp(20px,2.6vw,32px);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
-.more summary{cursor:pointer;list-style:none;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px;padding:14px 44px 14px 0;min-height:44px}
-.more summary::-webkit-details-marker{display:none}
-.more summary::after{content:"+";position:absolute;right:4px;top:50%;translate:0 -50%;font:300 1.5rem/1 var(--display);color:var(--co-text,var(--gold-text));transition:transform .25s}
-.more[open] summary::after{transform:rotate(45deg)}
-.more-t{font:600 var(--t-sm)/1.4 var(--ui);color:var(--ink);transition:color .2s}
-.more-close{display:none}
-.more[open] .more-open{display:none}
-.more[open] .more-close{display:inline}
-.more-d{font:400 var(--t-xs)/1.4 var(--body);color:var(--ink-3)}
-.more summary:hover .more-t{color:var(--co-text,var(--gold-text))}
-.more summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.more-in{padding:6px 0 clamp(24px,3vw,36px)}
-.more-story{display:grid;gap:1em;max-width:68ch;color:var(--ink-2);font:400 var(--t-body)/1.65 var(--body)}
-.more-in .sub-h3{margin-top:clamp(24px,3vw,36px)}
-.more-in .sub-steps{margin-top:12px}
-.more-in .sub-steps .step{padding-block:18px 8px}
-.more-in .faq{margin-top:10px;border-top:0}
-.more-in .faq-item summary{padding-block:14px;font-size:1.0625rem}
 
 /* one action under each service, as a line rather than three buttons */
-.sub-act{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px;margin-top:clamp(16px,2vw,24px)}
-.sub-act-main{display:inline-flex;align-items:center;gap:8px;min-height:24px;font:600 var(--t-sm)/1.4 var(--ui);color:var(--ink);text-decoration:none;transition:color .2s}
-.sub-act-main span{color:var(--co-text,var(--gold-text));transition:transform .2s}
-.sub-act-main:hover{color:var(--co-text,var(--gold-text))}
-.sub-act-main:hover span{transform:translateX(4px)}
-.sub-act-sub{font:400 var(--t-xs)/1.4 var(--ui);color:var(--ink-2);text-underline-offset:4px;text-decoration-color:var(--line-2)}
-.sub-act-sub:hover{color:var(--ink);text-decoration-color:currentColor}
-.sub-act a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-@media (max-width:1100px){
-  .sub-grid{grid-template-columns:minmax(0,260px) minmax(0,1fr)}
-  .sub-grid .sub-facts{grid-column:1 / -1;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:16px;border-bottom:0}
-}
 @media (max-width:860px){
   .co .sub{padding-block:36px 40px}
-  .sub-top{grid-template-columns:1fr;row-gap:4px}
-  .sub-grid{grid-template-columns:1fr;gap:20px}
-  .sub-grid .sub-pic{aspect-ratio:16/10}
-  .sub-grid .sub-facts{grid-column:auto;grid-template-columns:repeat(2,minmax(0,1fr))}
-  .sub-grid .sub-facts > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
-  .sub-lines li{grid-template-columns:1fr;gap:2px}
-  .more-in .sub-steps{grid-template-columns:1fr}
 }
-@media (prefers-reduced-motion:reduce){ .more summary::after,.more-t,.sub-act-main,.sub-act-main span{transition:none} }
 
 /* ---- how buying works, with the reasons a buyer can check under it ---- */
 .co-steps .steps{margin-top:clamp(20px,2.4vw,32px)}
@@ -3946,8 +2908,6 @@ and the document rows ----------------------------- */
 .co-steps .step h3{font-size:1.25rem}
 .co-steps .step p{font-size:var(--t-xs)}
 .co-steps .after{margin-top:clamp(28px,3.4vw,44px)}
-.co-why{list-style:none;padding:0;margin-top:14px}
-.co-why .bwhy-item h3::before{background:var(--co,var(--gold))}
 
 /* ---- the other areas: a ruled row each, the services named ---- */
 .oth{list-style:none;margin:clamp(20px,2.4vw,32px) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(20px,2.4vw,32px);border-top:1px solid var(--line-2)}
@@ -3990,58 +2950,14 @@ and the document rows ----------------------------- */
 @media (prefers-reduced-motion:reduce){ .svclist-pic img,.svclist-t,.svclist-go{transition:none} .svclist a:hover .svclist-pic img{transform:none} }
 
 /* ---- the overview band: statement, argument and the table in one ---- */
-.co-over{background:var(--co-tint,var(--panel))}
-.co-over .wrap{row-gap:22px}
-.glance-head{grid-column:1 / -1;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 32px;margin-top:clamp(24px,3vw,40px);padding-top:clamp(20px,2.4vw,28px);border-top:1px solid var(--line-2)}
-.glance-head h2{font:300 clamp(1.5rem,2.2vw,1.9375rem)/1.2 var(--display);letter-spacing:-.012em;color:var(--ink);margin:0}
-.glance-head p{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink-2);max-width:48ch;margin:0}
-.co-over .glance-wrap{grid-column:1 / -1;margin-top:0}
-.co-over .glance{border-top-color:var(--ink)}
-.glance td dl{gap:5px}
-.glance td dl > div{grid-template-columns:auto minmax(0,1fr);gap:0 8px;align-items:baseline}
-.glance dt{padding-top:2px}
-.glance thead th:nth-child(2){width:34%}
-.glance thead th:nth-child(3){width:26%}
 .co .sub{padding-block:clamp(36px,4.2vw,52px)}
-.sub-grid{margin-top:clamp(18px,2.2vw,26px)}
-.more{margin-top:clamp(16px,2vw,24px)}
-.sub-act{margin-top:14px}
 .co-steps{padding-block:clamp(40px,4.5vw,56px)}
-@media (max-width:900px){
-  .co-over .wrap{row-gap:18px}
-  .glance-head{margin-top:16px}
-}
-@media (max-width:760px){
-  .glance td[data-l="Key facts"]{display:none}
-  .glance td dl > div{grid-template-columns:1fr;gap:2px}
-}
-@media (max-width:860px){
-  .sub-side{display:contents}
-  .sub-grid .sub-pic{order:0}
-  .sub-main{order:1}
-  .sub-grid .sub-facts{order:2}
-  .sub-tags{order:3}
-}
 @media (max-width:560px){ .svclist-d{display:none} }
 
 /* ---- the bands after the services are supporting matter: smaller
    headings, the sourcing regions on one row ---- */
 .co-full .section.tight .head2 h2{font-size:clamp(1.5rem,2.4vw,2.125rem)}
 .co-full .section.tight .head2{margin-bottom:0}
-.co-full .srcregs{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:clamp(20px,2.4vw,32px)}
-.co-full .srcreg li{font-size:var(--t-sm)}
-.co-full .srcmore{margin-top:clamp(16px,2vw,24px)}
-@media (max-width:900px){ .co-full .srcregs{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:560px){ .co-full .srcregs{grid-template-columns:minmax(0,1fr)} }
-
-/* ---- the table, a touch denser: five rows fit under the statement ---- */
-.glance th,.glance td{padding-block:13px 15px}
-.glance td{font-size:var(--t-xs)}
-.glance-name{font-size:1.1875rem}
-.glance dd{font-size:var(--t-xs)}
-.glance-head{margin-top:clamp(20px,2.4vw,28px);padding-top:clamp(16px,2vw,22px)}
-.co-over{padding-block:clamp(40px,4.5vw,56px)}
-@media (max-width:760px){ .glance th,.glance td{padding:0} }
 
 /* ---- the other areas as one strip: the footer already lists every area,
    so this is a pointer, not a gallery ---- */
@@ -4072,11 +2988,7 @@ and the document rows ----------------------------- */
 @media (max-width:560px){ .svclist a{grid-template-columns:64px minmax(0,1fr) auto;gap:0 12px} }
 
 /* ---- the opening's argument in two columns, the chapters a touch tighter ---- */
-.co-over .co-story-text{columns:2;column-gap:clamp(24px,3vw,40px);display:block;max-width:none}
-.co-over .co-story-text p{break-inside:avoid;margin:0 0 .9em}
-.co-over .co-story-text p:last-child{margin-bottom:0}
 .co .sub{padding-block:clamp(32px,3.6vw,44px)}
-@media (max-width:900px){ .co-over .co-story-text{columns:1} }
 
 /* ---- index rows: the name and role as one block, the line beside it ---- */
 .svclist a{grid-template-columns:72px minmax(0,14rem) minmax(0,1fr) auto;grid-template-rows:auto;align-items:center}
@@ -4086,8 +2998,6 @@ and the document rows ----------------------------- */
 .svclist-n{margin-right:0}
 .svclist-d{grid-column:3;grid-row:1;align-self:center}
 .svclist-go{grid-column:4;grid-row:1}
-.co-over .co-story-text{columns:auto;display:grid;gap:1em}
-.co-over .co-story-text p{margin:0}
 @media (max-width:1180px){ .svclist a{grid-template-columns:72px minmax(0,13rem) minmax(0,1fr) auto} }
 @media (max-width:900px){
   .svclist a{grid-template-columns:72px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:start}
@@ -4096,46 +3006,19 @@ and the document rows ----------------------------- */
 }
 @media (max-width:560px){ .svclist a{grid-template-columns:64px minmax(0,1fr) auto;grid-template-rows:auto;gap:0 12px;align-items:center} .svclist-go{grid-row:1} }
 
-/* ---- two small corrections from the final check: the strip measures its
-   links against itself, so the mark's reveal brings the first one fully
-   back; the quiet supply link is a 24px target ---- */
-.subnav-list{position:relative}
-.sub-act-sub{display:inline-flex;align-items:center;min-height:24px}
-
 /* ==========================================================================
    AREA PAGE — the services as tabs. One service in view at a time, each
    laid out the same way; without script the panels stand one under the
    other and the tabs are plain anchors. Appended last, with own queries.
    ========================================================================== */
-.tover-in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,4vw,72px);align-items:start}
-.tover .co-statement{margin:0;max-width:none}
-.tover-text{display:grid;gap:1em;color:var(--ink-2);font-size:var(--t-body);line-height:1.65;max-width:62ch;padding-top:6px}
-.tover-text .serve{margin:10px 0 0}
-.tover-text .tags li{padding:6px 11px;font-size:var(--t-xs)}
-@media (max-width:860px){ .tover-in{grid-template-columns:1fr;gap:20px} }
 
 .tabs-sec{padding-top:clamp(40px,5vw,64px);padding-bottom:clamp(40px,5vw,72px)}
-.tabs-bar{position:sticky;top:var(--head-h);z-index:40;background:var(--paper);border-top:1px solid var(--ink);border-bottom:1px solid var(--line-2);margin-top:clamp(20px,2.6vw,32px)}
-.tablist{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
-.tablist::-webkit-scrollbar{display:none}
-.tab{
-  flex:none;display:inline-flex;align-items:baseline;gap:10px;min-height:58px;padding:0 22px 0 0;margin-right:22px;
-  font:400 var(--t-lg)/1.3 var(--display);color:var(--ink-2);text-decoration:none;white-space:nowrap;
-  border-bottom:2px solid transparent;transition:color .2s,border-color .2s;
-}
-.tab:last-child{margin-right:0}
-.tab-n{font:300 .875rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.tab:hover,.tab:focus-visible{color:var(--ink)}
-.tab.on{color:var(--ink);border-bottom-color:var(--co,var(--gold))}
-.tab:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 
 .tpanels{padding-top:clamp(28px,3.4vw,44px)}
 .tpanel{scroll-margin-top:calc(var(--head-h) + 70px)}
 .tpanel:focus{outline:0}
 html.js .tpanel:not(.on){display:none}
 html:not(.js) .tpanel + .tpanel{margin-top:clamp(40px,5vw,72px);padding-top:clamp(40px,5vw,72px);border-top:1px solid var(--line-2)}
-.tpanel-grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:clamp(28px,4vw,64px);align-items:start}
-.tside{display:grid;gap:18px;align-content:start;position:sticky;top:calc(var(--head-h) + 76px)}
 .tpic{margin:0;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--panel)}
 .tpic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .tpic::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:3px;background:var(--co,var(--gold))}
@@ -4146,71 +3029,24 @@ html:not(.js) .tpanel + .tpanel{margin-top:clamp(40px,5vw,72px);padding-top:clam
 .tfrom{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;margin:0}
 .tfrom span{flex-basis:100%;font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3))}
 .tfrom b{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
-.tmain{display:grid;gap:14px;align-content:start;max-width:72ch}
-.tmain h2{font:300 clamp(1.875rem,3vw,2.625rem)/1.08 var(--display);letter-spacing:-.016em;color:var(--ink);margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
 .trole{font:400 var(--t-lg)/1.3 var(--display);color:var(--co-text,var(--gold-text))}
 .tlead{margin:0;font:400 clamp(1.1875rem,1.6vw,1.375rem)/1.4 var(--display);color:var(--ink)}
-.tbody{display:grid;gap:.8em;font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2)}
 .th3{margin:14px 0 0;font:600 .75rem/1.4 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--label,var(--ink-3))}
 .th3::before{content:"";display:inline-block;width:22px;height:1px;background:var(--co,var(--gold));vertical-align:middle;margin-right:10px}
-.tlines{margin:0;border-top:1px solid var(--line-2)}
-.tlines > div{display:grid;grid-template-columns:minmax(0,30%) minmax(0,1fr);column-gap:20px;padding:12px 0;border-bottom:1px solid var(--line)}
-.tlines dt{font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
-.tlines dd{margin:0;font:400 var(--t-sm)/1.55 var(--body);color:var(--ink-2)}
-.tsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.tsteps li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;align-items:baseline;padding-top:12px;border-top:1px solid var(--line-2)}
-.tsteps li > span{font:300 1rem/1.4 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.tsteps strong{display:block;font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
-.tsteps p{margin:4px 0 0;font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
-.tfaq{margin-top:0}
-.tfaq .faq-item summary{padding:12px 44px 12px 0;font-size:1rem}
-.tfaq .faq-item p{font-size:var(--t-sm);margin-bottom:14px}
-.tact{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-top:18px;padding-top:22px;border-top:1px solid var(--ink)}
-.tact .btn.co-btn{background:var(--co);border-color:var(--co);color:var(--co-on,#fff);padding:12px 20px;font-size:var(--t-xs)}
-.tact .btn.co-btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
-.tact-link{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink);text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:4px;min-height:24px}
-.tact-link:hover{text-decoration-color:var(--gold)}
-.tnav{display:flex;justify-content:space-between;gap:16px;margin:10px 0 0;padding-top:14px;border-top:1px solid var(--line)}
-.tnav a{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink-2);text-decoration:none;min-height:24px;display:inline-flex;align-items:center;gap:6px}
-.tnav a:hover{color:var(--co-text,var(--gold-text))}
-.tnav a span{color:var(--gold-text)}
-@media (max-width:1080px){ .tpanel-grid{grid-template-columns:minmax(0,280px) minmax(0,1fr)} }
 @media (max-width:860px){
-  .tpanel-grid{grid-template-columns:1fr;gap:22px}
-  .tside{position:static;grid-template-columns:1fr}
-  .tab{min-height:50px;font-size:var(--t-body);padding-right:14px;margin-right:14px}
-  .tsteps{grid-template-columns:1fr}
-  .tlines > div{grid-template-columns:1fr;row-gap:4px}
   .tpanel{scroll-margin-top:calc(var(--head-h) + 58px)}
 }
 @media (min-width:561px) and (max-width:860px){
-  .tside{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
   .tfrom{grid-column:1 / -1}
 }
-@media (prefers-reduced-motion:reduce){ .tab{transition:none} }
 
 /* ---- the area page, focused: hero, the services as tabs, how to buy ---- */
 .co-hero-lede{margin:14px 0 0;max-width:46ch;font:400 var(--t-lg)/1.5 var(--body);color:rgba(255,255,255,.88)}
 .co-hero-cta{margin-top:22px}
 .tabs-sec{padding-top:clamp(36px,4.5vw,56px)}
-.tabs-head h2{font:300 clamp(1.625rem,2.4vw,2.125rem)/1.15 var(--display);letter-spacing:-.014em;color:var(--ink);margin:10px 0 0}
-.tabs-bar{margin-top:clamp(18px,2.2vw,28px)}
 .tpanels{padding-top:clamp(24px,3vw,40px)}
-.tmain{gap:12px}
-.tmain h2{font-size:clamp(1.75rem,2.6vw,2.25rem)}
-.tmore{margin-top:4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.tmore > summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:12px 0;font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink)}
-.tmore > summary::-webkit-details-marker{display:none}
-.tmore > summary::after{content:"+";font:300 1.375rem/1 var(--display);color:var(--gold-text);transition:transform .25s}
-.tmore[open] > summary::after{transform:rotate(45deg)}
-.tmore > summary:hover{color:var(--co-text,var(--gold-text))}
-.tmore > summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
-.tmore-in{display:grid;gap:.8em;padding:4px 0 18px;font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2)}
-.tmore-in .tfaq{margin-top:6px;border-top:1px solid var(--line-2)}
-.tact{margin-top:10px;border-top:0;padding-top:14px}
 .co-steps .steps{margin-top:clamp(20px,2.6vw,32px)}
 @media (max-width:560px){ .co-hero-lede{font-size:var(--t-body)} }
-@media (prefers-reduced-motion:reduce){ .tmore > summary::after{transition:none} }
 
 /* ==========================================================================
    AREA PAGE — the industry pattern: a short overview with figures, the
@@ -4221,50 +3057,13 @@ html:not(.js) .tpanel + .tpanel{margin-top:clamp(40px,5vw,72px);padding-top:clam
 .tover2-h{font:300 clamp(1.375rem,2vw,1.75rem)/1.35 var(--display);color:var(--ink);margin:10px 0 0;max-width:40ch}
 .tover2-serve{margin:16px 0 0;font:400 var(--t-sm)/1.6 var(--body);color:var(--ink-2);max-width:60ch}
 .tover2-serve span{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3));margin-right:8px}
-.tover2-figs{margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-2)}
-.tover2-figs > div{display:grid;gap:6px;padding:16px clamp(12px,1.6vw,22px) 4px 0}
-.tover2-figs > div + div{padding-left:clamp(12px,1.6vw,22px);border-left:1px solid var(--line-2)}
-.tover2-figs dd{margin:0;font:300 clamp(1.875rem,2.6vw,2.5rem)/1 var(--display);color:var(--co-text,var(--gold-text));font-variant-numeric:lining-nums}
-.tover2-figs dt{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3))}
 @media (max-width:860px){ .tover2-in{grid-template-columns:1fr;gap:22px} }
 
 .tabs-sec{padding-top:clamp(36px,4.5vw,64px)}
-.svcgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,1.6vw,22px);margin-top:clamp(24px,3vw,40px)}
-.svccard{
-  display:grid;grid-template-rows:auto 1fr;text-decoration:none;color:inherit;
-  background:var(--paper);border:1px solid var(--line);transition:border-color .25s,transform .25s;
-}
-.svccard:hover,.svccard:focus-visible{border-color:var(--co,var(--gold));transform:translateY(-3px)}
-.svccard.on{border-color:var(--co,var(--gold));background:var(--co-tint,var(--panel));transform:none}
-.svccard:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.svccard-pic{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--panel)}
-.svccard-pic img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.svccard:hover .svccard-pic img{transform:scale(1.04)}
-.svccard-pic::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:3px;background:var(--co,var(--gold))}
-.svccard.on .svccard-pic::after{width:100%}
-.svccard-body{display:grid;gap:6px;align-content:start;padding:16px 16px 18px}
-.svccard-n{font:300 .9375rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.svccard-name{font:400 1.25rem/1.2 var(--display);color:var(--ink)}
-.svccard-role{font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
-.svccard-go{margin-top:auto;padding-top:10px;font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
-.svccard-arr{display:inline-block;color:var(--gold-text);transition:transform .25s}
-.svccard.on .svccard-arr{transform:rotate(180deg)}
-.svccard-close{display:none}
-.svccard.on .svccard-open{display:none}
-.svccard.on .svccard-close{display:inline}
-.tabs-bar{display:none}
 .tpanels{padding-top:0}
 html.js .tpanels{margin-top:0}
 html.js .tpanels.open{margin-top:clamp(24px,3vw,40px);padding-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--ink)}
 .tpanel{scroll-margin-top:calc(var(--head-h) + 16px)}
-.tpanel-top{margin:0 0 18px}
-.tpanel-close{font:600 var(--t-xs)/1.4 var(--ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-decoration:none;display:inline-flex;align-items:center;gap:8px;min-height:24px}
-.tpanel-close:hover{color:var(--co-text,var(--gold-text))}
-.tpanel-close span{color:var(--gold-text)}
-html:not(.js) .tpanel-close{display:none}
-@media (max-width:1080px){ .svcgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:560px){ .svcgrid{grid-template-columns:1fr;gap:14px} .svccard:hover{transform:none} }
-@media (prefers-reduced-motion:reduce){ .svccard,.svccard-pic img,.svccard-arr{transition:none} .svccard:hover{transform:none} .svccard:hover .svccard-pic img{transform:none} }
 
 /* ---- the area page, composed: the grid takes one row, the figures a strip,
    the open card points at its details ---- */
@@ -4273,17 +3072,8 @@ html:not(.js) .tpanel-close{display:none}
 .tover2-serve-h{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--label,var(--ink-3));margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line-2)}
 .tover2-serve ul{list-style:none;margin:0;padding:0}
 .tover2-serve li{font:400 var(--t-sm)/1.5 var(--body);color:var(--ink);padding:7px 0;border-bottom:1px solid var(--line)}
-.tover2 .tover2-figs{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:clamp(28px,3.4vw,44px);border-top:1px solid var(--ink);border-bottom:1px solid var(--line-2)}
-.tover2 .tover2-figs > div{padding:18px clamp(12px,1.6vw,22px) 16px 0}
-.tover2 .tover2-figs dd{font-size:clamp(2rem,2.8vw,2.625rem)}
-.svcgrid{grid-template-columns:repeat(var(--cols,4),minmax(0,1fr))}
-.svccard{position:relative}
-.svccard.on::after{content:"";position:absolute;left:50%;bottom:-1px;width:14px;height:14px;transform:translate(-50%,50%) rotate(45deg);background:var(--paper);border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);z-index:2}
 html.js .tpanels.open{margin-top:clamp(20px,2.6vw,32px)}
-.svccard-name{font-size:1.1875rem}
-@media (max-width:1080px){ .svcgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:860px){ .tover2 .tover2-in{grid-template-columns:1fr;gap:20px} .tover2 .tover2-figs{grid-template-columns:repeat(2,minmax(0,1fr))} .tover2 .tover2-figs > div:nth-child(odd){padding-left:0;border-left:0} .tover2 .tover2-figs > div:nth-child(-n+2){border-bottom:1px solid var(--line)} }
-@media (max-width:560px){ .svcgrid{grid-template-columns:1fr} }
+@media (max-width:860px){ .tover2 .tover2-in{grid-template-columns:1fr;gap:20px} }
 
 /* ==========================================================================
    AREA PAGE — the hero names what is inside; the detail is a product sheet.
@@ -4311,57 +3101,25 @@ html.js .tpanels.open{margin-top:clamp(20px,2.6vw,32px)}
 
 /* the sheet */
 html.js .tpanels.open{margin-top:22px;padding-top:0;border-top:0}
-.svccard.on::after{background:var(--co-tint,var(--panel));border-color:var(--ink)}
 .tpanel{background:var(--co-tint,var(--panel));border:1px solid var(--ink);padding:clamp(22px,3vw,40px) clamp(22px,3vw,40px) clamp(18px,2.4vw,28px)}
 html:not(.js) .tpanel + .tpanel{margin-top:24px;padding-top:clamp(22px,3vw,40px);border-top:1px solid var(--ink)}
-.tp-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 28px;padding-bottom:22px;border-bottom:1px solid var(--ink)}
-.tp-head h2{font:300 clamp(1.75rem,2.8vw,2.375rem)/1.08 var(--display);letter-spacing:-.016em;color:var(--ink);margin:8px 0 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
-.tp-head .trole{font-size:var(--t-lg)}
-.tp-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-bottom:4px}
-.tp-actions .btn.co-btn{background:var(--co);border-color:var(--co);color:var(--co-on,#fff);padding:12px 20px;font-size:var(--t-xs)}
-.tp-actions .btn.co-btn:hover{background:var(--ink);border-color:var(--ink);color:#fff}
 .tp-grid{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(24px,3.4vw,56px);padding-top:clamp(22px,2.8vw,36px)}
 .tp-side{display:grid;gap:14px;align-content:start}
 .tp-side .th3{margin-top:6px}
 .tp-side .tfacts{border-top-color:var(--line-2)}
 .tp-side .tfacts > div{border-bottom-color:rgba(11,26,58,.12)}
 .tp-side .tfrom{padding-top:4px}
-.tp-supply{display:inline-flex;align-items:center;gap:8px;margin-top:4px;font-size:var(--t-xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;text-decoration:none}
-.tp-supply span{color:var(--gold-text)}
 .tp-main{display:grid;gap:14px;align-content:start}
 .tp-main .tlead{font-size:clamp(1.1875rem,1.5vw,1.3125rem)}
-.tp-body{margin:0;font:400 var(--t-body)/1.65 var(--body);color:var(--ink-2);max-width:66ch}
 .tp-main .th3{margin-top:10px}
-.tlines2{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(20px,2.6vw,36px);border-top:1px solid var(--line-2)}
-.tlines2 > div{padding:12px 0 14px;border-bottom:1px solid rgba(11,26,58,.12);display:grid;gap:4px;align-content:start}
-.tlines2 dt{display:flex;align-items:baseline;gap:10px;font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
-.tlines2 dt span{font:300 .8125rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
-.tlines2 dd{margin:0;font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
-.tp-main .tmore{margin-top:6px;border-color:rgba(11,26,58,.14)}
-.tnav{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 20px;margin:clamp(18px,2.4vw,28px) 0 0;padding-top:14px;border-top:1px solid var(--ink)}
-.tnav-pn{display:flex;gap:22px}
-html:not(.js) .tnav .tpanel-close{display:none}
 @media (max-width:860px){
   .tp-grid{grid-template-columns:1fr;gap:20px}
   .tp-side{grid-template-columns:1fr}
-  .tlines2{grid-template-columns:1fr}
   .tpanel{padding:18px 16px 16px}
 }
 @media (min-width:561px) and (max-width:860px){ .tp-side{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 20px} .tp-side .tpic{grid-row:1 / span 4} }
 
 /* on a phone the cards are rows, so the sheet opens right under them */
-@media (max-width:560px){
-  .svcgrid{gap:0;border-top:1px solid var(--ink)}
-  .svccard{grid-template-columns:84px minmax(0,1fr);grid-template-rows:none;border:0;border-bottom:1px solid var(--line);background:none}
-  .svccard.on{background:var(--co-tint,var(--panel))}
-  .svccard.on::after{display:none}
-  .svccard-pic{aspect-ratio:1;align-self:center;margin:10px 0}
-  .svccard-pic::after{display:none}
-  .svccard-body{padding:12px 12px 12px 14px;gap:3px;align-content:center}
-  .svccard-n{display:none}
-  .svccard-name{font-size:1.0625rem}
-  .svccard-go{margin-top:2px;padding-top:0}
-}
 
 /* ==========================================================================
    AREA PAGE — every service sheet on the page in order, revealed as it
@@ -4373,10 +3131,6 @@ html.js .tpanels{margin-top:clamp(24px,3vw,40px)}
 .sheet{scroll-margin-top:calc(var(--head-h) + 16px)}
 html.js .sheet{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
 html.js .sheet.in{opacity:1;transform:none}
-.svccard.on::after{display:none}
-.svccard-go{color:var(--ink-2)}
-.svccard.on .svccard-go{color:var(--ink)}
-.tnav .tpanel-close{display:inline-flex}
 @media (prefers-reduced-motion:reduce){ html.js .sheet{opacity:1;transform:none;transition:none} }
 
 /* the sheet, trimmed to the essentials */
@@ -4391,12 +3145,7 @@ html.js .sheet.in{opacity:1;transform:none}
 .tp-main .trole{font-size:var(--t-body)}
 .tp-main .tlead{font-size:clamp(1.0625rem,1.3vw,1.1875rem);line-height:1.4}
 .tp-main .th3{margin-top:6px}
-.tlist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
-.tlist li{padding:8px 0;border-bottom:1px solid rgba(11,26,58,.12);font:400 var(--t-xs)/1.5 var(--body);color:var(--ink-2)}
-.tlist strong{font:400 var(--t-sm)/1.4 var(--display);color:var(--ink);margin-right:6px}
 .tp-main .tfrom{margin-top:4px}
-.tp-main .tmore{margin-top:4px}
-.tp-main .tmore > summary{min-height:40px;padding:8px 0;font-size:var(--t-xs)}
 @media (max-width:860px){ .tp-grid{grid-template-columns:1fr} }
 @media (min-width:561px) and (max-width:860px){ .tp-side{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 20px} .tp-side .tpic{grid-row:auto} }
 
@@ -4424,29 +3173,9 @@ html.js .sheet.in{opacity:1;transform:none}
 .tlist2 dt span{font:300 .75rem/1 var(--display);letter-spacing:.08em;color:var(--co-text,var(--gold-text))}
 .tlist2 dd{margin:0;font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
 .sheet .tp-main .tfrom{margin-top:6px}
-.sheet .tp-main .tmore{border-bottom:0}
-.sheet .tp-main .tmore > summary{color:var(--co-text,var(--gold-text))}
-.whybuy{padding-block:clamp(44px,5.5vw,76px)}
-.whybuy-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,96px);align-items:start}
-.whybuy h2{font:300 clamp(1.5rem,2.2vw,1.9375rem)/1.15 var(--display);color:var(--ink);margin:10px 0 18px}
-.whylist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
-.whylist li{display:grid;gap:3px;padding:12px 0;border-bottom:1px solid var(--line)}
-.whylist strong{font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
-.whylist span{font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
-.buysteps{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-2)}
-.buysteps li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
-.buysteps li > span{font:300 1rem/1.4 var(--display);letter-spacing:.08em;color:var(--gold-text)}
-.buysteps strong{display:block;font:400 1.0625rem/1.3 var(--display);color:var(--ink)}
-.buysteps p{margin:3px 0 0;font:400 var(--t-xs)/1.55 var(--body);color:var(--ink-2)}
-.othernav{border-top:1px solid var(--line-2);padding-block:18px}
-.othernav-in{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px}
-.othernav-h{font:600 var(--t-label,.6875rem)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-right:6px}
-.othernav a{font:500 var(--t-sm)/1.4 var(--ui);color:var(--ink);text-decoration:none;min-height:24px;display:inline-flex;align-items:center;border-bottom:1px solid transparent}
-.othernav a:hover{border-bottom-color:var(--gold)}
 @media (max-width:860px){
   .sheet .tp-grid{grid-template-columns:1fr}
   .tlist2{grid-template-columns:1fr}
-  .whybuy-in{grid-template-columns:1fr;gap:28px}
   .tover2 .tover2-in{grid-template-columns:1fr}
 }
 
@@ -4499,15 +3228,13 @@ html.js .tpanels{margin-top:clamp(20px,2.6vw,32px)}
 .head2 h2,.co-full .section.tight .head2 h2,.intro-head h2,.platform-h,.contact-h,
 .sp-two h2,.apply-side h2,.src-side h2{font-size:var(--t-h2);line-height:1.1}
 .acc-body h3{font-size:var(--t-h2)}
-.sheet .tp-main h2,.tp-head h2,.tmain h2,.secblk h2,.tover2-h,.vm h3,.dir .dir-ask-q,
-.next-card h2,.co-ask h2{font-size:var(--t-h2b)}
+.sheet .tp-main h2,.secblk h2,.tover2-h,.vm h3,.dir .dir-ask-q,.next-card h2,.co-ask h2{font-size:var(--t-h2b)}
 .tover2-h{line-height:1.3}
-.stats dd,.co-figs dd,.tover2 .tover2-figs dd{font-size:var(--t-fig)}
+.stats dd{font-size:var(--t-fig)}
 .stats dd::before{margin-bottom:12px}
 
 /* ---- h3: one card title, one row title; one body size inside a card ---- */
-.step h3,.co-steps .step h3,.hs .wwd-card h3,.dir h3,.route h3,.vc h3,.pline h3,.valcard h3,
-.tl-step h3,.why-item h3,.qsteps h3{font-size:var(--t-h3)}
+.step h3,.co-steps .step h3,.hs .wwd-card h3,.dir h3,.route h3,.vc h3,.pline h3,.valcard h3,.tl-step h3,.why-item h3{font-size:var(--t-h3)}
 .bwhy-item h3,.opp-title,.catrow-name,.oth-t,.svclist-t{font-size:var(--t-lg)}
 .hs-cos .cos-name{font-size:clamp(1.375rem,1.9vw,1.75rem)}
 .acc-say,.tp-main .tlead,.sheet .tp-main .tlead{font-size:var(--t-lg)}
@@ -4521,23 +3248,20 @@ html.js .tpanels{margin-top:clamp(20px,2.6vw,32px)}
 .hs .wwd-n::before{margin-bottom:12px}
 
 /* ---- labels: 12px eyebrows at one tracking; 11px labels inside components */
-.eyebrow,.pagehead-eyebrow,.hero-kicker,.th3,.secblk-count,.vm-label,.cos-role,.sub-h3{font-size:var(--t-xxs);letter-spacing:.14em}
-.stats dt,.oth-k,.reg-n,.co-scroll span,.glance dt,.opp-req-rows dt{
+.eyebrow,.pagehead-eyebrow,.hero-kicker,.th3,.secblk-count,.vm-label,.cos-role{font-size:var(--t-xxs);letter-spacing:.14em}
+.stats dt,.oth-k,.reg-n,.co-scroll span,.opp-req-rows dt{
   font:600 var(--t-label)/1.4 var(--ui);letter-spacing:.14em;text-transform:uppercase;
 }
 
 /* ---- rhythm: one band of padding on every section, and no double gap
    where two sections on the same ground meet ----------------------------- */
-.section,.section.tight,.section.hs,.section.hs.hs-led,.section.hs.sectors,.section.hs.tight,
-.next,.co-ask,.secblk,.tabs-sec,.co-steps,.co-over,.whybuy{padding-block:var(--band)}
+.section,.section.tight,.section.hs,.section.hs.hs-led,.section.hs.tight,.next,.co-ask,.secblk,.tabs-sec,.co-steps{padding-block:var(--band)}
 .tover2 + .tabs-sec,
 .section.stone + .section.stone,
 .section.grow + .next,
 .secidx + .next,
 #categories + #requirements{padding-top:0}
 .section.apply + .section.stone{padding-top:32px}
-
-/* ---- small alignments the study turned up ------------------------------ */
 /* the other-areas row: every arrow on the same baseline, whatever the name wraps to */
 .oth a{grid-template-rows:auto 1fr auto;align-content:stretch}
 .oth-go{align-self:end}
@@ -4557,7 +3281,7 @@ html.js .tpanels{margin-top:clamp(20px,2.6vw,32px)}
    the companies strip a ruled list, the footer clear of the corner button */
 @media (max-width:560px){
   :root{--gutter:16px}
-  .co-figs dd,.stats dd{font-size:1.75rem}
+  .stats dd{font-size:1.75rem}
   .next-act{flex-direction:column}
   .next-act .btn,.after .btn,.pagehead-cta .btn,.regcta-act .btn{width:100%}
   .hs-cos .cos{-webkit-mask-image:none;mask-image:none}

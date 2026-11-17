@@ -114,18 +114,16 @@ const COMPANIES = [
      services: [ … ]
 
    A service:
-     slug, name, role, headline, short, intro, body
-     img                 the shot beside the story and on the index card
-     facts               the strip under the opening
-     lines               what is actually supplied — the specifications,
-                         the varieties, the routes
-     origins             where it is sourced from; each must be on REACH
-     steps               how the work moves, where that helps
-     activities          the tags under the story
-     supply              the Supplier Portal category a producer of this
-                         would register in, which puts a "Supply this" button
-                         on the page
-     cta                 the ask
+     slug, name, role   the name and what it is, in a few words
+     short, intro       the search description, and the one sentence that
+                        opens its chapter
+     img                the photograph beside the chapter and on the index
+     facts              the four facts beside the photograph
+     lines              what is actually supplied — the specifications, the
+                        varieties, the routes
+     origins            where it is sourced from; each must be on REACH
+     related            other services this one draws on, by slug
+     activities         keywords for search
    -------------------------------------------------------------------------- */
 
 const AREAS = [
@@ -169,14 +167,8 @@ const AREAS = [
         slug: 'sulphur',
         name: 'Sulphur',
         role: 'Granular solid sulphur, in bulk',
-        headline: 'Granular Sulphur, Shipped in Bulk',
         short: 'Granular solid sulphur in bulk for industrial and commercial use, sourced in the Gulf and Central Asia, with the shipping arranged alongside.',
         intro: 'We supply granular solid sulphur in bulk, and arrange the vessel that carries it.',
-        body: [
-          'Sulphur is a by-product of gas and oil processing, and the Gulf produces more of it than it uses. We buy it from producers and authorised sellers in the region and in Central Asia and sell it in bulk to industrial buyers — fertiliser, chemical and metallurgical plants — in Asia, Africa and the Mediterranean.',
-          'The product is granular: formed, dry, low in dust and fines, which is what receiving ports and plants ask for. Every cargo is sold to a specification sheet and inspected at the load port by an independent surveyor.',
-          'Because the freight sits in the same business, a sulphur enquiry is answered as a delivered price — FOB or CFR — with the laycan and the vessel class the route allows.'
-        ],
         img: 'prod-sulphur',
         facts: [
           { k: 'Form', v: 'Granular, 2–6 mm' },
@@ -192,21 +184,13 @@ const AREAS = [
         ],
         origins: ['Qatar', 'UAE', 'Turkmenistan', 'Kazakhstan'],
         activities: ['Bulk Commodities', 'Industrial Supply', 'Vessel Chartering', 'Letters of Credit'],
-        supply: 'energy-materials',
-        cta: 'Enquire about sulphur'
       },
       {
         slug: 'coffee',
         name: 'Coffee',
         role: 'Green coffee, by origin and grade',
-        headline: 'Green Coffee From the Origins That Grow It',
         short: 'Green arabica and robusta coffee bought by origin, grade and crop, from Africa, Asia and the Americas, and shipped to roasters and traders.',
         intro: 'We buy green coffee at origin — by grade, screen size and crop year — and ship it to roasters and traders.',
-        body: [
-          'Coffee is bought from exporters and cooperatives in the countries that grow it. Arabica from Ethiopia, Colombia and Brazil; robusta from Uganda, Vietnam and Indonesia. Each lot is bought against a sample and a grade, not a description.',
-          'What a roaster needs is consistency across a contract: the same screen, the same defect count, the same cup, shipment after shipment. Our buying is built around that, with pre-shipment samples approved before a container is stuffed.',
-          'The coffee travels in jute or GrainPro-lined bags in containers, and the shipping, documents and customs are handled by the same desk that bought it.'
-        ],
         img: 'coffee-still',
         facts: [
           { k: 'Varieties', v: 'Arabica and robusta' },
@@ -222,21 +206,13 @@ const AREAS = [
         ],
         origins: ['Ethiopia', 'Uganda', 'Brazil', 'Colombia', 'Vietnam', 'Indonesia'],
         activities: ['Green Coffee', 'Origin Sourcing', 'Quality Sampling', 'Container Shipping'],
-        supply: 'commodities-food',
-        cta: 'Enquire about coffee'
       },
       {
         slug: 'sugar',
         name: 'Sugar',
         role: 'Refined white and raw sugar',
-        headline: 'Sugar, by Grade and by the Shipload',
         short: 'Refined white cane sugar (ICUMSA 45) and raw sugar in bagged or bulk lots, for refiners, food manufacturers and distributors.',
         intro: 'We supply refined white sugar and raw sugar, bagged or in bulk, in quantities from a container to a vessel.',
-        body: [
-          'Sugar is bought from mills and refineries in the producing countries and from the Gulf refineries that process raw cane. Refined white sugar is sold to the ICUMSA 45 standard; raw sugar to the standard the refiner specifies.',
-          'The work is in the documents and the timing as much as the price: a current crop year, a polarisation and moisture that hold on arrival, packing that survives the port, and a shipment date that fits the buyer’s own programme.',
-          'Smaller buyers take containers of 50 kg bags; larger ones take breakbulk or bulk vessels. Both are quoted with the freight, so the price is a landed one.'
-        ],
         img: 'prod-sugar',
         facts: [
           { k: 'Grades', v: 'ICUMSA 45 refined white; raw sugar' },
@@ -252,21 +228,13 @@ const AREAS = [
         ],
         origins: ['Brazil', 'India', 'Ukraine', 'UAE'],
         activities: ['Bulk Commodities', 'Food Manufacturing Supply', 'Letters of Credit', 'Breakbulk Shipping'],
-        supply: 'commodities-food',
-        cta: 'Enquire about sugar'
       },
       {
         slug: 'edible-oils',
         name: 'Edible Oils',
         role: 'Palm olein, sunflower and soybean oil',
-        headline: 'Edible Oils in Bulk, Drum and Bottle',
         short: 'Refined palm olein, sunflower and soybean oil for food manufacturers, distributors and institutional buyers, in flexitanks, drums and retail packs.',
         intro: 'We supply refined edible oils — palm olein, sunflower and soybean — in the pack the buyer’s line or shelf needs.',
-        body: [
-          'Edible oil is bought from refineries in the producing regions: palm olein from South-East Asia, sunflower oil from the Black Sea and Türkiye, soybean oil from South America. Each is sold refined, bleached and deodorised, to the buyer’s specification.',
-          'A manufacturer takes oil in flexitanks or ISO tanks; a distributor takes it in drums, jerrycans or retail bottles under its own label. We quote all of them, with the freight, because the pack decides the route as much as the origin does.',
-          'Food oil has a shelf life, so the schedule matters: production date, shipping window and arrival are agreed before the order is confirmed.'
-        ],
         img: 'prod-edible-oils',
         facts: [
           { k: 'Oils', v: 'Palm olein, sunflower, soybean' },
@@ -282,21 +250,13 @@ const AREAS = [
         ],
         origins: ['Indonesia', 'Ukraine', 'Türkiye', 'Brazil'],
         activities: ['Food Commodities', 'Private Label', 'Bulk Liquids', 'Institutional Supply'],
-        supply: 'commodities-food',
-        cta: 'Enquire about edible oils'
       },
       {
         slug: 'wheat-grains',
         name: 'Wheat & Grains',
         role: 'Milling wheat, feed grains and flour',
-        headline: 'Wheat and Grains for Mills, Feed and Food',
         short: 'Milling wheat, feed barley and corn, and flour, sourced from the Black Sea, Central Asia and Australia for mills, feed producers and food manufacturers.',
         intro: 'We supply milling wheat, feed grains and flour from the regions that grow them, in bagged or bulk lots.',
-        body: [
-          'Wheat is bought from exporters in Ukraine, Kazakhstan, Australia and Canada, by protein, gluten, falling number and test weight — the figures a mill buys on. Feed barley and corn are bought the same way for feed producers.',
-          'A grain cargo is a logistics exercise: the crop, the port, the vessel and the laycan all have to line up, and the documents — phytosanitary, fumigation, weight and quality — have to be right for the receiving country.',
-          'Bagged flour and smaller grain lots travel in containers; milling programmes take bulk vessels. Both are quoted delivered.'
-        ],
         img: 'panel-food-commodities',
         facts: [
           { k: 'Products', v: 'Milling wheat, feed barley, corn, flour' },
@@ -312,8 +272,6 @@ const AREAS = [
         ],
         origins: ['Ukraine', 'Kazakhstan', 'Australia', 'Canada', 'Bulgaria'],
         activities: ['Bulk Grains', 'Milling Supply', 'Feed Supply', 'Bulk Shipping'],
-        supply: 'commodities-food',
-        cta: 'Enquire about wheat and grains'
       }
     ]
   },
@@ -358,14 +316,8 @@ const AREAS = [
         slug: 'fresh-vegetables',
         name: 'Fresh Vegetables',
         role: 'Imported weekly, by season and origin',
-        headline: 'Fresh Vegetables, Every Week of the Year',
         short: 'Tomatoes, cucumbers, peppers, onions, potatoes and leafy produce, imported by air and sea and delivered to retailers and kitchens across Qatar.',
         intro: 'We import fresh vegetables on a weekly programme and deliver them to supermarkets, hotels, restaurants and caterers.',
-        body: [
-          'Vegetables are sourced by season: Mediterranean and Turkish origins by sea in reefers, Indian and Chinese origins for the staples, and European origins by air when a line needs to be filled quickly. The origin moves as the seasons do.',
-          'What a buyer sees is a grade and a shelf life on arrival. We buy Class I produce against a market specification, with the phytosanitary certificate and the Ministry of Public Health registration every shipment needs, and we reject at the port what does not meet it.',
-          'Delivery is the last link: chilled, on a schedule, to the buyer’s store or kitchen.'
-        ],
         img: 'prod-fresh-vegetables',
         facts: [
           { k: 'Lines', v: 'Tomatoes, cucumbers, capsicum, onions, potatoes, leafy produce' },
@@ -380,27 +332,14 @@ const AREAS = [
           { t: 'Compliance', d: 'GlobalG.A.P. or equivalent growers, phytosanitary certificate per shipment, MoPH registration and Arabic labelling.' }
         ],
         origins: ['Spain', 'Türkiye', 'India', 'China'],
-        steps: [
-          { t: 'Source', d: 'Growers and exporters across several regions, so supply can shift as a season ends or availability tightens.' },
-          { t: 'Import', d: 'Reefers to Hamad Port or air freight to Doha, cleared and inspected on arrival.' },
-          { t: 'Distribute', d: 'Delivered chilled to supermarkets, hotels, restaurants, caterers and wholesalers.' }
-        ],
         activities: ['Fresh Produce', 'Cold Chain', 'Seasonal Sourcing', 'Qatar Distribution'],
-        supply: 'fresh-food',
-        cta: 'Enquire about fresh vegetables'
       },
       {
         slug: 'fresh-fruits',
         name: 'Fresh Fruits',
         role: 'Apples, citrus, bananas, grapes and more',
-        headline: 'Fresh Fruit as the Seasons Allow',
         short: 'Apples, citrus, bananas, grapes, melons and stone fruit from international growing regions, delivered to retail and food service in Qatar.',
         intro: 'We import fresh fruit from the growing regions in season and deliver it to retailers and kitchens across Qatar.',
-        body: [
-          'Fruit follows the harvest: citrus and stone fruit from Spain and Türkiye, bananas and tropical fruit from South America and India, apples and grapes from wherever the season is. Buying across hemispheres is what keeps a line on the shelf all year.',
-          'Each line is bought by variety, size and grade, ripened or not as the customer wants it, and shipped in reefers at the temperature that variety needs. Bananas are ripened in Qatar to order.',
-          'The customer is a supermarket buyer, a hotel purchasing manager or a wholesaler, and each gets a standing programme rather than a one-off load.'
-        ],
         img: 'prod-fresh-fruits',
         facts: [
           { k: 'Lines', v: 'Apples, citrus, bananas, grapes, melons, stone fruit' },
@@ -415,27 +354,14 @@ const AREAS = [
           { t: 'Retail and food-service packs', d: 'Loose, pre-packed or bulk, to the customer’s shelf or kitchen.' }
         ],
         origins: ['Spain', 'Brazil', 'Colombia', 'India', 'Türkiye'],
-        steps: [
-          { t: 'Source', d: 'Growers and exporters in both hemispheres, so a line is in season somewhere all year.' },
-          { t: 'Import', d: 'Reefers at the variety’s own temperature, cleared and inspected at Hamad Port or Doha airport.' },
-          { t: 'Distribute', d: 'Ripened where needed, then delivered chilled to the customer.' }
-        ],
         activities: ['Fresh Produce', 'Cold Chain', 'Ripening', 'Retail Supply'],
-        supply: 'fresh-food',
-        cta: 'Enquire about fresh fruits'
       },
       {
         slug: 'rice',
         name: 'Rice',
         role: 'Basmati, long-grain, parboiled and white',
-        headline: 'Rice by Variety, Grade and Pack',
         short: 'Basmati, long-grain, parboiled and white rice by variety, grade and pack size, for retail, food service and hospitality in Qatar.',
         intro: 'We import rice by variety and grade and supply it in the pack size each customer sells or cooks from.',
-        body: [
-          'Rice is bought from millers and exporters in India and Vietnam: basmati and sella from the Indian subcontinent, long-grain and jasmine from South-East Asia. Each is bought by grade, broken percentage, moisture and age.',
-          'A hotel kitchen, a supermarket and a wholesaler want the same rice in different packs. We supply 1 kg to 40 kg bags under our own labels or the customer’s, and bulk big bags for processors.',
-          'Rice keeps, so the work is in buying the right crop at the right time and holding stock in Qatar for the customers who need delivery this week.'
-        ],
         img: 'still-roma-commercial',
         facts: [
           { k: 'Varieties', v: 'Basmati, sella, long-grain, jasmine, parboiled, white' },
@@ -451,21 +377,13 @@ const AREAS = [
         ],
         origins: ['India', 'Vietnam'],
         activities: ['Staple Foods', 'Private Label', 'Wholesale Supply', 'Stock in Qatar'],
-        supply: 'fresh-food',
-        cta: 'Enquire about rice'
       },
       {
         slug: 'grains-pulses',
         name: 'Grains & Pulses',
         role: 'Lentils, chickpeas, beans and peas',
-        headline: 'Pulses and Grains for Shelf and Kitchen',
         short: 'Lentils, chickpeas, beans, peas and wheat products, imported in bulk and packed for retail, food service and manufacturing in Qatar.',
         intro: 'We import pulses and packed grains from the regions that grow them and supply them packed for the shelf or the kitchen.',
-        body: [
-          'Pulses are bought from exporters in Canada, Australia, Türkiye and India — red and green lentils, chickpeas, kidney and white beans, split peas — by size, colour and defect count.',
-          'They arrive in containers of 25 or 50 kg bags and are repacked in Qatar into retail packs under our labels or the customer’s, or supplied in bulk bags to food manufacturers and caterers.',
-          'Alongside them we supply packed wheat products — flour, semolina, bulgur and pasta — to the same customers, on the same deliveries.'
-        ],
         img: 'prod-food-security',
         facts: [
           { k: 'Lines', v: 'Lentils, chickpeas, beans, peas, flour, semolina, bulgur' },
@@ -481,21 +399,13 @@ const AREAS = [
         ],
         origins: ['Canada', 'Australia', 'Türkiye', 'India'],
         activities: ['Staple Foods', 'Repacking', 'Private Label', 'Wholesale Supply'],
-        supply: 'fresh-food',
-        cta: 'Enquire about grains and pulses'
       },
       {
         slug: 'dry-foods',
         name: 'Dry Food Products',
         role: 'Shelf-stable staples and FMCG',
-        headline: 'Shelf-Stable Foods, Imported to Demand',
         short: 'Shelf-stable staples and packaged foods — oils, canned goods, dried fruit and nuts, spices, dairy and beverages — imported and distributed in Qatar.',
         intro: 'We import shelf-stable foods and packaged goods to what the Qatar market asks for and distribute them to retail and food service.',
-        body: [
-          'Dry foods are the widest line: cooking oils and ghee, canned vegetables and pulses, dried fruit and nuts, spices, sauces, dairy, juices and beverages. They are bought from manufacturers and exporters in Türkiye, India, China and the Gulf, by brand or under our own labels.',
-          'The range follows demand. A supermarket chain, a hotel group or a catering company tells us what it needs on the shelf and in the store, and the line is sourced, registered and delivered to that.',
-          'Every product carries the Ministry of Public Health registration, the Halal certification where it applies, and the Arabic labelling Qatar requires, before it ships.'
-        ],
         img: 'prod-food-commodities',
         facts: [
           { k: 'Lines', v: 'Oils, canned goods, dried fruit and nuts, spices, dairy, beverages' },
@@ -511,8 +421,6 @@ const AREAS = [
         ],
         origins: ['Türkiye', 'India', 'China', 'UAE'],
         activities: ['FMCG', 'Private Label', 'Halal Supply', 'Qatar Distribution'],
-        supply: 'fresh-food',
-        cta: 'Enquire about dry foods'
       }
     ]
   },
@@ -557,14 +465,8 @@ const AREAS = [
         slug: 'ocean-freight',
         name: 'Ocean Freight',
         role: 'Container, bulk and breakbulk',
-        headline: 'Container, Bulk and Breakbulk by Sea',
         short: 'Full and part container loads, bulk, breakbulk and project cargo between Qatar and international ports, with documents and customs handled.',
         intro: 'We ship full and part container loads, bulk and breakbulk cargo between Qatar and the ports the Group trades with.',
-        body: [
-          'Ocean freight is booked with the lines and operators serving Hamad Port and the Gulf: FCL and LCL containers on the main trades, reefers for food, and breakbulk or project cargo where a shipment does not fit a box.',
-          'The desk handles the whole movement: the booking, the bill of lading, the certificates the destination needs, customs clearance at both ends and delivery to the door, so the customer has one counterpart and one invoice.',
-          'For the Group’s own trading the freight is built into the delivered price; for customers it is quoted on its own.'
-        ],
         img: 'still-lusail-commercial',
         facts: [
           { k: 'Cargo', v: 'FCL, LCL, reefer, breakbulk, project' },
@@ -579,21 +481,13 @@ const AREAS = [
           { t: 'Door to door', d: 'Collection at origin, port handling, sea leg and delivery in Qatar or at destination, on one quote.' }
         ],
         activities: ['Containers', 'Breakbulk', 'Customs Clearance', 'Marine Insurance'],
-        supply: 'logistics',
-        cta: 'Enquire about ocean freight'
       },
       {
         slug: 'vessel-chartering',
         name: 'Vessel Chartering',
         role: 'Bulk capacity for large shipments',
-        headline: 'A Vessel for the Whole Cargo',
         short: 'Marine capacity arranged with shipping partners for bulk commodities and large-volume shipments, from Handysize parcels to full vessels.',
         intro: 'We charter vessels for bulk commodities and large shipments, on voyage or time terms, through our shipping partners.',
-        body: [
-          'A cargo of sulphur, sugar or grain does not travel in containers; it travels in a chartered vessel. We fix Handysize, Supramax and larger tonnage through brokers and owners for our own trading and for customers with a bulk cargo to move.',
-          'The desk handles the fixture from enquiry to discharge: the laycan, the charter party, port agency at both ends, loading and discharge supervision, laytime and demurrage, and the marine insurance.',
-          'Inbound to Qatar, the Group runs a standing programme of bulk and bagged commodity liftings into Hamad Port from Red Sea, Indian Ocean and Black Sea ports.'
-        ],
         img: 'panel-ocean-freight',
         facts: [
           { k: 'Tonnage', v: 'Handysize, Supramax, Panamax' },
@@ -608,21 +502,13 @@ const AREAS = [
           { t: 'Laytime and claims', d: 'Statements of fact, laytime calculations and demurrage handled by the same desk.' }
         ],
         activities: ['Bulk Shipping', 'Charter Parties', 'Port Agency', 'Demurrage'],
-        supply: 'logistics',
-        cta: 'Enquire about chartering'
       },
       {
         slug: 'land-freight',
         name: 'Land Freight',
         role: 'Trucks, trailers and heavy transport',
-        headline: 'Trucks and Trailers Across Qatar and the Gulf',
         short: 'Heavy trucks, flatbed and low-bed trailers, reefers and container movement within Qatar and across regional borders.',
         intro: 'We move cargo by road within Qatar and across the Gulf — containers, general cargo, heavy and refrigerated loads.',
-        body: [
-          'Road freight is the leg every shipment ends with. We run and contract heavy trucks, flatbeds, low-beds and reefer trailers for container haulage from Hamad Port, deliveries to stores, kitchens and sites across Qatar, and cross-border movements to the UAE and the wider Gulf.',
-          'Heavy and out-of-gauge pieces — plant, generators, transformers — travel on low-bed and extendable trailers with the permits and escorts the route requires.',
-          'For food, reefer trailers hold the cold chain from port to shelf, and the delivery schedule is the customer’s, not ours.'
-        ],
         img: 'prod-land-freight',
         facts: [
           { k: 'Fleet', v: 'Heavy trucks, flatbed, low-bed, reefer, container chassis' },
@@ -637,21 +523,13 @@ const AREAS = [
           { t: 'Cross-border', d: 'Road movements to the UAE and the Gulf, with transit documents and border clearance.' }
         ],
         activities: ['Road Haulage', 'Heavy Transport', 'Cold Chain', 'Cross-Border'],
-        supply: 'logistics',
-        cta: 'Enquire about land freight'
       },
       {
         slug: 'air-freight',
         name: 'Air Freight',
         role: 'Urgent, perishable and high-value cargo',
-        headline: 'Air Freight When the Cargo Cannot Wait',
         short: 'Air freight for urgent, perishable and high-value cargo between Qatar and major international markets, airport to airport or door to door.',
         intro: 'We fly cargo that cannot wait for a ship — perishables, spare parts, urgent project pieces — between Doha and the world.',
-        body: [
-          'Air freight is booked on scheduled and charter capacity through Hamad International Airport and the hubs the Group trades through. Perishables fly in cool-chain handling; spare parts and project pieces fly as general cargo or on a charter when size or time demands it.',
-          'The desk handles the airway bill, export and import clearance, airport handling and the final delivery, so a shipment is quoted and tracked as one job.',
-          'Much of what we fly is our own: fresh produce from Europe, samples for the commodity desk, parts for a customer’s site. The same capacity is open to customers.'
-        ],
         img: 'prod-air-freight',
         facts: [
           { k: 'Cargo', v: 'Perishables, parts, high-value, project' },
@@ -666,8 +544,6 @@ const AREAS = [
           { t: 'Clearance and delivery', d: 'Export and import clearance, airport handling and delivery to the door.' }
         ],
         activities: ['Air Cargo', 'Perishables', 'Charter', 'Customs Clearance'],
-        supply: 'logistics',
-        cta: 'Enquire about air freight'
       }
     ]
   },
@@ -712,14 +588,8 @@ const AREAS = [
         slug: 'energy-materials',
         name: 'Energy & Industrial Materials',
         role: 'Fuels, petrochemicals, steel and chemicals',
-        headline: 'Materials for Energy and Industrial Operators',
         short: 'Refined fuels, petrochemicals and polymers, lubricants, bitumen, steel and industrial chemicals, supplied to energy and industrial operators against their specification.',
         intro: 'We supply the materials energy and industrial operators run on, sourced from producers and authorised distributors and delivered to specification.',
-        body: [
-          'Refined fuels, petrochemicals and polymers, lubricants and base oils, bitumen, steel and industrial chemicals: bought from producers, refineries and authorised distributors in the Gulf and internationally, and sold to operators, contractors and institutions against a specification and a delivery schedule.',
-          'A supply contract here is measured in years, so each product is sourced from more than one origin and inspected independently, and the contract is backed by a counterpart with the balance sheet and the certified systems to carry it.',
-          'Logistics for heavy and hazardous materials — tankers, ISO tanks, bulk vessels, permits — is handled by the Group’s own freight desk.'
-        ],
         img: 'prod-industrial-materials',
         facts: [
           { k: 'Materials', v: 'Fuels, petrochemicals, lubricants, bitumen, steel, chemicals' },
@@ -734,21 +604,13 @@ const AREAS = [
           { t: 'Steel and industrial chemicals', d: 'Structural and reinforcing steel, pipe, and process chemicals to specification.' }
         ],
         activities: ['Energy Supply', 'Industrial Materials', 'Contract Supply', 'Hazardous Logistics'],
-        supply: 'energy-materials',
-        cta: 'Enquire about energy and industrial materials'
       },
       {
         slug: 'equipment',
         name: 'Industrial, Institutional & Commercial Equipment',
         role: 'Sourced, supplied and supported',
-        headline: 'Equipment for Sites, Institutions and Operations',
         short: 'Generator sets, construction plant, facility and site equipment, and medical and laboratory equipment, sourced and supplied with warranty and service in Qatar.',
         intro: 'We source and supply equipment for industrial sites, institutions and commercial operations, with the warranty and the service agent to stand behind it.',
-        body: [
-          'Equipment is bought from manufacturers and authorised dealers against the client’s specification: generator sets and power equipment, construction plant and machinery, facility and site equipment, and medical and laboratory equipment supplied against institutional orders.',
-          'A piece of equipment is only useful if it is approved, delivered, commissioned and serviced. Each supply is quoted delivered to site with the approvals it needs — Civil Defence, Kahramaa, the client’s HSE standard — a warranty, and a service agent in Qatar.',
-          'For programmes, the equipment is supplied alongside the materials and the project services, so the client has one counterpart.'
-        ],
         img: 'prod-equipment',
         facts: [
           { k: 'Equipment', v: 'Power, construction, facility, medical, laboratory' },
@@ -763,21 +625,13 @@ const AREAS = [
           { t: 'Medical and laboratory', d: 'Supplied against client orders with registration, installation and commissioning.' }
         ],
         activities: ['Equipment Supply', 'Commissioning', 'Spares & Service', 'Institutional Supply'],
-        supply: 'equipment',
-        cta: 'Enquire about equipment'
       },
       {
         slug: 'project-supply',
         name: 'Project-Based Commercial Supply',
         role: 'From tender to final delivery',
-        headline: 'Supply Organised Around a Project',
         short: 'Materials, equipment, packages and site services organised around a project’s schedule and specification, from tender to final delivery.',
         intro: 'We organise supply around a project — its schedule, its specification, its site — from the tender to the last delivery.',
-        body: [
-          'A project buys hundreds of things at once and needs them in order. We take a project’s bill of quantities and supply it as packages: engineering and EPC packages, fit-out and interior works, site services and manpower, and the logistics and heavy lift that bring it all to site.',
-          'The work is coordination as much as supply: sourcing across the Group’s suppliers, consolidating shipments, clearing and delivering to the schedule, and documenting each delivery for the client’s project controls.',
-          'Government programmes, national projects and major private-sector developments are the typical client, under a tender or a framework.'
-        ],
         img: 'prod-project-supply',
         facts: [
           { k: 'Scope', v: 'Packages, fit-out, site services, logistics' },
@@ -792,22 +646,14 @@ const AREAS = [
           { t: 'Project logistics and heavy lift', d: 'Consolidation, shipping, clearance and heavy transport to site, by the Group’s own freight desk.' }
         ],
         activities: ['Project Supply', 'Tender Response', 'Consolidation', 'Heavy Lift'],
-        supply: 'projects',
-        cta: 'Enquire about project supply'
       },
       {
         slug: 'food-security',
         related: ['wheat-grains', 'sugar', 'edible-oils', 'rice', 'grains-pulses'],
         name: 'Strategic Commodities & Food Security',
         role: 'Long-term supply for national programmes',
-        headline: 'Essential Commodities, Supplied for the Long Term',
         short: 'Long-term supply of essential commodities — grains, sugar, rice, edible oils, pulses — for programmes where continuity matters more than the price on the day.',
         intro: 'We contract the long-term supply of essential commodities for programmes where continuity matters more than the price on the day.',
-        body: [
-          'A food-security or strategic-reserve programme needs the same commodity, to the same standard, arriving on schedule for years. We structure that as a framework: multiple origins for each commodity, agreed specifications, a shipping programme, and a counterpart able to finance and deliver it.',
-          'The commodities are the ones the Group already trades — wheat and grains, sugar, rice, edible oils and pulses — so the programme draws on existing suppliers and existing routes rather than ones built for the occasion.',
-          'The client is a government entity, a national programme or an institutional buyer, and the contract is a tender or a framework agreement.'
-        ],
         img: 'prod-vessel-chartering',
         facts: [
           { k: 'Commodities', v: 'Wheat, grains, sugar, rice, edible oils, pulses' },
@@ -822,8 +668,6 @@ const AREAS = [
           { t: 'Financing and delivery', d: 'Supplied, financed and delivered by one counterpart, under certified management systems.' }
         ],
         activities: ['Food Security', 'Strategic Supply', 'Government Programmes', 'Framework Contracts'],
-        supply: 'commodities-food',
-        cta: 'Enquire about strategic supply'
       }
     ]
   },
@@ -868,14 +712,8 @@ const AREAS = [
         slug: 'enterprise-it',
         name: 'Enterprise IT Integration',
         role: 'Infrastructure, software and support',
-        headline: 'Enterprise Systems, Integrated and Supported',
         short: 'Servers, storage and networking, software licensing and cloud, cybersecurity and identity — supplied, integrated and supported for institutions and businesses.',
         intro: 'We supply and integrate enterprise IT — infrastructure, software, security — and support it after it goes live.',
-        body: [
-          'Infrastructure first: servers, storage and networking, supplied from the global vendors and installed in the client’s data centre or hosted. Then the software — licences, cloud services, business applications — and the security and identity layer that holds it together.',
-          'Integration is the job. A system that is bought and not integrated is a cost; one that is integrated, monitored and supported is an asset. We deliver with established international technology partners and keep the support in Qatar.',
-          'Clients are government entities, institutions and companies buying against a tender or a framework, and the delivery is governed under ISO 9001.'
-        ],
         img: 'prod-technology-systems',
         facts: [
           { k: 'Scope', v: 'Infrastructure, software, security, support' },
@@ -890,21 +728,13 @@ const AREAS = [
           { t: 'Managed support', d: 'Monitoring, maintenance and a service desk after go-live.' }
         ],
         activities: ['Enterprise IT', 'Systems Integration', 'Cybersecurity', 'Managed Support'],
-        supply: 'technology',
-        cta: 'Enquire about enterprise IT'
       },
       {
         slug: 'advanced-systems',
         name: 'Advanced Systems & AI',
         role: 'Data platforms, AI and monitoring',
-        headline: 'Advanced Systems and AI for Institutions',
         short: 'AI and data platforms, infrastructure monitoring and advanced systems, delivered with global technology partners for institutions and operators.',
         intro: 'We deliver advanced systems — data platforms, AI, infrastructure monitoring — for institutions and operators that need them to run, not just to demonstrate.',
-        body: [
-          'Advanced systems are bought for a purpose: a data platform that an institution can report from, monitoring that tells an operator what its infrastructure is doing, AI applied to a process that already exists. We scope that purpose with the client and deliver it with the global partners who build the platforms.',
-          'The Group invests in advanced technology and AI as well as supplying it, which means the systems we deliver are ones we are prepared to back.',
-          'Delivery is a project: scoped, integrated with the client’s existing systems, tested and handed over with the training and support to run it.'
-        ],
         img: 'still-tibeco-group',
         facts: [
           { k: 'Scope', v: 'Data platforms, AI, monitoring, advanced systems' },
@@ -919,8 +749,6 @@ const AREAS = [
           { t: 'Training and support', d: 'The client’s team trained to run it, and support after go-live.' }
         ],
         activities: ['AI & Data', 'Monitoring', 'Systems Delivery', 'Technology Investment'],
-        supply: 'technology',
-        cta: 'Enquire about advanced systems'
       }
     ]
   },
@@ -964,14 +792,8 @@ const AREAS = [
         slug: 'strategic-investment',
         name: 'Strategic Investment',
         role: 'Positions in energy, technology and industry',
-        headline: 'Investment Backed by the Means to Deliver',
         short: 'Capital for energy, advanced technology and industrial development, deployed where the Group can also bring sourcing, supply and execution.',
         intro: 'We take positions in energy, advanced technology and industrial development, where the Group can also supply and deliver.',
-        body: [
-          'An investment here comes with more than capital. The Group brings its sourcing networks, its logistics and its institutional supply to the businesses it invests in, so a project can be financed, supplied and delivered by the same counterpart.',
-          'The focus is energy, advanced technology and industrial development — the sectors the Group already works in and understands — and the horizon is long: positions chosen to still make sense in ten years.',
-          'We work with developers, operators and co-investors in Qatar and across the Gulf, Europe, North Africa and Asia.'
-        ],
         img: 'hero-sector-investments',
         facts: [
           { k: 'Focus', v: 'Energy, advanced technology, industrial development' },
@@ -986,20 +808,13 @@ const AREAS = [
           { t: 'Governance', d: 'Certified management systems and a selective, long-term mandate.' }
         ],
         activities: ['Strategic Investment', 'Energy', 'Technology & AI', 'Industrial Development'],
-        cta: 'Discuss an investment'
       },
       {
         slug: 'partnerships',
         name: 'Joint Ventures & Partnerships',
         role: 'New businesses, new markets, together',
-        headline: 'Partnerships Worth Something to Both Sides',
         short: 'Joint ventures, new concepts and long-term commercial cooperation with producers, operators and founders whose business fits where the Group is going.',
         intro: 'We build joint ventures and long-term partnerships with producers, operators and founders — a business in Qatar, a route into the Gulf, a market we should be in.',
-        body: [
-          'Most of what the Group does started with someone else: a producer looking for a route into Qatar, an operator with a concept that needed a partner, a founder with a business that fitted. The partnership platform is where those conversations go.',
-          'A joint venture brings the Group’s capital, its licences and presence in Qatar, its sourcing and logistics, and a partner’s product, know-how or market. The structure follows the business, not the other way round.',
-          'We are actively looking to establish new businesses, enter new commercial sectors next to the ones we know, and explore the regional and international markets our sourcing already reaches.'
-        ],
         img: 'hero-partnerships',
         facts: [
           { k: 'Forms', v: 'Joint ventures, distribution, licensing, cooperation' },
@@ -1014,7 +829,6 @@ const AREAS = [
           { t: 'International cooperation', d: 'Long-term commercial cooperation in the markets the Group sources from and sells to.' }
         ],
         activities: ['Joint Ventures', 'Market Entry', 'Distribution Partnerships', 'New Businesses'],
-        cta: 'Propose a partnership'
       }
     ]
   },
@@ -1050,14 +864,8 @@ const AREAS = [
         slug: 'laundry',
         name: 'Laundry & Garment Care',
         role: 'Everyday laundry to specialist care',
-        headline: 'Professional Laundry and Garment Care',
         short: 'Professional laundry and garment care for households — everyday washing, pressing and finishing, specialist treatment, and household textiles.',
         intro: 'We clean, press and return clothes — everyday household laundry, and the pieces that need more care than that.',
-        body: [
-          'The service handles everyday household items and the pieces that need specialist treatment: heavier fabrics, tailoring, and anything a home machine would spoil.',
-          'A laundry is judged on whether the same garment comes back the same way every time, so the work is built around turnaround, handling and consistency rather than volume alone.',
-          'It is the Group’s presence in consumer services, the part of the portfolio that serves households directly.'
-        ],
         img: 'hero-cavallo-laundry',
         facts: [
           { k: 'For', v: 'Households' },
@@ -1071,27 +879,14 @@ const AREAS = [
           { t: 'Specialist care', d: 'The pieces that need handling rather than a standard cycle: heavier fabrics, tailoring, and anything a home machine would spoil.' },
           { t: 'Household textiles', d: 'Bedding, towels and the larger items that are awkward to wash and slow to dry at home.' }
         ],
-        steps: [
-          { t: 'Turnaround', d: 'Back when it was promised. A service people use every week has to earn that place every week.' },
-          { t: 'Handling', d: 'Everyday items and the pieces that need more care than a standard cycle, each treated as what it is.' },
-          { t: 'Consistency', d: 'The same garment comes back the same way every time — the only standard a laundry is really judged on.' }
-        ],
-        stepsTitle: 'What we are <span class="soft">judged on</span>',
         activities: ['Garment Care', 'Textile Cleaning', 'Everyday Laundry', 'Specialist Treatment'],
-        cta: 'Ask about laundry and garment care'
       },
       {
         slug: 'cafe',
         name: 'Café & Hospitality',
         role: 'Coffee, service, and the room',
-        headline: 'A Coffee Concept Built Around Experience',
         short: 'A café built on quality coffee, service across the counter and the room it is served in — somewhere people come back to.',
         intro: 'We run a café built around three things that have to work together: the coffee, the service across the counter, and the room people choose to sit in.',
-        body: [
-          'Qatar’s food and beverage market is busy and competitive, and a concept survives in it by being somewhere people come back to rather than somewhere they pass through once.',
-          'That depends on the product itself, the service across the counter, and the room. Any one of them being wrong is enough.',
-          'Running a hospitality business also gives the Group something the trading side cannot: daily contact with customers, and the operational discipline that comes with opening every morning.'
-        ],
         img: 'hero-nero-cafe',
         facts: [
           { k: 'Concept', v: 'Specialty coffee café' },
@@ -1106,7 +901,6 @@ const AREAS = [
           { t: 'Daily operations', d: 'Opening, stocking, staffing and closing, every day — the discipline the rest of the Group does not get from trading.' }
         ],
         activities: ['Café Operations', 'Specialty Coffee', 'Hospitality', 'Customer Experience'],
-        cta: 'Ask about the café'
       }
     ]
   }
@@ -1242,212 +1036,12 @@ const FIGURES = [
   { k: 'Source countries', count: 'countries' }
 ];
 
-/* The questions a buyer asks about a service before writing, answered on
-   its page and published as a FAQPage for search. Keyed by service slug; a
-   service with no entry simply has no questions section. Plain answers,
-   nothing a buyer could not hold us to. */
-const SERVICE_FAQ = {
-  sulphur: [
-    { q: 'What specification of sulphur does Lusail Corp supply?',
-      a: 'Granular solid sulphur, typically 99.5% sulphur minimum on a dry basis, moisture 0.5% maximum, granules of 2 to 6 mm, bright yellow and low in dust and fines. Every cargo is sold to a written specification sheet and inspected at the load port.' },
-    { q: 'What is the minimum quantity and how is it shipped?',
-      a: 'Sulphur is sold in bulk vessel lots, usually from 15,000 MT upwards, in Handysize to Supramax parcels. Smaller quantities are considered where a part-cargo can be combined. The vessel is chartered by our own freight desk.' },
-    { q: 'Where is the sulphur sourced from and on what terms?',
-      a: 'From producers and authorised sellers in Qatar and the Gulf, and in Central Asia. It is quoted FOB a Gulf port or CFR the receiving port, with payment by irrevocable letter of credit at sight unless agreed otherwise.' }
-  ],
-  coffee: [
-    { q: 'Which coffee origins and grades can you supply?',
-      a: 'Washed and natural arabica from Ethiopia, Colombia and Brazil, and robusta from Uganda, Vietnam and Indonesia, bought by the origin’s own grading — screen size, defect count and cup. Other origins are sourced on request.' },
-    { q: 'How is the quality of a coffee shipment controlled?',
-      a: 'Each lot is bought against an offer sample and a grade. A pre-shipment sample is sent for approval before the container is stuffed, and the shipment is only loaded once it is approved.' },
-    { q: 'What quantity and packing do you ship coffee in?',
-      a: 'Full containers of 19 to 21 MT in 60 or 70 kg jute bags, with GrainPro or similar liners where the destination asks for them. Quoted FOB origin or CFR destination with the shipping handled by us.' }
-  ],
-  sugar: [
-    { q: 'What grades of sugar does Lusail Corp supply?',
-      a: 'Refined white cane sugar to the ICUMSA 45 standard — polarisation 99.8° minimum, moisture and ash 0.04% maximum, current crop year — and raw cane sugar to the refiner’s specification.' },
-    { q: 'How is sugar packed and in what quantities?',
-      a: 'In 50 kg polypropylene bags with inner liner for containers and breakbulk, in 1 MT big bags, or in bulk for refinery cargoes. From a single container to vessel lots of 25,000 MT.' },
-    { q: 'How are sugar shipments inspected and paid for?',
-      a: 'Weight and quality are certified at the load port by SGS or Intertek. Payment is by irrevocable letter of credit at sight, with the price quoted FOB origin or CFR the receiving port.' }
-  ],
-  'edible-oils': [
-    { q: 'Which edible oils can you supply?',
-      a: 'Refined, bleached and deodorised palm olein from South-East Asian refineries, refined sunflower oil from the Black Sea and Türkiye, and refined soybean oil from South America, each to the buyer’s specification.' },
-    { q: 'In what packing is edible oil shipped?',
-      a: 'In flexitanks or ISO tanks for manufacturers, in drums and jerrycans for distributors, and in retail bottles — including under the buyer’s own label, with Arabic labelling where Qatar is the destination.' },
-    { q: 'How are shelf life and delivery dates handled?',
-      a: 'Production date, shipping window and arrival date are agreed before an order is confirmed, so the oil arrives with the shelf life the buyer’s line or shelf needs.' }
-  ],
-  'wheat-grains': [
-    { q: 'What wheat and grain specifications do you supply?',
-      a: 'Milling wheat by protein (typically 11.5% to 13.5%), gluten, falling number and test weight to the origin standard; feed barley and yellow corn for feed producers; and all-purpose and bakery flour in 50 kg bags.' },
-    { q: 'Where is the wheat sourced from?',
-      a: 'From exporters in Ukraine, Kazakhstan, Bulgaria, Australia and Canada. The origin used depends on the crop, the season, quality and the terms on the day.' },
-    { q: 'How is a grain cargo shipped and documented?',
-      a: 'Milling programmes travel in Handysize and Supramax bulk vessels chartered by our own desk; bagged flour and smaller lots in containers. Each shipment carries phytosanitary, fumigation, weight and quality certificates for the receiving country.' }
-  ],
-  'fresh-vegetables': [
-    { q: 'Which vegetables do you import and how often?',
-      a: 'Tomatoes, cucumbers, capsicum, courgettes, aubergines, onions, potatoes and leafy lines, on a weekly programme by sea reefer and by air, with the origin switched as the seasons move.' },
-    { q: 'What grade and certification do your vegetables carry?',
-      a: 'Class I produce to the Qatar market specification from GlobalG.A.P. or equivalent growers, with a phytosanitary certificate per shipment, Ministry of Public Health registration and Arabic labelling.' },
-    { q: 'Who do you deliver fresh vegetables to?',
-      a: 'Supermarkets, hotels, restaurants, caterers and wholesalers across Qatar, delivered chilled on a schedule to the store or kitchen.' }
-  ],
-  'fresh-fruits': [
-    { q: 'Which fruits can you supply through the year?',
-      a: 'Apples, citrus, bananas, grapes, melons and stone fruit, bought in both hemispheres so a line is in season somewhere all year. Pineapples, mangoes and papaya in season.' },
-    { q: 'How is fruit shipped and ripened?',
-      a: 'In reefers at the temperature each variety needs, cleared at Hamad Port or Doha airport. Bananas are shipped green and ripened to order in Qatar.' },
-    { q: 'Can you supply fruit on a standing programme?',
-      a: 'Yes. Supermarket buyers, hotel purchasing managers and wholesalers are supplied on a standing weekly programme rather than one-off loads.' }
-  ],
-  rice: [
-    { q: 'What varieties and grades of rice do you supply?',
-      a: 'Aged 1121 and traditional basmati, white and golden sella, Vietnamese and Thai-style long-grain, jasmine, parboiled and white rice, bought by broken percentage, moisture and age.' },
-    { q: 'What pack sizes are available?',
-      a: 'Retail and catering packs from 1 kg to 40 kg, and 1 MT big bags for processors, under our own labels or packed and labelled to the customer’s design.' },
-    { q: 'Do you hold rice in stock in Qatar?',
-      a: 'Yes. Stock is held in Qatar for customers who need delivery this week, alongside the programmes bought at origin for the season.' }
-  ],
-  'grains-pulses': [
-    { q: 'Which pulses do you import?',
-      a: 'Red and green lentils, kabuli chickpeas by size, kidney, white and black beans, and split and whole peas, from Canada, Australia, Türkiye and India.' },
-    { q: 'Can pulses be packed to our own label?',
-      a: 'Yes. Bulk imports are repacked in Qatar into retail packs under the customer’s label and pack size, or supplied in 25 and 50 kg bags and bulk bags.' },
-    { q: 'Do you also supply flour and wheat products?',
-      a: 'Flour, semolina, bulgur and pasta are supplied in retail and catering packs to the same customers on the same deliveries.' }
-  ],
-  'dry-foods': [
-    { q: 'What dry food lines do you distribute?',
-      a: 'Cooking oils and ghee, sugar, salt, flour and pasta; canned vegetables, pulses and fish; sauces and condiments; dates, dried fruit, nuts and spices; long-life dairy, juices and water.' },
-    { q: 'Do your products meet Qatar’s import requirements?',
-      a: 'Every product carries Ministry of Public Health registration, Halal certification where it applies, and the Arabic labelling Qatar requires before it ships.' },
-    { q: 'Can you source a product we do not see listed?',
-      a: 'Yes. The range follows demand: a supermarket chain, a hotel group or a caterer tells us what it needs and the line is sourced, registered and delivered to that.' }
-  ],
-  'ocean-freight': [
-    { q: 'What kinds of cargo do you ship by sea?',
-      a: 'Full and part container loads in dry, high-cube and reefer containers, breakbulk and out-of-gauge project pieces, and bulk cargo, between Qatar and the ports the Group trades with.' },
-    { q: 'Do you handle customs and documents?',
-      a: 'Yes. Export and import clearance, bills of lading, certificates of origin, phytosanitary and inspection certificates and marine insurance are handled by the same desk.' },
-    { q: 'Can you quote door to door?',
-      a: 'Yes. Collection at origin, port handling, the sea leg and delivery in Qatar or at destination are quoted as one price with one invoice.' }
-  ],
-  'vessel-chartering': [
-    { q: 'What vessel sizes do you charter?',
-      a: 'Handysize, Supramax and Panamax tonnage for parcels of roughly 5,000 to 60,000 MT, fixed through brokers and owners on voyage charter, contract of affreightment or time charter terms.' },
-    { q: 'What does the chartering service include?',
-      a: 'The fixture itself, the charter party, port agency at both ends, loading and discharge supervision, draft surveys, laytime and demurrage calculations and marine insurance.' },
-    { q: 'Do you charter for cargo that is not your own?',
-      a: 'Yes. The same desk that charters for the Group’s sulphur, sugar and grain fixes vessels for customers with a bulk cargo to move.' }
-  ],
-  'land-freight': [
-    { q: 'What road transport do you provide?',
-      a: 'Container haulage from Hamad Port, scheduled distribution across Qatar, heavy and out-of-gauge transport on low-bed and extendable trailers, chilled transport in reefer trailers, and cross-border movements to the UAE and the Gulf.' },
-    { q: 'Do you handle permits and escorts for heavy loads?',
-      a: 'Yes. Route permits, escorts and the lifting at either end are arranged with the movement.' },
-    { q: 'Can you deliver on our schedule?',
-      a: 'Yes. Distribution deliveries to stores, kitchens and sites run to the customer’s schedule, with the cold chain held from port to shelf for food.' }
-  ],
-  'air-freight': [
-    { q: 'What do you move by air?',
-      a: 'Perishables in cool-chain handling, spare parts and high-value goods, documents, and project pieces on scheduled or charter capacity through Hamad International Airport.' },
-    { q: 'Can you arrange an air charter?',
-      a: 'Yes. Part and full charters are arranged for project cargo and time-critical volumes that scheduled capacity cannot carry.' },
-    { q: 'Is the service airport to airport or door to door?',
-      a: 'Either. The airway bill, export and import clearance, airport handling and final delivery are handled as one job, quoted and tracked together.' }
-  ],
-  'energy-materials': [
-    { q: 'Which energy and industrial materials do you supply?',
-      a: 'Refined fuels such as EN590 diesel, jet A-1 and gasoline; petrochemicals and polymers; lubricants, base oils and bitumen; structural and reinforcing steel, pipe and industrial chemicals, each to the operator’s specification.' },
-    { q: 'How do you secure supply over a long contract?',
-      a: 'Each product is sourced from more than one origin and inspected independently, under ISO 9001, 14001 and 45001 management systems, with the contract carried by a counterpart able to finance and deliver it.' },
-    { q: 'Do you handle the logistics for hazardous materials?',
-      a: 'Yes. Tankers, ISO tanks, bulk vessels and the permits they need are handled by the Group’s own freight desk.' }
-  ],
-  equipment: [
-    { q: 'What equipment can you source and supply?',
-      a: 'Generator sets and power equipment, lighting towers and welfare cabins, construction plant and machinery, facility and institutional equipment, and medical and laboratory equipment against client orders.' },
-    { q: 'Is the equipment delivered, approved and supported?',
-      a: 'Yes. Each supply is quoted delivered to site with the approvals it needs — Civil Defence, Kahramaa, the client’s HSE standard — a warranty, and a service agent in Qatar.' },
-    { q: 'Can equipment be supplied as part of a larger programme?',
-      a: 'Yes. For programmes the equipment is supplied alongside the materials and project services, so the client has one counterpart.' }
-  ],
-  'project-supply': [
-    { q: 'What does project-based supply cover?',
-      a: 'EPC and engineering packages, fit-out and interior works, site services and manpower, and the project logistics and heavy lift that bring it all to site, organised around the project’s bill of quantities and schedule.' },
-    { q: 'Who are the typical clients?',
-      a: 'Government programmes, national projects and major private-sector developments, under a tender or a framework agreement.' },
-    { q: 'How is delivery coordinated?',
-      a: 'Sourcing across the Group’s suppliers, consolidation, clearance and delivery to the schedule, with each delivery documented for the client’s project controls.' }
-  ],
-  'food-security': [
-    { q: 'Which commodities does strategic supply cover?',
-      a: 'Wheat and grains, sugar, rice, edible oils and pulses — the commodities the Group already trades, drawing on existing suppliers and routes.' },
-    { q: 'How is continuity of supply secured?',
-      a: 'Through a framework with multiple origins for each commodity, agreed specifications, independent inspection on every lifting and a shipping programme into Hamad Port run by the Group’s own chartering desk.' },
-    { q: 'Who is this service for?',
-      a: 'Government entities, national programmes and institutional buyers contracting under a tender or a multi-year framework agreement.' }
-  ],
-  'enterprise-it': [
-    { q: 'What does enterprise IT integration include?',
-      a: 'Servers, storage and networking; software licences, cloud services and business applications; cybersecurity and identity; and managed support after go-live, delivered with established international technology partners.' },
-    { q: 'Is support provided after installation?',
-      a: 'Yes. Monitoring, maintenance and a service desk are provided after go-live, with the support kept in Qatar.' },
-    { q: 'Who do you deliver enterprise IT for?',
-      a: 'Government entities, institutions and companies buying against a tender or a framework, with delivery governed under ISO 9001.' }
-  ],
-  'advanced-systems': [
-    { q: 'What advanced systems do you deliver?',
-      a: 'Data platforms, analytics and applied AI, infrastructure monitoring and control, and other advanced systems scoped to a process the client already runs.' },
-    { q: 'How is a system integrated with what we already have?',
-      a: 'Each delivery is a scoped project: connected to the client’s existing systems, tested, and handed over with the training and support to run it.' },
-    { q: 'Which partners do you work with?',
-      a: 'The global technology platforms that build the systems, with the Group as the delivery partner in Qatar and the region.' }
-  ],
-  'strategic-investment': [
-    { q: 'What does Lusail Corp invest in?',
-      a: 'Energy, advanced technology and industrial development — businesses and projects where the Group can also bring sourcing, supply and execution.' },
-    { q: 'What is the investment horizon?',
-      a: 'Long term. Positions are fewer and larger, chosen for whether they will still make sense in a decade rather than this quarter.' },
-    { q: 'Do you co-invest with others?',
-      a: 'Yes. The Group invests alongside developers, operators and institutional co-investors in Qatar and across the Gulf, Europe, North Africa and Asia.' }
-  ],
-  partnerships: [
-    { q: 'What kinds of partnership does the Group enter?',
-      a: 'Joint ventures in Qatar, distribution partnerships for producers seeking a route into the Gulf, new concepts with operators and founders, and long-term commercial cooperation in the markets the Group sources from and sells to.' },
-    { q: 'What does Lusail Corp bring to a joint venture?',
-      a: 'Capital, licences and presence in Qatar, sourcing and logistics, and customers across retail, hospitality, industry and institutions.' },
-    { q: 'How do we propose a partnership?',
-      a: 'Send an enquiry choosing Investment & Partnerships as the area, with a line on the business, the market and what you are looking for. It reaches the desk that handles partnerships directly.' }
-  ],
-  laundry: [
-    { q: 'What laundry services are offered?',
-      a: 'Everyday washing, drying and folding; pressing and finishing; specialist care for heavier fabrics, tailoring and delicate pieces; and household textiles such as bedding and towels.' },
-    { q: 'Who is the laundry service for?',
-      a: 'Households in Qatar. It is the Group’s consumer service, built around turnaround, handling and consistency.' },
-    { q: 'How do I ask about the service?',
-      a: 'Send an enquiry choosing Consumer & Hospitality Services as the area, and it reaches the laundry desk directly.' }
-  ],
-  cafe: [
-    { q: 'What is the café concept?',
-      a: 'A specialty coffee café built on three things that have to work together: the coffee, the service across the counter and the room people choose to sit in.' },
-    { q: 'Where is the café?',
-      a: 'In Qatar. Location, hours and menu are available on enquiry while the café’s own listing is being prepared.' },
-    { q: 'Is the Group open to new hospitality concepts?',
-      a: 'Yes. Operators and founders with a concept that fits the Group’s portfolio can propose it through the Investment & Partnerships area.' }
-  ]
-};
-
 /* Flat list of every service, each carrying a back-reference to its area. */
 const ALL_SERVICES = AREAS.flatMap(a =>
   a.services.map(s => Object.assign({}, s, {
     areaSlug: a.slug, areaName: a.name, areaHero: a.hero, desk: a.desk,
     accent: a.accent, accentText: a.accentText, tint: a.tint, accentOn: a.accentOn,
-    quotable: !!a.quote, audience: a.audience || '',
-    faq: SERVICE_FAQ[s.slug] || []
+    quotable: !!a.quote, audience: a.audience || ''
   }))
 );
 
@@ -1463,9 +1057,6 @@ const CONSUMER_AREA = AREAS.find(a => a.audience === 'consumer');
   for (const s of ALL_SERVICES.concat(AREAS)) {
     if (seen.has(s.slug)) { console.error('\n  site.js: the slug "' + s.slug + '" is used twice.\n'); process.exit(1); }
     seen.add(s.slug);
-  }
-  for (const k of Object.keys(SERVICE_FAQ)) if (!ALL_SERVICES.some(s => s.slug === k)) {
-    console.error('\n  site.js: SERVICE_FAQ names "' + k + '", which is not a service.\n'); process.exit(1);
   }
   for (const a of AREAS) if (!COMPANIES.some(c => c.slug === a.desk)) {
     console.error('\n  site.js: area "' + a.slug + '" routes to a desk "' + a.desk + '" that is not a company.\n'); process.exit(1);

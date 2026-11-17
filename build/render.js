@@ -329,20 +329,6 @@ function areaSchema(a) {
   };
 }
 
-/* The questions of every service on a page, as one FAQPage, so a search
-   engine can show them. */
-function faqSchema(list) {
-  const qs = list.flatMap(s => s.faq || []);
-  if (!qs.length) return null;
-  return {
-    '@type': 'FAQPage',
-    mainEntity: qs.map(f => ({
-      '@type': 'Question', name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a }
-    }))
-  };
-}
-
 /* A trail of where the page sits. The last step names the current page and
    deliberately carries no url. */
 function crumbs(steps) {
@@ -1141,19 +1127,16 @@ ${g.href ? `        <a class="gov-go" href="${g.href}">${esc(g.link)} <span aria
 /* ---------- one service area ----------------------------------------------- */
 
 /* Each area is a landing page of its own, and the page a search engine
-   should land a buyer on. It opens on the area, then writes up every
-   service inside it in full — the story, what is supplied line by line,
-   where it is sourced from, how it works, the questions — one section per
-   service, each with an anchor so a link from anywhere lands on it. The
-   title names the area and its services; the markup carries a Service for
-   the area with every service as an offer, a FAQPage from all of their
-   questions, and a BreadcrumbList. */
+   should land a buyer on: the area, then every service inside it as a
+   chapter with an anchor, so a link from anywhere lands on it. The title
+   names the area and its services; the markup carries a Service for the
+   area with every service as an offer, and a BreadcrumbList. */
 /* One service, as a chapter of its area's page: the photograph and the
    facts at the left; the name, one sentence, what we supply as short rows,
    and where it is sourced from at the right. The h2 and id are what every
    link on the site and the structured data point at. */
 function serviceChapter(s, i, n) {
-    return `      <section class="tpanel sheet" id="${s.slug}" aria-labelledby="h-${s.slug}">
+  return `      <section class="tpanel sheet" id="${s.slug}" aria-labelledby="h-${s.slug}">
         <div class="tp-grid">
           <aside class="tp-side">
             <figure class="tpic">
@@ -1190,8 +1173,6 @@ function pageArea(a) {
     a.accentOn && '--co-on:' + a.accentOn
   ].filter(Boolean).join(';');
   const askHref = (s, topic) => `/contact/?topic=${topic || 'question'}${s ? '&service=' + s.slug : ''}`;
-  const origins = [...new Set(list.flatMap(s => s.origins || []))];
-  const panel = (s, i) => serviceChapter(s, i, n);
 
   const process = a.buying && a.buying.length
     ? `<section class="section co-steps" aria-labelledby="buyTitle">
@@ -1282,7 +1263,7 @@ ${a.customers.map(c => `          <li>${esc(c)}</li>`).join('\n')}
   <div class="wrap">
     ${head2('svcListTitle', `What we provide in <span class="soft">${esc(low(a))}</span>`, a.quote ? `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with its specification, what we supply and where it is sourced from.` : `${esc(cap(count(n)))} ${n === 1 ? 'service' : 'services'}, each with what it covers and what it is judged on.`)}
     <div class="tpanels sheets" id="sheets">
-${list.map(panel).join('\n')}
+${list.map((s, i) => serviceChapter(s, i, n)).join('\n')}
     </div>
   </div>
 </section>
@@ -1327,46 +1308,6 @@ ${a.why.map(w => `      <div class="bwhy-item">
 </div>
 `
     + footer();
-}
-
-/* Where an area is sourced from, gathered off every service in it and
-   grouped by the Group's sourcing regions. An area with no origins gets no
-   section at all. */
-function sourcingSection(name, used) {
-  if (!used.length) return '';
-
-  const groups = REACH.map(reg => ({
-    t: reg.t,
-    countries: used.filter(u => reg.d.split(String.fromCharCode(183)).map(x => x.trim()).includes(u))
-  })).filter(g => g.countries.length);
-
-  /* Every origin has to land in a region. Without this an origin the Group
-     does not declare would be dropped from this section in silence. */
-  const placed = groups.reduce((n, g) => n + g.countries.length, 0);
-  if (placed !== used.length) {
-    const lost = used.filter(u => !groups.some(g => g.countries.includes(u)));
-    console.error(String.fromCharCode(10) + `  ${name}: ` + lost.join(', ') +
-      ` is not on the Group's sourcing list. Add it to REACH, or correct the service.` + String.fromCharCode(10));
-    process.exit(1);
-  }
-
-  return `<section class="section tight" aria-labelledby="srcTitle">
-  <div class="wrap">
-    ${head2('srcTitle', 'Where we <span class="soft">source it</span>',
-      `${esc(name)} draws on ${plural(used.length, 'country', 'countries')} across ${plural(groups.length, 'region', 'regions')}. Which one is used depends on the product, the season, the quality and the terms on the day.`)}
-    <div class="srcregs rise">
-${groups.map(g => `      <div class="srcreg">
-        <h3>${esc(g.t)}</h3>
-        <ul>
-${g.countries.map(x => `          <li>${esc(x)}</li>`).join(String.fromCharCode(10))}
-        </ul>
-      </div>`).join(String.fromCharCode(10))}
-    </div>
-    <p class="srcmore"><a href="/#markets">The Group's full sourcing register <span aria-hidden="true">&#8594;</span></a></p>
-  </div>
-</section>
-
-`;
 }
 
 /* ---------- partners ------------------------------------------------------- */

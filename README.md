@@ -95,17 +95,21 @@ the `Organization`'s offer catalogue, and `/services/` an `ItemList`.
 ## Where things live
 
 ```
-data/site.js             ALL content — sectors, companies, values, reach, contact,
-                         what the Group buys (SUPPLY), open events (OPPORTUNITIES),
-                         every form (FORMS)
+data/site.js             ALL content — service areas and services, companies, values,
+                         reach, contact, what the Group buys (SUPPLY), open events
+                         (OPPORTUNITIES), every form (FORMS)
 build/render.js          templates + generator
+build/routes.js          every page and every old address, in one place; writes
+                         vercel.json (npm run routes) and is checked by the build
 build/variants.js        resizes the photographs; run by hand, results committed
 build/import.js          brings any photo in at web size (npm run import)
 build/imageroles.js      what each photograph is used for, which sets its sizes
 build/worldmap.js        decodes the land data into points for the home-page globe
 api/contact.js           Vercel function: validates the form, emails it via Resend
 assets/css/site.css      one stylesheet; design tokens at the top
-assets/js/site.js        nav, sector menu, map pins, panels, form, reveals
+assets/js/site.js        the bar and its panel, the figures, reveals, the forms,
+                         the portal list, the corner form, the index rail, the
+                         accordion, the globe, the chapters on an area page
 site-assets/logo/        the logo kit (SVG) + favicons
 site-assets/font/        the three typefaces, self-hosted (SIL OFL; see NOTICE.md)
 site-assets/img/         web-sized photography — the originals
@@ -554,12 +558,31 @@ Publishing an event is adding an entry and deploying. The five in the file
 today are illustrative — carried over from the mock-up — and must be replaced
 before launch (see [TODO.md](TODO.md)).
 
+## Routes
+
+Every page and every old or guessed address is listed in
+[build/routes.js](build/routes.js), grouped by what it was: the first site's
+pages, the company pages, the sectors, the services that once had addresses
+of their own, the quotation, the supplier portal. `npm run routes` writes
+`vercel.json` from it; nothing is edited in `vercel.json` by hand.
+
+The build checks the list against the pages it has just written and
+refuses to finish if a redirect points at itself or at another redirect,
+at a page or an anchor that does not exist, or would catch a real page —
+or if `vercel.json` is out of date. That is the check that was missing when
+the redirect list grew by hand to 236 entries and two of them looped.
+
+Vercel is set to `trailingSlash: true`, so `/about` becomes `/about/` on
+its own and every source is listed once, with the slash. Anything that is
+neither a page nor listed is a 404: the 404 page answers with that status
+for search engines and takes the visitor to the home page.
+
 ## Deploying
 
 `vercel.json` is committed, so Vercel needs no manual configuration — it runs
-`npm run build`, serves `dist/`, and applies the redirects for old and guessed
-URLs. Any other static host works the same way: build, then upload `dist/`
-(the form then needs its own endpoint, or falls back to email).
+`npm run build`, serves `dist/`, and applies the redirects. Any other static
+host works the same way: build, then upload `dist/` (the form then needs its
+own endpoint, or falls back to email).
 
 It also sets `Cache-Control`, which nothing did before: every repeat visit was
 revalidating the stylesheet, the script and every photograph — eighteen
